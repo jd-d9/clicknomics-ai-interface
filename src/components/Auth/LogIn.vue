@@ -67,9 +67,9 @@
                                             </div>
                                         </div>
                                         <div class="col-6 text-right">
-                                            <router-link to="/password/reset" class="text-dark text-underline">
+                                            <a href="/password/reset" class="text-dark text-underline">
                                                 <small class="font-weight-600">Forgot password?</small>
-                                            </router-link>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="text-center">
@@ -161,6 +161,7 @@
                         }
                     })
                     .catch(error => {
+                        console.log(error, 'error')
                         this.backendErrorMessage = error.response.data.message;
                         this.hideShowLoader = false;
                     }); 

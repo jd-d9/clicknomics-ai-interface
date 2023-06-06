@@ -18,12 +18,11 @@
         methods: {
           // get value on click of navbar toggler button
             moveRouteContents(data) {
-                console.log(data, 'data')
                 this.toggleContents = data;
             },
             // dynamically add class for toggle sidebar
             addDynamicClass() {
-                if(window.location.pathname === '/login' || window.location.pathname === '/password/reset' || window.location.pathname === '/authenticator/validate' || window.location.pathname === '/authenticator/validate/email' || window.location.pathname === '/set_new_password') {  
+                if(!sessionStorage.getItem('Email') || window.location.pathname === '/login' || window.location.pathname === '/password/reset' || window.location.pathname === '/authenticator/validate' || window.location.pathname === '/authenticator/validate/email' || window.location.pathname === '/set_new_password') {  
                     this.toggleClass = false;
                 }else {
                     this.toggleClass = true;
@@ -33,7 +32,6 @@
         mounted() {
             this.addDynamicClass();
             $(document).ready(() => {
-                console.log('code')
                 $('v-data-table-footer__items-per-page').children('span').text('Rows per page:');
             })
         },

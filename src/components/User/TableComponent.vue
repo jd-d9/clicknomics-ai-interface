@@ -12,7 +12,7 @@
                     <a href="javascript:void(0);" @click="editUser(item.selectable.id)">
                         <img :src="images.edit" class="icon-width" title="Edit user">
                     </a>
-                    <a href="javascript:void(0);" @click="deleteUser(item.selectable.id)">
+                    <a href="javascript:void(0);" @click="deleteUser(item.selectable.id)" v-if="item.selectable.email !== currentLoginUserMail">
                         <img :src="images.bin" class="icon-width" title="Delete user">
                     </a>
                 </td>
@@ -40,6 +40,7 @@
                 ],
                 itemsPerPage: -1,
                 hideShowLoader: false,
+                currentLoginUserMail: '',
             }
         },
         methods: {
@@ -70,11 +71,20 @@
                     }
                 })
                 .catch(error => {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     console.log(error)
                     this.hideShowLoader = false;
                 }); 
             }
         },
+        mounted() {
+            this.currentLoginUserMail = sessionStorage.getItem('Email');
+        }
     }
 </script>
 

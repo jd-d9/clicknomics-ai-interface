@@ -69,7 +69,7 @@
                 </div>
             </div>
         </div>
-        <!-- Create & Update RM AMEX Plum Activity-->
+        <!-- Create & Update RM AMEX Plum Activity -->
         <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">

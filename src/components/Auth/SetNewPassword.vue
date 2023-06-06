@@ -168,12 +168,6 @@
                         }
                     })
                     .catch(error => {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
                         this.backendErrorMessage = error.response.data.message;
                         this.hideShowLoader = false;
                     }); 

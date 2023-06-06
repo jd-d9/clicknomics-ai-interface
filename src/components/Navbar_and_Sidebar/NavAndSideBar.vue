@@ -9,7 +9,7 @@
                 </a>
             </div>
             <div class="sidebar-contents">
-                <a :href="data.routes" class="side-menu text-decoration-none" v-for="data in allMenues" :key="data" @click="toggleSidebarHover">
+                <a :href="data.routes === '#' ? 'javascript:void(0)' : '/' + data.routes" class="side-menu text-decoration-none" v-for="data in allMenues" :key="data" @click="toggleSidebarHover">
                     <img :src="iconSource + data.icon" alt="icon" title="Dashboard">
                     <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                     <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
@@ -28,7 +28,7 @@
                 </a>
             </div>
             <div class="sidebar-contents">
-                <a :href="data.routes == '#' ? 'javascript:void(0)' : data.routes" class="side-menu text-decoration-none side-menu-hover" @mouseleave="hideHoveredDropdown" v-for="data in allMenues" :key="data">
+                <a :href="data.routes === '#' ? 'javascript:void(0)' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" @mouseleave="hideHoveredDropdown" v-for="data in allMenues" :key="data">
                     <img :src="iconSource + data.icon" alt="icon" :title="data.menu">
                     <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                     <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
@@ -48,14 +48,14 @@
                                         </h2>
                                         <div :id="childs.id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                                             <div class="accordion-body">
-                                                <a :to="childs.routes" class="accordian-hover">{{ childs.menu }}</a>
+                                                <a :href="childs.routes === '#' ? 'javascript:void(0)' : '/' + childs.routes" class="accordian-hover">{{ childs.menu }}</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="sidebar-dropdown-menubars" v-else>
-                                <a :href="subChild.routes">{{ subChild.menu }}</a>
+                                <a :href="subChild.routes === '#' ? 'javascript:void(0)' : '/' + subChild.routes">{{ subChild.menu }}</a>
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
     <!-- sidebar hover end here -->
     <loader-component v-if="hideShowLoader"></loader-component>
     <!-- navbar start here -->
-    <nav class="navbar-content bg-primary" :class="{'toggle-margin': hideShowSidebar}">
+    <nav class="navbar-content bg-primary" :class="{'navbar-content': !showOnClick, 'toggle-margin': hideShowSidebar}">
         <div class="container-fluid px-4 pt-0 pb-4">
             <div class="row justify-content-center align-items-center">
                 <div class="col-1">
@@ -124,7 +124,7 @@
                                     </div>
                                 </li>
                                 <li class="text-center pt-2">
-                                    <router-link to="" class="view-all-notification d-block text-primary">View All</router-link>
+                                    <a href="javascript:void(0)" class="view-all-notification d-block text-primary">View All</a>
                                 </li>
                             </ul>
                         </div>
@@ -132,21 +132,21 @@
                             <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="d-flex align-items-center justify-content-end">
                                     <div class="profile-image me-2">
-                                        <img :src="require('../../assets/img/theme/team-4.jpg')" alt="img">
+                                        <img :src="profileImage ? profileImage : images.user" alt="img">
                                     </div>
-                                    <p class="mb-0 text-white">Maulik <i class="fa-solid fa-angle-down"></i></p>
+                                    <p class="mb-0 text-white">{{ name }} <i class="fa-solid fa-angle-down"></i></p>
                                 </div>
                             </button>
                             <ul class="dropdown-menu profile-dropdown">
                                 <li><small class="welcome">WELCOME!</small></li>
                                 <li>
-                                    <router-link to="/my_profile" class="dropdown-item">
+                                    <a href="/my_profile" class="dropdown-item">
                                         <i class="fa-solid fa-user"></i>
                                         <span class="profile-name ms-4">My Profile</span>
-                                    </router-link>
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" class="dropdown-item border-0" @click="logoutUser">
+                                    <a href="javascript:void(0)" class="dropdown-item border-0" id="logout-button" @click="logoutUser">
                                         <i class="fa-solid fa-person-running"></i>
                                         <span class="profile-name ms-4">Logout</span>
                                     </a>
@@ -171,13 +171,17 @@
                     logo: require('../../assets/img/brand/logo.png'),
                     favicon: require('../../assets/img/brand/favicon.png'),
                     bell: require('../../assets/img/icons/bell.svg'),
+                    user: require('../../assets/img/icons/dummy-user.png')
                 },
                 hideShowSidebar: true,
+                toggleNavbar: true,
                 hideShowLoader: false,
                 showOnClick: false,
                 sideBarData: [],
                 allMenues: [],
                 subDropDownTabs: [],
+                profileImage: '',
+                name: '',
             }
         },
         computed: {
@@ -227,14 +231,13 @@
             },
             // sidebar behaviour on click and hover
             toggleSidebarHover() {
-                this.showOnClick = true;
+                this.showOnClick = !this.showOnClick;
                 this.hideShowSidebar = !this.hideShowSidebar;
             },
             // mouse leave function
             hideHoveredDropdown() {
                 this.showOnClick = false;
                 this.$emit('move-contents', this.hideShowSidebar);
-
             },
             // logout user
             logoutUser() {
@@ -250,23 +253,21 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        setTimeout(() => {
-                            location.reload();
-                        }, 500)
-                        this.$router.push('/login');
-                        sessionStorage.clear();
+                        document.getElementById('logout-button').setAttribute('href', '/login');
                         this.hideShowLoader = false;
+                        sessionStorage.clear();
                         this.$toast.open({
                             message: 'Logged out',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
+                        document.getElementById('logout-button').click();
                     }
                 })
                 .catch(error => {
                     this.$toast.open({
-                        message: error.response.data,
+                        message: error.response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'error'
@@ -274,11 +275,34 @@
                     console.log(error);
                     this.hideShowLoader = false;
                 }); 
-            }
+            },
+            // get current loged in user data
+            getCurrentUserData() {
+                this.hideShowLoader = true;
+                this.axios.get(this.$api + '/settings/getsingleuser', {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.profileImage = response.data.data.profile_image;
+                        this.name = response.data.data.name;
+                        this.backendErrorMessage = '';
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    this.backendErrorMessage = error.response.data.message;
+                    this.hideShowLoader = false;
+                }); 
+            },
         },
         mounted() {
             this.toggleComponents();
             this.getSidebarMenues();
+            this.getCurrentUserData();
         }
     } 
 </script>
@@ -375,6 +399,13 @@
         border-right: 1px solid #005eb3;
         width: 245px;
         height: 100vh;
+    }
+    .side-menu-hover:hover {
+        background-color: #084c89 !important;
+        border-radius: 0 !important;
+    }
+    .side-menu-hover:hover i {
+        color: white;
     }
     .side-menu-hover:hover .sidebar-dropdown-menu{
         display: block !important;
@@ -494,6 +525,7 @@
         background-color: #81df8d;
     }
     .sidebar-dropdown-menubars a{
+        display: block;
         text-decoration: none;
         color: black;
     }
@@ -548,6 +580,7 @@
     }
     .hide-show-sidebar {
         width: 60px;
+        height: 100%;
         transition: all 0.2s ease;
     }
 </style>

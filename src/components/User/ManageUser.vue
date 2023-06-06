@@ -14,12 +14,12 @@
                                     <li class="breadcrumb-item">
                                         <a href="/settings/user_management/users">Users</a>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Create User</li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{ breadCrumbText }}</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/user_management/users" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
+                            <a href="/settings/user_management/users" class="btn btn-lg btn-neutral btn_animated">Back</a>
                         </div>
                     </div>
                 </div>
@@ -160,6 +160,7 @@ export default {
             roles: [],
             countryDetails: [],
             toggleSomeComponent: true,
+            breadCrumbText: 'Create User'
         }
     },
     methods:{
@@ -269,7 +270,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    this.backendErrorMessage = error.response.data.errors[0];
+                    this.backendErrorMessage = error.response.data.message;
                     this.hideShowLoader = false;
                 }); 
             }
@@ -343,7 +344,7 @@ export default {
                 if(response.data.success) {
                     this.$router.push('/settings/user_management/users');
                     this.$toast.open({
-                        message: 'Details updated',
+                        message: 'User details updated',
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
@@ -352,6 +353,12 @@ export default {
                 }
             })
             .catch(error => {
+                this.$toast.open({
+                    message: error.response.data.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
                 console.log(error);
                 this.hideShowLoader = false;
             });
@@ -367,8 +374,8 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    console.log(response.data.data, 'country');
                     this.countryDetails = response.data.data;
+                    this.countryDetails.sort((a, b) => a.name - b.name);
                     this.hideShowLoader = false;
                 }
             })
@@ -388,6 +395,7 @@ export default {
         if(this.$route.params.id) {       
             this.toggleSomeComponent = false;
             this.editUserDetails(this.$route.params.id);
+            this.breadCrumbText = 'Edit User'
         }
     }
 }

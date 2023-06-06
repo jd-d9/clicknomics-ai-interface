@@ -6,7 +6,6 @@
                 <div class="header-body">
                     <div class="row align-items-center mt--4">
                         <div class="col-lg-6 col-7 pt-0">
-                            <!-- <h6 class="h2 text-white d-block mb-0">Users</h6> -->
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
@@ -37,12 +36,12 @@
                                     <div class="col-12 text-center mt-3">
                                         <div>
                                             <span class="avatar avatar-lg rounded-circle mr-4 wd-100 ht-100">
-                                                <img :src="profileImage ? profileImage : require('../../assets/img/theme/team-4.jpg')" alt="profile image">
+                                                <img :src="profileImage ? profileImage : images.user" alt="profile image">
                                             </span>
                                         </div>
                                         <div class="file_select">
                                             <a href="javascript:void(0)" class="btn btn-primary btn-lg btn_animated">Choose File</a>
-                                            <input type="file" accept="image/*" id="file-input" @change="profilePhoto">
+                                            <input class="cursor-pointer" type="file" accept="image/*" id="file-input" @change="updateProfilePhoto">
                                         </div>
                                     </div>
                                 </div>
@@ -65,9 +64,12 @@
                                         <label  class="d-block form-control-label">Current user email</label>
                                         <p class="font-weight-normal m-0 text-color">{{ currentEmail }}</p>
                                         <label class="d-block form-control-label mt-2">New user email</label>
-                                        <input type="text" id="input-username" :class="{'form-control': true }" placeholder="Email" v-model="email">
+                                        <input type="text" id="input-username" :class="{'form-control': true, 'is-invalid': invalidEmail }" placeholder="Email" v-model="email" @keyup="emailIsValid">
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ invalidEmail }}</strong>
+                                        </span>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update user Email</button>
+                                    <button class="btn btn-primary btn-lg btn_animated" type="submit" @click.prevent="updateUserEmail">Update user Email</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="userEmailToggle = !userEmailToggle">Close</button>
                                 </form>
                             </div>
@@ -109,7 +111,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update User Detail</button>
+                                    <button class="btn btn-primary btn-lg btn_animated" type="submit" @click.prevent="updateUserDetails">Update User Detail</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="profileDetailsToggle = !profileDetailsToggle">Close</button>
                                 </form>
                                 <div id="userDetailsForm" v-if="!profileDetailsToggle">
@@ -137,17 +139,26 @@
                                 <form id="changePasswordForm" v-show="passwordToggle">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Current password</label>
-                                        <input type="password" name="old_password" :class="{'form-control': true }" v-model="currentPassword">
+                                        <input type="password" name="old_password" :class="{'form-control': true, 'is-invalid': invalidCurrentPassword }" v-model="currentPassword" @keyup="currentPasswordIsValid">
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ invalidCurrentPassword }}</strong>
+                                        </span>
                                     </div>
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">New password</label>
-                                        <input type="password" id="input-username" :class="{'form-control': true }" placeholder="Password" v-model="password">
+                                        <input type="password" id="input-username" :class="{'form-control': true, 'is-invalid': invalidPassword }" placeholder="Password" v-model="password" @keyup="passwordIsValid">
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ invalidPassword }}</strong>
+                                        </span>
                                     </div>
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Repeat New password</label>
-                                        <input type="text" id="input-username" :class="{'form-control': true }" placeholder="Confirm Password" v-model="passwordConfirmation">
+                                        <input type="text" id="input-username" :class="{'form-control': true, 'is-invalid': invalidConfirmPass }" placeholder="Confirm Password" v-model="passwordConfirmation" @keyup="confirmPassValid">
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ invalidConfirmPass }}</strong>
+                                        </span>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update password</button>
+                                    <button class="btn btn-primary btn-lg btn_animated" type="submit" @click.prevent="updateUserPassword">Update password</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="passwordToggle = !passwordToggle">Close</button>
                                 </form>
                                 <div id="changePassword" v-if="!passwordToggle">
@@ -180,12 +191,12 @@
                                             <option value="0">No</option>
                                         </select>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update</button>
+                                    <button class="btn btn-primary btn-lg btn_animated" type="submit" @click.prevent="update2FaVerify">Update</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="TwoFaVerifyToggle = !TwoFaVerifyToggle">Close</button>
                                 </form>
                                 <div id="changePassword" v-if="!TwoFaVerifyToggle">
                                     <h4 class="tx-normal tx-color-04 tx-spacing--2">
-                                        <span class="ml-1">Enabled</span>
+                                        <span class="ml-1">{{ verificationStatus === '1' ? 'Enabled' : 'Disabled' }}</span>
                                     </h4>
                                 </div>
                             </div>
@@ -204,6 +215,7 @@
                 images: {
                     logo: require('../../assets/img/brand/logo.png'),
                     edit: require('../../assets/img/icons/edit.svg'),
+                    user: require('../../assets/img/icons/dummy-user.png')
                 },
                 userEmailToggle: false,
                 passwordToggle: false,
@@ -223,9 +235,59 @@
                 remember2Fa: '1',
                 hideShowLoader: false,
                 countryDetails: [],
+                invalidEmail: '',
+                invalidCurrentPassword: '',
+                invalidPassword: '',
+                invalidConfirmPass: '',
             }
         },
         methods: {
+            // email validation
+            emailIsValid() {
+                const mailFormat = /^[^@]+@\w+(\.\w+)+\w$/;
+                if(!this.email) {
+                    this.invalidEmail = 'Email is required.';
+                }
+                else if(!this.email.match(mailFormat)) {
+                    this.invalidEmail = 'Please enter valid email.';
+                }
+                else {
+                    this.invalidEmail = '';
+                }
+            },
+            // current password validation
+            currentPasswordIsValid() {
+                if(!this.currentPassword) {
+                    this.invalidCurrentPassword = 'Password is required.';
+                }
+                else {
+                    this.invalidCurrentPassword = '';
+                }
+            },
+            // password validation
+            passwordIsValid() {
+                if(!this.password) {
+                    this.invalidPassword = 'Password is required.';
+                }
+                else if(this.password.length < 6) {
+                    this.invalidPassword = 'Please enter valid password.';
+                }
+                else {
+                    this.invalidPassword = '';
+                }
+            },
+            // confirm password validation
+            confirmPassValid() {
+                if(!this.passwordConfirmation) {
+                    this.invalidConfirmPass = 'Field is required.';
+                }
+                else if(!this.passwordConfirmation.match(this.password)) {
+                    this.invalidConfirmPass = 'Please re-enter password.';
+                }
+                else {
+                    this.invalidConfirmPass = '';
+                }
+            },
             // get current loged in user data
             getCurrentUserData() {
                 this.hideShowLoader = true;
@@ -238,21 +300,16 @@
                 .then(response => {
                     if(response.data.success) {
                         this.currentUserDetails = response.data.data;
-                        console.log(this.currentUserDetails)
-
                         this.profileImage = this.currentUserDetails.profile_image;
                         this.currentEmail = this.currentUserDetails.email;
                         this.name = this.currentUserDetails.name;
                         this.countryCode = this.currentUserDetails.country_code;
                         this.phoneNumber = this.currentUserDetails.phone_number;
-                        // this.password = this.currentUserDetails.name;
-                        // this.passwordConfirmation = this.currentUserDetails.name;
-                        // this.currentPassword = this.currentUserDetails.name;
                         this.verificationStatus = this.currentUserDetails.verification_status;
                         this.remember2Fa = this.currentUserDetails.two_factor_code;
-
                         this.backendErrorMessage = '';
                         this.hideShowLoader = false;
+                        console.log(this.currentUserDetails, 'currentUserData');
                     }
                 })
                 .catch(error => {
@@ -271,8 +328,8 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        console.log(response.data.data, 'country');
                         this.countryDetails = response.data.data;
+                        this.countryDetails.sort((a, b) => a.name - b.name);
                         this.hideShowLoader = false;
                     }
                 })
@@ -282,15 +339,206 @@
                 });
             },
             // upload image
-            profilePhoto(event) {
-                const file = event.target.files[0]
+            updateProfilePhoto(event) {
+                this.hideShowLoader = true;
+                const file = event.target.files[0];
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     let profileImage64 = reader.result;
                     this.profileImage = profileImage64;
+                    this.axios.post(this.$api + '/userprofiles/userimage', {
+                        profile_image: profileImage64
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        }
+                    })
+                    .then(response => {
+                        if(response.data.success) {
+                            this.$toast.open({
+                                message: 'Profile image updated',
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                            this.hideShowLoader = false;
+                        }
+                    })
+                    .catch(error => {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        console.log(error);
+                        this.hideShowLoader = false;
+                    });
                 }
                 reader.readAsDataURL(file);
             },
+            // updating user email
+            updateUserEmail() {
+                this.emailIsValid();
+                if(this.invalidEmail || !this.email) {
+                    console.log('if');
+                    return false;
+                }
+                else {
+                    console.log('else');
+                    this.hideShowLoader = true;
+                    this.axios.post(this.$api + '/userprofiles/useremail', {
+                        email: this.email
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        }
+                    })
+                    .then(response => {
+                        if(response.data.success) {
+                            this.$toast.open({
+                                message: 'User email updated',
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                            this.hideShowLoader = false;
+                            this.getCurrentUserData();
+                            this.userEmailToggle = false;
+                        }
+                    })
+                    .catch(error => {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        console.log(error);
+                        this.hideShowLoader = false;
+                    });
+                }
+            },
+            // updating profile details
+            updateUserDetails() {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/userprofiles/userdetail', {
+                    name: this.name,
+                    phone_number : this.phoneNumber,
+                    country_code : this.countryCode
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'Profile details updated',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.hideShowLoader = false;
+                        this.profileDetailsToggle = false;
+                        this.getCurrentUserData();
+                    }
+                })
+                .catch(error => {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
+            },
+            // updating user password
+            updateUserPassword() {
+                this.passwordIsValid();
+                this.confirmPassValid();
+                this.currentPasswordIsValid();
+                if(this.invalidConfirmPass || this.invalidPassword || this.invalidCurrentPassword || !this.password || !this.currentPassword || !this.passwordConfirmation) {
+                    return false;
+                }
+                else {
+                    this.hideShowLoader = true;
+                    this.axios.post(this.$api + '/userprofiles/userpassword', {
+                        currentPassword: this.currentPassword,
+                        password : this.password,
+                        password_confirmation : this.passwordConfirmation
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        }
+                    })
+                    .then(response => {
+                        if(response.data.success) {
+                            this.$toast.open({
+                                message: 'Password updated',
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                            this.hideShowLoader = false;
+                            this.getCurrentUserData();
+                            this.passwordToggle = false;
+                        }
+                    })
+                    .catch(error => {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        console.log(error);
+                        this.hideShowLoader = false;
+                    });
+                }
+            },
+            // updating user 2Fa verification
+            update2FaVerify() {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/userprofiles/usertwofactor', {
+                    verification_status: this.verificationStatus,
+                    remember_2fa: this.remember2Fa
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: '2Fa verification updated',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.hideShowLoader = false;
+                        this.getCurrentUserData();
+                        this.TwoFaVerifyToggle = false;
+                    }
+                })
+                .catch(error => {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
+            }
         },
         mounted() {
             this.getCurrentUserData();
@@ -319,5 +567,8 @@
 }
 .text-color {
     color: #525f7f;
+}
+.cursor-pointer {
+    cursor: pointer;
 }
 </style>

@@ -51,8 +51,8 @@
                                             <!-- <span class="text-red-600">error</span> -->
                                         </div>
                                         <a href="javascript:void(0)" class="text-right" data-bs-toggle="modal" data-bs-target="#confirm2FAModal">Regenerate 2FA click here?</a>
-                                        <router-link to="/authenticator/validate/email" class="float-right mb-2" @click="tryAnother === true">Try Another way.</router-link>
-                                        <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated" @click.prevent="checkCodeAndAuthUser">Authenticate</button>
+                                        <a href="/authenticator/validate/email" class="float-right mb-2" @click="tryAnother === true">Try Another way.</a>
+                                        <a href="javascript:void(0)" class="btn btn-primary mt-4 btn-block btn_animated" id="auth-button" @click="checkCodeAndAuthUser">Authenticate</a>
                                     </form>
                                 </div>
                             </div>
@@ -133,7 +133,7 @@
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
                 // if scan and enter auth code
-                if(this.displayQrCode && !this.tryAnother) {
+                if(this.displayQrCode && !this.tryAnother) {  // this.displayQrCode && ! this.tryAnother
                     console.log('if')
                     this.axios.post(this.$api + '/authenticator/validateCode', {
                         google2fa_secret: this.authCode,
@@ -153,10 +153,8 @@
                                 duration: '5000',
                                 type: 'success'
                             });
-                            this.$router.push('/dashboard');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 200);
+                            document.getElementById('auth-button').setAttribute('href', '/dashboard');
+                            document.getElementById('auth-button').click();
                             this.backendErrorMessage = '';
                         }
                     })
@@ -171,6 +169,7 @@
                     this.axios.post(this.$api + '/authenticator/validateTwoFactorCode', {
                         two_factor_code: this.authCode,
                         remember_2fa: this.rememberVerification,
+                        email: sessionStorage.getItem('Email'),
                     }, {
                         headers: {
                             "Content-Type": "application/json",
@@ -185,10 +184,8 @@
                                 duration: '5000',
                                 type: 'success'
                             });
-                            this.$router.push('/dashboard');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 200);
+                            document.getElementById('auth-button').setAttribute('href', '/dashboard');
+                            document.getElementById('auth-button').click();
                             this.backendErrorMessage = '';
                         }
                     })

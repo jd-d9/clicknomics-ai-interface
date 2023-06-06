@@ -39,7 +39,7 @@
                                     </thead>
                                     <tbody class="list">
                                         <tr v-for="(role, index) in items" :key="index">
-                                            <th>{{index+1}}</th>
+                                            <th>{{role.id}}</th>
                                             <td>{{role.role_name}}</td>
                                             <!-- <td class="collumn-width text-center">
                                                 <a href="javascript:void(0);" @click="editRole(role.id)">
@@ -102,7 +102,6 @@ export default {
         },
         // delete user role
         deleteRole(id) {
-            this.hideShowLoader = true;
             this.axios.delete(this.$api + '/settings/role/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -111,24 +110,22 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.getUserRole();
                     this.$toast.open({
                         message: 'Role deleted',
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.getUserRole();
                 }
             })
             .catch(error => {
                 this.$toast.open({
-                    message: error,
+                    message: error.response.data.message,
                     position: 'top-right',
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
             }); 
         },
         // edit user role

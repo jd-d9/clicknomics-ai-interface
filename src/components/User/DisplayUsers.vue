@@ -16,7 +16,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/user_management/users/create" class="btn btn-lg btn-neutral btn_animated">Add User</router-link>
+                            <a href="/settings/user_management/users/create" class="btn btn-lg btn-neutral btn_animated">Add User</a>
                         </div>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                                     <div class="row">
                                         <div class="col-3 ms-auto">
                                             <div class="ms-auto search-input position-relative">
-                                                <input type="search" placeholder="Search">
+                                                <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchUser">
                                             </div>
                                         </div>
                                     </div>
@@ -55,6 +55,8 @@
             return {
                 hideShowLoader: false,
                 items: [],
+                userFilter: [],
+                searchInput: '',
             }
         },
         methods: {
@@ -69,19 +71,27 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        console.log(response.data.data.data, 'users');
-                        this.items = response.data.data.data;
+                        // console.log(response.data.data.data, 'users');
+                        // this.items = response.data.data.data;     // older
+                        console.log(response.data.data[0].data, 'users');
+                        this.items = response.data.data[0].data;
+                        this.userFilter = response.data.data[0].data
                         this.hideShowLoader = false;
-                    }
-                    else {
-                        this.hideShowLoader = false;
-                        console.log('Invalid email or password.');
                     }
                 })
                 .catch(error => {
                     this.hideShowLoader = false;
                     console.log(error)
                 }); 
+            },
+            // search user from table
+            searchUser() {
+                this.items = this.userFilter.filter((val) => {
+                    return val.name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                           val.id.toString().includes(this.searchInput.toLowerCase()) || 
+                           val.email.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                           val.country_code.concat(" ", val.phone_number).toLowerCase().includes(this.searchInput.toLowerCase())
+                })
             }
         },
         mounted() {

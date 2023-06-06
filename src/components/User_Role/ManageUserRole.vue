@@ -13,7 +13,7 @@
                                     <li class="breadcrumb-item">
                                         <a href="/settings/user_management/user_roles">User Roles</a>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Create User Role</li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{ breadCrumbText }}</li>
                                 </ol>
                             </nav>
                         </div>
@@ -88,13 +88,13 @@
                                 <div class="row">
                                     <div class="col-lg-6" v-if="!toggleButton">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent ="createUserRole">Save</button>
+                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="createUserRole">Save</button>
                                             <button type="button" class="btn btn-secondary btn-lg btn_animated">Reset</button>
                                         </div>
                                     </div>
                                     <div class="col-lg-6" v-else>
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent ="createUserRole">Update</button>
+                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="updateUserRole">Update</button>
                                         </div>
                                     </div>
                                 </div>
@@ -116,6 +116,7 @@ export default {
             hideShowLoader: false,
             menuItem: [],
             toggleButton: false,
+            breadCrumbText: 'Create User Role',
         }
     },
     methods: {
@@ -169,11 +170,10 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        // this.menuItem = response.data.data;
                         this.menuItem = response.data;
                         console.log(this.menuItem);
                         this.$toast.open({
-                            message: 'Role created successfully',
+                            message: 'New role created',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -183,48 +183,81 @@ export default {
                     }
                 })
                 .catch(error => {
-                    this.hideShowLoader = false;
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     console.log(error)
+                    this.hideShowLoader = false;
                 }); 
             }
-            console.log('pending');
         },
         // get new user role
-        // getUserRole() {
-        //     this.hideShowLoader = true;
-        //     this.axios.get(this.$api + '/settings/role/' + this.$route.params.id + '/edit', {
-        //         role_name: this.roleName,
-        //         role_permission: this.menuItem
-        //     }, {
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-        //         }
-        //     })
-        //     .then(response => {
-        //         if(response.data.success) {
-        //             this.menuItem = response.data.data;
-        //             console.log(this.menuItem);
-        //             this.$toast.open({
-        //                 message: 'Role created successfully',
-        //                 position: 'top-right',
-        //                 duration: '5000',
-        //                 type: 'success'
-        //             });
-        //             this.$router.push('/settings/user_management/user_roles');
-        //             this.hideShowLoader = false;
-        //         }
-        //     })
-        //     .catch(error => {
-        //         this.hideShowLoader = false;
-        //         console.log(error)
-        //     }); 
-        // }
+        getUserRole() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/settings/role/' + this.$route.params.id + '/edit', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.menuItem = response.data.data.menus;
+                    this.roleName = response.data.data.role.role_name;
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                this.hideShowLoader = false;
+                console.log(error)
+            }); 
+        },
+        // update user role
+        updateUserRole() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/settings/role/' + this.$route.params.id, {
+                role_name: this.roleName,
+                role_permission: JSON.stringify(this.menuItem),
+                _method: 'PUT'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: 'Role details updated',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.$router.push('/settings/user_management/user_roles');
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                this.$toast.open({
+                    message: error.response.data.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.hideShowLoader = false;
+                console.log(error)
+            }); 
+        }
     },
     mounted() {
         this.getAllUserRole();
         if(this.$route.params.id) {
+            this.getUserRole();
             this.toggleButton = true;
+            this.breadCrumbText = 'Edit User Role';
         }
     }
 }

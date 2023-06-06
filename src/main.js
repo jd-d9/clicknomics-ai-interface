@@ -28,7 +28,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LoaderComponent from './components/Common/LoaderComponent.vue';
 import NavAndSideBar from './components/Navbar_and_Sidebar/NavAndSideBar.vue';
 import TableComponent from './components/User/TableComponent.vue';
-// import 'vuetify/styles';
 
 loadFonts();
 
