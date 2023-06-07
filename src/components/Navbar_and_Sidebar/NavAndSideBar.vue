@@ -2,72 +2,93 @@
     <!-- sidebar default start here -->
     <div class="sidebar" v-if="hideShowSidebar">
         <div class="sidebar-inner">
-            <div class="text-center py-3 px-2">
-                <a to="/dashboard" class="sidebar-logo">
+            <div class="text-center bg-white py-3 px-2 sticky-top">
+                <router-link to="/dashboard" class="sidebar-logo">
                     <img :src="images.logo" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
                     <img :src="images.favicon" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
-                </a>
+                </router-link>
             </div>
             <div class="sidebar-contents">
-                <a :href="data.routes === '#' ? 'javascript:void(0)' : '/' + data.routes" class="side-menu text-decoration-none" v-for="data in allMenues" :key="data" @click="toggleSidebarHover">
-                    <img :src="iconSource + data.icon" alt="icon" title="Dashboard">
+                <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none" v-for="data in allMenues" :key="data" @click="toggleSidebarHover">
+                    <img :src="require('../../assets/img/icons/' + data.icon)" alt="icon" title="Dashboard">
                     <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                     <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
-                </a>
+                </router-link>
             </div>
         </div>
     </div>
     <!-- sidebar default end here -->
     <!-- sidebar hover start here -->
     <div class="sidebar hide-show-sidebar" v-else>
-        <div class="sidebar-inner">
-            <div class="text-center py-3 px-2">
-                <a to="/dashboard" class="sidebar-logo">
-                    <img :src="images.logo" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
-                    <img :src="images.favicon" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
-                </a>
-            </div>
-            <div class="sidebar-contents">
-                <a :href="data.routes === '#' ? 'javascript:void(0)' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" @mouseleave="hideHoveredDropdown" v-for="data in allMenues" :key="data">
-                    <img :src="iconSource + data.icon" alt="icon" :title="data.menu">
-                    <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
-                    <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
-                    <!-- list item dropdown start here -->
-                    <div class="sidebar-dropdown-menu" :class="{'d-block': showOnClick}" v-if="data.child">
-                        <div class="sidebar-dropdown-head px-3 py-2">
-                            <p class="mb-0 text-white py-1">{{ data.menu }}</p>
-                        </div>
-                        <div v-for="subChild in data.child" :key="subChild">
-                            <div class="sidebar-dropdown-menubars p-0" v-if="subChild.children.length !== 0">
-                                <div class="accordion accordion-flush" id="accordionFlushExample">
-                                    <div class="accordion-item" v-for="childs in subChild.children" :key="childs">
-                                        <h2 class="accordion-header" id="flush-headingOne">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + childs.id" aria-expanded="false" aria-controls="flush-collapseOne">
-                                                {{ subChild.menu }}
-                                            </button>
-                                        </h2>
-                                        <div :id="childs.id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                                            <div class="accordion-body">
-                                                <a :href="childs.routes === '#' ? 'javascript:void(0)' : '/' + childs.routes" class="accordian-hover">{{ childs.menu }}</a>
+        <div class="sidebar-inner-wrapper">
+            <div class="sidebar-inner">
+                <div class="text-center py-3 px-2">
+                    <router-link to="/dashboard" class="sidebar-logo">
+                        <img :src="images.logo" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
+                        <img :src="images.favicon" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
+                    </router-link>
+                </div>
+                <div class="sidebar-contents">
+                    <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" @mouseleave="hideHoveredDropdown" v-for="data in allMenues" :key="data">
+                        <img :src="require('../../assets/img/icons/' + data.icon)" alt="icon" :title="data.menu">
+                        <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
+                        <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
+                        <!-- sidebar dropdown start here -->
+                        <div class="sidebar-dropdown-menu" :class="{'d-block': showOnClick}" v-if="data.child">
+                            <div class="sidebar-dropdown-head px-3 py-2">
+                                <p class="mb-0 text-white py-1">{{ data.menu }}</p>
+                            </div>
+                            <div v-for="subChild in data.child" :key="subChild">
+                                <div class="sidebar-dropdown-menubars p-0" v-if="subChild.children.length !== 0">
+                                    <!-- accordian start here -->
+                                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="flush-headingOne">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" aria-controls="flush-collapseOne">
+                                                    {{ subChild.menu }}
+                                                </button>
+                                            </h2>
+                                            <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                                <div class="accordion-body" v-for="childs in subChild.children" :key="childs">
+                                                    <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover">{{ childs.menu }}</router-link>
+                                                    <!-- <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-if="childs.children.length === 0">{{ childs.menu }}</router-link>
+                                                    <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-else>
+                                                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="flush-headingOne">
+                                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" aria-controls="flush-collapseOne">
+                                                                        {{ childs.menu }}
+                                                                    </button>
+                                                                </h2>
+                                                                <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                                                    <div class="accordion-body">
+                                                                        <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-for="grandChilds in childs.children" :key="grandChilds">{{ grandChilds.menu }}</router-link>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </router-link> -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- accordian end here -->
+                                </div>
+                                <div class="sidebar-dropdown-menubars" v-else>
+                                    <router-link :to="subChild.routes === '#' ? '' : '/' + subChild.routes">{{ subChild.menu }}</router-link>
                                 </div>
                             </div>
-                            <div class="sidebar-dropdown-menubars" v-else>
-                                <a :href="subChild.routes === '#' ? 'javascript:void(0)' : '/' + subChild.routes">{{ subChild.menu }}</a>
-                            </div>
                         </div>
-                    </div>
-                    <!-- list item dropdown end here -->
-                </a>
+                        <!-- sidebar dropdown end here -->
+                    </router-link>
+                </div>
             </div>
         </div>
     </div>
     <!-- sidebar hover end here -->
     <loader-component v-if="hideShowLoader"></loader-component>
     <!-- navbar start here -->
-    <nav class="navbar-content bg-primary" :class="{'navbar-content': !showOnClick, 'toggle-margin': hideShowSidebar}">
+    <nav class="navbar-content bg-primary" :class="{'toggle-margin': hideShowSidebar}">
         <div class="container-fluid px-4 pt-0 pb-4">
             <div class="row justify-content-center align-items-center">
                 <div class="col-1">
@@ -124,7 +145,7 @@
                                     </div>
                                 </li>
                                 <li class="text-center pt-2">
-                                    <a href="javascript:void(0)" class="view-all-notification d-block text-primary">View All</a>
+                                    <router-link to="/notification-list" class="view-all-notification d-block text-primary">View All</router-link>
                                 </li>
                             </ul>
                         </div>
@@ -140,16 +161,16 @@
                             <ul class="dropdown-menu profile-dropdown">
                                 <li><small class="welcome">WELCOME!</small></li>
                                 <li>
-                                    <a href="/my_profile" class="dropdown-item">
+                                    <router-link to="/my_profile" class="dropdown-item">
                                         <i class="fa-solid fa-user"></i>
                                         <span class="profile-name ms-4">My Profile</span>
-                                    </a>
+                                    </router-link>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" class="dropdown-item border-0" id="logout-button" @click="logoutUser">
+                                    <router-link to="" class="dropdown-item border-0" id="logout-button" @click="logoutUser">
                                         <i class="fa-solid fa-person-running"></i>
                                         <span class="profile-name ms-4">Logout</span>
-                                    </a>
+                                    </router-link>
                                 </li>
                             </ul>
                         </div>
@@ -182,14 +203,9 @@
                 subDropDownTabs: [],
                 profileImage: '',
                 name: '',
+                rootEmit: '',
             }
         },
-        computed: {
-            // dynamic icon path
-            iconSource() {
-                return 'http://127.0.0.1:8000/admin/img/icons/'
-            }
-        },  
         methods: {
             // get sidebar menu tabs
             getSidebarMenues() { 
@@ -216,7 +232,7 @@
             // hide/show components
             toggleComponents() {
                 this.hideShowSidebar = false;
-                if(window.location.pathname === '/dashboard') {  
+                if(window.location.pathname === '/dashboard' || this.$route.params.notFound) {
                     this.hideShowSidebar = true;
                     this.$emit('move-contents', this.hideShowSidebar);
                 }else {
@@ -224,10 +240,15 @@
                     this.$emit('move-contents', this.hideShowSidebar);
                 }
             },
-            // toggle sidebar
+            // toggle sidebar and dropdown
             toggleSidebar() {
-                this.hideShowSidebar = !this.hideShowSidebar;
-                this.$emit('move-contents', this.hideShowSidebar);
+                if(window.location.pathname === '/dashboard') {  
+                    this.hideShowSidebar = !this.hideShowSidebar;
+                    this.$emit('move-contents', this.hideShowSidebar);
+                } else {
+                    this.showOnClick = !this.showOnClick;
+                    this.$emit('move-contents', this.showOnClick);
+                }
             },
             // sidebar behaviour on click and hover
             toggleSidebarHover() {
@@ -253,7 +274,6 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        document.getElementById('logout-button').setAttribute('href', '/login');
                         this.hideShowLoader = false;
                         sessionStorage.clear();
                         this.$toast.open({
@@ -262,7 +282,7 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        document.getElementById('logout-button').click();
+                        this.$router.push('/login');
                     }
                 })
                 .catch(error => {
@@ -297,12 +317,21 @@
                     this.backendErrorMessage = error.response.data.message;
                     this.hideShowLoader = false;
                 }); 
-            },
+            }
+        },
+        watch: {
+            $route() {
+                this.toggleComponents();
+            }
         },
         mounted() {
             this.toggleComponents();
             this.getSidebarMenues();
             this.getCurrentUserData();
+            // this.$root.$on('span-clicked', () => {
+            //     console.log('emit-event');
+            //     this.getCurrentUserData();
+            // })
         }
     } 
 </script>
@@ -310,6 +339,9 @@
 <style scoped>
     .navbar-content {
         margin-left: 60px;
+    }
+    .navbar-content-default {
+        margin-left: 300px;
     }
     .toggle-margin {
         margin-left: 300px;
@@ -384,9 +416,20 @@
         background-color: white;
         border-right: 1px solid #005eb3;
     }
-    .sidebar-inner {
+    .sidebar-inner-wrapper {
         position: relative;
         z-index: 100;
+    }
+    .sidebar-inner {
+        overflow-y: auto;
+        height: 100vh;
+    }
+    .sidebar-inner::-webkit-scrollbar {
+        width: 1px;
+        background-color: white;
+    }
+    .sidebar-inner::-webkit-scrollbar-thumb {
+        background-color: rgb(209, 209, 209);
     }
     .sidebar-dropdown-menu{
         display: none;
@@ -452,7 +495,7 @@
     }
     .welcome {
         padding: 5px 10px;
-       font-size: .625rem;
+        font-size: .625rem;
     }
     .profile-name {
         font-size: .875rem;
@@ -508,6 +551,10 @@
     .side-menu img {
         width: 30px;
         margin-right: 8px;
+    }
+    .side-menu-hover img {
+        width: 30px;
+        margin-right: 5px !important;
     }
     .side-menu span {
         font-size: .875rem;

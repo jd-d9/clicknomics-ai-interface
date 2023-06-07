@@ -9,14 +9,14 @@
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">Users</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <a href="/settings/user_management/users/create" class="btn btn-lg btn-neutral btn_animated">Add User</a>
+                            <router-link to="/settings/user_management/users/create" class="btn btn-lg btn-neutral btn_animated">Add User</router-link>
                         </div>
                     </div>
                 </div>
@@ -56,6 +56,7 @@
                 hideShowLoader: false,
                 items: [],
                 userFilter: [],
+                userPermissions: {},
                 searchInput: '',
             }
         },
@@ -71,11 +72,10 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        // console.log(response.data.data.data, 'users');
-                        // this.items = response.data.data.data;     // older
-                        console.log(response.data.data[0].data, 'users');
-                        this.items = response.data.data[0].data;
-                        this.userFilter = response.data.data[0].data
+                        console.log(response.data.data.user.data, 'users');
+                        this.items = response.data.data.user.data;
+                        this.userFilter = response.data.data.user.data;
+                        this.userPermissions = response.data.data.permission;
                         this.hideShowLoader = false;
                     }
                 })

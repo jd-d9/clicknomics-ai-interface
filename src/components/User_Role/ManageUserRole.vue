@@ -8,17 +8,17 @@
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
                                     <li class="breadcrumb-item">
-                                        <a href="/settings/user_management/user_roles">User Roles</a>
+                                        <router-link to="/settings/user_management/user_roles">User Roles</router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">{{ breadCrumbText }}</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <a href="/settings/user_management/user_roles" class="btn btn-lg btn-neutral btn_animated">Back</a>
+                            <router-link to="/settings/user_management/user_roles" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
                         </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                                     <div class="col-lg-6" v-if="!toggleButton">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="createUserRole">Save</button>
-                                            <button type="button" class="btn btn-secondary btn-lg btn_animated">Reset</button>
+                                            <button type="button" class="btn btn-secondary btn-lg btn_animated" @click.prevent="resetForm">Reset</button>
                                         </div>
                                     </div>
                                     <div class="col-lg-6" v-else>
@@ -250,6 +250,10 @@ export default {
                 this.hideShowLoader = false;
                 console.log(error)
             }); 
+        },
+        // reset form data
+        resetForm() {
+            window.location.reload();
         }
     },
     mounted() {

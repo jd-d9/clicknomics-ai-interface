@@ -7,7 +7,6 @@
 </template>
 
 <script>
-    import $ from 'jquery';
     export default {
         data() {
             return {
@@ -29,13 +28,15 @@
                 }
             }
         },
-        mounted() {
-            this.addDynamicClass();
-            $(document).ready(() => {
-                $('v-data-table-footer__items-per-page').children('span').text('Rows per page:');
-            })
+        watch: {
+            $route(val) {
+                this.addDynamicClass();
+                if(val.fullPath === '/login') {
+                    this.toggleContents = true;
+                }
+            }
         },
-        unmounted() {
+        mounted() {
             this.addDynamicClass();
         }
     }

@@ -9,14 +9,14 @@
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">My Profile</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <a href="/dashboard" class="btn btn-lg btn-neutral btn_animated">Back</a>
+                            <router-link to="/dashboard" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                                         </div>
                                         <div class="file_select">
                                             <a href="javascript:void(0)" class="btn btn-primary btn-lg btn_animated">Choose File</a>
-                                            <input class="cursor-pointer" type="file" accept="image/*" id="file-input" @change="updateProfilePhoto">
+                                            <input class="cursor-pointer" type="file" accept="image/*" id="file-input" @change="updateProfilePhoto" v-c-emit-root-event:span-clicked="currentUserDetails">
                                         </div>
                                     </div>
                                 </div>
@@ -153,7 +153,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Repeat New password</label>
-                                        <input type="text" id="input-username" :class="{'form-control': true, 'is-invalid': invalidConfirmPass }" placeholder="Confirm Password" v-model="passwordConfirmation" @keyup="confirmPassValid">
+                                        <input type="password" id="input-username" :class="{'form-control': true, 'is-invalid': invalidConfirmPass }" placeholder="Confirm Password" v-model="passwordConfirmation" @keyup="confirmPassValid">
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ invalidConfirmPass }}</strong>
                                         </span>
@@ -218,8 +218,8 @@
                     user: require('../../assets/img/icons/dummy-user.png')
                 },
                 userEmailToggle: false,
-                passwordToggle: false,
                 profileDetailsToggle: false,
+                passwordToggle: false,
                 TwoFaVerifyToggle: false,
                 currentUserDetails: {},
                 profileImage: '',
@@ -306,7 +306,7 @@
                         this.countryCode = this.currentUserDetails.country_code;
                         this.phoneNumber = this.currentUserDetails.phone_number;
                         this.verificationStatus = this.currentUserDetails.verification_status;
-                        this.remember2Fa = this.currentUserDetails.two_factor_code;
+                        this.remember2Fa = this.currentUserDetails.remember_2fa;
                         this.backendErrorMessage = '';
                         this.hideShowLoader = false;
                         console.log(this.currentUserDetails, 'currentUserData');
@@ -346,7 +346,7 @@
                 reader.onloadend = () => {
                     let profileImage64 = reader.result;
                     this.profileImage = profileImage64;
-                    this.axios.post(this.$api + '/userprofiles/userimage', {
+                    this.axios.post(this.$api + '/userprofiles/updateProfileImage', {
                         profile_image: profileImage64
                     }, {
                         headers: {
@@ -363,6 +363,7 @@
                                 type: 'success'
                             });
                             this.hideShowLoader = false;
+                            this.getCurrentUserData();
                         }
                     })
                     .catch(error => {
@@ -388,7 +389,7 @@
                 else {
                     console.log('else');
                     this.hideShowLoader = true;
-                    this.axios.post(this.$api + '/userprofiles/useremail', {
+                    this.axios.post(this.$api + '/userprofiles/updateUserEmail', {
                         email: this.email
                     }, {
                         headers: {
@@ -424,7 +425,7 @@
             // updating profile details
             updateUserDetails() {
                 this.hideShowLoader = true;
-                this.axios.post(this.$api + '/userprofiles/userdetail', {
+                this.axios.post(this.$api + '/userprofiles/updateUserDetail', {
                     name: this.name,
                     phone_number : this.phoneNumber,
                     country_code : this.countryCode
@@ -443,8 +444,8 @@
                             type: 'success'
                         });
                         this.hideShowLoader = false;
-                        this.profileDetailsToggle = false;
                         this.getCurrentUserData();
+                        this.profileDetailsToggle = false;
                     }
                 })
                 .catch(error => {
@@ -468,7 +469,7 @@
                 }
                 else {
                     this.hideShowLoader = true;
-                    this.axios.post(this.$api + '/userprofiles/userpassword', {
+                    this.axios.post(this.$api + '/userprofiles/updateUserPassword', {
                         currentPassword: this.currentPassword,
                         password : this.password,
                         password_confirmation : this.passwordConfirmation
@@ -489,6 +490,9 @@
                             this.hideShowLoader = false;
                             this.getCurrentUserData();
                             this.passwordToggle = false;
+                            this.currentPassword = '';
+                            this.password = '';
+                            this.passwordConfirmation = '';
                         }
                     })
                     .catch(error => {
@@ -506,7 +510,7 @@
             // updating user 2Fa verification
             update2FaVerify() {
                 this.hideShowLoader = true;
-                this.axios.post(this.$api + '/userprofiles/usertwofactor', {
+                this.axios.post(this.$api + '/userprofiles/update2FAVerificationStatus', {
                     verification_status: this.verificationStatus,
                     remember_2fa: this.remember2Fa
                 }, {

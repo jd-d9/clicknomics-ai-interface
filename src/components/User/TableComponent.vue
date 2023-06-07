@@ -1,20 +1,20 @@
 <template>
     <loader-component v-if="hideShowLoader"></loader-component>
     <!-- data table component -->
-    <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, -1], itemsPerPageText: 'Rows per page:'}" :headers="headers" :items="users" :search="search" :itemsPerPage="itemsPerPage">
+    <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="users" :search="search" :itemsPerPage="itemsPerPage">
         <template v-slot:item="{ item }">
             <tr class="table-body-back">
                 <th>{{item.selectable.id}}</th>
                 <td>{{item.selectable.name}}</td>
                 <td>{{item.selectable.email}}</td>
                 <td>+{{item.selectable.country_code}} - {{item.selectable.phone_number}}</td>   <!-- .split('-')[0] -->
-                <td>
-                    <a href="javascript:void(0);" @click="editUser(item.selectable.id)">
+                <td class="text-center">
+                    <router-link to="" @click="editUser(item.selectable.id)">
                         <img :src="images.edit" class="icon-width" title="Edit user">
-                    </a>
-                    <a href="javascript:void(0);" @click="deleteUser(item.selectable.id)" v-if="item.selectable.email !== currentLoginUserMail">
+                    </router-link>
+                    <router-link to="" @click="deleteUser(item.selectable.id)" v-if="item.selectable.email !== currentLoginUserMail">
                         <img :src="images.bin" class="icon-width" title="Delete user">
-                    </a>
+                    </router-link>
                 </td>
             </tr>
         </template>
@@ -36,7 +36,7 @@
                     { title: 'Name', key: 'name' },
                     { title: 'Email', key: 'email' },
                     { title: 'Mobile No.', key: 'phone_number' },
-                    { title: 'Action', key: 'action', sortable: false },
+                    { title: 'Action', align:'center', key: 'action', sortable: false },
                 ],
                 itemsPerPage: -1,
                 hideShowLoader: false,

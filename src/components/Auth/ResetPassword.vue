@@ -105,13 +105,13 @@
                                 duration: '5000',
                                 type: 'success'
                             });
-                            // this.$router.push('/login');
                             this.backendErrorMessage = '';
                             this.hideShowLoader = false;
                         }
                     })
                     .catch(error => {
-                        this.backendErrorMessage = error.response.data.message;
+                        console.log(error.response);
+                        this.backendErrorMessage = error.response.data.errors[0];
                         this.hideShowLoader = false;
                     });
                 }

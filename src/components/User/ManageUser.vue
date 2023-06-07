@@ -9,17 +9,17 @@
                             <nav aria-label="breadcrumb" class="d-none d-block">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
                                     <li class="breadcrumb-item">
-                                        <a href="/settings/user_management/users">Users</a>
+                                        <router-link to="/settings/user">Users</router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">{{ breadCrumbText }}</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <a href="/settings/user_management/users" class="btn btn-lg btn-neutral btn_animated">Back</a>
+                            <router-link to="/settings/user" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
                         </div>
                     </div>
                 </div>
@@ -154,7 +154,7 @@ export default {
             invalidContact: '',
             selectedCountry: '91',
             phone_number: '',
-            roleId: '1',
+            roleId: '',
             status: '1',
             hideShowLoader: false,
             roles: [],
@@ -258,7 +258,7 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.$router.push('/settings/user_management/users');
+                        this.$router.push('/settings/user');
                         this.hideShowLoader = false;
                         this.backendErrorMessage = '';
                         this.$toast.open({
@@ -342,7 +342,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.$router.push('/settings/user_management/users');
+                    this.$router.push('/settings/user');
                     this.$toast.open({
                         message: 'User details updated',
                         position: 'top-right',

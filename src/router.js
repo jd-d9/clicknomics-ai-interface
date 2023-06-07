@@ -16,8 +16,10 @@ import MicrosoftEliminatedAccounts from './components/Archived_Traffic_Source/Mi
 import eliminatedAccount from './components/Archived_Traffic_Source/eliminatedAccount.vue';
 import CloudWayList from './components/Integrations/CloudWayList.vue';
 import DomainList from './components/Integrations/DomainList.vue';
+import IntegrationDomain from './components/Integrations/IntegrationDomain.vue';
 import NetworkList from './components/Integrations/NetworkList.vue';
 import CommingSoonComponent from './components/Common/CommingSoonComponent.vue';
+import NotFoundPage from './components/Common/NotFoundPage.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -30,7 +32,7 @@ const router = createRouter({
         {path: '/authenticator/validate', component: TwoFA, meta: {auth: true}},
         {path: '/authenticator/validate/email', component: EmailAuth, meta: {auth: true}},
         {path: '/my_profile', component: UserProfile, meta: {auth: true}},
-        {path: '/settings/user_management/users', component: DisplayUsers, meta: {auth: true}},
+        {path: '/settings/user', component: DisplayUsers, meta: {auth: true}},
         {path: '/settings/user_management/users/create', component: ManageUser, meta: {auth: true}},
         {path: '/settings/user_management/users/:id/edit', component: ManageUser, meta: {auth: true}},
         {path: '/settings/user_management/user_roles', component: DisplayUserRole, meta: {auth: true}},
@@ -42,8 +44,10 @@ const router = createRouter({
         {path: '/settings/archived-accounts-google', component: eliminatedAccount, meta: {auth: true}},
         {path: '/settings/cloudways', component: CloudWayList, meta: {auth: true}},
         {path: '/settings/domain', component: DomainList, meta: {auth: true}},
+        {path: '/settings/domain/integrate', component: IntegrationDomain, meta: {auth: true}},
         {path: '/settings/networks', component: NetworkList, meta: {auth: true}},
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
+        {path: '/:notFound(.*)', component: NotFoundPage},
     ]
 });
 

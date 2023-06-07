@@ -8,14 +8,14 @@
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">User Roles</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <a href="/settings/user_management/user_roles/create" class="btn btn-lg btn-neutral btn_animated">Add User Role</a>
+                            <router-link to="/settings/user_management/user_roles/create" class="btn btn-lg btn-neutral btn_animated">Add User Role</router-link>
                         </div>
                     </div>
                 </div>
@@ -42,17 +42,17 @@
                                             <th>{{role.id}}</th>
                                             <td>{{role.role_name}}</td>
                                             <!-- <td class="collumn-width text-center">
-                                                <a href="javascript:void(0);" @click="editRole(role.id)">
+                                                <router-link to="" @click="editRole(role.id)">
                                                     <img :src="images.edit" class="image-width" title="Edit role">
-                                                </a>
+                                                </router-link>
                                             </td> -->
-                                            <td class="text-center">
-                                                <a href="javascript:void(0);" @click="editRole(role.id)">
+                                            <td class="text-center collumn-width">
+                                                <router-link to="" @click="editRole(role.id)">
                                                     <img :src="images.edit" class="image-width" title="Edit role">
-                                                </a>
-                                                <a href="javascript:void(0);" @click="deleteRole(role.id)">
+                                                </router-link>
+                                                <router-link class="text-start" to="" @click="deleteRole(role.id)" v-if="role.role_name !== 'Super Admin'">
                                                     <img :src="images.bin" class="image-width" title="Delete role">
-                                                </a>
+                                                </router-link>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -140,9 +140,6 @@ export default {
 </script>
 
 <style scoped>
-    a[disabled]:hover {
-    cursor: not-allowed;
-    }
     .image-width {
         width: 30px;
     }

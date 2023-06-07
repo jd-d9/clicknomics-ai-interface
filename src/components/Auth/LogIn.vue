@@ -67,9 +67,9 @@
                                             </div>
                                         </div>
                                         <div class="col-6 text-right">
-                                            <a href="/password/reset" class="text-dark text-underline">
+                                            <router-link to="/password/reset" class="text-dark text-underline">
                                                 <small class="font-weight-600">Forgot password?</small>
-                                            </a>
+                                            </router-link>
                                         </div>
                                     </div>
                                     <div class="text-center">

@@ -40,9 +40,9 @@
                                             <td>{{item.domain_selected}}</td>
                                             <td>{{format_date(item.created_at)}}</td>
                                             <td>
-                                                <!-- <a href="javascript:void(0);" @click="edit(item.id)">
+                                                <a href="javascript:void(0);" @click="edit(item.id)">
                                                     <img :src="images.edit" class="img-width">
-                                                </a> -->
+                                                </a>
                                                 <a href="javascript:void(0);" @click="showConfirmation(item.id)">
                                                     <img :src="images.bin" class="img-width">
                                                 </a>
