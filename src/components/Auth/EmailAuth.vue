@@ -32,13 +32,13 @@
                                     <div class="text-center logo_responsive">
                                         <img :src="images.logo" class="image-width">
                                     </div>
-                                    <form method="POST" action="" class="mt-5 login_form">
+                                    <form class="mt-5 login_form" @submit.prevent="sendCodeInEmail">
                                         <div id="qrcode" class="text-center">
                                             <span class="d-block">
                                                 Verify via email address?
                                             </span>
                                             <router-link to="/authenticator/validate" id="show_validate">Try Another Way</router-link>
-                                            <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated" @click.prevent="sendCodeInEmail">Send Auth Code In Email.</button>
+                                            <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Send Auth Code In Email.</button>
                                         </div>
                                     </form>
                                 </div>

@@ -32,7 +32,7 @@
                                     <div class="text-center logo_responsive">
                                         <img :src="images.logo" style="width:50%">
                                     </div>
-                                    <form method="POST" action="" class="mt-5 login_form">
+                                    <form class="mt-5 login_form" @submit.prevent="sendResetPasswordLink">
                                         <div class="form-group mb-3 position-relative">
                                             <span class="form_icon">
                                                 <img :src="images.envelope">
@@ -44,7 +44,7 @@
                                             <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         </div>
                                         <div class="text-center">
-                                            <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated" @click.prevent="sendResetPasswordLink">Send Password Reset Link</button>
+                                            <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Send Password Reset Link</button>
                                         </div>
                                     </form>
                                 </div>

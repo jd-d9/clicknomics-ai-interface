@@ -41,7 +41,7 @@
                                         </div>
                                         <div class="file_select">
                                             <a href="javascript:void(0)" class="btn btn-primary btn-lg btn_animated">Choose File</a>
-                                            <input class="cursor-pointer" type="file" accept="image/*" id="file-input" @change="updateProfilePhoto" v-c-emit-root-event:span-clicked="currentUserDetails">
+                                            <input class="cursor-pointer" type="file" accept="image/*" id="file-input" @change="updateProfilePhoto">
                                         </div>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                                         <p class="font-weight-normal m-0 text-color">{{ currentEmail }}</p>
                                     </div>
                                 </div>
-                                <form id="userNameForm" v-show="userEmailToggle">
+                                <form id="userNameForm" v-show="userEmailToggle" @submit.prevent="updateUserEmail">
                                     <div class="form-group">
                                         <label  class="d-block form-control-label">Current user email</label>
                                         <p class="font-weight-normal m-0 text-color">{{ currentEmail }}</p>
@@ -69,7 +69,7 @@
                                             <strong>{{ invalidEmail }}</strong>
                                         </span>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit" @click.prevent="updateUserEmail">Update user Email</button>
+                                    <button type="submit" class="btn btn-primary btn-lg btn_animated">Update user Email</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="userEmailToggle = !userEmailToggle">Close</button>
                                 </form>
                             </div>
@@ -90,7 +90,7 @@
                                 </button>
                             </h6>
                             <div>
-                                <form v-show="profileDetailsToggle">
+                                <form v-show="profileDetailsToggle" @submit.prevent="updateUserDetails">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Name</label>
                                         <input type="text" id="input-username"  :class="{'form-control': true }" placeholder="Name" v-model="name">
@@ -111,7 +111,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit" @click.prevent="updateUserDetails">Update User Detail</button>
+                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update User Detail</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="profileDetailsToggle = !profileDetailsToggle">Close</button>
                                 </form>
                                 <div id="userDetailsForm" v-if="!profileDetailsToggle">
@@ -136,7 +136,7 @@
                                 </button>
                             </h6>
                             <div>
-                                <form id="changePasswordForm" v-show="passwordToggle">
+                                <form id="changePasswordForm" v-show="passwordToggle" @submit.prevent="updateUserPassword">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Current password</label>
                                         <input type="password" name="old_password" :class="{'form-control': true, 'is-invalid': invalidCurrentPassword }" v-model="currentPassword" @keyup="currentPasswordIsValid">
@@ -158,7 +158,7 @@
                                             <strong>{{ invalidConfirmPass }}</strong>
                                         </span>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit" @click.prevent="updateUserPassword">Update password</button>
+                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update password</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="passwordToggle = !passwordToggle">Close</button>
                                 </form>
                                 <div id="changePassword" v-if="!passwordToggle">
@@ -176,7 +176,7 @@
                                 </button>
                             </h6>
                             <div>
-                                <form id="changePasswordForm" v-show="TwoFaVerifyToggle">
+                                <form id="changePasswordForm" v-show="TwoFaVerifyToggle" @submit.prevent="update2FaVerify">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">2FA Verification Status</label>
                                         <select :class="{'form-control': true }" placeholder="User Status"  v-model="verificationStatus">
@@ -191,7 +191,7 @@
                                             <option value="0">No</option>
                                         </select>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit" @click.prevent="update2FaVerify">Update</button>
+                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="TwoFaVerifyToggle = !TwoFaVerifyToggle">Close</button>
                                 </form>
                                 <div id="changePassword" v-if="!TwoFaVerifyToggle">
@@ -210,6 +210,7 @@
 
 <script>
     export default {
+        emits: ['updating-profile-details'],
         data() {
             return {
                 images: {
@@ -364,6 +365,7 @@
                             });
                             this.hideShowLoader = false;
                             this.getCurrentUserData();
+                            this.$emit('updating-profile-details', 'update');
                         }
                     })
                     .catch(error => {
@@ -408,6 +410,7 @@
                             this.hideShowLoader = false;
                             this.getCurrentUserData();
                             this.userEmailToggle = false;
+                            sessionStorage.setItem('Email', this.email);
                         }
                     })
                     .catch(error => {
@@ -446,6 +449,7 @@
                         this.hideShowLoader = false;
                         this.getCurrentUserData();
                         this.profileDetailsToggle = false;
+                        this.$emit('updating-profile-details', 'update');
                     }
                 })
                 .catch(error => {

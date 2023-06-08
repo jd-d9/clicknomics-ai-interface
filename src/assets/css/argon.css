@@ -689,7 +689,7 @@ textarea.form-control{height: auto;}
 }
 .btn:hover{text-decoration: none;color: #525f7f;}
 .btn:focus,.btn.focus{outline: 0;box-shadow: 0 7px 14px rgba(50, 50, 93, .1), 0 3px 6px rgba(0, 0, 0, .08);}
-.btn.disabled,.btn:disabled{opacity: .65;box-shadow: none;}
+.btn.disabled,.btn:disabled{cursor: not-allowed; opacity: .80;box-shadow: none;}
 .btn:not(:disabled):not(.disabled):active,.btn:not(:disabled):not(.disabled).active{box-shadow: none;}
 .btn:not(:disabled):not(.disabled):active:focus,.btn:not(:disabled):not(.disabled).active:focus{box-shadow: 0 7px 14px rgba(50, 50, 93, .1), 0 3px 6px rgba(0, 0, 0, .08);}
 a.btn.disabled,fieldset:disabled a.btn{pointer-events: none;}

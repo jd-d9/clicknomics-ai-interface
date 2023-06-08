@@ -1,8 +1,8 @@
 <template>
     <div>
         <!-- navbar & sidebar component -->
-        <nav-and-side-bar @move-contents="moveRouteContents" v-if="toggleClass"></nav-and-side-bar>
-        <router-view :class="{'padding-left': true, 'toggle-padding': !toggleContents, 'all-contents': toggleClass}"></router-view>  
+        <nav-and-side-bar :updatingUserDetails="profileImageUpdate" @move-contents="moveRouteContents" v-if="toggleClass"></nav-and-side-bar>
+        <router-view :class="{'padding-left': true, 'toggle-padding': !toggleContents, 'all-contents': toggleClass}" @updating-profile-details="updatingUserProfileDetails"></router-view>  
     </div>
 </template>
 
@@ -12,10 +12,14 @@
             return {
                 toggleContents: true,
                 toggleClass: false,
+                profileImageUpdate: '',
             }
         },
+        mounted() {
+            this.addDynamicClass();
+        },
         methods: {
-          // get value on click of navbar toggler button
+            // get value on click of navbar toggler button
             moveRouteContents(data) {
                 this.toggleContents = data;
             },
@@ -23,9 +27,15 @@
             addDynamicClass() {
                 if(!sessionStorage.getItem('Email') || window.location.pathname === '/login' || window.location.pathname === '/password/reset' || window.location.pathname === '/authenticator/validate' || window.location.pathname === '/authenticator/validate/email' || window.location.pathname === '/set_new_password') {  
                     this.toggleClass = false;
-                }else {
+                }
+                else {
                     this.toggleClass = true;
                 }
+            },
+            // updating user profile detail which stay in navbar
+            updatingUserProfileDetails(data) {
+                console.log(data, 'data');
+                this.profileImageUpdate = data;
             }
         },
         watch: {
@@ -35,9 +45,6 @@
                     this.toggleContents = true;
                 }
             }
-        },
-        mounted() {
-            this.addDynamicClass();
         }
     }
 </script>
@@ -86,6 +93,9 @@
     }
     .v-list-item:hover > .v-list-item__overlay {
         opacity: 0.1 !important;
+    }
+    .v-list-item__overlay {
+        opacity: 0 !important;
     }
     /* manage email notification */
     .v-field--variant-filled {

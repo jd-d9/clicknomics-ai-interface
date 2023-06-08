@@ -286,7 +286,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.roles = response.data.data.data;
+                    this.roles = response.data.data.roles;
                     console.log(this.roles, 'this.roles')
                     this.hideShowLoader = false;
                 }

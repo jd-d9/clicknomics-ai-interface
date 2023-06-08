@@ -183,9 +183,9 @@
 </template>
 
 <script>
-    // import $ from 'jquery';
     export default {
         emits: ['move-containts'],
+        props: ['updatingUserDetails'],
         data() {
             return {
                 images: {
@@ -195,7 +195,6 @@
                     user: require('../../assets/img/icons/dummy-user.png')
                 },
                 hideShowSidebar: true,
-                toggleNavbar: true,
                 hideShowLoader: false,
                 showOnClick: false,
                 sideBarData: [],
@@ -204,6 +203,17 @@
                 profileImage: '',
                 name: '',
                 rootEmit: '',
+            }
+        },
+        mounted() {
+            this.toggleComponents();
+            this.getSidebarMenues();
+            this.getCurrentUserData();
+            if(screen.width < 1200) {
+                setTimeout(() => {
+                    this.hideShowSidebar = false;
+                    this.$emit('move-contents', this.hideShowSidebar);
+                }, 100)
             }
         },
         methods: {
@@ -311,6 +321,7 @@
                         this.name = response.data.data.name;
                         this.backendErrorMessage = '';
                         this.hideShowLoader = false;
+                        sessionStorage.setItem('roleId', response.data.data.role_id)
                     }
                 })
                 .catch(error => {
@@ -320,18 +331,14 @@
             }
         },
         watch: {
+            updatingUserDetails(val) {
+                if(val === 'update') {
+                    this.getCurrentUserData();
+                }
+            },
             $route() {
                 this.toggleComponents();
             }
-        },
-        mounted() {
-            this.toggleComponents();
-            this.getSidebarMenues();
-            this.getCurrentUserData();
-            // this.$root.$on('span-clicked', () => {
-            //     console.log('emit-event');
-            //     this.getCurrentUserData();
-            // })
         }
     } 
 </script>

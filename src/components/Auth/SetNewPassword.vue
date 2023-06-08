@@ -28,7 +28,7 @@
                             <div class="text-center logo_responsive">
                                 <img :src="images.logo" alt="logo">
                             </div>
-                            <form class="mt-5 login_form" @submit.prevent="settingNewPassword">
+                            <form class="mt-5 login_form" @submit.prevent="setNewPassword">
                                 <div class="form-group mb-3 position-relative">
                                     <span class="form_icon">
                                         <img :src="images.envelope">
@@ -68,7 +68,7 @@
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated" @click="setNewPassword">Reset Password</button>
+                                    <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Reset Password</button>
                                 </div>
                             </form>
                         </div>

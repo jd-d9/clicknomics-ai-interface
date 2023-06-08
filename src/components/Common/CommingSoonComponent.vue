@@ -22,13 +22,11 @@
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
                 <div class="col">
-                     <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="text-center">Coming Soon</h4>
-                            </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">Coming Soon</h4>
                         </div>
-                    </v-app>
+                    </div>
                 </div>
             </div>
         </div>

@@ -7,14 +7,14 @@
                 <th>{{item.selectable.id}}</th>
                 <td>{{item.selectable.name}}</td>
                 <td>{{item.selectable.email}}</td>
-                <td>+{{item.selectable.country_code}} - {{item.selectable.phone_number}}</td>   <!-- .split('-')[0] -->
+                <td>+{{item.selectable.country_code}} - {{item.selectable.phone_number}}</td>
                 <td class="text-center">
-                    <router-link to="" @click="editUser(item.selectable.id)">
+                    <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="editUser(item.selectable.id)">
                         <img :src="images.edit" class="icon-width" title="Edit user">
-                    </router-link>
-                    <router-link to="" @click="deleteUser(item.selectable.id)" v-if="item.selectable.email !== currentLoginUserMail">
+                    </button>
+                    <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deleteUser(item.selectable.id)" v-if="item.selectable.role_id != roleId">
                         <img :src="images.bin" class="icon-width" title="Delete user">
-                    </router-link>
+                    </button>
                 </td>
             </tr>
         </template>
@@ -23,7 +23,7 @@
 
 <script>
     export default {
-        props: ['users', 'updateUserData'],
+        props: ['users', 'permissions', 'updateUserData'],
         data() {
             return {
                 images: {
@@ -40,7 +40,7 @@
                 ],
                 itemsPerPage: -1,
                 hideShowLoader: false,
-                currentLoginUserMail: '',
+                roleId: sessionStorage.getItem('roleId'),
             }
         },
         methods: {
@@ -81,9 +81,6 @@
                     this.hideShowLoader = false;
                 }); 
             }
-        },
-        mounted() {
-            this.currentLoginUserMail = sessionStorage.getItem('Email');
         }
     }
 </script>
@@ -98,5 +95,12 @@
     }
     .table-body-back th {
         font-weight: 600 !important;
+    }
+    .disable-button {
+        border: none;
+        background: transparent;
+    }
+    .disable-button[disabled] {
+        cursor: not-allowed;
     }
 </style>

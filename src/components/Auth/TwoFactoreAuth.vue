@@ -29,7 +29,7 @@
                                     <div class="text-center logo_responsive  mb-5">
                                         <img :src="images.logo" class="image-height">
                                     </div>
-                                    <form>
+                                    <form @submit.prevent="checkCodeAndAuthUser">
                                         <div class="text-center">
                                             <div v-html="displayQrCode"></div>
                                         </div>
@@ -52,7 +52,7 @@
                                         </div>
                                         <a href="javascript:void(0)" class="text-right" data-bs-toggle="modal" data-bs-target="#confirm2FAModal">Regenerate 2FA click here?</a>
                                         <router-link to="/authenticator/validate/email" class="float-right mb-2" @click="tryAnother === true">Try Another way.</router-link>
-                                        <a href="javascript:void(0)" class="btn btn-primary mt-4 btn-block btn_animated" id="auth-button" @click="checkCodeAndAuthUser">Authenticate</a>
+                                        <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
                                     </form>
                                 </div>
                             </div>
@@ -154,8 +154,6 @@
                                 type: 'success'
                             });
                             this.hideShowLoader = false;
-                            // document.getElementById('auth-button').setAttribute('href', '/dashboard');
-                            // document.getElementById('auth-button').click();
                             this.$router.push('/dashboard');
                             this.backendErrorMessage = '';
                         }
@@ -188,8 +186,6 @@
                                 type: 'success'
                             });
                             this.hideShowLoader = false;
-                            // document.getElementById('auth-button').setAttribute('href', '/dashboard');
-                            // document.getElementById('auth-button').click();
                             this.$router.push('/dashboard');
                             this.backendErrorMessage = '';
                         }

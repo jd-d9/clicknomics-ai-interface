@@ -16,7 +16,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/user_management/users/create" class="btn btn-lg btn-neutral btn_animated">Add User</router-link>
+                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="userPermissions.create_auth == '0'" @click.prevent="addNewUser">Add User</button>
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="userPermissions.view == '1'">
                     <div class="card">
                         <div class="card-body">
                             <div class="v-card v-sheet theme--light">
@@ -39,8 +39,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <table-component :users="items" :updateUserData="getUsersData"></table-component>
+                                <table-component :users="items" :permissions="userPermissions" :updateUserData="getUsersData"></table-component>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" v-else>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
                         </div>
                     </div>
                 </div>
@@ -61,6 +68,10 @@
             }
         },
         methods: {
+            // add new user
+            addNewUser() {
+                this.$router.push('/settings/user_management/users/create')
+            },
             // get regestered user data
             getUsersData() {
                 this.hideShowLoader = true;

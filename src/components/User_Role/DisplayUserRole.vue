@@ -15,7 +15,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/user_management/user_roles/create" class="btn btn-lg btn-neutral btn_animated">Add User Role</router-link>
+                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="rolePermission.create_auth == '0'" @click.prevent="addNewUserRole">Add User Role</button>
                         </div>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class=" col ">
+                <div class="col" v-if="rolePermission.view == '1'">
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -41,23 +41,25 @@
                                         <tr v-for="(role, index) in items" :key="index">
                                             <th>{{role.id}}</th>
                                             <td>{{role.role_name}}</td>
-                                            <!-- <td class="collumn-width text-center">
-                                                <router-link to="" @click="editRole(role.id)">
-                                                    <img :src="images.edit" class="image-width" title="Edit role">
-                                                </router-link>
-                                            </td> -->
                                             <td class="text-center collumn-width">
-                                                <router-link to="" @click="editRole(role.id)">
+                                                <button class="disable-button" :disabled="rolePermission.update_auth == '0'" @click.prevent="editRole(role.id)">
                                                     <img :src="images.edit" class="image-width" title="Edit role">
-                                                </router-link>
-                                                <router-link class="text-start" to="" @click="deleteRole(role.id)" v-if="role.role_name !== 'Super Admin'">
+                                                </button>
+                                                <button class="disable-button text-start" v-if="role.id != '1'" :disabled="rolePermission.delete_auth == '0'" @click.prevent="deleteRole(role.id)">
                                                     <img :src="images.bin" class="image-width" title="Delete role">
-                                                </router-link>
+                                                </button>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" v-else>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
                         </div>
                     </div>
                 </div>
@@ -75,10 +77,15 @@ export default {
                 bin: require('../../assets/img/icons/bin.svg'),
             },
             items: [],
-            hideShowLoader: false
+            hideShowLoader: false,
+            rolePermission: {},
         }
     },
     methods: {
+        // add new user role
+        addNewUserRole() {
+            this.$router.push('/settings/user_management/user_roles/create')
+        },
         // get all user role
         getUserRole() {
             this.hideShowLoader = true;
@@ -90,8 +97,9 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    console.log(response.data.data.data);
-                    this.items = response.data.data.data;
+                    console.log(response.data.data.roles);
+                    this.items = response.data.data.roles;
+                    this.rolePermission = response.data.data.permission;
                     this.hideShowLoader = false;
                 }
             })
@@ -154,5 +162,16 @@ export default {
     }
     .collumn-width2 {
         width: 25%;
+    }
+    .disable {
+        pointer-events: none;
+        cursor: progress;
+    }
+    .disable-button {
+        border: none;
+        background: transparent;
+    }
+    .disable-button[disabled] {
+        cursor: not-allowed;
     }
 </style>
