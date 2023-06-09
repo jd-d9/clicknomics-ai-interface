@@ -1,29 +1,5 @@
 <template>
     <div>
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/settings/user_management/user_roles">User Roles</router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">{{ breadCrumbText }}</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/user_management/user_roles" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="hideShowLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
@@ -116,7 +92,6 @@ export default {
             hideShowLoader: false,
             menuItem: [],
             toggleButton: false,
-            breadCrumbText: 'Create User Role',
         }
     },
     methods: {
@@ -149,6 +124,27 @@ export default {
             else {
                 this.roleNameInvalid = '';
             }
+        },
+        // get user role data for edit user role
+        getUserRole() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/settings/role/' + this.$route.params.id + '/edit', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.menuItem = response.data.data.menus;
+                    this.roleName = response.data.data.role.role_name;
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                this.hideShowLoader = false;
+                console.log(error)
+            }); 
         },
         // create new user role
         createUserRole() {
@@ -193,27 +189,6 @@ export default {
                     this.hideShowLoader = false;
                 }); 
             }
-        },
-        // get new user role
-        getUserRole() {
-            this.hideShowLoader = true;
-            this.axios.get(this.$api + '/settings/role/' + this.$route.params.id + '/edit', {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.menuItem = response.data.data.menus;
-                    this.roleName = response.data.data.role.role_name;
-                    this.hideShowLoader = false;
-                }
-            })
-            .catch(error => {
-                this.hideShowLoader = false;
-                console.log(error)
-            }); 
         },
         // update user role
         updateUserRole() {
@@ -261,7 +236,6 @@ export default {
         if(this.$route.params.id) {
             this.getUserRole();
             this.toggleButton = true;
-            this.breadCrumbText = 'Edit User Role';
         }
     }
 }

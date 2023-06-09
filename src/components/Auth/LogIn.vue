@@ -28,55 +28,45 @@
                             <div class="text-center logo_responsive">
                                 <img :src="images.logo" alt="logo">
                             </div>
-                            <!-- <ValidationObserver v-slot="{ submitAndAuthenticateUser }"> -->
-                                <form class="mt-5 login_form" @submit.prevent="submitAndAuthenticateUser">
-                                    <div class="form-group mb-3 position-relative">
-                                        <span class="form_icon">
-                                            <img :src="images.envelope">
-                                        </span>
-                                        <input id="email" type="email" class="form-control" :class="{'is-invalid': invalidEmail}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail" @keyup="emailIsValid">
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ invalidEmail }}</strong>
-                                        </span>
-                                        <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
-                                        <!-- <ValidationProvider v-slot="{ error }" rules="required" name="Email">
-                                            <input type="email" id="input-username" :class="{'form-control': true , 'border-red-600':error!= '' ? true : false }" placeholder="Email" v-model="userEmail">
-                                            <span class="text-red-600">{{ error }}</span>
-                                        </ValidationProvider> -->
-                                        <!-- <ValidationProvider v-slot="{ error }" rules="required|email" name="email">
-                                            <input type="email" id="input-username" :class="{'form-control': true , 'border-red-600':error!= '' ? true : false }" placeholder="Email" v-model="email">
-                                            <span class="text-red-600">{{ error[0] }}</span>
-                                        </ValidationProvider> -->
-                                    </div>
-                                    <div class="form-group mb-3 position-relative">
-                                        <span class="form_icon">
-                                            <img :src="images.lock">
-                                        </span>
-                                        <input id="password" type="password" class="form-control" :class="{'is-invalid': invalidPassword}" autocomplete="current-password" placeholder="Password" v-model="userPassword" @keyup="passwordIsValid">
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ invalidPassword }}</strong>
-                                        </span>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6 text-left">
-                                            <div class="custom-control custom-control-alternative custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox" name="remember" id="customCheckLogin">
-                                                <label class="custom-control-label" for="customCheckLogin">
-                                                    <span class="text-muted">Remember me</span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 text-right">
-                                            <router-link to="/password/reset" class="text-dark text-underline">
-                                                <small class="font-weight-600">Forgot password?</small>
-                                            </router-link>
+                            <form class="mt-5 login_form" @submit.prevent="submitAndAuthenticateUser">
+                                <div class="form-group mb-3 position-relative">
+                                    <span class="form_icon">
+                                        <img :src="images.envelope">
+                                    </span>
+                                    <input id="email" type="email" class="form-control" :class="{'is-invalid': invalidEmail}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail" @keyup="emailIsValid">
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ invalidEmail }}</strong>
+                                    </span>
+                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </div>
+                                <div class="form-group mb-3 position-relative">
+                                    <span class="form_icon">
+                                        <img :src="images.lock">
+                                    </span>
+                                    <input id="password" type="password" class="form-control" :class="{'is-invalid': invalidPassword}" autocomplete="current-password" placeholder="Password" v-model="userPassword" @keyup="passwordIsValid">
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ invalidPassword }}</strong>
+                                    </span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-left">
+                                        <div class="custom-control custom-control-alternative custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" name="remember" id="customCheckLogin">
+                                            <label class="custom-control-label" for="customCheckLogin">
+                                                <span class="text-muted">Remember me</span>
+                                            </label>
                                         </div>
                                     </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Sign In</button>
+                                    <div class="col-6 text-right">
+                                        <router-link to="/password/reset" class="text-dark text-underline">
+                                            <small class="font-weight-600">Forgot password?</small>
+                                        </router-link>
                                     </div>
-                                </form>
-                            <!-- </ValidationObserver> -->
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Sign In</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -27,16 +27,35 @@ import 'bootstrap/dist/js/bootstrap.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LoaderComponent from './components/Common/LoaderComponent.vue';
 import NavAndSideBar from './components/Navbar_and_Sidebar/NavAndSideBar.vue';
-import TableComponent from './components/User/TableComponent.vue';
 
 loadFonts();
-
+const myCustomLightTheme = {
+  dark: false,
+  colors: {
+    background: '#FFFFFF',
+    surface: '#FFFFFF',
+    primary: '#6200EE',
+    'primary-darken-1': '#3700B3',
+    secondary: '#03DAC6',
+    'secondary-darken-1': '#018786',
+    error: '#B00020',
+    info: '#2196F3',
+    success: '#4CAF50',
+    warning: '#FB8C00',
+  },
+}
 const vuetify = createVuetify({
   directives,
   labsComponents,
   components: {
     VDataTable
-  }
+  },
+  theme: {
+    defaultTheme: 'myCustomLightTheme',
+    themes: {
+      myCustomLightTheme,
+    },
+  },
 })
 
 const app = createApp(App);
@@ -45,6 +64,7 @@ app.use(router);
 app.use(VueAxios, axios);
 app.use(ToastPlugin);
 app.use(vuetify);
+// import 'vuetify/styles';
 require('@/assets/css/argon.css');
 require('@/assets/css/responsive.css');
 require('@/assets/css/dark-argon.css');
@@ -54,5 +74,4 @@ require('@/assets/css/dark-argon.css');
 // Vue.config.productionTip = false;
 app.component('loader-component', LoaderComponent);
 app.component('nav-and-side-bar', NavAndSideBar);
-app.component('table-component', TableComponent);
 app.mount('#app');

@@ -50,9 +50,6 @@
 </script>
 
 <style>
-    /* @import url(assets/css/argon.css);
-    @import url(assets/css/dark-argon.css);
-    @import url(assets/css/responsive.css); */
     .padding-left {
         padding-left: 0px;
     }

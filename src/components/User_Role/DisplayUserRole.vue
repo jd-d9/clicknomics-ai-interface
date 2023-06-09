@@ -2,6 +2,7 @@
     <div>
         <div class="header bg-primary pb-6">
             <div class="container-fluid">
+                <!-- header content -->
                 <div class="header-body">
                     <div class="row align-items-center mt--4">
                         <div class="col-lg-6 col-7 pt-0">
@@ -82,10 +83,6 @@ export default {
         }
     },
     methods: {
-        // add new user role
-        addNewUserRole() {
-            this.$router.push('/settings/user_management/user_roles/create')
-        },
         // get all user role
         getUserRole() {
             this.hideShowLoader = true;
@@ -108,8 +105,17 @@ export default {
                 console.log(error)
             }); 
         },
+        // add new user role
+        addNewUserRole() {
+            this.$router.push('/settings/user_management/user_roles/create');
+        },
+        // edit user role
+        editRole(id) {
+            this.$router.push('/settings/user_management/user_roles/' + id + '/edit');
+        },
         // delete user role
         deleteRole(id) {
+            this.hideShowLoader = true;
             this.axios.delete(this.$api + '/settings/role/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -118,6 +124,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
+                    this.hideShowLoader = false;
                     this.$toast.open({
                         message: 'Role deleted',
                         position: 'top-right',
@@ -128,6 +135,7 @@ export default {
                 }
             })
             .catch(error => {
+                this.hideShowLoader = false;
                 this.$toast.open({
                     message: error.response.data.message,
                     position: 'top-right',
@@ -136,10 +144,6 @@ export default {
                 });
             }); 
         },
-        // edit user role
-        editRole(id) {
-            this.$router.push('/settings/user_management/user_roles/' + id + '/edit');
-        }
     },
     mounted() {
         this.getUserRole();

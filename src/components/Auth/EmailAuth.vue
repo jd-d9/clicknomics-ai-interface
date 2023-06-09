@@ -3,7 +3,6 @@
         <loader-component v-if="hideShowLoader"></loader-component>
         <!-- Main content -->
         <div class="main-content height" id="panel">
-            <loader-component class="d-none"></loader-component>
             <div class="main-content">
                 <!-- Header -->
                 <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">

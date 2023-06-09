@@ -7,9 +7,15 @@ import SetNewPassword from './components/Auth/SetNewPassword.vue';
 import DashboardComponent from './components/DashboardComponent.vue';
 import UserProfile from './components/User_Profile/UserProfile.vue';
 import DisplayUsers from './components/User/DisplayUsers.vue';
-import ManageUser from './components/User/ManageUser.vue';
+import CreateUser from './components/User/CreateUser.vue';
+import UpdateUser from './components/User/UpdateUser.vue';
 import DisplayUserRole from './components/User_Role/DisplayUserRole.vue';
-import ManageUserRole from './components/User_Role/ManageUserRole.vue';
+import CreateUserRole from './components/User_Role/CreateUserRole.vue';
+import UpdateUserRole from './components/User_Role/UpdateUserRole.vue';
+import DisplayInvoices from './components/Invoice/DisplayInvoices.vue';
+import DisplayInvoiceTemplates from './components/Invoice/DisplayInvoiceTemplates.vue';
+import InvoiceForm from './components/Invoice/InvoiceForm.vue';
+// import InvoiceForm from './components/Invoice/ExampleDemo.vue';
 import ManageEmailNotification from './components/Email_Notification/ManageEmailNotification.vue';
 import ProcessEmailReport from './components/Reports/ProcessEmailReport.vue';
 import MicrosoftEliminatedAccounts from './components/Archived_Traffic_Source/MicrosoftEliminatedAccounts.vue';
@@ -33,11 +39,14 @@ const router = createRouter({
         {path: '/authenticator/validate/email', component: EmailAuth, meta: {auth: true}},
         {path: '/my_profile', component: UserProfile, meta: {auth: true}},
         {path: '/settings/user', component: DisplayUsers, meta: {auth: true}},
-        {path: '/settings/user_management/users/create', component: ManageUser, meta: {auth: true}},
-        {path: '/settings/user_management/users/:id/edit', component: ManageUser, meta: {auth: true}},
+        {path: '/settings/user_management/users/create', component: CreateUser, meta: {auth: true}},
+        {path: '/settings/user_management/users/:id/edit', component: UpdateUser, meta: {auth: true}},
         {path: '/settings/user_management/user_roles', component: DisplayUserRole, meta: {auth: true}},
-        {path: '/settings/user_management/user_roles/create', component: ManageUserRole, meta: {auth: true}},
-        {path: '/settings/user_management/user_roles/:id/edit', component: ManageUserRole, meta: {auth: true}},
+        {path: '/settings/user_management/user_roles/create', component: CreateUserRole, meta: {auth: true}},
+        {path: '/settings/user_management/user_roles/:id/edit', component: UpdateUserRole, meta: {auth: true}},
+        {path: '/accounting/invoice', component: DisplayInvoices, meta: {auth: true}},
+        {path: '/accounting/invoice/template', component: DisplayInvoiceTemplates, meta: {auth: true}},
+        {path: '/InvoiceForm', component: InvoiceForm, meta: {auth: true}},
         {path: '/settings/emailNotification', component: ManageEmailNotification, meta: {auth: true}},
         {path: '/settings/processEmailReport', component: ProcessEmailReport, meta: {auth: true}},
         {path: '/settings/archived-accounts-microsoft', component: MicrosoftEliminatedAccounts, meta: {auth: true}},
