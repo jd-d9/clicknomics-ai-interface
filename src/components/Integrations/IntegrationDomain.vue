@@ -99,11 +99,11 @@
 export default {
     data() {
         return {
-            images: {
-                edit: require('../../assets/img/icons/edit.svg'),
-                bin: require('../../assets/img/icons/bin.svg'),
-                networks: require('../../assets/img/icons/networks.svg'),
-            },
+            // images: {
+            //     edit: require('/assets/img/icons/edit.svg'),
+            //     bin: require('/assets/img/icons/bin.svg'),
+            //     networks: require('/assets/img/icons/networks.svg'),
+            // },
             hideShowLoader: false,
             domain_selected: '',
             api_key: '',

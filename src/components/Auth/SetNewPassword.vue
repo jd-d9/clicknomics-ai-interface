@@ -26,12 +26,12 @@
                     <div class="card bg-secondary border-0 mb-0">
                         <div class="card-body px-lg-5 py-lg-5">
                             <div class="text-center logo_responsive">
-                                <img :src="images.logo" alt="logo">
+                                <img src="/assets/img/brand/logo.png" alt="logo">
                             </div>
                             <form class="mt-5 login_form" @submit.prevent="setNewPassword">
                                 <div class="form-group mb-3 position-relative">
                                     <span class="form_icon">
-                                        <img :src="images.envelope">
+                                        <img src="/assets/img/icons/envelope.svg">
                                     </span>
                                     <input id="email" type="email" class="form-control" :class="{'is-invalid': invalidEmail}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail" @keyup="emailIsValid">
                                     <span class="invalid-feedback" role="alert">
@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="form-group mb-3 position-relative">
                                     <span class="form_icon">
-                                        <img :src="images.lock">
+                                        <img src="/assets/img/icons/lock.svg">
                                     </span>
                                     <input id="password" type="password" class="form-control" :class="{'is-invalid': invalidPassword}" autocomplete="password" autofocus placeholder="New Password" v-model="newPassword" @keyup="passwordIsValid">
                                     <span class="invalid-feedback" role="alert">
@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="form-group mb-3 position-relative">
                                     <span class="form_icon">
-                                        <img :src="images.lock">
+                                        <img src="/assets/img/icons/lock.svg">
                                     </span>
                                     <input id="password" type="password" class="form-control" :class="{'is-invalid': invalidConfirmPass}" autocomplete="current-password" placeholder="Confirm New Password" v-model="confirmNewPassword" @keyup="confirmPassValid">
                                     <span class="invalid-feedback" role="alert">
@@ -84,11 +84,11 @@
     export default {
         data() {
             return {
-                images: {
-                    logo: require('../../assets/img/brand/logo.png'),
-                    envelope: require('../../assets/img/icons/envelope.svg'),
-                    lock: require('../../assets/img/icons/lock.svg'),
-                },
+                // images: {
+                //     logo: require('/assets/img/brand/logo.png'),
+                //     envelope: require('/assets/img/icons/envelope.svg'),
+                //     lock: require('/assets/img/icons/lock.svg'),
+                // },
                 hideShowLoader: false,
                 userEmail: '',
                 newPassword: '',

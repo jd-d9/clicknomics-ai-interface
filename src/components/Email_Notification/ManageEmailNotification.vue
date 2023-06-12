@@ -44,10 +44,10 @@
                                     <template v-slot:item="{ item }">
                                         <td>
                                             <a href="javascript:void(0);" @click="edit(item.id)">
-                                                <img :src="images.envelop" class="img-width">
+                                                <img src="/assets/img/icons/edit.svg" class="img-width">
                                             </a>
                                             <a href="javascript:void(0);" @click="deleteData(item.id)">
-                                                <img :src="images.bin" class="img-width">
+                                                <img src="/assets/img/icons/bin.svg" class="img-width">
                                             </a>
                                         </td>
                                     </template>
@@ -171,10 +171,10 @@
 export default {
     data() {
         return {
-            images: {
-                edit: require('../../assets/img/icons/edit.svg'),
-                bin: require('../../assets/img/icons/bin.svg'),
-            },
+            // images: {
+            //     edit: require('/assets/img/icons/edit.svg'),
+            //     bin: require('/assets/img/icons/bin.svg'),
+            // },
             showLoader: false,
             dataMetrics: [],
             search: '',

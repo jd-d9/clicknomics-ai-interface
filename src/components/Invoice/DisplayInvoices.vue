@@ -61,16 +61,16 @@
                                             </td>
                                             <td>
                                                 <button class="disable-button" @click.prevent="editUser(item.selectable.id)">
-                                                    <img :src="images.edit" class="icon-width" title="Edit user">
+                                                    <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
                                                 </button>
                                                 <button class="disable-button" @click.prevent="deleteUser(item.selectable.id)">
-                                                    <img :src="images.download" class="icon-width" title="Delete user">
+                                                    <img src="/assets/img/icons/download.svg" class="icon-width" title="Delete user">
                                                 </button>
                                                 <button class="disable-button" @click.prevent="editUser(item.selectable.id)">
-                                                    <img :src="images.share" class="icon-width" title="Edit user">
+                                                    <img src="/assets/img/icons/share.svg" class="icon-width" title="Edit user">
                                                 </button>
                                                 <button class="disable-button" @click.prevent="deleteUser(item.selectable.id)">
-                                                    <img :src="images.bin" class="icon-width" title="Delete user">
+                                                    <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
                                                 </button>
                                             </td>
                                         </tr>
@@ -234,13 +234,13 @@ export default {
         let startDate = new Date(today.getFullYear(), today.getMonth(), 1);
         let endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 11, 59, 59, 999);
         return {
-            images: {
-                logo: require('../../assets/img/brand/logo.png'),
-                edit: require('../../assets/img/icons/edit.svg'),
-                bin: require('../../assets/img/icons/bin.svg'),
-                download: require('../../assets/img/icons/download.svg'),
-                share: require('../../assets/img/icons/share.svg'),
-            },
+            // images: {
+            //     logo: require('/assets/img/brand/logo.png'),
+            //     edit: require('/assets/img/icons/edit.svg'),
+            //     bin: require('/assets/img/icons/bin.svg'),
+            //     download: require('/assets/img/icons/download.svg'),
+            //     share: require('/assets/img/icons/share.svg'),
+            // },
             headers: [
                 { title: 'ID', key: 'id', sortable: this.isSortable},
                 { title: 'Invoice Number', key: 'invoice_number', sortable: this.isSortable },
@@ -379,8 +379,5 @@ export default {
     min-height: 11vh !important;
     flex: unset !important;
     width: 100%;
-}
-.form-control {
-    padding: unset !important;
 }
 </style>

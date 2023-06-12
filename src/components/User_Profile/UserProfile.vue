@@ -36,7 +36,7 @@
                                     <div class="col-12 text-center mt-3">
                                         <div>
                                             <span class="avatar avatar-lg rounded-circle mr-4 wd-100 ht-100">
-                                                <img :src="profileImage ? profileImage : images.user" alt="profile image">
+                                                <img :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" alt="profile image">
                                             </span>
                                         </div>
                                         <div class="file_select">
@@ -50,7 +50,7 @@
                             <!-- user email section -->
                             <h6 class="heading-small text-muted mb-4">User Email
                                 <button class="btn btn-sm float-right button-border" v-if="!userEmailToggle" type="button" @click="userEmailToggle = !userEmailToggle">
-                                    <img :src="images.edit" class="image-width">
+                                    <img src="/assets/img/icons/edit.svg" class="image-width">
                                 </button>
                             </h6>
                             <div>
@@ -86,7 +86,7 @@
                             <!-- user profile section -->
                             <h6 class="heading-small text-muted mb-4">Profile Details
                                 <button class="btn btn-sm float-right button-border" v-if="!profileDetailsToggle" type="button" @click="profileDetailsToggle = !profileDetailsToggle">
-                                    <img :src="images.edit" class="image-width">
+                                    <img src="/assets/img/icons/edit.svg" class="image-width">
                                 </button>
                             </h6>
                             <div>
@@ -132,7 +132,7 @@
                             <!-- password section -->
                             <h6 class="heading-small text-muted mb-4">Password
                                 <button class="btn btn-sm float-right button-border" v-if="!passwordToggle" type="button" @click="passwordToggle = !passwordToggle">
-                                    <img :src="images.edit" class="image-width">
+                                    <img src="/assets/img/icons/edit.svg" class="image-width">
                                 </button>
                             </h6>
                             <div>
@@ -172,7 +172,7 @@
                             <hr class="my-4">
                             <h6 class="heading-small text-muted mb-4">2FA Verification
                                 <button class="btn btn-sm float-right button-border" v-if="!TwoFaVerifyToggle" type="button" @click="TwoFaVerifyToggle = !TwoFaVerifyToggle">
-                                    <img :src="images.edit" class="image-width">
+                                    <img src="/assets/img/icons/edit.svg" class="image-width">
                                 </button>
                             </h6>
                             <div>
@@ -213,11 +213,11 @@
         emits: ['updating-profile-details'],
         data() {
             return {
-                images: {
-                    logo: require('../../assets/img/brand/logo.png'),
-                    edit: require('../../assets/img/icons/edit.svg'),
-                    user: require('../../assets/img/icons/dummy-user.png')
-                },
+                // images: {
+                //     logo: require('/assets/img/brand/logo.png'),
+                //     edit: require('/assets/img/icons/edit.svg'),
+                //     user: require('/assets/img/icons/dummy-user.png')
+                // },
                 userEmailToggle: false,
                 profileDetailsToggle: false,
                 passwordToggle: false,

@@ -6340,7 +6340,9 @@ table img:hover{transform:translateY(-5px);transition:all .3s ease-in-out;}
 .theme--light.v-application {
     background: none !important;
 }
-
+.v-theme--myCustomLightTheme.v-application {
+    background: none !important;
+}
 
 .mx-datepicker {
     width:100% !important;
@@ -6732,3 +6734,12 @@ select{
 .table-expand.v-data-table tr td, .table-expand.v-data-table tr th{
     border-left: thin solid rgba(0,0,0,.12) !important;
 }
+
+
+
+
+
+
+
+
+/* new added css */

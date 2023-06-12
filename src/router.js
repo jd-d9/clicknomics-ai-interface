@@ -15,7 +15,6 @@ import UpdateUserRole from './components/User_Role/UpdateUserRole.vue';
 import DisplayInvoices from './components/Invoice/DisplayInvoices.vue';
 import DisplayInvoiceTemplates from './components/Invoice/DisplayInvoiceTemplates.vue';
 import InvoiceForm from './components/Invoice/InvoiceForm.vue';
-// import InvoiceForm from './components/Invoice/ExampleDemo.vue';
 import ManageEmailNotification from './components/Email_Notification/ManageEmailNotification.vue';
 import ProcessEmailReport from './components/Reports/ProcessEmailReport.vue';
 import MicrosoftEliminatedAccounts from './components/Archived_Traffic_Source/MicrosoftEliminatedAccounts.vue';
@@ -46,7 +45,7 @@ const router = createRouter({
         {path: '/settings/user_management/user_roles/:id/edit', component: UpdateUserRole, meta: {auth: true}},
         {path: '/accounting/invoice', component: DisplayInvoices, meta: {auth: true}},
         {path: '/accounting/invoice/template', component: DisplayInvoiceTemplates, meta: {auth: true}},
-        {path: '/InvoiceForm', component: InvoiceForm, meta: {auth: true}},
+        {path: '/accounting/invoice/create', component: InvoiceForm, meta: {auth: true}},
         {path: '/settings/emailNotification', component: ManageEmailNotification, meta: {auth: true}},
         {path: '/settings/processEmailReport', component: ProcessEmailReport, meta: {auth: true}},
         {path: '/settings/archived-accounts-microsoft', component: MicrosoftEliminatedAccounts, meta: {auth: true}},

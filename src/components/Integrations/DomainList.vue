@@ -16,7 +16,7 @@
                         </div>
                         <div class="col-lg-6 col-5 text-right">
                             <a href="/settings/domain/integrate" class="btn btn-lg btn-neutral btn_animated">
-                                <img :src="images.networks" class="img-width2">
+                                <img src="/assets/img/icons/networks.svg" class="img-width2">
                                 Integrate Domain
                             </a>
                         </div>
@@ -41,10 +41,10 @@
                                             <td>{{format_date(item.created_at)}}</td>
                                             <td>
                                                 <a href="javascript:void(0);" @click="edit(item.id)">
-                                                    <img :src="images.edit" class="img-width">
+                                                    <img src="/assets/img/icons/edit.svg" class="img-width">
                                                 </a>
                                                 <a href="javascript:void(0);" @click="showConfirmation(item.id)">
-                                                    <img :src="images.bin" class="img-width">
+                                                    <img src="/assets/img/icons/bin.svg" class="img-width">
                                                 </a>
                                             </td>
                                         </tr>
@@ -126,10 +126,10 @@
 export default {
     data() {
         return {
-            images: {
-                bin: require('../../assets/img/icons/bin.svg'),
-                networks: require('../../assets/img/icons/networks.svg'),
-            },
+            // images: {
+            //     bin: require('/assets/img/icons/bin.svg'),
+            //     networks: require('/assets/img/icons/networks.svg'),
+            // },
             hideShowLoader: false,
             confirmationBox: false,
             showEditForm: false,

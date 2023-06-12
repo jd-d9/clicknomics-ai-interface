@@ -49,10 +49,10 @@
                                             <td>+{{item.selectable.country_code}} - {{item.selectable.phone_number}}</td>
                                             <td class="text-center">
                                                 <button class="disable-button" :disabled="userPermissions.update_auth == '0'" @click.prevent="editUser(item.selectable.id)">
-                                                    <img :src="images.edit" class="icon-width" title="Edit user">
+                                                    <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
                                                 </button>
                                                 <button class="disable-button" :disabled="userPermissions.delete_auth == '0'" @click.prevent="deleteUser(item.selectable.id)" v-if="item.selectable.role_id != roleId">
-                                                    <img :src="images.bin" class="icon-width" title="Delete user">
+                                                    <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
                                                 </button>
                                             </td>
                                         </tr>
@@ -78,10 +78,10 @@
     export default {
         data() {
             return {
-                images: {
-                    edit: require('../../assets/img/icons/edit.svg'),
-                    bin: require('../../assets/img/icons/bin.svg'),
-                },
+                // images: {
+                //     edit: require('/assets/img/icons/edit.svg'),
+                //     bin: require('/assets/img/icons/bin.svg'),
+                // },
                 search: '',
                 headers: [
                     { title: 'ID', key: 'id', align: 'start' },
@@ -210,7 +210,8 @@
     }
     @font-face {
         font-family: fontAwesomeFont;
-        src: url(../../assets/fonts/font_awesome/fa-solid-900.ttf);
+        src: url(../../../public/assets/fonts/font_awesome/fa-solid-900.ttf);
+        /* src: url(/assets/fonts/font_awesome/fa-solid-900.ttf); */
     }
     .search-input:hover::before {
         transform: scale(1, 1);

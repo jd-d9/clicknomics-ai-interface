@@ -4,13 +4,13 @@
         <div class="sidebar-inner">
             <div class="text-center bg-white py-3 px-2 sticky-top">
                 <router-link to="/dashboard" class="sidebar-logo">
-                    <img :src="images.logo" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
-                    <img :src="images.favicon" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
+                    <img src="/assets/img/brand/logo.png" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
+                    <img src="/assets/img/brand/favicon.png" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
                 </router-link>
             </div>
             <div class="sidebar-contents">
                 <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none" v-for="data in allMenues" :key="data" @click="toggleSidebarHover">
-                    <img :src="require('../../assets/img/icons/' + data.icon)" alt="icon" title="Dashboard">
+                    <img :src="'/assets/img/icons/' + data.icon" alt="icon" title="Dashboard">
                     <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                     <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
                 </router-link>
@@ -24,13 +24,13 @@
             <div class="sidebar-inner">
                 <div class="text-center py-3 px-2">
                     <router-link to="/dashboard" class="sidebar-logo">
-                        <img :src="images.logo" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
-                        <img :src="images.favicon" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
+                        <img src="/assets/img/brand/logo.png" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
+                        <img src="/assets/img/brand/favicon.png" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
                     </router-link>
                 </div>
                 <div class="sidebar-contents">
                     <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" @mouseleave="hideHoveredDropdown" v-for="data in allMenues" :key="data">
-                        <img :src="require('../../assets/img/icons/' + data.icon)" alt="icon" :title="data.menu">
+                        <img :src="'/assets/img/icons/' + data.icon" alt="icon" :title="data.menu">
                         <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                         <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
                         <!-- sidebar dropdown start here -->
@@ -109,7 +109,7 @@
                         </div>
                         <div class="dropdown">
                             <button class="btn dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img :src="images.bell" alt="bell">
+                                <img src="/assets/img/icons/bell.svg" alt="bell">
                                 <span class="position-absolute translate-middle badge rounded-circle">5</span>
                             </button>
                             <ul class="dropdown-menu notification-dropdown">
@@ -153,7 +153,7 @@
                             <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="d-flex align-items-center justify-content-end">
                                     <div class="profile-image me-2">
-                                        <img :src="profileImage ? profileImage : images.user" alt="img">
+                                        <img :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" alt="img">
                                     </div>
                                     <p class="mb-0 text-white">{{ name }} <i class="fa-solid fa-angle-down"></i></p>
                                 </div>
@@ -188,12 +188,12 @@
         props: ['updatingUserDetails'],
         data() {
             return {
-                images: {
-                    logo: require('../../assets/img/brand/logo.png'),
-                    favicon: require('../../assets/img/brand/favicon.png'),
-                    bell: require('../../assets/img/icons/bell.svg'),
-                    user: require('../../assets/img/icons/dummy-user.png')
-                },
+                // images: {
+                //     logo: require('/assets/img/brand/logo.png'),
+                //     favicon: require('/assets/img/brand/favicon.png'),
+                //     bell: require('/assets/img/icons/bell.svg'),
+                //     user: require('/assets/img/icons/dummy-user.png')
+                // },
                 hideShowSidebar: true,
                 hideShowLoader: false,
                 showOnClick: false,
@@ -605,7 +605,8 @@
     }
     @font-face {
         font-family: fontAwesomeFont;
-        src: url(../../assets/fonts/font_awesome/fa-solid-900.ttf);
+        src: url(../../../public/assets/fonts/font_awesome/fa-solid-900.ttf);
+        /* /assets/fonts/font_awesome/fa-solid-900.ttf */
     }
     .accordion-button::after {
         content: '\f105';

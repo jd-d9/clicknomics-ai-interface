@@ -44,10 +44,10 @@
                                             <td>{{role.role_name}}</td>
                                             <td class="text-center collumn-width">
                                                 <button class="disable-button" :disabled="rolePermission.update_auth == '0'" @click.prevent="editRole(role.id)">
-                                                    <img :src="images.edit" class="image-width" title="Edit role">
+                                                    <img src="/assets/img/icons/edit.svg" class="image-width" title="Edit role">
                                                 </button>
                                                 <button class="disable-button text-start" v-if="role.id != '1'" :disabled="rolePermission.delete_auth == '0'" @click.prevent="deleteRole(role.id)">
-                                                    <img :src="images.bin" class="image-width" title="Delete role">
+                                                    <img src="/assets/img/icons/bin.svg" class="image-width" title="Delete role">
                                                 </button>
                                             </td>
                                         </tr>
@@ -73,10 +73,10 @@
 export default {
     data() {
         return {
-            images: {
-                edit: require('../../assets/img/icons/edit.svg'),
-                bin: require('../../assets/img/icons/bin.svg'),
-            },
+            // images: {
+            //     edit: require('/assets/img/icons/edit.svg'),
+            //     bin: require('/assets/img/icons/bin.svg'),
+            // },
             items: [],
             hideShowLoader: false,
             rolePermission: {},

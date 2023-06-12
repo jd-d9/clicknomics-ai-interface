@@ -1,0 +1,186 @@
+.v-application__wrap{min-height: auto !important;}
+.v-theme--myCustomLightTheme.v-icon{
+    color: rgb(0 94 179) !important;
+}
+.v-theme--myCustomLightTheme.v-data-table{
+    color: #000 !important;
+}
+.v-theme--myCustomLightTheme.v-label {
+    color: rgb(0 0 0);
+}
+.v-theme--myCustomLightTheme.v-data-table>.v-data-table__wrapper>table>thead>tr>th {
+    color: #136ab9 !important;
+    background-color: #f0f0f0;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 0.75rem;
+    vertical-align: top;
+}
+.v-theme--myCustomLightTheme.v-application {
+    background: none !important;
+}
+.v-theme--myCustomLightTheme.v-text-field.v-select>.v-input__control>.v-field:before{
+    border-color: #ffffff !important;
+}
+.v-card--variant-elevated.v-card:not(.v-card--variant-elevated--outlined) {
+    box-shadow: none !important;
+    border: 1px solid rgb(213 220 232);
+    border-radius: 4px;
+}
+.v-text-field__details {display: none !important;}
+/* .v-text-field .v-label--active {transform-origin: top left;} */
+.v-text-field.v-text-field--solo .v-input__control{min-height: 36px !important;}
+.v-theme--myCustomLightTheme.v-text-field.v-select>.v-input__control>.v-field:before{
+    border-color: #ffffff !important;
+}
+.v-select>.v-input__control>.v-field{margin-bottom: 0px !important;}
+.v-input--density-default .v-field--variant-filled, .v-input--density-default .v-field--variant-solo, .v-input--density-default .v-field--variant-solo-filled, .v-input--density-default .v-field--variant-solo-inverted {
+    padding: 0 0;
+}
+.v-field--variant-solo, .v-field--variant-solo-filled, .v-field--variant-solo-inverted {
+    box-shadow: none !important;
+    border: 1px solid rgb(158, 158, 158) !important;
+    border-radius: 4px;
+}
+.v-field--variant-solo:hover, .v-field--variant-solo-filled:hover, .v-field--variant-solo-inverted:hover {
+    border: 1px solid black !important;
+}
+.v-text-field--filled.v-input--dense.v-text-field--outlined.v-text-field--filled>.v-input__control>.v-field, .v-text-field--filled.v-input--dense.v-text-field--outlined>.v-input__control>.v-field, .v-text-field--filled.v-input--dense.v-text-field--single-line>.v-input__control>.v-field, .v-text-field--full-width.v-input--dense.v-text-field--outlined.v-text-field--filled>.v-input__control>.v-field, .v-text-field--full-width.v-input--dense.v-text-field--outlined>.v-input__control>.v-field, .v-text-field--full-width.v-input--dense.v-text-field--single-line>.v-input__control>.v-field, .v-text-field--outlined.v-input--dense.v-text-field--outlined.v-text-field--filled>.v-input__control>.v-field, .v-text-field--outlined.v-input--dense.v-text-field--outlined>.v-input__control>.v-field, .v-text-field--outlined.v-input--dense.v-text-field--single-line>.v-input__control>.v-field {
+    height: 500px !important;
+}
+.v-input--hide-details>.v-input__control>.v-field{
+    margin-bottom: 0px;
+}
+.v-textarea .v-field__input {
+    mask-image: none;
+}
+.v-text-field>.v-input__control>.v-field>.v-field__field {
+    display: flex;
+    flex: 1 1 auto;
+    position: relative;
+}
+.v-text-field--outlined .v-field__field, .v-text-field--single-line .v-field__field {
+    text-align: center;
+}
+.v-input--density-default .v-field--variant-solo .v-label.v-field-label--floating, .v-input--density-default .v-field--variant-solo-inverted .v-label.v-field-label--floating, .v-input--density-default .v-field--variant-filled .v-label.v-field-label--floating, .v-input--density-default .v-field--variant-solo-filled .v-label.v-field-label--floating {
+    top: -10px;
+    padding: 0 2px !important;
+    opacity: 1 !important;
+    background-color: white !important;
+}
+.v-field--variant-solo:focus, .v-field--variant-solo-filled:focus, .v-field--variant-solo-inverted:focus {
+    border: 1px solid #3f51b5 !important;
+}
+#input-0, #input-0::placeholder {
+    font-weight: 600;
+    font-size: 23px !important;
+}
+#input-3 {
+    line-height: 1.6;
+    min-height: 170px !important;
+    height: unset !important;
+    padding-top: 15px !important;
+}
+#input-7, #input-9, #input-16, #input-18 {
+    padding-top: 15px !important;
+}
+.v3dp__datepicker {
+    border: 1px solid rgb(158, 158, 158);
+    border-radius: 4px;
+}
+.v-field--focused, .v-field--focused:hover {
+    border-width: 2px !important;
+    border-color: #3f51b5 !important;
+}
+.v-field--focused .v-field-label--floating {
+    color: #3f51b5 !important;
+}
+/* .v-field--focused:hover {
+    border-color: #3f51b5 !important;
+} */
+.v3dp__input_wrapper {
+    position: relative;
+}
+@font-face {
+    font-family: fontAwesomeFont;
+    src: url(../fonts/font_awesome/fa-solid-900.ttf);
+    /* /assets/fonts/font_awesome/fa-solid-900.ttf */
+}
+.v3dp__input_wrapper::after {
+    content: '\f133';
+    position: absolute;
+    font-size: 14px;
+    color: rgba(0, 0, 0, .2);
+    font-family: fontAwesomeFont;
+    top: 7px;
+    right: 5px;
+    background-color: white;
+}
+.v3dp__input_wrapper:hover::after {
+    display: none;
+}
+.v3dp__input_wrapper input {
+    width: 115px;
+    padding: 6px 8px;
+}
+.v3dp__input_wrapper input:focus {
+    outline: none !important;
+}
+.v3dp__clearable {
+    left: -8px;
+}
+.v3dp__popout {
+    right: 0;
+}
+.v-divider {
+    display: block;
+    flex: 1 1 0px;
+    max-width: 100%;
+    height: 0;
+    max-height: 0;
+    border: solid;
+    border-width: thin 0 0;
+    transition: inherit;
+}
+.v-data-table-footer {
+    height: 60px !important;
+}
+.v-data-table-footer .v-field__input {
+    padding-top: unset !important;
+    padding-bottom: unset !important;
+    line-height: unset;
+    width: unset;
+    min-height: unset !important;
+}
+.v-field__input {
+    flex: 1 1 auto;
+    padding-top: unset !important;
+    padding-bottom: unset !important;
+    line-height: 20px;
+    max-width: 100%;
+    min-width: 0;
+    width: 310px;
+    min-height: 40px !important;
+}
+.v-btn.v-btn--density-default {
+    width: unset;
+    height: unset;
+    padding: 4px;
+}
+.v-btn--variant-elevated {
+    box-shadow: none;
+}
+.v-btn--elevated:focus, .v-btn--elevated:hover {
+    box-shadow: none;
+}
+
+
+.v-input__control {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    min-width: 0;
+    width: 100%;
+}

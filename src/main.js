@@ -19,9 +19,12 @@ import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
 // import VueSessionStorage from 'vue-sessionstorage';
 import '@mdi/font/css/materialdesignicons.css';
+
+import 'vuetify/dist/vuetify.css';
+
 import { createVuetify } from 'vuetify';
 import * as directives from 'vuetify/directives';
-import * as labsComponents from 'vuetify/labs/components'
+import * as labsComponents from 'vuetify/labs/components';
 import { VDataTable } from 'vuetify/labs/VDataTable';
 import 'bootstrap/dist/js/bootstrap.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -29,21 +32,21 @@ import LoaderComponent from './components/Common/LoaderComponent.vue';
 import NavAndSideBar from './components/Navbar_and_Sidebar/NavAndSideBar.vue';
 
 loadFonts();
-const myCustomLightTheme = {
-  dark: false,
-  colors: {
-    background: '#FFFFFF',
-    surface: '#FFFFFF',
-    primary: '#6200EE',
-    'primary-darken-1': '#3700B3',
-    secondary: '#03DAC6',
-    'secondary-darken-1': '#018786',
-    error: '#B00020',
-    info: '#2196F3',
-    success: '#4CAF50',
-    warning: '#FB8C00',
-  },
-}
+// const myCustomLightTheme = {
+//   dark: false,
+//   colors: {
+//     background: '#FFFFFF',
+//     surface: '#FFFFFF',
+//     primary: '#6200EE',
+//     'primary-darken-1': '#3700B3',
+//     secondary: '#03DAC6',
+//     'secondary-darken-1': '#018786',
+//     error: '#B00020',
+//     info: '#2196F3',
+//     success: '#4CAF50',
+//     warning: '#FB8C00',
+//   },
+// }
 const vuetify = createVuetify({
   directives,
   labsComponents,
@@ -51,9 +54,13 @@ const vuetify = createVuetify({
     VDataTable
   },
   theme: {
-    defaultTheme: 'myCustomLightTheme',
     themes: {
-      myCustomLightTheme,
+      light: {
+          primary: '#3f51b5',
+          secondary: '#696969',
+          accent: '#8c9eff',
+          error: '#b71c1c',
+      },
     },
   },
 })

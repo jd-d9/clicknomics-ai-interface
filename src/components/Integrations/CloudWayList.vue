@@ -16,7 +16,7 @@
                         </div>
                         <div class="col-lg-6 col-5 text-right">
                             <a href="/settings/cloudways/integrate" class="btn btn-lg btn-neutral btn_animated">
-                                <img :src="images.networks" class="img-width2">
+                                <img src="/assets/img/icons/networks.svg" class="img-width2">
                                 Integrate Cloudways
                             </a>
                         </div>
@@ -40,7 +40,7 @@
                                             <td>{{format_date(item.created_at)}}</td>
                                             <td>
                                                 <a href="javascript:void(0);">
-                                                    <img :src="images.bin" class="img-width">
+                                                    <img src="/assets/img/icons/bin.svg" class="img-width">
                                                 </a>
                                             </td>
                                         </tr>
@@ -75,10 +75,10 @@
 export default {
     data() {
         return {
-            images: {
-                bin: require('../../assets/img/icons/bin.svg'),
-                networks: require('../../assets/img/icons/networks.svg'),
-            },
+            // images: {
+            //     bin: require('/assets/img/icons/bin.svg'),
+            //     networks: require('/assets/img/icons/networks.svg'),
+            // },
             hideShowLoader: false,
             confirmationBox: false,
             accountIdToDelete: '',

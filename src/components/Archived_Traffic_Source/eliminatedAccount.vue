@@ -35,7 +35,7 @@
                                             <td>{{format_date(item.deleted_at)}}</td>
                                             <td>
                                                 <a href="javascript:void(0);">
-                                                    <img :src="images.restore" class="img-width">
+                                                    <img src="/assets/img/icons/restore.svg" class="img-width">
                                                 </a>
                                             </td>
                                         </tr>
@@ -54,9 +54,9 @@
 export default {
     data() {
         return {
-            images: {
-                restore: require('../../assets/img/icons/restore.svg'),
-            },
+            // images: {
+            //     restore: require('/assets/img/icons/restore.svg'),
+            // },
             hideShowLoader: false,
             singleExpand: true,
             networkHeaders: [

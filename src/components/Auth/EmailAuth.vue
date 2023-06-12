@@ -29,7 +29,7 @@
                             <div class="card bg-secondary border-0">
                                 <div class="card-body px-lg-5 py-lg-5">
                                     <div class="text-center logo_responsive">
-                                        <img :src="images.logo" class="image-width">
+                                        <img src="/assets/img/brand/logo.png" class="image-width">
                                     </div>
                                     <form class="mt-5 login_form" @submit.prevent="sendCodeInEmail">
                                         <div id="qrcode" class="text-center">
@@ -54,9 +54,9 @@
     export default {
         data() {
             return {
-                images: {
-                    logo: require('../../assets/img/brand/logo.png'),
-                },
+                // images: {
+                //     logo: require('/assets/img/brand/logo.png'),
+                // },
                 hideShowLoader: false,
             }
         }, 

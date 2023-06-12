@@ -24,7 +24,7 @@
                     <div class="card bg-secondary border-0 mb-0">
                         <div class="card-body px-lg-5 py-lg-5">
                             <div class="text-center logo_responsive">
-                                <img :src="images.logo" class="img-width">
+                                <img src="/assets/img/brand/logo.png" class="img-width">
                             </div>
                             <div class="text-center mt-5">
                                 <div class="number">404</div>
@@ -42,9 +42,9 @@
     export default {
         data() {
             return {
-                images: {
-                    logo: require('../../assets/img/brand/logo.png'),
-                },
+                // images: {
+                //     logo: require('/assets/img/brand/logo.png'),
+                // },
             }
         }
     }

@@ -55,10 +55,10 @@
                                                 <td>
                                                     <button class="btn btn-lg btn-neutral">Create Invoice From Template</button>
                                                     <button class="disable-button" @click.prevent="editUser(item.selectable.id)">
-                                                        <img :src="images.edit" class="icon-width" title="Edit user">
+                                                        <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
                                                     </button>
                                                     <button class="disable-button" @click.prevent="deleteUser(item.selectable.id)">
-                                                        <img :src="images.bin" class="icon-width" title="Delete user">
+                                                        <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
                                                     </button>
                                                 </td>
                                             </tr>
@@ -110,13 +110,13 @@
 export default {
     data() {
         return {
-            images: {
-                logo: require('../../assets/img/brand/logo.png'),
-                edit: require('../../assets/img/icons/edit.svg'),
-                bin: require('../../assets/img/icons/bin.svg'),
-                download: require('../../assets/img/icons/download.svg'),
-                share: require('../../assets/img/icons/share.svg'),
-            },
+            // images: {
+            //     logo: require('/assets/img/brand/logo.png'),
+            //     edit: require('/assets/img/icons/edit.svg'),
+            //     bin: require('/assets/img/icons/bin.svg'),
+            //     download: require('/assets/img/icons/download.svg'),
+            //     share: require('/assets/img/icons/share.svg'),
+            // },
             hideShowLoader: false,
             search: '',
             headers: [

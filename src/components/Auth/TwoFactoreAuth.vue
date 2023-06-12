@@ -27,7 +27,7 @@
                             <div class="card bg-secondary border-0 mb-0">
                                 <div class="card-body px-lg-4 py-lg-4">
                                     <div class="text-center logo_responsive  mb-5">
-                                        <img :src="images.logo" class="image-height">
+                                        <img src="/assets/img/brand/logo.png" class="image-height">
                                     </div>
                                     <form @submit.prevent="checkCodeAndAuthUser">
                                         <div class="text-center">
@@ -97,9 +97,9 @@
     export default {
         data() {
             return {
-                images: {
-                    logo: require('../../assets/img/brand/logo.png'),
-                },
+                // images: {
+                //     logo: require('/assets/img/brand/logo.png'),
+                // },
                 hideShowLoader: false,
                 displayQrCode: '',
                 authCode: '',
