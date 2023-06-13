@@ -8,14 +8,14 @@
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">Invoice Template List</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right">
-                            <a href="/accounting/invoice" class="btn btn-lg btn-neutral btn_animated">Back</a>
+                            <router-link to="/accounting/invoice" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
                         </div>
                     </div>
                 </div>
@@ -34,24 +34,25 @@
                                         <div class="row">
                                             <div class="col-3 ms-auto">
                                                 <div class="ms-auto search-input position-relative">
-                                                    <input type="search" placeholder="Search" v-model="searchInput">
+                                                    <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchInvoice">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- data table component -->
-                                    <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="invoiceList" :search="search"  :single-expand="singleExpand" class="elevation-1" :itemsPerPage="itemsPerPage">
+                                    <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="templateList" :search="search"  :single-expand="singleExpand" class="elevation-1" :itemsPerPage="itemsPerPage">
                                         <template v-slot:item="{ item }">
                                             <tr class="table-body-back">
                                                 <th>{{item.selectable.id}}</th>
                                                 <td>
-                                                    <router-link to="" data-bs-target="#createUpdateData" data-bs-toggle="modal">
-                                                        {{item.selectable.name}} <i class="fa-solid fa-pen-to-square edit-icon-pen"></i>
+                                                    <router-link to="" @click.prevent="editTemplateName(item.selectable.id)">
+                                                        {{item.selectable.template_name}} 
+                                                        <i class="fa-solid fa-pen-to-square edit-icon-pen"></i>
                                                     </router-link>
                                                 </td>
-                                                <td>{{item.selectable.email}}</td>
-                                                <td>+{{item.selectable.country_code}} - {{item.selectable.phone_number}}</td>
-                                                <td>{{item.selectable.email}}</td>
+                                                <td>{{item.selectable.invoice_number}}</td>
+                                                <td>{{item.selectable.invoice_issue_date}}</td>
+                                                <td>{{item.selectable.invoice_due_date}}</td>
                                                 <td>
                                                     <button class="btn btn-lg btn-neutral">Create Invoice From Template</button>
                                                     <button class="disable-button" @click.prevent="editUser(item.selectable.id)">
@@ -72,12 +73,12 @@
             </div>
         </div>
           <!-- Modal Update Template -->
-        <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
+        <div class="modal fade" id="editTemplateNameModal" tabindex="-1" role="dialog" aria-labelledby="editTemplateNameModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 style="color:#fff;" class="modal-title">Update Template Name</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
                             <span style="color:#fff;" aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -88,13 +89,13 @@
                                     <div class="col-lg-12 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Template Name</label>
-                                            <input type="text" :class="{'form-control': true }" v-model="selectedTemplate.name">
+                                            <input type="text" :class="{'form-control': true }" v-model="selectedTemplateName">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
+                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="updateTemplateName">Save</button>
                                     </div>
                                 </div>
                             </form>
@@ -127,44 +128,110 @@ export default {
                 { title: 'Invoice Due Date', key: 'invoice_due_date' },
                 { title: 'Action', key: 'actions', },
             ],
-            invoiceList: [
-                {
-                    "id": 1,
-                    "name": "Test Media Buyer",
-                    "email": "test@gmail.com",
-                    "email_verified_at": null,
-                    "last_login": null,
-                    "role_id": 29,
-                    "status": "1",
-                    "country_code": "62",
-                    "phone_number": "7878000000",
-                    "created_by": 5,
-                    "updated_by": 5,
-                    "profile_image": null,
-                    "created_at": "2023-06-09T04:59:55.000000Z",
-                    "updated_at": "2023-06-09T05:00:19.000000Z",
-                    "google2fa_secret": null,
-                    "reset_2fa_token": null,
-                    "reset_2fa_at": null,
-                    "two_factor_code": null,
-                    "two_factor_expires_at": null,
-                    "verified_by": null,
-                    "verified_at": null,
-                    "verification_status": null,
-                    "remember_2fa": null
-                },
-            ],
+            searchInput: '',
+            templateList: [],
+            templateFilter: [],
             singleExpand: true,
             page: 1,
             itemsPerPage: -1,
-            selectedTemplate: {
-                id: '',
-                name: ''
-            }
+            selectedTemplateName: '',
+            selectedTemplateId: '',
+            // selectedTemplate: {
+            //     id: '',
+            //     name: ''
+            // }
         }
     },
+    mounted() {
+        this.getTemplateData();
+    },
     methods: {
-
+        // opening modal
+        openModal() {
+            window.$('#editTemplateNameModal').modal('show');
+        },
+        // closing modal
+        closeModal() {
+            window.$('#editTemplateNameModal').modal('hide');
+        },
+        // search user from table
+        searchInvoice() {
+            this.templateList = this.templateFilter.filter((val) => {
+                return val.invoice_number.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.id.toString().includes(this.searchInput.toLowerCase()) || 
+                        val.template_name.toString().includes(this.searchInput.toLowerCase()) || 
+                        val.invoice_issue_date.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.invoice_due_date.toLowerCase().includes(this.searchInput.toLowerCase())
+            })
+        },
+        // open modal and get template name
+        editTemplateName(id) {
+            this.openModal();
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/invoices/invoicetemplateShow/' + id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.selectedTemplateName = response.data.data.template_name;
+                    this.selectedTemplateId = response.data.data.id;
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // update template name
+        updateTemplateName() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/invoices/updateInvoiceTemplateName', {
+                id: this.selectedTemplateId,
+                template_name: this.selectedTemplateName
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.closeModal();
+                    this.getTemplateData();
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // get templates
+        getTemplateData() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/invoices/invoiceTemplate', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    console.log(response.data.data, 'data')
+                    this.templateList = response.data.data;
+                    this.templateFilter = response.data.data;
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
     }    
 }
 </script>

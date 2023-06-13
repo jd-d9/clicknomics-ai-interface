@@ -10,17 +10,17 @@
                                     <li class="breadcrumb-item">
                                         <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Invoice {{ dynamicBredCrumb }}</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Template {{ dynamicBredCrumb }}</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right" v-if="toggleElement">
-                            <router-link to="" @click.prevent="openModal" type="button" class="btn btn-lg btn-neutral btn_animated" @click="showModal = true">Save As Template</router-link>
-                            <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="saveInvoice">Save Invoice</button>
+                            <!-- <router-link to="" type="button" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Create New Template</router-link> -->
+                            <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="saveInvoice">Create New Template</button>
                         </div>
                         <div class="col-lg-6 text-right" v-else>
-                            <router-link to="" @click.prevent="openModal" type="button" class="btn btn-lg btn-neutral btn_animated" @click="showModal = true">Save As Template</router-link>
-                            <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="updateInvoice">Update Invoice</button>
+                            <router-link to="" type="button" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Save As Template</router-link>
+                            <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="updateTemplate">Update Template</button>
                         </div>
                     </div>
                 </div>
@@ -221,12 +221,12 @@
             </div>
         </div>
         <!-- Update Ads Account List-->
-        <div class="modal fade" id="saveAsTemplateModal" tabindex="-1" role="dialog" aria-labelledby="saveAsTemplateModalTitle" aria-hidden="true">
+        <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 style="color:#fff;" class="modal-title">Invoice Template</h5>
-                        <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span style="color:#fff;" aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -259,8 +259,6 @@
 </template>
 
 <script>
-// import $ from 'jquery';
-import 'bootstrap';
 import Datepicker from 'vue3-datepicker';
 import moment from 'moment';
 export default {
@@ -297,12 +295,11 @@ export default {
                 companyDetail: 'Instant Profits Media LLC\n1611 Spring Gate Lane Unit #370878\nLas Vegas, NV, 89134\nPhone: +14074139604\nwww.instantprofitsmedia.com - info@instantprofitsmedia.com\nEIN: 82-1197063',
             },
             templateName: '',
-            saveAsTemplate: 1,
+            saveAsTemplate: 0,
             dynamicBredCrumb: 'Create',
             toggleElement: true,
             isTempInvalid: false,
-            errorMessage: '',
-            showModal: false,
+            errorMessage: ''
         }
     },
     computed: {
@@ -320,11 +317,11 @@ export default {
     methods: {
         // opening modal
         openModal() {
-            window.$('#saveAsTemplateModal').modal('show');
+            window.$('#createUpdateData').modal('show');
         },
         // closing modal
         closeModal() {
-            window.$('#saveAsTemplateModal').modal('hide');
+            window.$('#createUpdateData').modal('hide');
         },
         // add new product in product table
         addNewItem() {
@@ -390,7 +387,7 @@ export default {
             });
         },
         // update invoice
-        updateInvoice() {
+        updateTemplate() {
             this.hideShowLoader = true;
             this.axios.post(this.$api + '/accounting/invoice/' + this.$route.params.id, {
                 _method: 'PUT',
@@ -407,7 +404,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.$router.push('/accounting/invoice');
+                    this.$router.push('/accounting/invoice/template');
                     this.$toast.open({
                         message: 'Invoice updated',
                         position: 'top-right',
@@ -437,7 +434,6 @@ export default {
         saveTemplate() {
             this.templateNameIsValid();
             if(!this.templateName || this.errorMessage || this.isTempInvalid) {
-                this.showModal = true;
                 return false;
             }
             else {
@@ -458,7 +454,6 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.$router.push('/accounting/invoice/template');
-                        this.showModal = false;
                         this.$toast.open({
                             message: 'Saved as template',
                             position: 'top-right',
@@ -466,7 +461,6 @@ export default {
                             type: 'success'
                         });
                         this.hideShowLoader = false;
-                        this.closeModal();
                     }
                 })
                 .catch(error => {

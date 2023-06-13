@@ -9,7 +9,29 @@
                         <div class="card-header">
                             <h3 class="mb-0 float-left pt-2"><b>Date: 12/05/2023</b></h3>
                             <div class="float-right">
-
+                                <!-- <date-range-picker
+                                    ref="picker"
+                                    :opens="opens"
+                                    :locale-data="{ firstDay: 1, format: 'dd-mm-yyyy HH:mm:ss' }"
+                                    :minDate="minDate" :maxDate="maxDate"
+                                    :singleDatePicker="singleDatePicker"
+                                    :timePicker="timePicker"
+                                    :timePicker24Hour="timePicker24Hour"
+                                    :showWeekNumbers="showWeekNumbers"
+                                    :showDropdowns="showDropdowns"
+                                    :autoApply="autoApply"
+                                    v-model="dateRange"
+                                    @update="updateValues"
+                                    @toggle="logEvent('event: open', $event)"
+                                    @start-selection="logEvent('event: startSelection', $event)"
+                                    @finish-selection="logEvent('event: finishSelection', $event)"
+                                    :linkedCalendars="linkedCalendars"
+                                    :dateFormat="dateFormat"
+                            >
+                                <template v-slot:input="picker">
+                                    {{ picker.startDate }} - {{ picker.endDate }}
+                                </template>
+                            </date-range-picker> -->
                                 <!-- <date-range-picker :ranges="false" singleDatePicker="single" :opens="'left'" v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker"> -->
 
                                 <!-- <template>

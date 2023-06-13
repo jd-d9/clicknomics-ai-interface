@@ -6743,3 +6743,91 @@ select{
 
 
 /* new added css */
+#input-0, #input-0::placeholder {
+    min-height: unset !important;
+    font-weight: 600;
+    font-size: 23px !important;
+    padding: 8px 5px 0 10px !important;
+}
+.field-wrapper-span .v-field--variant-filled {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 4px;
+}
+.field-wrapper-span .v-field--variant-filled:hover {
+    border: 1px solid black !important;
+}
+.field-wrapper-span .v-field__input {
+    padding: 10px 5px 0 10px !important;
+    /* height: unset !important;
+    min-height: unset !important; */
+}
+.v-field--variant-filled {
+    transform: unset !important;
+}
+.width-adding .v-field__input {
+    padding: 0 5px 0 10px !important;
+    min-height: 40px !important;
+}
+.field-wrapper-span .v-field--focused, .field-wrapper-span .v-field--focused:hover{
+    border: 2px solid #005eb3 !important;
+}
+.field-wrapper-span .v-field--focused .v-field-label--floating{
+    color: #005eb3 !important;
+}
+.v-field-label--floating {
+    background-color: white;
+    padding: 0 2px;
+    opacity: 1 !important;
+    top: 0 !important;
+    left: -8px !important;
+    transform: translateY(-50%) !important;
+}
+.v-textarea .v-field__input {
+    mask-image: none !important;
+}
+.single-product-form .v-card--variant-elevated {
+    border: 1px solid #e0e0e0 !important;
+    box-shadow: none !important;
+}
+.single-product-form .v-btn--variant-elevated {
+    width: unset !important;
+    height: unset !important;
+    box-shadow: none !important;
+    padding: 4px;
+    color: #005eb3;
+}
+.v3dp__input_wrapper {
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, .1);
+}
+@font-face {
+    font-family: fontAwesomeFont;
+    src: url(../fonts/font_awesome/fa-solid-900.ttf);
+    /* /assets/fonts/font_awesome/fa-solid-900.ttf */
+}
+.v3dp__input_wrapper::after {
+    content: '\f133';
+    position: absolute;
+    font-size: 14px;
+    color: rgba(0, 0, 0, .2);
+    font-family: fontAwesomeFont;
+    top: 7px;
+    right: 5px;
+    background-color: white;
+}
+.v3dp__input_wrapper:hover::after {
+    display: none;
+}
+.v3dp__input_wrapper input {
+    width: 120px;
+    padding: 6px 8px;
+}
+.v3dp__input_wrapper input:focus {
+    outline: none !important;
+}
+.v3dp__clearable {
+    left: -8px;
+}
+.v3dp__popout {
+    right: 0;
+}

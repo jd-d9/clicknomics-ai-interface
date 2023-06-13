@@ -8,15 +8,15 @@
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">Invoice</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right">
-                            <a href="/accounting/invoice/template" class="btn btn-lg btn-neutral btn_animated">Templates</a>
-                            <a href="/accounting/invoice/create" class="btn btn-lg btn-neutral btn_animated">Add New Invoice</a>
+                            <router-link to="/accounting/invoice/template" class="btn btn-lg btn-neutral btn_animated">Templates</router-link>
+                            <router-link to="/accounting/invoice/create" class="btn btn-lg btn-neutral btn_animated">Add New Invoice</router-link>
                         </div>
                     </div>
                 </div>
@@ -32,17 +32,20 @@
                             <div class="v-card v-sheet theme--light">
                                 <div class="card-header text-end">
                                     <div class="row">
-                                        <div class="col-4">
-                                            <select class="select-tag">
-                                                <option value="Not available">Not Available</option>
-                                            </select>
-                                        </div>
+                                        <v-col class="d-flex" cols="12" sm="4">
+                                            <v-select
+                                            label="Network Filter" 
+                                            :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+                                            variant="solo"
+                                            @change="fetchInvoiceList"
+                                            ></v-select>
+                                        </v-col>
                                         <div class="col-4">
                                             <input type="date" class="date-picker">
                                         </div>
                                         <div class="col-3 ms-auto">
                                             <div class="ms-auto search-input position-relative">
-                                                <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchUser">
+                                                <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchInvoice">
                                             </div>
                                         </div>
                                     </div>
@@ -53,23 +56,23 @@
                                         <tr class="table-body-back">
                                             <th>{{item.selectable.id}}</th>
                                             <td>{{item.selectable.invoice_number}}</td>
-                                            <td>{{item.selectable.name}}</td>
+                                            <td>{{item.selectable.network_name ? item.selectable.network_name : '-'}}</td>
                                             <td>{{item.selectable.invoice_issue_date}}</td>
                                             <td>{{item.selectable.invoice_due_date}}</td>
                                             <td>
                                                 <router-link to="" data-bs-target="#updateEditedData" data-bs-toggle="modal">{{item.selectable.is_invoice_edited == '1' ? 'Yes' : 'No'}}</router-link>
                                             </td>
                                             <td>
-                                                <button class="disable-button" @click.prevent="editUser(item.selectable.id)">
+                                                <button class="disable-button" @click.prevent="editInvoice(item.selectable.id)">
                                                     <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
                                                 </button>
-                                                <button class="disable-button" @click.prevent="deleteUser(item.selectable.id)">
+                                                <button class="disable-button" @click.prevent="downloadInvoice(item.selectable.id)">
                                                     <img src="/assets/img/icons/download.svg" class="icon-width" title="Delete user">
                                                 </button>
-                                                <button class="disable-button" @click.prevent="editUser(item.selectable.id)">
+                                                <button class="disable-button" @click.prevent="shareInvoice(item.selectable.id)">
                                                     <img src="/assets/img/icons/share.svg" class="icon-width" title="Edit user">
                                                 </button>
-                                                <button class="disable-button" @click.prevent="deleteUser(item.selectable.id)">
+                                                <button class="disable-button" @click.prevent="deleteInvoice(item.selectable.id)">
                                                     <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
                                                 </button>
                                             </td>
@@ -256,58 +259,8 @@ export default {
             singleExpand: true,
             page: 1,
             itemsPerPage: -1,
-            invoiceList: [
-                {
-                    "id": 1,
-                    "name": "Test Media Buyer",
-                    "email": "test@gmail.com",
-                    "email_verified_at": null,
-                    "last_login": null,
-                    "role_id": 29,
-                    "status": "1",
-                    "country_code": "62",
-                    "phone_number": "7878000000",
-                    "created_by": 5,
-                    "updated_by": 5,
-                    "profile_image": null,
-                    "created_at": "2023-06-09T04:59:55.000000Z",
-                    "updated_at": "2023-06-09T05:00:19.000000Z",
-                    "google2fa_secret": null,
-                    "reset_2fa_token": null,
-                    "reset_2fa_at": null,
-                    "two_factor_code": null,
-                    "two_factor_expires_at": null,
-                    "verified_by": null,
-                    "verified_at": null,
-                    "verification_status": null,
-                    "remember_2fa": null
-                },
-                {
-                    "id": 2,
-                    "name": "Testing...",
-                    "email": "hardik.d9ithub@gmail.com",
-                    "email_verified_at": null,
-                    "last_login": null,
-                    "role_id": 28,
-                    "status": "1",
-                    "country_code": "91",
-                    "phone_number": "8484840000",
-                    "created_by": 5,
-                    "updated_by": 26,
-                    "profile_image": "uploads/userProfile/6482bc493bf66.jpeg",
-                    "created_at": "2023-06-07T10:19:39.000000Z",
-                    "updated_at": "2023-06-09T05:44:41.000000Z",
-                    "google2fa_secret": "MERZEKJFQYQC57OSL6CMYJYIJDHSWFJV",
-                    "reset_2fa_token": null,
-                    "reset_2fa_at": null,
-                    "two_factor_code": "694694",
-                    "two_factor_expires_at": "2023-06-09 05:57:12",
-                    "verified_by": "email",
-                    "verified_at": "2023-06-09 05:42:52",
-                    "verification_status": "1",
-                    "remember_2fa": 1
-                }
-            ],
+            invoiceList: [],
+            invoiceFilter: [],
             emailList: [
                 {
                     email: ''
@@ -333,6 +286,16 @@ export default {
         this.getInvoicesList();
     },
     methods: {
+        // search user from table
+        searchInvoice() {
+            this.invoiceList = this.invoiceFilter.filter((val) => {
+                return val.invoice_number.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.id.toString().includes(this.searchInput.toLowerCase()) || 
+                        // val.network_name.toString().includes(this.searchInput.toLowerCase()) || 
+                        val.invoice_issue_date.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.invoice_due_date.toLowerCase().includes(this.searchInput.toLowerCase())
+            })
+        },
         // get invoices list
         getInvoicesList() {
             this.hideShowLoader = true;
@@ -344,7 +307,8 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.invoiceList = response.data.data.invoiceList
+                    this.invoiceList = response.data.data.invoiceList;
+                    this.invoiceFilter = response.data.data.invoiceList;
                     console.log(response.data.data.invoiceList, 'this.invoiceList')
                     this.hideShowLoader = false;
                 }
@@ -353,6 +317,36 @@ export default {
                 this.hideShowLoader = false;
                 console.log(error)
             });
+        },
+        // delete invoice
+        deleteInvoice(id) {
+            this.hideShowLoader = true;
+            this.axios.delete(this.$api + '/accounting/invoice/' + id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: 'Invoice deleted',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.getInvoicesList();
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // edit invoice
+        editInvoice(id) {
+            this.$router.push('/accounting/invoice/' + id + '/edit');
         }
     }
 }
