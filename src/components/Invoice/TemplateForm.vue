@@ -10,16 +10,15 @@
                                     <li class="breadcrumb-item">
                                         <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Template {{ dynamicBredCrumb }}</li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{ dynamicBredCrumb }}</li>
                                 </ol>
                             </nav>
                         </div>
-                        <div class="col-lg-6 text-right" v-if="toggleElement">
-                            <!-- <router-link to="" type="button" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Create New Template</router-link> -->
-                            <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="saveInvoice">Create New Template</button>
+                        <div class="col-lg-6 text-right" v-if="!toggleElement">
+                            <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="createInvoice">Create Invoice</button>
                         </div>
                         <div class="col-lg-6 text-right" v-else>
-                            <router-link to="" type="button" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Save As Template</router-link>
+                            <router-link to="" type="button" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Create New Template</router-link>
                             <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="updateTemplate">Update Template</button>
                         </div>
                     </div>
@@ -40,8 +39,8 @@
                                                 <!-- Left Content -->
                                                 <div class="col-5">
                                                     <div class="d-flex align-center mb-4">
-                                                        <span class="field-wrapper-span text--primary font-weight-bold text-xl">
-                                                            <v-text-field v-model.number="invoiceData.companyName" outlined dense class="flex-grow-0 text-xl" label="Company Name" placeholder="Company Name" hide-details="auto"></v-text-field>
+                                                        <span class="field-wrapper-span company-name-field text--primary font-weight-bold text-xl">
+                                                            <v-text-field v-model="invoiceData.companyName" outlined dense class="flex-grow-0 text-xl" label="Company Name" placeholder="Company Name" hide-details="auto"></v-text-field>
                                                         </span>
                                                     </div>
                                                     <span class="field-wrapper-span d-block">
@@ -53,7 +52,7 @@
                                                     <div class="d-flex align-center justify-end">
                                                         <span class="me-2">Invoice Number:</span>
                                                         <span class="field-wrapper-span width-adding">
-                                                            <v-text-field v-model.number="invoiceData.invoiceData.invoiceNumber" outlined dense class="header-inputs flex-grow-0" hide-details="auto"></v-text-field>
+                                                            <v-text-field v-model="invoiceData.invoiceData.invoiceNumber" outlined dense class="header-inputs flex-grow-0" hide-details="auto"></v-text-field>
                                                         </span>
                                                     </div>
                                                     <div class="mt-3 d-flex align-center justify-end">
@@ -221,12 +220,12 @@
             </div>
         </div>
         <!-- Update Ads Account List-->
-        <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
+        <div class="modal fade" id="createNewTemplateModal" tabindex="-1" role="dialog" aria-labelledby="createNewTemplateModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 style="color:#fff;" class="modal-title">Invoice Template</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
                             <span style="color:#fff;" aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -246,7 +245,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="saveTemplate">Save</button>
+                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="saveAsNewTemplate">Save</button>
                                     </div>
                                 </div>
                             </form>
@@ -295,8 +294,9 @@ export default {
                 companyDetail: 'Instant Profits Media LLC\n1611 Spring Gate Lane Unit #370878\nLas Vegas, NV, 89134\nPhone: +14074139604\nwww.instantprofitsmedia.com - info@instantprofitsmedia.com\nEIN: 82-1197063',
             },
             templateName: '',
+            CurrentTemplateName: '',
             saveAsTemplate: 0,
-            dynamicBredCrumb: 'Create',
+            dynamicBredCrumb: 'Edit Template',
             toggleElement: true,
             isTempInvalid: false,
             errorMessage: ''
@@ -308,20 +308,20 @@ export default {
         }
     },
     mounted() {
-        if(this.$route.params.id) {
-            this.dynamicBredCrumb = 'Edit';
+        this.getInvoiceData();
+        if(location.pathname == '/accounting/invoice/'+ this.$route.params.id +'/createFromTemplate') {
+            this.dynamicBredCrumb = 'Create Invoice From Template';
             this.toggleElement = false;
-            this.getInvoiceData();
         }
     },
     methods: {
         // opening modal
         openModal() {
-            window.$('#createUpdateData').modal('show');
+            window.$('#createNewTemplateModal').modal('show');
         },
         // closing modal
         closeModal() {
-            window.$('#createUpdateData').modal('hide');
+            window.$('#createNewTemplateModal').modal('hide');
         },
         // add new product in product table
         addNewItem() {
@@ -332,14 +332,13 @@ export default {
             })
         },
         // save invoice
-        saveInvoice() {
+        createInvoice() {
             this.hideShowLoader = true;
             this.axios.post(this.$api + '/accounting/invoice', {
                 invoice_number: this.invoiceData.invoiceData.invoiceNumber,
                 invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
                 invoice_due_date: moment(this.invoiceData.invoiceData.dueDate).format('YYYY-MM-DD'),
                 invoiceData: JSON.stringify( this.invoiceData),
-                // is_invoice_edited: '0'
             }, {
                 headers: {
                     "Content-Type": "application/json",
@@ -349,7 +348,6 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$router.push('/accounting/invoice');
-                    console.log(JSON.stringify( this.invoiceData), 'oidshiuhdsiuhfhsdiufhsiuhdisduhiudhfuih')
                     this.$toast.open({
                         message: 'Invoice created',
                         position: 'top-right',
@@ -367,7 +365,7 @@ export default {
         // get invoice data for edit
         getInvoiceData() {
             this.hideShowLoader = true;
-            this.axios.get(this.$api + '/accounting/invoice/' + this.$route.params.id, {
+            this.axios.get(this.$api + '/accounting/invoices/invoicetemplateShow/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -375,6 +373,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
+                    this.CurrentTemplateName = response.data.data.template_name;
                     this.invoiceData = JSON.parse(response.data.data.invoiceData);
                     this.invoiceData.invoiceData.issuedDate = new Date(this.invoiceData.invoiceData.issuedDate);
                     this.invoiceData.invoiceData.dueDate = new Date(this.invoiceData.invoiceData.dueDate);
@@ -386,16 +385,15 @@ export default {
                 this.hideShowLoader = false;
             });
         },
-        // update invoice
+        // update template
         updateTemplate() {
             this.hideShowLoader = true;
-            this.axios.post(this.$api + '/accounting/invoice/' + this.$route.params.id, {
-                _method: 'PUT',
+            this.axios.post(this.$api + '/accounting/invoices/updateTemplate/' + this.$route.params.id, {
+                template_name: this.CurrentTemplateName,
                 invoice_number: this.invoiceData.invoiceData.invoiceNumber,
                 invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
                 invoice_due_date: moment(this.invoiceData.invoiceData.dueDate).format('YYYY-MM-DD'),
                 invoiceData: JSON.stringify( this.invoiceData),
-                // is_invoice_edited: '0'
             }, {
                 headers: {
                     "Content-Type": "application/json",
@@ -406,7 +404,7 @@ export default {
                 if(response.data.success) {
                     this.$router.push('/accounting/invoice/template');
                     this.$toast.open({
-                        message: 'Invoice updated',
+                        message: 'Template updated',
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
@@ -431,20 +429,19 @@ export default {
             }
         },
         // save data as template
-        saveTemplate() {
+        saveAsNewTemplate() {
             this.templateNameIsValid();
             if(!this.templateName || this.errorMessage || this.isTempInvalid) {
                 return false;
             }
             else {
                 this.hideShowLoader = true;
-                this.axios.post(this.$api + '/accounting/invoice', {
+                this.axios.post(this.$api + '/accounting/invoices/saveTemplate', {
+                    template_name: this.templateName,
                     invoice_number: this.invoiceData.invoiceData.invoiceNumber,
                     invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
                     invoice_due_date: moment(this.invoiceData.invoiceData.dueDate).format('YYYY-MM-DD'),
                     invoiceData: JSON.stringify( this.invoiceData),
-                    template_name: this.templateName,
-                    save_as_template: this.saveAsTemplate,
                 }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -454,8 +451,9 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.$router.push('/accounting/invoice/template');
+                        this.closeModal();
                         this.$toast.open({
-                            message: 'Saved as template',
+                            message: 'Template created',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'

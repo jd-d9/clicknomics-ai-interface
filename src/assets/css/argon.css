@@ -6662,9 +6662,19 @@ select{
 .monitor .v-label {
     margin: 0 !important;
 }
-
+.radio-button-app .v-application__wrap {
+    min-height: 7vh !important;
+}
 .monitor_main .v-input__control {
-    padding: 10px 0 !important;
+    padding: 4px 0 !important;
+}
+.monitor_main .v-input__details {
+    display: none !important;
+}
+.monitor_main {
+    flex: unset !important;
+    border: 1px solid #b9bbbc;
+    border-radius: 12px;
 }
 
 .daterangepicker .calendars {
@@ -6743,7 +6753,7 @@ select{
 
 
 /* new added css */
-#input-0, #input-0::placeholder {
+.company-name-field .v-field__input, .company-name-field .v-field__input::placeholder {
     min-height: unset !important;
     font-weight: 600;
     font-size: 23px !important;
@@ -6830,4 +6840,79 @@ select{
 }
 .v3dp__popout {
     right: 0;
+}
+/* dashboard component */
+.v-layout--full-height {
+    height: unset !important;
+    border-radius: 5px;
+}
+/* display user component */
+.v-card--variant-elevated {   
+    box-shadow: none !important;
+    border-width: 1px !important;
+}
+.v-card-title .v-input{
+    margin: 0px;
+    padding: 0px;
+}
+.v-card__subtitle, .v-card__text, .v-card-title {
+    padding: 10px 15px !important;
+    background: #e8f0fe;
+    color: #000;
+    font-weight: 500 !important;
+    font-size: 1.0625rem !important;
+    border-bottom: 1px solid rgb(4 206 4);
+}
+/* invoice/template form */
+.v3dp__elements button.selected span {
+    background-color: #1284e7 !important;
+    border-radius: 0;
+    outline: none !important;
+    border-color: transparent !important;
+}
+.v3dp__elements button:not(:disabled):hover span {
+    background-color: #f3f9fe !important;
+    color: #000 !important;
+}
+.v-data-table-header__content {
+    color: #3f51b5 !important;
+    font-size: 14px !important;
+}
+.v-application a {
+    color: #3f51b5 !important;
+}
+.v-card-actions {
+    border-top: 1px solid #04ce04;
+    color: black !important;
+}
+.v-card-actions button{
+    color: black !important;
+}
+.select-network-filter {
+    width: 100%;
+}
+.select-network-filter .v-field__input{
+    padding-top: 0 !important;
+}
+.select-network-filter .v-input__details, .select-network-filter .v-field-label--floating{
+    display: none !important;
+}
+.select-network-filter .v-input__control{
+    height: 36px !important;
+}
+.select-network-filter-two .v-input__control{
+    height: 24px !important;
+}
+.select-network-filter .v-field__input{
+    --v-field-input-min-height: unset !important;
+    height: 100% !important;
+    padding-bottom: 0px !important;
+    align-items: center;
+}
+.select-network-filter .v-input__control .v-input--density-default, 
+.select-network-filter .v-input__control .v-field--variant-solo{ 
+    --v-input-control-height: 100% !important;
+}
+.v-select__content {
+    transform: translateY(-35px) !important;
 }

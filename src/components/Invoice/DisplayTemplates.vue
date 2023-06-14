@@ -29,43 +29,46 @@
                     <div class="card">
                         <div class="card shadow">
                             <div class="card-body">
-                                <div class="v-card v-sheet theme--light">
-                                    <div class="card-header text-end">
-                                        <div class="row">
-                                            <div class="col-3 ms-auto">
-                                                <div class="ms-auto search-input position-relative">
-                                                    <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchInvoice">
+                                <v-app>
+                                    <v-card>
+                                        <v-card-title>
+                                            <!-- <v-row></v-row> -->
+                                                <div class="row">
+                                                    <div class="col-3 ms-auto">
+                                                        <div class="ms-auto search-input position-relative">
+                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchInvoice">
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- data table component -->
-                                    <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="templateList" :search="search"  :single-expand="singleExpand" class="elevation-1" :itemsPerPage="itemsPerPage">
-                                        <template v-slot:item="{ item }">
-                                            <tr class="table-body-back">
-                                                <th>{{item.selectable.id}}</th>
-                                                <td>
-                                                    <router-link to="" @click.prevent="editTemplateName(item.selectable.id)">
-                                                        {{item.selectable.template_name}} 
-                                                        <i class="fa-solid fa-pen-to-square edit-icon-pen"></i>
-                                                    </router-link>
-                                                </td>
-                                                <td>{{item.selectable.invoice_number}}</td>
-                                                <td>{{item.selectable.invoice_issue_date}}</td>
-                                                <td>{{item.selectable.invoice_due_date}}</td>
-                                                <td>
-                                                    <button class="btn btn-lg btn-neutral">Create Invoice From Template</button>
-                                                    <button class="disable-button" @click.prevent="editUser(item.selectable.id)">
-                                                        <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
-                                                    </button>
-                                                    <button class="disable-button" @click.prevent="deleteUser(item.selectable.id)">
-                                                        <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </v-data-table>
-                                </div>
+                                        </v-card-title>
+                                        <!-- data table component -->
+                                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="templateList" :search="search"  :single-expand="singleExpand" class="elevation-1" :itemsPerPage="itemsPerPage">
+                                            <template v-slot:item="{ item }">
+                                                <tr class="table-body-back">
+                                                    <th>{{item.selectable.id}}</th>
+                                                    <td>
+                                                        <router-link to="" @click.prevent="editTemplateName(item.selectable.id)">
+                                                            {{item.selectable.template_name}} 
+                                                            <i class="fa-solid fa-pen-to-square edit-icon-pen"></i>
+                                                        </router-link>
+                                                    </td>
+                                                    <td>{{item.selectable.invoice_number}}</td>
+                                                    <td>{{item.selectable.invoice_issue_date}}</td>
+                                                    <td>{{item.selectable.invoice_due_date}}</td>
+                                                    <td>
+                                                        <button class="btn btn-lg btn-neutral" @click.prevent="createInvoiceFromTemp(item.selectable.id)">Create Invoice From Template</button>
+                                                        <router-link :to="'/accounting/invoice/template/' + item.selectable.id + '/edit'" class="disable-button">
+                                                            <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit template">
+                                                        </router-link>
+                                                        <button class="disable-button" @click.prevent="deleteTemplate(item.selectable.id)">
+                                                            <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete template">
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </v-data-table>
+                                    </v-card>
+                                </v-app>
                             </div>
                         </div>
                     </div>
@@ -164,6 +167,56 @@ export default {
                         val.invoice_due_date.toLowerCase().includes(this.searchInput.toLowerCase())
             })
         },
+        // get templates
+        getTemplateData() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/invoices/invoiceTemplate', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    console.log(response.data.data, 'data')
+                    this.templateList = response.data.data;
+                    this.templateFilter = response.data.data;
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // deleting template
+        deleteTemplate(id) {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/invoices/deleteInvoiceTemplate', {  // must use post method for this(from backend side)
+                id: id,
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: 'Template deleted',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.getTemplateData();
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
         // open modal and get template name
         editTemplateName(id) {
             this.openModal();
@@ -202,6 +255,12 @@ export default {
                 if(response.data.success) {
                     this.closeModal();
                     this.getTemplateData();
+                    this.$toast.open({
+                        message: 'Template name updated',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
                     this.hideShowLoader = false;
                 }
             })
@@ -210,28 +269,10 @@ export default {
                 this.hideShowLoader = false;
             });
         },
-        // get templates
-        getTemplateData() {
-            this.hideShowLoader = true;
-            this.axios.get(this.$api + '/accounting/invoices/invoiceTemplate', {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    console.log(response.data.data, 'data')
-                    this.templateList = response.data.data;
-                    this.templateFilter = response.data.data;
-                    this.hideShowLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.hideShowLoader = false;
-            });
-        },
+        // create invoice from template redirect link
+        createInvoiceFromTemp(id) {
+            this.$router.push('/accounting/invoice/' + id + '/createFromTemplate');
+        }
     }    
 }
 </script>

@@ -15,11 +15,11 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right" v-if="toggleElement">
-                            <router-link to="" @click.prevent="openModal" type="button" class="btn btn-lg btn-neutral btn_animated" @click="showModal = true">Save As Template</router-link>
+                            <router-link to="" @click.prevent="openModal" type="button" class="btn btn-lg btn-neutral btn_animated">Save As Template</router-link>
                             <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="saveInvoice">Save Invoice</button>
                         </div>
                         <div class="col-lg-6 text-right" v-else>
-                            <router-link to="" @click.prevent="openModal" type="button" class="btn btn-lg btn-neutral btn_animated" @click="showModal = true">Save As Template</router-link>
+                            <router-link to="" @click.prevent="openModal" type="button" class="btn btn-lg btn-neutral btn_animated">Save As Template</router-link>
                             <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="updateInvoice">Update Invoice</button>
                         </div>
                     </div>
@@ -40,8 +40,8 @@
                                                 <!-- Left Content -->
                                                 <div class="col-5">
                                                     <div class="d-flex align-center mb-4">
-                                                        <span class="field-wrapper-span text--primary font-weight-bold text-xl">
-                                                            <v-text-field v-model.number="invoiceData.companyName" outlined dense class="flex-grow-0 text-xl" label="Company Name" placeholder="Company Name" hide-details="auto"></v-text-field>
+                                                        <span class="field-wrapper-span company-name-field text--primary font-weight-bold text-xl">
+                                                            <v-text-field v-model="invoiceData.companyName" outlined dense class="flex-grow-0 text-xl" label="Company Name" placeholder="Company Name" hide-details="auto"></v-text-field>
                                                         </span>
                                                     </div>
                                                     <span class="field-wrapper-span d-block">
@@ -53,7 +53,7 @@
                                                     <div class="d-flex align-center justify-end">
                                                         <span class="me-2">Invoice Number:</span>
                                                         <span class="field-wrapper-span width-adding">
-                                                            <v-text-field v-model.number="invoiceData.invoiceData.invoiceNumber" outlined dense class="header-inputs flex-grow-0" hide-details="auto"></v-text-field>
+                                                            <v-text-field v-model="invoiceData.invoiceData.invoiceNumber" outlined dense class="header-inputs flex-grow-0" hide-details="auto"></v-text-field>
                                                         </span>
                                                     </div>
                                                     <div class="mt-3 d-flex align-center justify-end">
@@ -302,7 +302,6 @@ export default {
             toggleElement: true,
             isTempInvalid: false,
             errorMessage: '',
-            showModal: false,
         }
     },
     computed: {
@@ -437,7 +436,6 @@ export default {
         saveTemplate() {
             this.templateNameIsValid();
             if(!this.templateName || this.errorMessage || this.isTempInvalid) {
-                this.showModal = true;
                 return false;
             }
             else {
@@ -458,7 +456,6 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.$router.push('/accounting/invoice/template');
-                        this.showModal = false;
                         this.$toast.open({
                             message: 'Saved as template',
                             position: 'top-right',

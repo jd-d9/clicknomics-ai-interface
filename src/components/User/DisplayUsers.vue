@@ -29,36 +29,49 @@
                 <div class="col" v-if="userPermissions.view == '1'">
                     <div class="card">
                         <div class="card-body">
-                            <div class="v-card v-sheet theme--light">
-                                <div class="card-header text-end">
-                                    <div class="row">
-                                        <div class="col-3 ms-auto">
-                                            <div class="ms-auto search-input position-relative">
-                                                <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchUser">
+                            <v-app>
+                                <v-card>
+                                    <v-card-title>
+                                        <v-spacer></v-spacer>
+                                        <!-- <v-row>
+                                            <v-col class="d-flex" cols="12" sm="4"></v-col>
+                                            <v-col class="d-flex justify-content-end" cols="12" sm="4">
+                                            </v-col>
+                                            <v-col class="d-flex search_width" cols="12" sm="4">
+                                                <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+                                            </v-col>
+                                        </v-row> -->
+                                        <div class="text-end">
+                                            <div class="row">
+                                                <div class="col-3 ms-auto">
+                                                    <div class="ms-auto search-input position-relative">
+                                                        <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchUser">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <!-- data table component -->
-                                <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items" :search="search" :itemsPerPage="itemsPerPage">
-                                    <template v-slot:item="{ item }">
-                                        <tr class="table-body-back">
-                                            <th>{{item.selectable.id}}</th>
-                                            <td>{{item.selectable.name}}</td>
-                                            <td>{{item.selectable.email}}</td>
-                                            <td>+{{item.selectable.country_code}} - {{item.selectable.phone_number}}</td>
-                                            <td class="text-center">
-                                                <button class="disable-button" :disabled="userPermissions.update_auth == '0'" @click.prevent="editUser(item.selectable.id)">
-                                                    <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
-                                                </button>
-                                                <button class="disable-button" :disabled="userPermissions.delete_auth == '0'" @click.prevent="deleteUser(item.selectable.id)" v-if="item.selectable.role_id != roleId">
-                                                    <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </template>
-                                </v-data-table>
-                            </div>
+                                    </v-card-title>
+                                    <!-- data table component -->
+                                    <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items" :search="search" :itemsPerPage="itemsPerPage">
+                                        <template v-slot:item="{ item }">
+                                            <tr class="table-body-back">
+                                                <th>{{item.selectable.id}}</th>
+                                                <td>{{item.selectable.name}}</td>
+                                                <td>{{item.selectable.email}}</td>
+                                                <td>+{{item.selectable.country_code}} - {{item.selectable.phone_number}}</td>
+                                                <td class="text-center">
+                                                    <button class="disable-button" :disabled="userPermissions.update_auth == '0'" @click.prevent="editUser(item.selectable.id)">
+                                                        <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
+                                                    </button>
+                                                    <button class="disable-button" :disabled="userPermissions.delete_auth == '0'" @click.prevent="deleteUser(item.selectable.id)" v-if="item.selectable.role_id != roleId">
+                                                        <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </v-data-table>
+                                </v-card>
+                            </v-app>
                         </div>
                     </div>
                 </div>

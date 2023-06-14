@@ -14,7 +14,6 @@ import 'vue-toast-notification/dist/theme-bootstrap.css';
 import '@mdi/font/css/materialdesignicons.css';
 // vuetify
 import 'vuetify/dist/vuetify.css';
-
 import { createVuetify } from 'vuetify';
 import * as directives from 'vuetify/directives';
 import * as labsComponents from 'vuetify/labs/components';
@@ -23,8 +22,8 @@ import { VDataTable } from 'vuetify/labs/VDataTable';
 import 'bootstrap/dist/js/bootstrap.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // date range picker
-// import DateRangePicker from 'vue2-daterange-picker';
-// import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
+import DateRangePicker from 'vue2-daterange-picker';
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import LoaderComponent from './components/Common/LoaderComponent.vue';
 import NavAndSideBar from './components/Navbar_and_Sidebar/NavAndSideBar.vue';
 
@@ -78,5 +77,5 @@ require('@/assets/css/dark-argon.css');
 // Vue.config.productionTip = false;
 app.component('loader-component', LoaderComponent);
 app.component('nav-and-side-bar', NavAndSideBar);
-// app.component('date-range-picker', DateRangePicker);
+app.component('date-range-picker', DateRangePicker);
 app.mount('#app');

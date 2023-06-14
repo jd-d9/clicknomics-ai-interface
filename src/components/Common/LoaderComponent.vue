@@ -32,7 +32,7 @@
     height: 100vh;
     left: 0;
     background: #000000d9;
-    z-index: 1052;
+    z-index: 5052 !important;
 }
 .loader_center {
     position: relative;
