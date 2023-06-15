@@ -194,53 +194,6 @@
 </script>
 
 <style>
-    .search-input {
-        width: 80%;
-    }
-    .search-input input{
-        width: 100%;
-        border: none !important;
-        border-radius: 0px !important;
-        border-bottom: 2px solid rgb(182, 182, 182) !important;
-        background: transparent !important;
-        padding: 6px 2px !important;
-        height: unset !important;
-        font-size: 16px !important;
-    }
-    .search-input input:focus{
-        outline: none;
-    }
-    .search-input::before {
-        position: absolute;
-        content: '';
-        z-index: 50000;
-        width: 100%;
-        height: 2px;
-        top: 96%;
-        left: 0;
-        transform: scale(0, 1);
-        background-color: rgb(4 96 180);
-    }
-    @font-face {
-        font-family: fontAwesomeFont;
-        src: url(../../../public/assets/fonts/font_awesome/fa-solid-900.ttf);
-        /* src: url(/assets/fonts/font_awesome/fa-solid-900.ttf); */
-    }
-    .search-input:hover::before {
-        transform: scale(1, 1);
-        transition: all 0.4s ease;
-    }
-    .search-input::after {
-        content: '\f002';
-        position: absolute;
-        background-color: rgb(232 240 254);
-        color: rgb(4 96 180);
-        font-family: fontAwesomeFont;
-        font-size: 18px;
-        top: 5px;
-        right: 5px;
-    }
-    /* may be it's necessary to keep in scoped tag if not working */
     .icon-width {
         width: 30px;
     }

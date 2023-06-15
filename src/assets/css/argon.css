@@ -6900,8 +6900,26 @@ select{
 .select-network-filter .v-input__control{
     height: 36px !important;
 }
+.select-network-filter-height .v-input__control{
+    height: unset !important;
+}
 .select-network-filter-two .v-input__control{
     height: 24px !important;
+    position: relative;
+}
+.select-network-filter-two .v-input__control::after{
+    content: '';
+    position: absolute;
+    bottom: 1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: black;
+    transform: scale(0, 1);
+}
+.select-network-filter-two .v-autocomplete--active-menu .v-input__control::after{
+    transform: scale(1, 1);
+    transition: all 0.3s ease;
 }
 .select-network-filter .v-field__input{
     --v-field-input-min-height: unset !important;
@@ -6915,4 +6933,70 @@ select{
 }
 .v-select__content {
     transform: translateY(-35px) !important;
+}
+/* serch input field */
+.search-input {
+    width: 73%;
+}
+.search-input input{
+    width: 100%;
+    border: none !important;
+    border-radius: 0px !important;
+    border-bottom: 1px solid rgb(182, 182, 182) !important;
+    background: transparent !important;
+    padding: 4px 2px 0 0 !important;
+    height: unset !important;
+    font-size: 16px !important;
+}
+.search-input input:focus{
+    outline: none;
+}
+.search-input::before {
+    position: absolute;
+    content: '';
+    z-index: 50000;
+    width: 100%;
+    height: 2px;
+    top: 96%;
+    left: 0;
+    transform: scale(0, 1);
+    background-color: rgb(4 96 180);
+}
+.search-input:hover::before {
+    transform: scale(1, 1);
+    transition: all 0.4s ease;
+}
+.search-input::after {
+    content: '\f002';
+    position: absolute;
+    background-color: rgb(232 240 254);
+    color: rgb(4 96 180);
+    font-family: fontAwesomeFont;
+    font-size: 16px;
+    top: 4px;
+    right: 5px;
+}
+/* credit card payment form */
+.date-picker-3 .v3dp__input_wrapper {
+    position: relative;
+    border: 1px solid rgb(185 187 188);
+    border-radius: 12px;
+    padding: 5px 10px;
+}
+.date-picker-3 .v3dp__input_wrapper input{
+    width: 98% !important;
+}
+.date-picker-3 .v3dp__input_wrapper::after {
+    right: 22px;
+    top: 12px;
+}
+.date-picker-3 .v3dp__datepicker .v3dp__popout{
+    left: 0;
+}
+/* data table row hover */
+.v-data-table .v-table__wrapper > table tbody > tr > td {
+    background-color: unset !important;
+}
+.table-hover-class .v-table__wrapper tbody tr:hover{
+    background: #eee !important;
 }

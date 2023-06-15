@@ -42,7 +42,7 @@
                                                 </div>
                                         </v-card-title>
                                         <!-- data table component -->
-                                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="templateList" :search="search"  :single-expand="singleExpand" class="elevation-1" :itemsPerPage="itemsPerPage">
+                                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="templateList" :search="search"  :single-expand="singleExpand" class="elevation-1 table-hover-class" :itemsPerPage="itemsPerPage">
                                             <template v-slot:item="{ item }">
                                                 <tr class="table-body-back">
                                                     <th>{{item.selectable.id}}</th>

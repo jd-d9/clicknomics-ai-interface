@@ -32,15 +32,17 @@
                             <v-app>
                                 <v-card>
                                     <v-card-title>
-                                        <v-row>
+                                        <v-row class="align-items-center">
                                             <v-col class="d-flex" cols="12" sm="4">
                                                 <div class="select-network-filter">
                                                     <v-select
-                                                    label="Network Filter" 
-                                                    :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+                                                    clearable
                                                     variant="solo"
-                                                    @change="fetchInvoiceList"
+                                                    label="Network Filter" 
+                                                    :items="networkFilter"
+                                                    v-model="networkSelected"
                                                     ></v-select>
+                                                    <!-- @change="filterUsingNetwork" -->
                                                 </div>
                                             </v-col>
                                             <!-- <v-col class="d-flex" cols="12" sm="4">
@@ -48,35 +50,42 @@
                                                 <v-text-field label="Search" variant="underlined"></v-text-field>
                                             </v-col> -->
                                             <div class="col-4">
-                                                <!-- <input type="date" class="date-picker"> -->
-                                                <!-- <date-range-picker v-model="dateRange">
-                                                    <div slot="header" slot-scope="header" class="slot">
+
+                                                <!-- <DateRangePickerWrapper/> -->
+
+                                                <!-- <date-range-picker
+                                                    v-model="dateRange"
+                                                    :date-format="dateFormat"
+                                                ></date-range-picker> -->
+
+                                                <!-- <date-range-picker :dateRange="dateRange" @input="$emit('update:modelValue', $event.target.value)">
+                                                    <template v-slot:header>
                                                         <h3>Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                                    </div>
+                                                    </template>
                                                     <template #input="picker">
-                                                        {{ picker.startDate }} - {{ picker.endDate }}
+                                                        {{ picker.startDate  }} - {{ picker.endDate }}
                                                     </template>
                                                     <template #date="data">
-                                                        <span class="small">{{ data.date }}</span>
+                                                        <span class="small">{{ data.date  }}</span>
                                                     </template>
                                                     <template #ranges="ranges">
-                                                        <div class="ranges">
-                                                            <ul>
-                                                                <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                                                    <b>{{ name }}</b> 
-                                                                    <small class="text-muted">{{ range[0].toDateString() }} - {{ range[1].toDateString() }}</small>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
+                                                    <div class="ranges">
+                                                        <ul>
+                                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
+                                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
+                                                            {{ range[1].toDateString() }}</small>
+                                                        </li>
+                                                        </ul>
+                                                    </div>
                                                     </template>
-                                                    <div slot="footer" slot-scope="data" class="slot">
+                                                    <template v-slot:footer>
                                                         <div>
                                                             <b class="text-black">Calendar footer</b> {{ data.rangeText }}
                                                         </div>
                                                         <div style="margin-left: auto">
-                                                            <a href="javascript:void(0)" @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
+                                                            <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
                                                         </div>
-                                                    </div>
+                                                    </template>
                                                 </date-range-picker> -->
                                             </div>
                                             <div class="col-3 ms-auto">
@@ -89,11 +98,11 @@
                                     <!-- data table component -->
                                     <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="invoiceList" :search="search"  :single-expand="singleExpand" class="elevation-1 table-expand" :itemsPerPage="itemsPerPage">
                                         <template v-slot:item="{ item }">
-                                            <tr>
+                                            <tr class="table-body-back">
                                                 <th>{{item.selectable.id}}</th>
                                                 <td>{{item.selectable.invoice_number}}</td>
                                                 <td>
-                                                    <router-link to="" @click="openCreateNetworkModal(item.selectable.id)">
+                                                    <router-link to="" @click="openCreateNetworkModal(item.selectable.id, item.selectable.network_add_type, item.selectable.network_name)">
                                                         {{item.selectable.network_name ? item.selectable.network_name : '-'}}
                                                     </router-link>
                                                 </td>
@@ -185,30 +194,30 @@
                                             <label class="form-control-label" for="input-username">Add Network Manually</label>
                                             <v-app>
                                                 <v-radio-group inline class="monitor_main" v-model="networkModal.networkAddType" @change="resetNetworkName">
-                                                    <v-radio class="monitor" label="YES" value="1"></v-radio>
-                                                    <v-radio class="monitor" label="NO" value="0"></v-radio>
+                                                    <v-radio class="monitor" label="YES" :value="1"></v-radio>
+                                                    <v-radio class="monitor" label="NO" :value="0"></v-radio>
                                                 </v-radio-group>
                                             </v-app>
                                         </div>
                                     </div>
-                                    <div class="col-lg-12 py-0"> <!-- v-if="networkModal.networkAddType" -->
+                                    <div class="col-lg-12 py-0" v-if="networkModal.networkAddType">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">CPA Network Name</label>
                                             <input type="text" :class="{'form-control': true}" v-model="networkModal.networkName">
                                         </div>
                                     </div>
-                                    <div class="col-lg-12 py-0"> <!-- v-if="!networkModal.networkAddType" -->
+                                    <div class="col-lg-12 py-0" v-else>
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Select CPA Network</label>
                                             <div class="select-network-filter select-network-filter-two">
-                                                <v-autocomplete :class="{'form-control': true}" variant="outlined" :items="networkList" v-model="networkModal.networkName"></v-autocomplete>
+                                                <v-autocomplete :class="{'form-control': true}" variant="outlined" v-model="networkModal.networkName"></v-autocomplete>  <!-- :items="networkList"-->
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
+                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="addCpaNetwork">Save</button>
                                     </div>
                                 </div>
                             </form>
@@ -244,7 +253,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-12 py-0 text-right">
+                                    <div class="col-lg-12 py-0 mt-4 text-right">
                                         <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="isInvoiceEdited">Save</button>
                                     </div>
                                 </div>
@@ -258,13 +267,29 @@
 </template>
 
 <script>
+// import DateRangePickerWrapper from '../Common/DateRangePickerWrapper.vue';
+// import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 export default {
+    name: "SlotsDemo",
+    components: {
+        // DateRangePickerWrapper,
+    },
+    filters: {
+        dateCell (value) {
+            let dt = new Date(value)
+            return dt.getDate()
+        },
+        date (val) {
+            return val ? val.toLocaleString() : ''
+        }
+    },
     data() {
-        let today = new Date();
-        let startDate = today;
-        let endDate = today;
-        endDate.setDate(endDate.getDate() + 6)
+        // let today = new Date();
+        // let startDate = today;
+        // let endDate = today;
+        // endDate.setDate(endDate.getDate() + 6)
         return {
+            // dateRange: {startDate, endDate},
             // images: {
             //     logo: require('/assets/img/brand/logo.png'),
             //     edit: require('/assets/img/icons/edit.svg'),
@@ -304,34 +329,78 @@ export default {
                 id: '',
                 is_invoice_edited: '',
             },
-            dateRange: {startDate, endDate},
             networkFilter: [],
-            networkSelected: '',
+            networkSelected: null,
             isSortable: true,
             dialog: false,
             selectedInvoiceId: '',
-        }
-    },
-    filters: {
-        dateCell (value) {
-        let dt = new Date(value)
-
-        return dt.getDate()
-        },
-        date (val) {
-        return val ? val.toLocaleString() : ''
+            dateRange: {
+                startDate: '2019-12-26',
+                endDate: '2019-12-28',
+            },
+            searchInput: '',
         }
     },
     mounted() {
         this.getInvoicesList();
+        this.fetchNetworkList();
+        this.filterUsingNetwork();
+    },
+    watch: {
+        networkSelected(val) {
+            if(val) {
+                this.invoiceList = this.invoiceFilter.filter((data) => {
+                    return data.network_name == this.networkSelected;
+                })
+            }
+            else {
+                this.invoiceList = this.invoiceFilter;
+            }
+        }
     },
     methods: {
+        dateFormat (classes, date) {
+            if (!classes.disabled) {
+                classes.disabled = date.getTime() < new Date()
+            }
+            return classes
+        },
+        // get network list data
+        fetchNetworkList() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/invoices/fetchInvoiceList', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.networkFilter = [];
+                    console.log(response.data.networksList)
+                    response.data.networksList.forEach((val) => {
+                        if(val.network_name && val.network_name !== null) {
+                            this.networkFilter.push(val.network_name);
+                        }
+                    })
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // invoice list filter using selected network
+        filterUsingNetwork() {
+           console.log(this.invoiceList, this.networkSelected, 'oifihfg')
+        },
         // search user from table
         searchInvoice() {
             this.invoiceList = this.invoiceFilter.filter((val) => {
                 return val.invoice_number.toLowerCase().includes(this.searchInput.toLowerCase()) || 
                         val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        // val.network_name.toString().includes(this.searchInput.toLowerCase()) || 
+                        val.network_name && val.network_name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
                         val.invoice_issue_date.toLowerCase().includes(this.searchInput.toLowerCase()) || 
                         val.invoice_due_date.toLowerCase().includes(this.searchInput.toLowerCase())
             })
@@ -498,13 +567,53 @@ export default {
             });
         },
         // open/close create network modals
-        openCreateNetworkModal() {
+        openCreateNetworkModal(id, type, name) {
+            this.networkModal.id = id;
+            this.networkModal.networkAddType = (type == 'live' ? 0 : 1);
+            this.networkModal.networkName = name;
             window.$('#createNetworkModal').modal('show');
         },
         closeCreateNetworkModal() {
             window.$('#createNetworkModal').modal('hide');
+            this.resetNetworkModal();
         },
-
+        // reset network name
+        resetNetworkName() {
+           this.networkModal.networkName = '';
+        },
+        resetNetworkModal() {
+            this.networkModal = {
+                id: '',
+                networkAddType: 0,
+                networkName: '',
+            }
+        },
+        // adding cpa network
+        addCpaNetwork() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/invoices/addNetworkCompanyToInvoice', {
+                id: this.networkModal.id,
+                network_name: this.networkModal.networkName,
+                network_add_type: this.networkModal.networkAddType === 0 ?  'live' : 'manual'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.hideShowLoader = false;
+                    this.closeCreateNetworkModal();
+                    this.getInvoicesList();
+                    this.fetchNetworkList();
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        }
     }
 }
 </script>

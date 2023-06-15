@@ -259,8 +259,6 @@
 </template>
 
 <script>
-// import $ from 'jquery';
-import 'bootstrap';
 import Datepicker from 'vue3-datepicker';
 import moment from 'moment';
 export default {
@@ -351,7 +349,6 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$router.push('/accounting/invoice');
-                    console.log(JSON.stringify( this.invoiceData), 'oidshiuhdsiuhfhsdiufhsiuhdisduhiudhfuih')
                     this.$toast.open({
                         message: 'Invoice created',
                         position: 'top-right',
