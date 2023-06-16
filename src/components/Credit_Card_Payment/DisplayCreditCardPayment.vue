@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-default main-content-height">
         <div class="header bg-primary pb-6">
             <div class="container-fluid">
                 <div class="header-body">
@@ -15,7 +15,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right">
-                            <router-link to="/admin/img/doc/ipm-credit-card-payment-demo.csv" class="btn btn-lg btn-neutral btn_animated" download>
+                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
                                 <div>
                                     <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
                                     <span class="btn-inner--text">Demo.csv</span>
@@ -125,7 +125,7 @@
                                                         </td>
                                                     </tr>
                                                 </template>
-                                                <!-- <template v-slot:body.append v-if="creditCardPaymentList.length > 0">
+                                                <template v-slot:tbody v-if="creditCardPaymentList.length > 0">
                                                     <tr class="total_table">
                                                         <td>Totals</td>
                                                         <td>-</td>
@@ -135,7 +135,7 @@
                                                         <td>-</td>
                                                         <td>-</td>
                                                     </tr>
-                                                </template> -->
+                                                </template>
                                             </v-data-table>
                                         </v-card>
                                     </v-app>
@@ -160,9 +160,9 @@
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
-                                    <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
+                                    <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="chooseFile" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
+                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" accept=".csv" type="file" name="chooseFile" required/>
                                 </div>
                             </div>
                         </div>
@@ -199,6 +199,7 @@ export default {
             ],
             dateRange: {startDate, endDate},
             file: '',
+            selectedFile: '',
             currentItemsTable: [],
             itemsPerPage: -1,
             fromAccountFilter: [],
@@ -227,6 +228,31 @@ export default {
             return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         }
     },
+    watch: {
+        // from account list filtering
+        fromAccount(val) {
+            console.log(val, 'val')
+            if(val) {
+                this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
+                    return val.from_account == this.fromAccount;
+                })
+            }
+            else {
+                this.creditCardPaymentList = this.creditCardPaymentFilter;
+            }
+        },
+        // to account list filtering
+        toAccount(val) {
+            if(val) {
+                this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
+                    return val.to_account == this.toAccount;
+                })
+            }
+            else {
+                this.creditCardPaymentList = this.creditCardPaymentFilter;
+            }
+        }
+    },
     methods: {        
         // open/close import csv modal
         openImportCsvModal() {
@@ -246,6 +272,12 @@ export default {
                         val.payment_date.toLowerCase().includes(this.searchInput.toLowerCase())
             })
         },
+        // filtering to account
+        // filterToAccount() {
+        //     this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
+        //         return val.to_account == this.toAccount;
+        //     })
+        // },
         // get credit card payment list 
         getCreditCardPaymentList() {
             this.hideShowLoader = true;
@@ -259,6 +291,16 @@ export default {
                 if(response.data.success) {
                     this.creditCardPaymentList = response.data.data;
                     this.creditCardPaymentFilter = response.data.data;
+                    response.data.allfromAccount.forEach((val) => {
+                        this.fromAccountFilter.push({
+                            title: val.from_account,
+                        })
+                    });
+                    response.data.alltoAccount.forEach((val) => {
+                        this.toAccountFilter.push({
+                            title: val.to_account,
+                        })
+                    });
                     this.hideShowLoader = false;
                 }
             })
@@ -292,6 +334,35 @@ export default {
                 this.hideShowLoader = false;
             });
         },
+        // downloading csv
+        downloadCsv() {
+            // /admin/img/doc/ipm-credit-card-payment-demo.csv
+            this.axios.get(this.$api + '/accounting/invoices/exportPDF', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                },
+                responseType: 'blob',
+            })
+            .then(response => {
+                let blob = new Blob([response.data], { type:'application/pdf' } );
+                const _url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = _url;
+                link.setAttribute('download', 'demo.pdf');
+                document.body.appendChild(link);
+                link.click();
+                this.$toast.open({
+                    message: 'Invoice downloaded',
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'success'
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
         // choose file and import csv
         importCsv() {
             this.hideShowLoader = true;
@@ -299,30 +370,37 @@ export default {
                 file: this.selectedFile
             }, {
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
                 }
             })
             .then(response => {
                 if(response.data.success) {
-                    this.$router.push('/accounting/creditCardPayments');
+                    this.closeImportCsvModal();
+                    this.hideShowLoader = false;
+                    this.selectedFile = '';
                     this.$toast.open({
-                        message: 'Credit card payment created',
+                        message: 'File imported',
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
                 this.hideShowLoader = false;
             });
         },
         // select csv file
         chooseFile(e) {
-            console.log(e.target.value);
+            this.selectedFile = e.target.files[0];
         }
     }
 }

@@ -57,7 +57,7 @@
     width: 300px;
 }
 .mesh-loader {
-      width: 100%;
+    width: 100%;
     position: absolute;
 }
 .dot {

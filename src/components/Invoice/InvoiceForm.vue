@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-default main-content-height">
         <div class="header bg-primary pb-6">
             <div class="container-fluid">
                 <div class="header-body">

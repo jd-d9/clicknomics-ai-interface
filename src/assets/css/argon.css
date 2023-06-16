@@ -1812,6 +1812,7 @@ a.bg-light:hover,a.bg-light:focus,button.bg-light:hover,button.bg-light:focus{ba
 .bg-dark{background-color:#212529 !important;}
 a.bg-dark:hover,a.bg-dark:focus,button.bg-dark:hover,button.bg-dark:focus{background-color:#0a0c0d !important;}
 .bg-default{background-color:#e8f0fe !important;}
+.main-content-height {min-height: 100vh;}
 a.bg-default:hover,a.bg-default:focus,button.bg-default:hover,button.bg-default:focus{background-color:#0b1526 !important;}
 .bg-white{background-color:#fff !important;}
 a.bg-white:hover,a.bg-white:focus,button.bg-white:hover,button.bg-white:focus{background-color:#e6e6e6 !important;}
@@ -6394,6 +6395,9 @@ table img:hover{transform:translateY(-5px);transition:all .3s ease-in-out;}
     background: #8fff565c;
     /* font-weight: bold; */
 }
+.total_table td {
+    padding: 10px 15px;
+}
 .file-upload .file-select {
     display: block;
     border: 2px solid #dce4ec;
@@ -6902,6 +6906,9 @@ select{
 }
 .select-network-filter-height .v-input__control{
     height: unset !important;
+}
+.select-network-filter-height .v-field{
+    --v-field-padding-start: unset !important;
 }
 .select-network-filter-two .v-input__control{
     height: 24px !important;

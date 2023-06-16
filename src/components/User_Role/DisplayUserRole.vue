@@ -38,7 +38,7 @@
                                             <th class="border-right text-center">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="list">
+                                    <tbody class="list add-side-borders">
                                         <tr v-for="(role, index) in items" :key="index">
                                             <th>{{role.id}}</th>
                                             <td>{{role.role_name}}</td>
@@ -177,5 +177,9 @@ export default {
     }
     .disable-button[disabled] {
         cursor: not-allowed;
+    }
+    .add-side-borders {
+        border-left: 1px solid #dee2e6;
+        border-right: 1px solid #dee2e6;
     }
 </style>

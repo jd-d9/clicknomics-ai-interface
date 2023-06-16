@@ -16,8 +16,10 @@ import DisplayInvoices from './components/Invoice/DisplayInvoices.vue';
 import DisplayTemplates from './components/Invoice/DisplayTemplates.vue';
 import InvoiceForm from './components/Invoice/InvoiceForm.vue';
 import TemplateForm from './components/Invoice/TemplateForm.vue';
-import CreditCardPayment from './components/Credit_Card_Payment/CreditCardPayment.vue';
+import CreditCardPayment from './components/Credit_Card_Payment/DisplayCreditCardPayment.vue';
 import CreditCardPaymentForm from './components/Credit_Card_Payment/CreditCardPaymentForm.vue';
+import DisplayTeamMemberPaymets from './components/Team_member_payment/DisplayTeamMemberPaymets.vue';
+import TeamMemberPaymetsForm from './components/Team_member_payment/TeamMemberPaymetsForm.vue';
 import ManageEmailNotification from './components/Email_Notification/ManageEmailNotification.vue';
 import ProcessEmailReport from './components/Reports/ProcessEmailReport.vue';
 import MicrosoftEliminatedAccounts from './components/Archived_Traffic_Source/MicrosoftEliminatedAccounts.vue';
@@ -32,13 +34,16 @@ import NotFoundPage from './components/Common/NotFoundPage.vue';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
+        // user login and authentications
         {path: '/login', component: LogIn},
         {path: '/password/reset', component: ResetPassword},
         {path: '/set_new_password', component: SetNewPassword},
         {path: '/', redirect: '/dashboard', meta: {auth: true}},
-        {path: '/dashboard', component: DashboardComponent, meta: {auth: true}},
         {path: '/authenticator/validate', component: TwoFA, meta: {auth: true}},
         {path: '/authenticator/validate/email', component: EmailAuth, meta: {auth: true}},
+        // dashboard
+        {path: '/dashboard', component: DashboardComponent, meta: {auth: true}},
+        // user profile / user / user role
         {path: '/my_profile', component: UserProfile, meta: {auth: true}},
         {path: '/settings/user', component: DisplayUsers, meta: {auth: true}},
         {path: '/settings/user_management/users/create', component: CreateUser, meta: {auth: true}},
@@ -46,15 +51,22 @@ const router = createRouter({
         {path: '/settings/user_management/user_roles', component: DisplayUserRole, meta: {auth: true}},
         {path: '/settings/user_management/user_roles/create', component: CreateUserRole, meta: {auth: true}},
         {path: '/settings/user_management/user_roles/:id/edit', component: UpdateUserRole, meta: {auth: true}},
+        // invoice and template
         {path: '/accounting/invoice', component: DisplayInvoices, meta: {auth: true}},
         {path: '/accounting/invoice/template', component: DisplayTemplates, meta: {auth: true}},
         {path: '/accounting/invoice/create', component: InvoiceForm, meta: {auth: true}},
         {path: '/accounting/invoice/:id/edit', component: InvoiceForm, meta: {auth: true}},
         {path: '/accounting/invoice/template/:id/edit', component: TemplateForm, meta: {auth: true}},
         {path: '/accounting/invoice/:id/createFromTemplate', component: TemplateForm, meta: {auth: true}},
+        // credit card payments
         {path: '/accounting/creditCardPayments', component: CreditCardPayment, meta: {auth: true}},
         {path: '/accounting/creditCardPayments/create', component: CreditCardPaymentForm, meta: {auth: true}},
         {path: '/accounting/creditCardPayments/:id/edit', component: CreditCardPaymentForm, meta: {auth: true}},
+        // team member payments
+        {path: '/accounting/teamMembersPayments', component: DisplayTeamMemberPaymets, meta: {auth: true}},
+        {path: '/accounting/teamMembersPayments/create', component: TeamMemberPaymetsForm, meta: {auth: true}},
+        {path: '/accounting/teamMembersPayments/:id/edit', component: TeamMemberPaymetsForm, meta: {auth: true}},
+        // other
         {path: '/settings/emailNotification', component: ManageEmailNotification, meta: {auth: true}},
         {path: '/settings/processEmailReport', component: ProcessEmailReport, meta: {auth: true}},
         {path: '/settings/archived-accounts-microsoft', component: MicrosoftEliminatedAccounts, meta: {auth: true}},
@@ -64,6 +76,7 @@ const router = createRouter({
         {path: '/settings/domain/integrate', component: IntegrationDomain, meta: {auth: true}},
         {path: '/settings/networks', component: NetworkList, meta: {auth: true}},
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
+        // not found page
         {path: '/:notFound(.*)', component: NotFoundPage},
     ]
 });
