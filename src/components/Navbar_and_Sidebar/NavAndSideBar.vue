@@ -309,7 +309,7 @@
             // get current loged in user data
             getCurrentUserData() {
                 this.hideShowLoader = true;
-                this.axios.get(this.$api + '/settings/getsingleuser', {
+                this.axios.get(this.$api + '/settings/getprofileuser', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`

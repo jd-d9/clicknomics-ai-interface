@@ -104,6 +104,7 @@
                 displayQrCode: '',
                 authCode: '',
                 key: '',
+                verifiedBy: '',
                 rememberVerification: 1,
                 tryAnother: false,
                 backendErrorMessage: '',
@@ -121,8 +122,10 @@
                 })
                 .then(response => {
                     console.log(response.data, 'qr code url');
-                    this.displayQrCode = response.data.inlineUrl;
-                    this.key = response.data.key;
+                    const getData = response.data;
+                    this.displayQrCode = getData.inlineUrl;
+                    this.key = getData.key;
+                    this.verifiedBy = getData.verified_by;
                     this.hideShowLoader = false;
                 })
                 .catch(error => {
@@ -133,7 +136,7 @@
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
                 // if scan and enter auth code
-                if(this.displayQrCode && !this.tryAnother) {  // this.displayQrCode && ! this.tryAnother
+                if(this.displayQrCode && !this.tryAnother || this.verifiedBy == '2fa app') {
                     this.hideShowLoader = true;
                     this.axios.post(this.$api + '/authenticator/validateCode', {
                         google2fa_secret: this.authCode,

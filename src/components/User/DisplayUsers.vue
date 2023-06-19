@@ -194,15 +194,6 @@
 </script>
 
 <style>
-    .icon-width {
-        width: 30px;
-    }
-    .table-body-back {
-        font-size: 14px !important;
-    }
-    .table-body-back th {
-        font-weight: 600 !important;
-    }
     .disable-button {
         border: none;
         background: transparent;

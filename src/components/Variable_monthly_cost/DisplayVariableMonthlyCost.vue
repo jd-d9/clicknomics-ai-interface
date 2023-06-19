@@ -1,36 +1,29 @@
 <template>
-    <div>
+    <div class="bg-default main-content-height">
         <div class="header bg-primary pb-6">
             <div class="container-fluid">
                 <div class="header-body">
-                    <div class="row align-items-center">
+                    <div class="row align-items-center mt--4">
                         <div class="col-lg-6 col-7 pt-0">
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">Variable Monthly Cost List</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right">
-                            <!-- <a href="/admin/img/doc/demo-ops-cost.csv" class="btn btn-lg btn-neutral btn_animated" download>
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </a>
-                            <a href="#exampleModalCenter"  data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-lg btn-neutral btn_animated">Import CSV</a> -->
-                            <a href="/accounting/variableMonthlyCost/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</a>
+                            <router-link to="/accounting/variableMonthlyCost/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <LoaderComponent v-if="showLoader"></LoaderComponent>
+        <loader-component v-if="hideShowLoader"></loader-component>
         <!-- Page content -->
-        <div class="container-fluid mt--6">
+        <div class="container-fluid mt--3">
             <div class="row justify-content-center">
                 <div class="col">
                     <v-app>
@@ -40,25 +33,20 @@
                                     <v-app>
                                         <v-card>
                                             <v-card-title>
-                                                <v-spacer></v-spacer>
-                                                <v-row>
-                                                    <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                                    <v-col class="d-flex justify-content-end" cols="12" sm="4">
+                                                <v-row class="align-items-center">
+                                                    <v-col class="d-flex" cols="12" sm="4">daterange</v-col>
+                                                    <!-- <v-col class="d-flex justify-content-end" cols="12" sm="4">
                                                         <template>
                                                             <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
-                                                                <!--    header slot-->
                                                                 <div slot="header" slot-scope="header" class="slot">
                                                                     <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
                                                                 </div>
-                                                                <!--    input slot (new slot syntax)-->
                                                                 <template #input="picker" style="min-width: 350px;">
                                                                     {{ picker.startDate | date }} - {{ picker.endDate | date }}
                                                                 </template>
-                                                                <!--    date slot-->
                                                                 <template #date="data">
                                                                     <span class="small">{{ data.date | dateCell }}</span>
                                                                 </template>
-                                                                <!--    ranges (new slot syntax) -->
                                                                 <template #ranges="ranges">
                                                                     <div class="ranges">
                                                                         <ul>
@@ -69,43 +57,45 @@
                                                                         </ul>
                                                                     </div>
                                                                 </template>
-                                                                <!--    footer slot-->
                                                                 <div slot="footer" slot-scope="data" class="slot">
                                                                     <div>
                                                                         <b class="text-black">Calendar footer</b> {{ data.rangeText }}
                                                                     </div>
                                                                     <div style="margin-left: auto">
-                                                                        <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
+                                                                        <router-link tock="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</router-link>
                                                                     </div>
                                                                 </div>
                                                             </date-range-picker>
                                                         </template>
-                                                    </v-col>
-                                                    <v-col class="d-flex search_width" cols="12" sm="4">
-                                                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                    </v-col>
+                                                    </v-col> -->
+                                                    <div class="col-3 ms-auto">
+                                                        <div class="ms-auto search-input position-relative">
+                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
+                                                        </div>
+                                                    </div>
                                                 </v-row>
                                             </v-card-title>
-                                            <v-data-table :headers="headers" :items="dataMetrics" :search="search" @current-items="currentItems"  :itemsPerPage="itemsPerPage">
+                                            <!-- data table component -->
+                                            <v-data-table :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                                                 <template v-slot:item="{ item }">
-                                                    <tr>
-                                                        <td>{{item.date}}</td>
-                                                        <td>{{item.amount | toCurrency}}</td>
-                                                        <td>{{item.notes ? item.notes : '-'}}</td>
+                                                    <tr class="table-body-back">
+                                                        <td>{{item.selectable.date}}</td>
+                                                        <td>{{item.selectable.amount}}</td>
+                                                        <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
                                                         <td>
-                                                            <a href="javascript:void(0);" @click="edit(item.id)">
-                                                                <img src="/admin/img/icons/edit.svg" style="width:30px">
-                                                            </a>
-                                                            <a href="javascript:void(0);" @click="deleteData(item.id)">
-                                                                <img src="/admin/img/icons/bin.svg" style="width:30px">
-                                                            </a>
+                                                            <router-link :to="'/accounting/variableMonthlyCost/' + item.selectable.id + '/edit'">
+                                                                <img src="/assets/img/icons/edit.svg" class="icon-width">
+                                                            </router-link>
+                                                            <router-link to="" @click="deleteData(item.selectable.id)">
+                                                                <img src="/assets/img/icons/bin.svg" class="icon-width">
+                                                            </router-link>
                                                         </td>
                                                     </tr>
                                                 </template>
-                                                <template slot="body.append" v-if="dataMetrics.length > 0">
-                                                    <tr class="total_table">
+                                                <template v-slot:tbody v-if="dataMetrics.length > 0">
+                                                    <tr class="total_table table-body-back">
                                                         <td>Totals</td>
-                                                        <td>{{ sumField | toCurrency }}</td>
+                                                        <td>{{ sumField }}</td>
                                                         <td>-</td>
                                                         <td>-</td>
                                                     </tr>
@@ -129,24 +119,22 @@
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <ValidationObserver v-slot="{handleSubmit}">
-                        <form @submit.prevent="handleSubmit(uploadCsv)">
-                            <div class="modal-body">
-                                    <div class="file-upload">
-                                        <div class="file-select">
-                                            <div class="file-select-button" id="fileName">Choose File</div>
-                                            <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
-                                            <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                            <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
-                                        </div>
+                        <form>
+                        <div class="modal-body">
+                                <div class="file-upload">
+                                    <div class="file-select">
+                                        <div class="file-select-button" id="fileName">Choose File</div>
+                                        <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
+                                        <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
+                                        <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
                                     </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Import</button>
-                            </div>
-                        </form>
-                    </ValidationObserver>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Import</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -157,16 +145,17 @@
 export default {
     data() {
         return {
-            showLoader: false,
+            hideShowLoader: false,
             dataMetrics: [],
+            dataMetricsFilter: [],
             search: '',
             headers: [
-                { text: 'Date', align: 'start', sortable: false, value: 'date' },
-                { text: 'Amount', value: 'amount' },
-                { text: 'Notes', value: 'notes' },
-                { text: 'Action', value: '' },
+                { title: 'Date', align: 'start', sortable: false, key: 'date' },
+                { title: 'Amount', key: 'amount' },
+                { title: 'Notes', key: 'notes' },
+                { title: 'Action', key: '' },
             ],
-            dateRange: {startDate, endDate},
+            // dateRange: {startDate, endDate},
             file: '',
             currentItemsTable: [],
             itemsPerPage: -1
@@ -176,14 +165,72 @@ export default {
 
     },
     mounted() {
-
+        this.getVariablePaymentList();
     },
     methods: {
-
+        // search payment from table
+        searchPayments() {
+            this.dataMetrics = this.dataMetricsFilter.filter((val) => {
+                return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.notes && val.notes.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.date.toLowerCase().includes(this.searchInput.toLowerCase())
+            })
+        },
+        // get variable payment list
+        getVariablePaymentList() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/variableCost', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const allData = response.data;
+                    console.log(allData.data.data)
+                    this.dataMetrics = allData.data.data;
+                    this.dataMetricsFilter = allData.data.data;
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // delete variable monthly cost
+        deleteData(id) {
+            this.hideShowLoader = true;
+            this.axios.delete(this.$api + '/accounting/variableCost/' + id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: 'Variable monthly cost deleted',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.getVariablePaymentList();
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        }
     }
 }
 </script>
 
 <style scoped>
-
+    .icon-width {
+        width: 30px;
+    }
 </style>

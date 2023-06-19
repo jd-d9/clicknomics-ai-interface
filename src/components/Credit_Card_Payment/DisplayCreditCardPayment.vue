@@ -126,7 +126,7 @@
                                                     </tr>
                                                 </template>
                                                 <template v-slot:tbody v-if="creditCardPaymentList.length > 0">
-                                                    <tr class="total_table">
+                                                    <tr class="total_table table-body-back">
                                                         <td>Totals</td>
                                                         <td>-</td>
                                                         <td>-</td>
@@ -231,7 +231,6 @@ export default {
     watch: {
         // from account list filtering
         fromAccount(val) {
-            console.log(val, 'val')
             if(val) {
                 this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
                     return val.from_account == this.fromAccount;
@@ -337,7 +336,9 @@ export default {
         // downloading csv
         downloadCsv() {
             // /admin/img/doc/ipm-credit-card-payment-demo.csv
-            this.axios.get(this.$api + '/accounting/invoices/exportPDF', {
+            this.axios.post(this.$api + '/settings/downloadfile', {
+                filename: 'creditCardPayments'
+            }, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
@@ -345,15 +346,15 @@ export default {
                 responseType: 'blob',
             })
             .then(response => {
-                let blob = new Blob([response.data], { type:'application/pdf' } );
+                let blob = new Blob([response.data], { type:'application/csv' } );
                 const _url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = _url;
-                link.setAttribute('download', 'demo.pdf');
+                link.setAttribute('download', 'demo.csv');
                 document.body.appendChild(link);
                 link.click();
                 this.$toast.open({
-                    message: 'Invoice downloaded',
+                    message: 'File downloaded',
                     position: 'top-right',
                     duration: '5000',
                     type: 'success'
@@ -377,6 +378,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.closeImportCsvModal();
+                    this.getCreditCardPaymentList();
                     this.hideShowLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({

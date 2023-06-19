@@ -56,7 +56,7 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group select-network-filter select-network-filter-two select-network-filter-height">
                                                 <label class="form-control-label" for="input-username">From Account</label>
-                                                <v-autocomplete :class="{'form-control': true, 'is-invalid': invalidFromAccount}" variant="outlined" :items="list" v-model="fromAccount" @change="fromAccountIsValid"></v-autocomplete>
+                                                <v-autocomplete :class="{'form-control': true, 'is-invalid': invalidFromAccount}" variant="outlined" :items="list" v-model="fromAccount" item-title="title" item-value="key"></v-autocomplete>
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ invalidFromAccount }}</strong>
                                                 </span>
@@ -65,7 +65,7 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group select-network-filter select-network-filter-height">
                                                 <label class="form-control-label" for="input-username">To Account</label>
-                                                <v-select :class="{'form-control': true, 'is-invalid': invalidToAccount}" :items="creditLines" v-model="toAccount" @change="toAccountIsValid"></v-select>
+                                                <v-select :class="{'form-control': true, 'is-invalid': invalidToAccount}" :items="creditLines" v-model="toAccount" item-title="title" item-value="key"></v-select>
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ invalidToAccount }}</strong>
                                                 </span>
@@ -122,6 +122,8 @@ export default {
             fromAccount: '',
             toAccount: '',
             status: '',
+            list: [],
+            creditLines: [],
             statusList: [
                 {
                     title: 'Initiated'
@@ -137,12 +139,39 @@ export default {
         }
     },
     mounted() {
+        this.getFromToAccountDropdownData();
         if(this.$route.params.id) {
             this.toggleComponent = false;
             this.breadCrumbMessage = 'Edit';
+            this.getDataForEdit();
         }
     },
     methods: {
+        // get data for edit
+        getDataForEdit() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const getData = response.data.data;
+                    this.date = new Date(getData.payment_date);
+                    this.amount = getData.amount;
+                    this.fromAccount = getData.from_account;
+                    this.toAccount = getData.to_account;
+                    this.status = getData.status,
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
         // create team member payment
         createTeamMemberPayment() {
             this.hideShowLoader = true;
@@ -160,6 +189,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
+                    this.$router.push('/accounting/teamMembersPayments');
                     this.$toast.open({
                         message: 'Team member payment created',
                         position: 'top-right',
@@ -173,7 +203,78 @@ export default {
                 console.log(error);
                 this.hideShowLoader = false;
             });
-        }
+        },
+        // update team member payment
+        updateTeamMemberPayment() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
+                _method: 'PUT',
+                payment_date: moment(this.date).format('YYYY-MM-DD'),
+                amount: this.amount,
+                from_account: this.fromAccount,
+                to_account: this.toAccount,
+                status: this.status,
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$router.push('/accounting/teamMembersPayments');
+                    this.$toast.open({
+                        message: 'Credit card payment updated',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // get fromaccount and toaccount dropdown data
+        getFromToAccountDropdownData() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/teamMemberPayments/teammemberlist', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const getData = response.data.data;
+                    // get to account data
+                    getData.filter((val) => {
+                        return val.team_member_type == 'toAccount';
+                    }).forEach((val) => {
+                        this.creditLines.push({
+                            title: val.team_member_name,
+                            key: val.id
+                        })
+                    });
+                    // get from account data
+                    getData.filter((val) => {
+                        return val.team_member_type == 'fromAccount';
+                    }).forEach((val) => {
+                        this.list.push({
+                            title: val.team_member_name,
+                            key: val.id
+                        })
+                    });
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
     }
 }
 </script>

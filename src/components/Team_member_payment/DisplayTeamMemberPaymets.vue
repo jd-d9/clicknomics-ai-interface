@@ -15,7 +15,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-8 text-right">
-                            <router-link to="/admin/img/doc/ipm-team-member-payment-demo.csv" class="btn btn-lg btn-neutral btn_animated" download>
+                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
                                 <div>
                                     <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
                                     <span class="btn-inner--text">Demo.csv</span>
@@ -46,7 +46,7 @@
                                             </router-link>
                                         </li>
                                         <li class="nav-item">
-                                            <router-link to="" class="nav-link mb-sm-4 mb-md-0" id="tabs-icons-text-4-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"> <!-- @click="genrateTeamMembersPaymentsReport" -->
+                                            <router-link to="" class="nav-link mb-sm-4 mb-md-0" id="tabs-icons-text-4-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="genrateTeamMembersPaymentsReport">
                                                 <span class="btn-inner--text">Reports</span>
                                             </router-link>
                                         </li>
@@ -92,9 +92,9 @@
                                                     </v-row>
                                                 </v-card-title>
                                                 <!-- data table component -->
-                                                <v-data-table class="table-hover-class" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="teamMemberPaymentList" @current-items="currentItems" :itemsPerPage="itemsPerPage">
+                                                <v-data-table class="table-hover-class" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="teamMemberPaymentList" :itemsPerPage="itemsPerPage">
                                                     <template v-slot:item="{ item }">
-                                                        <tr>
+                                                        <tr class="table-body-back">
                                                             <td>{{item.selectable.id}}</td>
                                                             <td>{{item.selectable.payment_date}}</td>
                                                             <td>{{item.selectable.from_account}}</td>
@@ -102,7 +102,7 @@
                                                             <td>{{item.selectable.amount }}</td>
                                                             <td>{{item.selectable.status}}</td>
                                                             <td>
-                                                                <router-link :to="'accounting/teamMembersPayments/'+ item.selectable.id +'/edit'">
+                                                                <router-link :to="'/accounting/teamMembersPayments/'+ item.selectable.id +'/edit'">
                                                                     <img src="/assets/img/icons/edit.svg" class="img-width">
                                                                 </router-link>
                                                                 <router-link to="" @click="deleteData(item.selectable.id)">
@@ -112,7 +112,7 @@
                                                         </tr>
                                                     </template>
                                                     <template v-slot:tbody v-if="teamMemberPaymentList.length > 0">
-                                                        <tr class="total_table">
+                                                        <tr class="total_table table-body-back">
                                                             <td>Totals</td>
                                                             <td>-</td>
                                                             <td>-</td>
@@ -167,26 +167,26 @@
                                                         </v-col>
                                                     </v-row>
                                                 </v-card-title>
-                                                <div class="row m-auto pt-3">
-                                                    <div class="col-md-3 py-0 dashboard_card">
+                                                <div class="row m-auto pt-3" v-if="cardMemberList.length > 0">
+                                                    <div class="col-md-3 py-0 dashboard_card" v-for="(item, index) in cardMemberList" :key="index">
                                                         <div class="card card-stats add-border">
                                                             <h5 class="card-title m-0 p-0">
                                                                 <div class="row m-0">
                                                                     <div class="col-md-12 add-background py-3">
-                                                                        FROM: item.from_account
+                                                                        FROM: {{item.from_account}}
                                                                     </div>
                                                                     <div class="col-md-12 add-background-two py-3">
-                                                                        TO: item.to_account
+                                                                        TO: {{item.to_account}}
                                                                     </div>
                                                                 </div>
                                                             </h5>
                                                             <div class="card-body">
-                                                                <h2 class="font-weight-bold mb-0">item.total_amount</h2>
+                                                                <h2 class="font-weight-bold mb-0">{{item.total_amount}}</h2>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row m-auto">
+                                                <div class="row m-auto" v-else>
                                                     <div class="col-md-12 text-center">
                                                         <div>
                                                             No data available
@@ -288,15 +288,15 @@
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
-                                    <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
+                                    <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
+                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" name="chooseFile"  required/>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Import</button>
+                            <button type="submit" class="btn btn-primary" @click.prevent="importCsv">Import</button>
                         </div>
                     </form>
                 </div>
@@ -351,6 +351,7 @@
 </template>
 
 <script>
+// import moment from 'moment';
 export default {
     data() {
         return {
@@ -376,14 +377,16 @@ export default {
             toAccountFilter: [],
             toAccount: null,
             cardMemberList: [],
-            showImportIcon: true
+            showImportIcon: true,
+            selectedFile: '',
         }
     },
-    computed: {
-        bodyAppend() {
-            return `body.append`
-        }
-    },
+    // computed: {
+    //     sumField() {
+    //         const key = 'amount';
+    //         return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+    //     }
+    // },
     watch: {
         // from account list filtering
         fromAccount(val) {
@@ -409,6 +412,7 @@ export default {
         }
     },
     mounted() {
+        // this.genrateTeamMembersPaymentsReport();
         this.getTeamMemberPaymentList();
     },
     methods: {
@@ -434,16 +438,16 @@ export default {
             window.$('#teamMemberModal').modal('hide');
         },
         // search payment from table
-        // searchPayments() {
-        //     this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
-        //         return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-        //                 val.id.toString().includes(this.searchInput.toLowerCase()) || 
-        //                 val.from_account.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-        //                 val.to_account.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-        //                 val.status.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-        //                 val.payment_date.toLowerCase().includes(this.searchInput.toLowerCase())
-        //     })
-        // },
+        searchPayments() {
+            this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
+                return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.id.toString().includes(this.searchInput.toLowerCase()) || 
+                        val.from_account.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.to_account.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.status.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.payment_date.toLowerCase().includes(this.searchInput.toLowerCase())
+            })
+        },
         // get team member payment details
         getTeamMemberPaymentList() {
             this.hideShowLoader = true;
@@ -455,7 +459,21 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    console.log(response.data, 'data-------')
+                    const allData = response.data;
+                    this.teamMemberPaymentList = allData.data.data;
+                    this.teamMemberPaymentFilter = allData.data.data;
+                    allData.allfromAccount.fromaccountlist.forEach((val) => {
+                        this.fromAccountFilter.push({
+                            title: val.team_member_name,
+                            key: val.id
+                        })
+                    });
+                    allData.alltoAccount.toaccountlist.forEach((val) => {
+                        this.toAccountFilter.push({
+                            title: val.team_member_name,
+                            key: val.id
+                        })
+                    });
                     this.hideShowLoader = false;
                 }
             })
@@ -475,7 +493,13 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    console.log(response.data, 'data-------')
+                    this.$toast.open({
+                        message: 'Team member payment deleted',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.getTeamMemberPaymentList();
                     this.hideShowLoader = false;
                 }
             })
@@ -487,7 +511,7 @@ export default {
         // adding to account
         addToAccount() {
             this.hideShowLoader = true;
-            this.axios.post(this.$api + '/accounting/teamMemberPayment/addToAccountMembers', {
+            this.axios.post(this.$api + '/accounting/teamMemberPayments/addToAccountMembers', {
                 team_member_name: this.teamMemberName
             }, {
                 headers: {
@@ -506,6 +530,7 @@ export default {
                     this.hideShowLoader = false;
                     this.getTeamMemberPaymentList();
                     this.closeTeamMemberModal();
+                    this.teamMemberName = '';
                 }
             })
             .catch(error => {
@@ -516,7 +541,7 @@ export default {
         // adding from account
         addFromAccount() {
             this.hideShowLoader = true;
-            this.axios.post(this.$api + '/accounting/teamMemberPayment/addFromAccountMembers', {
+            this.axios.post(this.$api + '/accounting/teamMemberPayments/addFromAccountMembers', {
                 team_member_name: this.teamMemberName
             }, {
                 headers: {
@@ -535,6 +560,7 @@ export default {
                     this.hideShowLoader = false;
                     this.getTeamMemberPaymentList();
                     this.closeFromAccountModal();
+                    this.teamMemberName = '';
                 }
             })
             .catch(error => {
@@ -542,6 +568,101 @@ export default {
                 this.hideShowLoader = false;
             });
         },
+        // generate report
+        genrateTeamMembersPaymentsReport() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport', {
+                // startDate: moment(new Date()).format('YYYY-MM-DD'),
+                // endDate: moment(new Date()).format('YYYY-MM-DD'),
+                startDate: '2023-06-19',
+                endDate: '2023-06-30',
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.cardMemberList = response.data.data;
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // downloading csv
+        downloadCsv() {
+            this.axios.post(this.$api + '/settings/downloadfile', {
+                filename: 'teamMembersPayments'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                },
+                responseType: 'blob',
+            })
+            .then(response => {
+                let blob = new Blob([response.data], { type:'application/csv' } );
+                const _url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = _url;
+                link.setAttribute('download', 'demo.csv');
+                document.body.appendChild(link);
+                link.click();
+                this.$toast.open({
+                    message: 'File downloaded',
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'success'
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+        // choose file and import csv
+        importCsv() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/creditCardPayments/importCreditCardPayment', {
+                file: this.selectedFile
+            }, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.closeImportCsvModal();
+                    this.getTeamMemberPaymentList();
+                    this.hideShowLoader = false;
+                    this.selectedFile = '';
+                    this.$toast.open({
+                        message: 'File imported',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.hideShowLoader = false;
+            });
+        },
+        // select csv file
+        chooseFile(e) {
+            this.selectedFile = e.target.files[0];
+        }
     }
 }
 </script>
