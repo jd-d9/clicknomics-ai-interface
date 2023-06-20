@@ -18,6 +18,8 @@ import { createVuetify } from 'vuetify';
 import * as directives from 'vuetify/directives';
 import * as labsComponents from 'vuetify/labs/components';
 import { VDataTable } from 'vuetify/labs/VDataTable';
+// vetify date range picker
+// import VueifiedDateRangePicker from 'VueifiedDateRangePicker';
 // bootstrap
 import 'bootstrap/dist/js/bootstrap.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -78,4 +80,5 @@ require('@/assets/css/dark-argon.css');
 app.component('loader-component', LoaderComponent);
 app.component('nav-and-side-bar', NavAndSideBar);
 // app.component('date-range-picker', DateRangePicker);
+// app.use(VueifiedDateRangePicker);
 app.mount('#app');

@@ -32,14 +32,15 @@
                                 <form>
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
-                                            <div class="form-group date-picker-3" v-if="toggleElement">
+                                            <div class="form-group date-picker-3">
                                                 <label class="form-control-label" for="input-username">Date</label>
-                                                <datepicker v-model="date" range :locale="locale" :clearable="true" format="YYYY-MM-DD"/>
-                                                <div :class="{'date-is-invalid': invalidDate}">
+                                                <datepicker v-model="date" range="true" :clearable="true" format="YYYY-MM-DD"/>
+                                                    <div :class="{'date-is-invalid': invalidDate}">
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ invalidDate }}</strong>
                                                     </span>
                                                 </div>
+                                                <!-- <vueified-date-range-picker @selected="cb"></vueified-date-range-picker> -->
                                             </div>
                                             <!-- <div class="form-group date-picker-3" v-else>
                                                 <label class="form-control-label" for="input-username">Date</label>

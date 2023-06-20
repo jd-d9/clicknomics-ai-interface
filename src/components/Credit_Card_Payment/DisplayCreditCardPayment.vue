@@ -22,7 +22,7 @@
                                 </div>
                             </router-link>
                             <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openImportCsvModal">Import CSV</router-link>
-                            <router-link to="/accounting/creditCardPayments/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
+                            <button @click.prevent="this.$router.push('/accounting/creditCardPayments/create')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
                         </div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="permissions.view == '1'">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -112,16 +112,15 @@
                                                         <td>{{item.selectable.payment_date}}</td>
                                                         <td>{{item.selectable.from_account}}</td>
                                                         <td>{{item.selectable.to_account}}</td>
-                                                        <td>{{item.selectable.amount }}</td>
-                                                        <!-- <td>{{item.amount | toCurrency}}</td> -->
+                                                        <td>${{item.selectable.amount }}</td>
                                                         <td>{{item.selectable.status}}</td>
                                                         <td>
-                                                            <router-link :to="'/accounting/creditCardPayments/' + item.selectable.id + '/edit'">
+                                                            <button @click.prevent="this.$router.push('/accounting/creditCardPayments/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
                                                                 <img src="/assets/img/icons/edit.svg" class="img-width">
-                                                            </router-link>
-                                                            <router-link to="" @click="deleteData(item.selectable.id)">
+                                                            </button>
+                                                            <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.update_auth == '0'" class="disable-button">
                                                                 <img src="/assets/img/icons/bin.svg" class="img-width">
-                                                            </router-link>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 </template>
@@ -131,7 +130,7 @@
                                                         <td>-</td>
                                                         <td>-</td>
                                                         <td>-</td>
-                                                        <td>{{ sumField }}</td>
+                                                        <td>${{ sumField }}</td>
                                                         <td>-</td>
                                                         <td>-</td>
                                                     </tr>
@@ -143,6 +142,13 @@
                             </div>
                         </div>
                     </v-app>
+                </div>
+                <div class="col" v-else>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -187,6 +193,7 @@ export default {
             hideShowLoader: false,
             creditCardPaymentList: [],
             creditCardPaymentFilter: [],
+            permissions: {},
             search: '',
             headers: [
                 { title: 'Payment ID', key: 'id' },
@@ -225,7 +232,7 @@ export default {
     computed: {
         sumField() {
             const key = 'amount';
-            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.creditCardPaymentList.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         }
     },
     watch: {
@@ -288,8 +295,10 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.creditCardPaymentList = response.data.data;
-                    this.creditCardPaymentFilter = response.data.data;
+                    const getData = response.data;
+                    this.creditCardPaymentList = getData.data;
+                    this.creditCardPaymentFilter = getData.data;
+                    this.permissions = getData.permission;
                     response.data.allfromAccount.forEach((val) => {
                         this.fromAccountFilter.push({
                             title: val.from_account,

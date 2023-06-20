@@ -10,7 +10,7 @@
                                     <li class="breadcrumb-item">
                                         <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Add Fixed Monthly Cost</li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{breadCrumbText}} Fixed Monthly Cost</li>
                                 </ol>
                             </nav>
                         </div>
@@ -21,43 +21,45 @@
                 </div>
             </div>
         </div>
-        <LoaderComponent v-if="showLoader"></LoaderComponent>
+        <loader-component v-if="hideShowLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
                 <div class="col">
                     <div class="card">
-                        <!-- <div class="card-header">
-                            <h3 class="mb-0 float-left">Fixed Monthly Cost</h3>
-                            <div class="float-right">
-                                <router-link to="/accounting/fixedMonthlyCost" class="btn btn-lg btn-neutral btn_animated">View Fixed Monthly Cost Listing</router-link>
-                            </div>
-                        </div> -->
                         <div class="card-body">
                             <div class="col-12">
-                                <form>
+                                <Form @submit="submit" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group date-picker-3">
                                                 <label class="form-control-label" for="input-username">Date</label>
-                                                <date-picker v-model="date" valueType="format" range format="YYYY-MM-DD"></date-picker>
+                                                <datepicker v-model="date" valueType="format" :clearable="true" format="YYYY-MM-DD"></datepicker>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Amount</label>
-                                                <input type="number" id="input-username"  :class="{'form-control': true}" placeholder="Add Amount" v-model="amount">
+                                                <Field type="number" step=".01" placeholder="Add Amount" v-model="amount" name="amount" :class="{'form-control': true, 'border-red-600': errors.amount }"/>
+                                                <span class="text-red-600">{{ errors.amount }}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" v-if="toggleElement">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
+                                                <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="addNewFixedMonthlyCost">Save</button>
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                    <div class="row" v-else>
+                                        <div class="col-lg-6 py-0">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="updateFixedMonthlyCost">Update</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Form>
                             </div>
                         </div>
                     </div>
@@ -68,19 +70,125 @@
 </template>
 
 <script>
+import { defineRule, Form, Field } from 'vee-validate';
+import Datepicker from 'vue3-datepicker';
+import moment from 'moment';
+defineRule('required', value => {
+    if (!value || !value.length) {
+        return 'This field is required';
+    }
+    return true;
+});
 export default {
+    components: {
+        Datepicker,
+        Field, Form
+    },
     data() {
         return {
-            showLoader: false,
+            schema: {
+                amount: 'required',
+                date: 'required',
+            },
+            hideShowLoader: false,
+            breadCrumbText: 'Add',
             date: '',
             amount: '',
+            toggleElement: true,
         }
     },
     mounted() {
-
+        if(this.$route.params.id) {
+            this.toggleElement = false;
+            this.breadCrumbText = 'Update';
+            this.getDataForEdit();
+        }
     },
     methods: {
+        // create new fixed monthly cost
+        addNewFixedMonthlyCost() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/fixedMonthlyCost', {
+                date: '2023-06-01,2023-06-07',
+                // date: moment(this.date).format('YYYY-MM-DD'),
+                amount: this.amount
 
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$router.push('/accounting/fixedMonthlyCost');
+                    this.$toast.open({
+                        message: 'Fixed monthly cost created',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // get data for edit details
+        getDataForEdit() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/fixedMonthlyCost/' + this.$route.params.id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const getData = response.data.data;
+                    console.log(getData);
+                    this.date = new Date(getData.date);
+                    this.amount = getData.amount;
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // update fixed monthly cost
+        updateFixedMonthlyCost() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/fixedMonthlyCost/' + this.$route.params.id, {
+                _method: 'PUT',
+                date: moment(this.date).format('YYYY-MM-DD'),
+                amount: this.amount,
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$router.push('/accounting/fixedMonthlyCost');
+                    this.$toast.open({
+                        message: 'Fixed monthly cost updated',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
     }
 }
 </script>

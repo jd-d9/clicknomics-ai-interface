@@ -7000,6 +7000,12 @@ select{
 .date-picker-3 .v3dp__datepicker .v3dp__popout{
     left: 0;
 }
+.date-picker-3 .v3dp__datepicker .current span {
+    border-radius: 0 !important;
+    background-color: #1284e7;
+    color: white;
+    outline: none !important;
+}
 /* data table row hover */
 .v-data-table .v-table__wrapper > table tbody > tr > td {
     background-color: unset !important;
@@ -7024,4 +7030,18 @@ select{
 }
 .table-body-back th {
     font-weight: 600 !important;
+}
+/* disable date input in fixed monthyly cost */
+.date-picker-disabled .v3dp__input_wrapper, .date-picker-disabled input {
+    color: #ccc;
+    background-color: #f3f3f3;
+    border-color: #ccc;
+    cursor: not-allowed;
+}
+.date-picker-disabled .v3dp__input_wrapper::after {
+    display: block;
+    background-color: transparent;
+}
+.disable-button[disabled] {
+    cursor: not-allowed;
 }

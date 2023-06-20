@@ -24,7 +24,7 @@
                             <router-link to="" data-target="#importCsvModal" class="btn btn-lg btn-neutral btn_animated" @click="openImportCsvModal">Import CSV</router-link>
                             <router-link to="" data-target="#fromAccountModal" class="btn btn-lg btn-neutral btn_animated" @click.prevent="openFromAccountModal">Add From Account</router-link>
                             <router-link to="" data-target="#teamMemberModal" class="btn btn-lg btn-neutral btn_animated" @click.prevent="openTeamMemberModal">Add To Account</router-link>
-                            <router-link to="/accounting/teamMembersPayments/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
+                            <button @click.prevent="this.$router.push('/accounting/teamMembersPayments/create')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
                         </div>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="permissions.view == '1'">
                     <v-app>
                         <div class="card">
                             <div class="card-header">
@@ -99,15 +99,15 @@
                                                             <td>{{item.selectable.payment_date}}</td>
                                                             <td>{{item.selectable.from_account}}</td>
                                                             <td>{{item.selectable.to_account}}</td>
-                                                            <td>{{item.selectable.amount }}</td>
+                                                            <td>${{item.selectable.amount }}</td>
                                                             <td>{{item.selectable.status}}</td>
                                                             <td>
-                                                                <router-link :to="'/accounting/teamMembersPayments/'+ item.selectable.id +'/edit'">
+                                                                <button @click.prevent="this.$router.push('/accounting/teamMembersPayments/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
                                                                     <img src="/assets/img/icons/edit.svg" class="img-width">
-                                                                </router-link>
-                                                                <router-link to="" @click="deleteData(item.selectable.id)">
+                                                                </button>
+                                                                <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
                                                                     <img src="/assets/img/icons/bin.svg" class="img-width">
-                                                                </router-link>
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                     </template>
@@ -117,12 +117,11 @@
                                                             <td>-</td>
                                                             <td>-</td>
                                                             <td>-</td>
-                                                            <td>{{ sumField }}</td>
+                                                            <td>${{ sumField }}</td>
                                                             <td>-</td>
                                                             <td>-</td>
                                                         </tr>
                                                     </template>
-                                                    <!--  v-if="dataMetrics.length > 0" -->
                                                 </v-data-table>
                                             </v-card>
                                         </v-app>
@@ -197,7 +196,7 @@
                                         </v-app>
                                     </div>
                                 </div>
-                                <div class="d-none">
+                                <div class="d-none">    <!-- v-else -->
                                     <v-app>
                                         <v-card>
                                             <v-card-title>
@@ -240,13 +239,13 @@
                                             <template>
                                                 <div class="row m-auto pt-3" v-if="cardMemberList.length > 0">
                                                     <div class="col-md-3 py-0 dashboard_card" v-for="(item, index) in cardMemberList" :key="index">
-                                                        <div class="card card-stats" style="border: 2px solid #005eb3;">
+                                                        <div class="card card-stats add-border">
                                                             <h5 class="card-title m-0 p-0">
                                                                 <div class="row m-0">
-                                                                    <div class="col-md-12" style="background: #005eb3;">
+                                                                    <div class="col-md-12 add-background py-3">
                                                                         FROM: {{item.from_account}}
                                                                     </div>
-                                                                    <div class="col-md-12" style="background: #05b675;">
+                                                                    <div class="col-md-12 add-background-two py-3">
                                                                         TO: {{item.to_account}}
                                                                     </div>
                                                                 </div>
@@ -272,8 +271,16 @@
                         </div>
                     </v-app>
                 </div>
+                <div class="col" v-else>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- import csv -->
         <div class="modal fade" id="importCsvModal" tabindex="-1" role="dialog" aria-labelledby="importCsvModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -302,7 +309,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Add Team Members -->
         <div class="modal fade" id="teamMemberModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -358,6 +364,7 @@ export default {
             hideShowLoader: false,
             teamMemberPaymentList: [],
             teamMemberPaymentFilter: [],
+            permissions: {},
             search: '',
             headers: [
                 { title: 'Payment ID', key: 'id' },
@@ -379,14 +386,70 @@ export default {
             cardMemberList: [],
             showImportIcon: true,
             selectedFile: '',
+            allfromAccount: [
+                {
+                    "from_account": 2,
+                    "fromaccountlist": {
+                        "id": 2,
+                        "team_member_name": "Maulik 1",
+                        "team_member_type": "fromAccount",
+                        "created_by": 4,
+                        "updated_by": null,
+                        "created_at": "2023-03-27T15:50:13.000000Z",
+                        "updated_at": null,
+                        "deleted_at": null
+                    }
+                },
+                {
+                    "from_account": 4,
+                    "fromaccountlist": {
+                        "id": 4,
+                        "team_member_name": "Testing 2",
+                        "team_member_type": "fromAccount",
+                        "created_by": 4,
+                        "updated_by": null,
+                        "created_at": "2023-03-27T15:50:13.000000Z",
+                        "updated_at": null,
+                        "deleted_at": null
+                    }
+                }
+            ],
+            alltoAccount: [
+                {
+                    "to_account": 1,
+                    "toaccountlist": {
+                        "id": 1,
+                        "team_member_name": "Maulik",
+                        "team_member_type": "toAccount",
+                        "created_by": 4,
+                        "updated_by": null,
+                        "created_at": "2023-03-27T15:50:13.000000Z",
+                        "updated_at": null,
+                        "deleted_at": null
+                    }
+                },
+                {
+                    "to_account": 3,
+                    "toaccountlist": {
+                        "id": 3,
+                        "team_member_name": "Testing",
+                        "team_member_type": "toAccount",
+                        "created_by": 4,
+                        "updated_by": null,
+                        "created_at": "2023-03-27T15:50:13.000000Z",
+                        "updated_at": null,
+                        "deleted_at": null
+                    }
+                }
+            ],
         }
     },
-    // computed: {
-    //     sumField() {
-    //         const key = 'amount';
-    //         return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-    //     }
-    // },
+    computed: {
+        sumField() {
+            const key = 'amount';
+            return this.teamMemberPaymentList.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+        }
+    },
     watch: {
         // from account list filtering
         fromAccount(val) {
@@ -462,15 +525,16 @@ export default {
                     const allData = response.data;
                     this.teamMemberPaymentList = allData.data.data;
                     this.teamMemberPaymentFilter = allData.data.data;
-                    allData.allfromAccount.fromaccountlist.forEach((val) => {
+                    this.permissions = allData.permission;
+                    allData.allfromAccount.forEach((val) => {
                         this.fromAccountFilter.push({
-                            title: val.team_member_name,
+                            title: val.fromaccountlist.team_member_name,
                             key: val.id
                         })
                     });
-                    allData.alltoAccount.toaccountlist.forEach((val) => {
+                    allData.alltoAccount.forEach((val) => {
                         this.toAccountFilter.push({
-                            title: val.team_member_name,
+                            title: val.toaccountlist.team_member_name,
                             key: val.id
                         })
                     });

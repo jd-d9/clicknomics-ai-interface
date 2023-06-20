@@ -45,7 +45,7 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Amount</label>
-                                                <input type="number" id="input-username"  :class="{'form-control': true, 'is-invalid': invalidAmount}" placeholder="Add Amount" v-model="amount" @keyup="amountIsValid">
+                                                <input type="number" id="input-username"  :class="{'form-control': true, 'is-invalid': invalidAmount}" step=".01" placeholder="Add Amount" v-model="amount" @keyup="amountIsValid">
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ invalidAmount }}</strong>
                                                 </span>

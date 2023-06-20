@@ -210,7 +210,7 @@
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Select CPA Network</label>
                                             <div class="select-network-filter select-network-filter-two">
-                                                <v-autocomplete :class="{'form-control': true}" variant="outlined" v-model="networkModal.networkName"></v-autocomplete>  <!-- :items="networkList"-->
+                                                <v-autocomplete :class="{'form-control': true}" variant="outlined" :items="networkList" v-model="networkModal.networkName"></v-autocomplete>  <!-- :items="networkList"-->
                                             </div>
                                         </div>
                                     </div>

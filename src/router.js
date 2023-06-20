@@ -22,6 +22,8 @@ import DisplayTeamMemberPaymets from './components/Team_member_payment/DisplayTe
 import TeamMemberPaymetsForm from './components/Team_member_payment/TeamMemberPaymetsForm.vue';
 import DisplayVariableMonthlyCost from './components/Variable_monthly_cost/DisplayVariableMonthlyCost.vue';
 import VariableMonthlyCostForm from './components/Variable_monthly_cost/VariableMonthlyCostForm.vue';
+import DisplayFixedMonthlyCost from './components/Fixed_monthly_cost/DisplayFixedMonthlyCostList.vue';
+import FixedMonthlyCostForm from './components/Fixed_monthly_cost/FixedMonthlyCostForm.vue';
 import ManageEmailNotification from './components/Email_Notification/ManageEmailNotification.vue';
 import ProcessEmailReport from './components/Reports/ProcessEmailReport.vue';
 import MicrosoftEliminatedAccounts from './components/Archived_Traffic_Source/MicrosoftEliminatedAccounts.vue';
@@ -72,6 +74,10 @@ const router = createRouter({
         {path: '/accounting/variableMonthlyCost', component: DisplayVariableMonthlyCost, meta: {auth: true}},
         {path: '/accounting/variableMonthlyCost/create', component: VariableMonthlyCostForm, meta: {auth: true}},
         {path: '/accounting/variableMonthlyCost/:id/edit', component: VariableMonthlyCostForm, meta: {auth: true}},
+        // fixed monthly cost
+        {path: '/accounting/fixedMonthlyCost', component: DisplayFixedMonthlyCost, meta: {auth: true}},
+        {path: '/accounting/fixedMonthlyCost/create', component: FixedMonthlyCostForm, meta: {auth: true}},
+        {path: '/accounting/fixedMonthlyCost/:id/edit', component: FixedMonthlyCostForm, meta: {auth: true}},
         // other
         {path: '/settings/emailNotification', component: ManageEmailNotification, meta: {auth: true}},
         {path: '/settings/processEmailReport', component: ProcessEmailReport, meta: {auth: true}},

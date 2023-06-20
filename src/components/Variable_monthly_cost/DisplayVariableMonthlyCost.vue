@@ -15,7 +15,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right">
-                            <router-link to="/accounting/variableMonthlyCost/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
+                            <button @click.prevent="this.$router.push('/accounting/variableMonthlyCost/create')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
                         </div>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="permissions.view == '1'">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -76,26 +76,26 @@
                                                 </v-row>
                                             </v-card-title>
                                             <!-- data table component -->
-                                            <v-data-table :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                                            <v-data-table class="table-hover-class" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                                                 <template v-slot:item="{ item }">
                                                     <tr class="table-body-back">
                                                         <td>{{item.selectable.date}}</td>
-                                                        <td>{{item.selectable.amount}}</td>
+                                                        <td>${{item.selectable.amount}}</td>
                                                         <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
                                                         <td>
-                                                            <router-link :to="'/accounting/variableMonthlyCost/' + item.selectable.id + '/edit'">
+                                                            <button @click.prevent="this.$router.push('/accounting/variableMonthlyCost/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
                                                                 <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                            </router-link>
-                                                            <router-link to="" @click="deleteData(item.selectable.id)">
+                                                            </button>
+                                                            <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
                                                                 <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                            </router-link>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 </template>
                                                 <template v-slot:tbody v-if="dataMetrics.length > 0">
                                                     <tr class="total_table table-body-back">
                                                         <td>Totals</td>
-                                                        <td>{{ sumField }}</td>
+                                                        <td>${{ sumField }}</td>
                                                         <td>-</td>
                                                         <td>-</td>
                                                     </tr>
@@ -107,6 +107,13 @@
                             </div>
                         </div>
                     </v-app>
+                </div>
+                <div class="col" v-else>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,6 +155,7 @@ export default {
             hideShowLoader: false,
             dataMetrics: [],
             dataMetricsFilter: [],
+            permissions: {},
             search: '',
             headers: [
                 { title: 'Date', align: 'start', sortable: false, key: 'date' },
@@ -162,7 +170,10 @@ export default {
         }
     },
     computed: {
-
+        sumField() {
+            const key = 'amount';
+            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+        }
     },
     mounted() {
         this.getVariablePaymentList();
@@ -188,9 +199,9 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const allData = response.data;
-                    console.log(allData.data.data)
                     this.dataMetrics = allData.data.data;
                     this.dataMetricsFilter = allData.data.data;
+                    this.permissions = allData.permission;
                     this.hideShowLoader = false;
                 }
             })

@@ -15,14 +15,14 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right">
-                            <router-link to="/admin/img/doc/ipm-ops-cost-demo.csv" class="btn btn-lg btn-neutral btn_animated" download>
+                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
                                 <div>
                                     <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
                                     <span class="btn-inner--text">Demo.csv</span>
                                 </div>
                             </router-link>
                             <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openImportCsvModal">Import CSV</router-link>
-                            <router-link to="/accounting/fixedMonthlyCost/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
+                            <button @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/create')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
                         </div>
                     </div>
                 </div>
@@ -32,27 +32,20 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="permissions.view == '1'">
                     <v-app>
                         <div class="card">
-                            <!-- <div class="card-header">
-                                <h3 class="mb-0 float-left pt-3">Fixed Monthly Cost List</h3>
-                                <div class="float-right">
-                                    <router-link to="/admin/img/doc/demo-ops-cost.csv" class="mr-4" download>Demo.csv</router-link>
-                                    <router-link to="#exampleModalCenter"  data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-lg btn-neutral btn_animated">Import CSV</router-link>
-                                    <router-link to="/accounting/fixedMonthlyCost/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
-                                </div>
-                            </div> -->
                             <div class="card-body">
                                 <div class="finance_data">
                                     <v-app>
                                         <v-card>
                                             <v-card-title>
                                                 <v-spacer></v-spacer>
-                                                <v-row>
-                                                    <v-col class="d-flex" cols="12" sm="4"></v-col>
+                                                <v-row class="align-items-center">
+                                                    <v-col class="d-flex" cols="12" sm="4">daterange</v-col>
+                                                    <!-- <v-col class="d-flex" cols="12" sm="4"></v-col>
                                                     <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                        <!-- <template>
+                                                        <template>
                                                             <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
                                                                 <div slot="header" slot-scope="header" class="slot">
                                                                     <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
@@ -82,43 +75,47 @@
                                                                     </div>
                                                                 </div>
                                                             </date-range-picker>
-                                                        </template> -->
-                                                    </v-col>
+                                                        </template>
+                                                    </v-col> -->
                                                     <div class="col-3 ms-auto">
                                                         <div class="ms-auto search-input position-relative">
-                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
+                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchCosts">
                                                         </div>
                                                     </div>
                                                 </v-row>
                                             </v-card-title>
-                                            <v-data-table :headers="headers" :items="dataMetrics" :search="search" @current-items="currentItems"  :itemsPerPage="itemsPerPage" show-select class="table-with-checkbox"  v-model="selected">
+                                            <!-- data table component -->
+                                            <v-data-table class="table-hover-class adding-font-size elevation-1" :headers="headers" :items="dataMetrics" :itemsPerPage="itemsPerPage" show-select v-model="selected">
                                                 <!-- <template v-slot:item="{ item }">
-                                                    <tr>
-                                                        <td>{{item.date}}</td>
-                                                        <td>{{item.amount | toCurrency}}</td>
+                                                    <tr class="table-body-back">
+                                                        <td>{{item.selectable.date}}</td>
+                                                        <td>${{item.selectable.amount}}</td>
                                                         <td>
-                                                            <router-link to="javascript:void(0);" @click="edit(item.id)">
-                                                                <img src="/admin/img/icons/edit.svg" style="width:30px">
+                                                            <router-link :to="'/accounting/fixedMonthlyCost/'+ item.selectable.id +'/edit'">
+                                                                <img src="/assets/img/icons/edit.svg" class="icon-width">
                                                             </router-link>
-                                                            <router-link to="javascript:void(0);" @click="deleteData(item.id)">
-                                                                <img src="/admin/img/icons/bin.svg" style="width:30px">
+                                                            <router-link to="" @click="deleteData(item.selectable.id)">
+                                                                <img src="/assets/img/icons/bin.svg" class="icon-width">
                                                             </router-link>
                                                         </td>
                                                     </tr>
                                                 </template> -->
-                                                <!-- <template v-slot:item.amount="{ item }">
-                                                    <td>{{item.amount}}</td>
-                                                </template> -->
-                                                <!-- <template v-slot:item.action="{ item }">
+                                                <template v-slot:[`item.date`]="{ item }">
+                                                    <td>{{item.selectable.date}}</td>
+                                                </template>
+                                                <template v-slot:[`item.amount`]="{ item }">
+                                                    <td>{{item.selectable.amount}}</td>
+                                                </template>
+                                                <template v-slot:[`item.action`]="{ item }">
                                                     <td>
-                                                        <router-link to="javascript:void(0);" @click="edit(item.id)">
-                                                            <img src="/admin/img/icons/edit.svg" style="width:30px">
-                                                        </router-link>
-                                                        <router-link to="javascript:void(0);" @click="deleteData(item.id)">
-                                                            <img src="/admin/img/icons/bin.svg" style="width:30px">
-                                                        </router-link>
+                                                        <button @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
+                                                            <img src="/assets/img/icons/edit.svg" class="icon-width">
+                                                        </button>
+                                                        <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
+                                                            <img src="/assets/img/icons/bin.svg" class="icon-width">
+                                                        </button>
                                                     </td>
-                                                </template> -->
+                                                </template>
                                                 <template v-slot:top v-if="selected.length > 0">
                                                     <div class="p-2 text-right">
                                                         <v-btn
@@ -127,6 +124,7 @@
                                                             raised
                                                             rounded="xl"
                                                             @click="deleteSelected"
+                                                            class="me-1"
                                                         >Remove Selected</v-btn>
                                                         <v-btn
                                                             elevation="2"
@@ -138,10 +136,10 @@
                                                     </div>
                                                 </template>
                                                 <template v-slot:tbody v-if="dataMetrics.length > 0">
-                                                    <tr class="total_table">
+                                                    <tr class="total_table table-body-back">
                                                         <td>-</td>
                                                         <td>Totals</td>
-                                                        <td>{{ sumField }}</td>
+                                                        <td>${{ sumField }}</td>
                                                         <td>-</td>
                                                     </tr>
                                                 </template>
@@ -152,6 +150,13 @@
                             </div>
                         </div>
                     </v-app>
+                </div>
+                <div class="col" v-else>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -169,15 +174,15 @@
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
-                                    <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
+                                    <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
+                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" accept=".csv" name="chooseFile"  required/>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
-                            <button type="submit" class="btn btn-primary">Import</button>
+                            <button type="submit" class="btn btn-primary" @click.prevent="importCsv">Import</button>
                         </div>
                     </form>
                 </div>
@@ -195,11 +200,11 @@
                     <div class="modal-body">
                         <div class="col-12">
                             <form>
-                                <div class="row" v-for="(item, index) in selected" :key="index">
+                                <div class="row" v-for="(item, index) in seletedForEdit" :key="index">
                                     <div class="col-lg-6 py-0">
-                                        <div class="form-group">
+                                        <div class="form-group date-picker-3 date-picker-disabled">
                                             <label class="form-control-label" for="input-username">Date</label>
-                                            <date-picker :disabled="true" v-model="item.date" valueType="format" format="YYYY-MM-DD"></date-picker>
+                                            <datepicker :disabled="true" v-model="item.date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 py-0">
@@ -214,7 +219,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
+                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="editSelected">Save</button>
                                     </div>
                                 </div>
                             </form>
@@ -227,28 +232,49 @@
 </template>
 
 <script>
+import Datepicker from 'vue3-datepicker';
+// import moment from 'moment';
 export default {
+    components: {
+        Datepicker
+    },
     data() {
         return {
             hideShowLoader: false,
             dataMetrics: [],
-            search: '',
+            dataMetricsFilter: [],
+            searchInput: '',
             headers: [
-                { text: 'Date', align: 'start', sortable: false, value: 'date' },
-                { text: 'Amount', value: 'amount' },
-                { text: 'Action', value: 'action' },
+                { title: 'Date', align: 'start', sortable: false, key: 'date' },
+                { title: 'Amount', key: 'amount' },
+                { title: 'Action', key: 'action' },
             ],
             file: '',
             currentItemsTable: [],
             itemsPerPage: -1,
             selected: [],
+            selectedId: [],
+            seletedForEdit: [],
+            selectedFile: '',
+            permissions: {}
         }
     },
     computed: {
-
+        sumField() {
+            const key = 'amount';
+            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+        }
+    },
+    watch: {
+        selected(val) {
+            this.selectedId = [];
+            val.forEach((data) => {
+                this.selectedId.push({id: data});
+            })
+        }
     },
     mounted() {
-
+        this.getFixedMonthlyCostList();
     },
     methods: {
         // open/close import csv modal
@@ -261,14 +287,228 @@ export default {
         // open/close bulk edition operation cost modal
         openCreateUpdateData() {
             window.$('#createUpdateData').modal('show');
+            this.seletedForEdit = [];
+            this.dataMetrics.forEach((val) => {
+                this.selectedId.forEach((data) => {
+                    if(data.id == val.id) {
+                        this.seletedForEdit.push({
+                            id: val.id,
+                            date: new Date(val.date),
+                            amount: val.amount
+                        })
+                    }
+                })
+            })
         },
         closeCreateUpdateData() {
             window.$('#createUpdateData').modal('hide');
+            this.seletedForEdit = [];
         },
+        // search costs from table
+        searchCosts() {
+            this.dataMetrics = this.dataMetricsFilter.filter((val) => {
+                return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                       val.date.toLowerCase().includes(this.searchInput.toLowerCase())
+            })
+        },
+        // get all data of fixed monthly cost list
+        getFixedMonthlyCostList() {
+            this.hideShowLoader = true;
+            this.axios.get(this.$api + '/accounting/fixedMonthlyCost', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const getData = response.data;
+                    this.dataMetrics = getData.data.data;
+                    this.dataMetricsFilter = getData.data.data;
+                    this.permissions = getData.permission;
+                    console.log(getData, 'getData');
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // delete selected items
+        deleteSelected() {
+            const confirmDelete = window.confirm('Do you really want to delete?');
+            if(confirmDelete) {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/accounting/fixedMonthlyCost/deleteMutipleRows', {
+                    id: JSON.stringify(this.selectedId)
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'Record deleted',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.getFixedMonthlyCostList();
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
+            }
+        },
+        // edit bult selected items
+        editSelected() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/fixedMonthlyCost/saveBulkEditOpsCost', {
+                rowdata: JSON.stringify(this.seletedForEdit)
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: 'Record updated',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.closeCreateUpdateData();
+                    this.getFixedMonthlyCostList();
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // delete from table
+        deleteData(id) {
+            this.hideShowLoader = true;
+            this.axios.delete(this.$api + '/accounting/fixedMonthlyCost/' + id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: 'Fixed monthly cost deleted',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.getFixedMonthlyCostList();
+                    this.hideShowLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.hideShowLoader = false;
+            });
+        },
+        // downloading csv
+        downloadCsv() {
+            this.axios.post(this.$api + '/settings/downloadfile', {
+                filename: 'fixedMonthlyCost'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                },
+                responseType: 'blob',
+            })
+            .then(response => {
+                let blob = new Blob([response.data], { type:'application/csv' } );
+                const _url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = _url;
+                link.setAttribute('download', 'demo.csv');
+                document.body.appendChild(link);
+                link.click();
+                this.$toast.open({
+                    message: 'File downloaded',
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'success'
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+        // choose file and import csv
+        importCsv() {
+            this.hideShowLoader = true;
+            this.axios.post(this.$api + '/accounting/fixedMonthlyCost/importOpsCostCSV', {
+                file: this.selectedFile
+            }, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.closeImportCsvModal();
+                    this.getFixedMonthlyCostList();
+                    this.hideShowLoader = false;
+                    this.selectedFile = '';
+                    this.$toast.open({
+                        message: 'File imported',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.hideShowLoader = false;
+            });
+        },
+        // select csv file
+        chooseFile(e) {
+            this.selectedFile = e.target.files[0];
+        }
     }
 }
 </script>
 
 <style scoped>
-
+    button[disabled] {
+        cursor: not-allowed !important;
+    }
+    a[disabled] {
+        cursor: not-allowed !important;
+    }
+    .disable-button[disabled] {
+        cursor: not-allowed;
+    }
+    .set-cursor:hover, .set-cursor {
+        cursor: not-allowed !important;
+    }
+    .adding-font-size tbody tr td{
+        font-size: 14px !important;
+    }
 </style>
