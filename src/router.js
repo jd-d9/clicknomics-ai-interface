@@ -24,6 +24,8 @@ import DisplayVariableMonthlyCost from './components/Variable_monthly_cost/Displ
 import VariableMonthlyCostForm from './components/Variable_monthly_cost/VariableMonthlyCostForm.vue';
 import DisplayFixedMonthlyCost from './components/Fixed_monthly_cost/DisplayFixedMonthlyCostList.vue';
 import FixedMonthlyCostForm from './components/Fixed_monthly_cost/FixedMonthlyCostForm.vue';
+import NetworksList from './components/Integrations/Cpa_Networks_List/NetworksList.vue';
+import IntegrateNetwork from './components/Integrations/Cpa_Networks_List/IntegrateCpaNetwork.vue';
 import ManageEmailNotification from './components/Email_Notification/ManageEmailNotification.vue';
 import ProcessEmailReport from './components/Reports/ProcessEmailReport.vue';
 import MicrosoftEliminatedAccounts from './components/Archived_Traffic_Source/MicrosoftEliminatedAccounts.vue';
@@ -31,7 +33,6 @@ import eliminatedAccount from './components/Archived_Traffic_Source/eliminatedAc
 import CloudWayList from './components/Integrations/CloudWayList.vue';
 import DomainList from './components/Integrations/DomainList.vue';
 import IntegrationDomain from './components/Integrations/IntegrationDomain.vue';
-import NetworkList from './components/Integrations/NetworkList.vue';
 import CommingSoonComponent from './components/Common/CommingSoonComponent.vue';
 import NotFoundPage from './components/Common/NotFoundPage.vue';
 
@@ -78,6 +79,9 @@ const router = createRouter({
         {path: '/accounting/fixedMonthlyCost', component: DisplayFixedMonthlyCost, meta: {auth: true}},
         {path: '/accounting/fixedMonthlyCost/create', component: FixedMonthlyCostForm, meta: {auth: true}},
         {path: '/accounting/fixedMonthlyCost/:id/edit', component: FixedMonthlyCostForm, meta: {auth: true}},
+        // settings/networks
+        {path: '/settings/networks', component: NetworksList, meta: {auth: true}},
+        {path: '/settings/networks/affiliates', component: IntegrateNetwork, meta: {auth: true}},
         // other
         {path: '/settings/emailNotification', component: ManageEmailNotification, meta: {auth: true}},
         {path: '/settings/processEmailReport', component: ProcessEmailReport, meta: {auth: true}},
@@ -86,7 +90,6 @@ const router = createRouter({
         {path: '/settings/cloudways', component: CloudWayList, meta: {auth: true}},
         {path: '/settings/domain', component: DomainList, meta: {auth: true}},
         {path: '/settings/domain/integrate', component: IntegrationDomain, meta: {auth: true}},
-        {path: '/settings/networks', component: NetworkList, meta: {auth: true}},
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page
         {path: '/:notFound(.*)', component: NotFoundPage},

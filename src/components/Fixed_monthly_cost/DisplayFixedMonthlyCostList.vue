@@ -124,7 +124,8 @@
                                                             raised
                                                             rounded="xl"
                                                             @click="deleteSelected"
-                                                            class="me-1"
+                                                            class="me-1 disable-button"
+                                                            :disabled="permissions.delete_auth == '0'"
                                                         >Remove Selected</v-btn>
                                                         <v-btn
                                                             elevation="2"
@@ -132,6 +133,8 @@
                                                             variant="outlined"
                                                             rounded="xl"
                                                             @click="openCreateUpdateData"
+                                                            class="disable-button"
+                                                            :disabled="permissions.update_auth == '0'"
                                                         >Edit Selected</v-btn>
                                                     </div>
                                                 </template>

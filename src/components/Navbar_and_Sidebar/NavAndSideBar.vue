@@ -389,6 +389,7 @@
     .sidenav-toggler {
         width: 18px;
         cursor: pointer;
+        transform: translateX(-5px);
     }
     .sidenav-toggler .line {
         margin-top: 3px;

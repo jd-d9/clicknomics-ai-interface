@@ -14,9 +14,9 @@
                                 </ol>
                             </nav>
                         </div>
-                        <div class="col-lg-6 text-right">
+                        <!-- <div class="col-lg-6 text-right">
                             <router-link to="/accounting/invoice" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

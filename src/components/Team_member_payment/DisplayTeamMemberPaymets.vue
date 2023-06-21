@@ -68,6 +68,7 @@
                                                                 variant="solo"
                                                                 label="From Account Filter" 
                                                                 :items="fromAccountFilter"
+                                                                item-value="key"
                                                                 v-model="fromAccount"
                                                                 ></v-select>
                                                             </div>
@@ -79,6 +80,7 @@
                                                                 variant="solo"
                                                                 label="To Account Filter" 
                                                                 :items="toAccountFilter"
+                                                                item-value="key"
                                                                 v-model="toAccount"
                                                                 ></v-select>
                                                             </div>
@@ -97,8 +99,8 @@
                                                         <tr class="table-body-back">
                                                             <td>{{item.selectable.id}}</td>
                                                             <td>{{item.selectable.payment_date}}</td>
-                                                            <td>{{item.selectable.from_account}}</td>
-                                                            <td>{{item.selectable.to_account}}</td>
+                                                            <td>{{item.selectable.fromaccountlist.team_member_name}}</td>
+                                                            <td>{{item.selectable.toaccountlist.team_member_name}}</td>
                                                             <td>${{item.selectable.amount }}</td>
                                                             <td>{{item.selectable.status}}</td>
                                                             <td>
@@ -386,62 +388,6 @@ export default {
             cardMemberList: [],
             showImportIcon: true,
             selectedFile: '',
-            allfromAccount: [
-                {
-                    "from_account": 2,
-                    "fromaccountlist": {
-                        "id": 2,
-                        "team_member_name": "Maulik 1",
-                        "team_member_type": "fromAccount",
-                        "created_by": 4,
-                        "updated_by": null,
-                        "created_at": "2023-03-27T15:50:13.000000Z",
-                        "updated_at": null,
-                        "deleted_at": null
-                    }
-                },
-                {
-                    "from_account": 4,
-                    "fromaccountlist": {
-                        "id": 4,
-                        "team_member_name": "Testing 2",
-                        "team_member_type": "fromAccount",
-                        "created_by": 4,
-                        "updated_by": null,
-                        "created_at": "2023-03-27T15:50:13.000000Z",
-                        "updated_at": null,
-                        "deleted_at": null
-                    }
-                }
-            ],
-            alltoAccount: [
-                {
-                    "to_account": 1,
-                    "toaccountlist": {
-                        "id": 1,
-                        "team_member_name": "Maulik",
-                        "team_member_type": "toAccount",
-                        "created_by": 4,
-                        "updated_by": null,
-                        "created_at": "2023-03-27T15:50:13.000000Z",
-                        "updated_at": null,
-                        "deleted_at": null
-                    }
-                },
-                {
-                    "to_account": 3,
-                    "toaccountlist": {
-                        "id": 3,
-                        "team_member_name": "Testing",
-                        "team_member_type": "toAccount",
-                        "created_by": 4,
-                        "updated_by": null,
-                        "created_at": "2023-03-27T15:50:13.000000Z",
-                        "updated_at": null,
-                        "deleted_at": null
-                    }
-                }
-            ],
         }
     },
     computed: {
@@ -453,10 +399,47 @@ export default {
     watch: {
         // from account list filtering
         fromAccount(val) {
-            if(val) {
-                this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
-                    return val.from_account == this.fromAccount;
+                if(val) {
+                this.hideShowLoader = true;
+                this.axios.get(this.$api + '/accounting/teamMemberPayment', {
+                    fromAccount: this.fromAccount,
+                    toAccount: this.toAccount,
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
                 })
+                .then(response => {
+                    if(response.data.success) {
+                        const allData = response.data;
+                        this.teamMemberPaymentList = allData.data.data;
+                        this.teamMemberPaymentFilter = allData.data.data;
+                        this.permissions = allData.permission;
+                        this.fromAccountFilter = [];
+                        allData.allfromAccount.forEach((val) => {
+                            this.fromAccountFilter.push({
+                                title: val.fromaccountlist.team_member_name,
+                                key: val.fromaccountlist.id
+                            })
+                        });
+                        this.toAccountFilter = [];
+                        allData.alltoAccount.forEach((val) => {
+                            this.toAccountFilter.push({
+                                title: val.toaccountlist.team_member_name,
+                                key: val.toaccountlist.id
+                            })
+                        });
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
+                // this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
+                //     return val.fromaccountlist.team_member_name == this.fromAccount;
+                // })
             }
             else {
                 this.teamMemberPaymentList = this.teamMemberPaymentFilter;
@@ -465,9 +448,43 @@ export default {
         // to account list filtering
         toAccount(val) {
             if(val) {
-                this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
-                    return val.to_account == this.toAccount;
+                this.hideShowLoader = true;
+                this.axios.get(this.$api + '/accounting/teamMemberPayment', {
+                    fromAccount: this.fromAccount,
+                    toAccount: this.toAccount,
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
                 })
+                .then(response => {
+                    if(response.data.success) {
+                        const allData = response.data;
+                        this.teamMemberPaymentList = allData.data.data;
+                        this.teamMemberPaymentFilter = allData.data.data;
+                        this.permissions = allData.permission;
+                        this.fromAccountFilter = [];
+                        allData.allfromAccount.forEach((val) => {
+                            this.fromAccountFilter.push({
+                                title: val.fromaccountlist.team_member_name,
+                                key: val.fromaccountlist.id
+                            })
+                        });
+                        this.toAccountFilter = [];
+                        allData.alltoAccount.forEach((val) => {
+                            this.toAccountFilter.push({
+                                title: val.toaccountlist.team_member_name,
+                                key: val.toaccountlist.id
+                            })
+                        });
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
             }
             else {
                 this.teamMemberPaymentList = this.teamMemberPaymentFilter;
@@ -505,8 +522,8 @@ export default {
             this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
                 return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
                         val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.from_account.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.to_account.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.fromaccountlist.team_member_name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.toaccountlist.team_member_name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
                         val.status.toLowerCase().includes(this.searchInput.toLowerCase()) || 
                         val.payment_date.toLowerCase().includes(this.searchInput.toLowerCase())
             })
@@ -526,16 +543,18 @@ export default {
                     this.teamMemberPaymentList = allData.data.data;
                     this.teamMemberPaymentFilter = allData.data.data;
                     this.permissions = allData.permission;
+                    this.fromAccountFilter = [];
                     allData.allfromAccount.forEach((val) => {
                         this.fromAccountFilter.push({
                             title: val.fromaccountlist.team_member_name,
-                            key: val.id
+                            key: val.fromaccountlist.id
                         })
                     });
+                    this.toAccountFilter = [];
                     allData.alltoAccount.forEach((val) => {
                         this.toAccountFilter.push({
                             title: val.toaccountlist.team_member_name,
-                            key: val.id
+                            key: val.toaccountlist.id
                         })
                     });
                     this.hideShowLoader = false;
@@ -638,7 +657,7 @@ export default {
             this.axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport', {
                 // startDate: moment(new Date()).format('YYYY-MM-DD'),
                 // endDate: moment(new Date()).format('YYYY-MM-DD'),
-                startDate: '2023-06-19',
+                startDate: '2022-06-19',
                 endDate: '2023-06-30',
             }, {
                 headers: {

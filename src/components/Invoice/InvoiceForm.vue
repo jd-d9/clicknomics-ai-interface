@@ -437,7 +437,7 @@ export default {
             }
             else {
                 this.hideShowLoader = true;
-                this.axios.post(this.$api + '/accounting/invoice', {
+                this.axios.post(this.$api + '/accounting/invoices/saveTemplate', {
                     invoice_number: this.invoiceData.invoiceData.invoiceNumber,
                     invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
                     invoice_due_date: moment(this.invoiceData.invoiceData.dueDate).format('YYYY-MM-DD'),

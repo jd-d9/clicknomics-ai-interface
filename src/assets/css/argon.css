@@ -7010,7 +7010,7 @@ select{
 .v-data-table .v-table__wrapper > table tbody > tr > td {
     background-color: unset !important;
 }
-.table-hover-class .v-table__wrapper tbody tr:hover{
+.table-hover-class .v-table__wrapper tbody tr:hover, .table-hover-class .v-table__wrapper tbody tr:hover th{
     background: #eee !important;
 }
 .v-data-table-footer .v-select__selection-text {
@@ -7044,4 +7044,20 @@ select{
 }
 .disable-button[disabled] {
     cursor: not-allowed;
+}
+.v-btn--disabled {
+    opacity: 0.8 !important;
+    pointer-events: unset !important;
+}
+.delete-confirm-card .v-card-title, .delete-confirm-card .v-card-text {
+    padding: 10px 15px !important;
+    font-weight: unset !important;
+    text-align: left !important;
+    background-color: rgb(232 240 254) !important;
+}
+.delete-confirm-card .v-card-text {
+    color: rgba(0, 0, 0, 0.5);
+}
+.v-dialog > .v-overlay__content {
+    overflow-y: auto !important;
 }
