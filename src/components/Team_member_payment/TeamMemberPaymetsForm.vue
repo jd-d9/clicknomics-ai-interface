@@ -29,26 +29,22 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="col-12">
-                                <form>
+                                <Form @submit="manageTeamMemberPayment" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group date-picker-3">
                                                 <label class="form-control-label" for="input-username">Date</label>
-                                                <datepicker inputFormat="yyyy-MM-dd" v-model="date" :locale="locale" :clearable="true" @change="dateIsValid"/>
-                                                <div :class="{'date-is-invalid': invalidDate}">
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ invalidDate }}</strong>
-                                                    </span>
-                                                </div>
+                                                <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
+                                                    <datepicker inputFormat="yyyy-MM-dd" v-model="date" :locale="locale" :clearable="true" name="Date"/>
+                                                </Field>
+                                                <ErrorMessage class="text-red-600" name="Date"/>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Amount</label>
-                                                <input type="number" id="input-username"  :class="{'form-control': true, 'is-invalid': invalidAmount}" step=".01" placeholder="Add Amount" v-model="amount" @keyup="amountIsValid">
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ invalidAmount }}</strong>
-                                                </span>
+                                                <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
+                                                <ErrorMessage class="text-red-600" name="Amount"/>
                                             </div>
                                         </div>
                                     </div>
@@ -56,19 +52,19 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group select-network-filter select-network-filter-two select-network-filter-height">
                                                 <label class="form-control-label" for="input-username">From Account</label>
-                                                <v-autocomplete :class="{'form-control': true, 'is-invalid': invalidFromAccount}" variant="outlined" :items="list" v-model="fromAccount" item-title="title" item-value="key"></v-autocomplete>
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ invalidFromAccount }}</strong>
-                                                </span>
+                                                <Field v-model="fromAccount" name="Fromaccount">
+                                                    <v-autocomplete name="Fromaccount" :class="{'form-control': true, 'border-red-600': errors.Fromaccount}" variant="outlined" :items="list" v-model="fromAccount" item-title="title" item-value="key"></v-autocomplete>
+                                                </Field>
+                                                <ErrorMessage class="text-red-600" name="Fromaccount"/>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group select-network-filter select-network-filter-height">
                                                 <label class="form-control-label" for="input-username">To Account</label>
-                                                <v-select :class="{'form-control': true, 'is-invalid': invalidToAccount}" :items="creditLines" v-model="toAccount" item-title="title" item-value="key"></v-select>
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ invalidToAccount }}</strong>
-                                                </span>
+                                                <Field v-model="toAccount" name="Toaccount">
+                                                    <v-select name="Toaccount" :class="{'form-control': true, 'border-red-600': errors.Toaccount}" :items="creditLines" v-model="toAccount" item-title="title" item-value="key"></v-select>
+                                                </Field>
+                                                <ErrorMessage class="text-red-600" name="Toaccount"/>
                                             </div>
                                         </div>
                                     </div>
@@ -76,28 +72,21 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group select-network-filter select-network-filter-height">
                                                 <label class="form-control-label" for="input-username">Status</label>
-                                                <v-select :class="{'form-control': true, 'is-invalid': invalidStatus}" :items="statusList" v-model="status" @change="statusIsValid"></v-select>
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ invalidStatus }}</strong>
-                                                </span>
+                                                <Field v-model="status" name="Status">
+                                                    <v-select name="Status" :class="{'form-control': true, 'border-red-600': errors.Status}" :items="statusList" v-model="status"></v-select>
+                                                </Field>    
+                                                <ErrorMessage class="text-red-600" name="Status"/>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="toggleComponent">
+                                    <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="createTeamMemberPayment">Save</button>
+                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row" v-else>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="updateTeamMemberPayment">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                </Form>
                             </div>
                         </div>
                     </div>
@@ -108,11 +97,14 @@
 </template>
 
 <script>
+import * as yup from 'yup';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import Datepicker from 'vue3-datepicker';
 import moment from 'moment';
 export default {
     components: {
-        Datepicker
+        Datepicker,
+        Form, Field, ErrorMessage
     },
     data() {
         return {
@@ -146,6 +138,17 @@ export default {
             this.getDataForEdit();
         }
     },
+    computed: {
+        schema() {
+            return yup.object({
+                Date: yup.string().required(),
+                Amount: yup.string().required(),
+                Fromaccount: yup.string().required(),
+                Toaccount: yup.string().required(),
+                Status: yup.string().required(),
+            });
+        },
+    },
     methods: {
         // get data for edit
         getDataForEdit() {
@@ -172,70 +175,73 @@ export default {
                 this.hideShowLoader = false;
             });
         },
-        // create team member payment
-        createTeamMemberPayment() {
-            this.hideShowLoader = true;
-            this.axios.post(this.$api + '/accounting/teamMemberPayment', {
-                payment_date: moment(this.date).format('YYYY-MM-DD'),
-                amount: this.amount,
-                from_account: this.fromAccount,
-                to_account: this.toAccount,
-                status: this.status,
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$router.push('/accounting/teamMembersPayments');
-                    this.$toast.open({
-                        message: 'Team member payment created',
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
+        // create and update team member payment
+        manageTeamMemberPayment() {
+            // update team member payment
+            if(this.$route.params.id) {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
+                    _method: 'PUT',
+                    payment_date: moment(this.date).format('YYYY-MM-DD'),
+                    amount: this.amount,
+                    from_account: this.fromAccount,
+                    to_account: this.toAccount,
+                    status: this.status,
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$router.push('/accounting/teamMembersPayments');
+                        this.$toast.open({
+                            message: 'Credit card payment updated',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
                     this.hideShowLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.hideShowLoader = false;
-            });
-        },
-        // update team member payment
-        updateTeamMemberPayment() {
-            this.hideShowLoader = true;
-            this.axios.post(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
-                _method: 'PUT',
-                payment_date: moment(this.date).format('YYYY-MM-DD'),
-                amount: this.amount,
-                from_account: this.fromAccount,
-                to_account: this.toAccount,
-                status: this.status,
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$router.push('/accounting/teamMembersPayments');
-                    this.$toast.open({
-                        message: 'Credit card payment updated',
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
+                });
+            }
+            // create team member payment
+            else {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/accounting/teamMemberPayment', {
+                    payment_date: moment(this.date).format('YYYY-MM-DD'),
+                    amount: this.amount,
+                    from_account: this.fromAccount,
+                    to_account: this.toAccount,
+                    status: this.status,
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$router.push('/accounting/teamMembersPayments');
+                        this.$toast.open({
+                            message: 'Team member payment created',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
                     this.hideShowLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.hideShowLoader = false;
-            });
+                });
+            }
         },
         // get fromaccount and toaccount dropdown data
         getFromToAccountDropdownData() {

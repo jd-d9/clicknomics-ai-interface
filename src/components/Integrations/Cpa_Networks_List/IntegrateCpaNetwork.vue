@@ -29,12 +29,13 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="col-12">
-                                <form>
+                                <Form @submit="integrateCpaNetwork" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Name Your Network</label>
-                                                <input type="text" id="input-username"  :class="{'form-control': true}" placeholder="Name" v-model="network_name">
+                                                <Field type="text" name="network" id="input-username" :class="{'form-control': true, 'border-red-600': errors.network}" placeholder="Name" v-model="network_name"/>
+                                                <ErrorMessage class="text-red-600" name="network"/>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
@@ -43,7 +44,8 @@
                                                 <div class="help-tip">
                                                     <div><p>Login URL for your network or domain when Affise is selected <br/> The Login URL needs to be https://api-networkdomain.affise.com/  </p></div>
                                                 </div>
-                                                <input type="text" id="input-username"  :class="{'form-control': true}" placeholder="Add the login URL for your network or domain" v-model="login_url" @blur="handleBlur">
+                                                <Field type="text" name="url" id="input-username" :class="{'form-control': true, 'border-red-600': errors.url}" placeholder="Add the login URL for your network or domain" v-model="login_url"/>
+                                                <ErrorMessage class="text-red-600" name="url"/>
                                             </div>
                                         </div>
                                     </div>
@@ -51,24 +53,28 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Network Platform</label>
-                                                <select :class="{'form-control': true}" placeholder="Select Role" v-model="network_selected">
-                                                    <option value="">Select Network</option>
-                                                    <option value="cake">Cake</option>
-                                                    <option value="hasoffers">Tune (Hasoffers)</option>
-                                                    <option value="everflow">Everflow</option>
-                                                    <option value="hitpath">Hitpath</option>
-                                                    <option value="clickbooth">ClickBooth</option>
-                                                    <option value="clickdealer">ClickDealer</option>
-                                                    <option value="w4">W4</option>
-                                                    <option value="affise">Affise</option>
-                                                    <option value="other">Other</option>
-                                                </select>
+                                                <Field name="role" v-model="network_selected">
+                                                    <select :class="{'form-control': true, 'border-red-600': errors.role}" name="role" placeholder="Select Role" v-model="network_selected">
+                                                        <option value="">Select Network</option>
+                                                        <option value="cake">Cake</option>
+                                                        <option value="hasoffers">Tune (Hasoffers)</option>
+                                                        <option value="everflow">Everflow</option>
+                                                        <option value="hitpath">Hitpath</option>
+                                                        <option value="clickbooth">ClickBooth</option>
+                                                        <option value="clickdealer">ClickDealer</option>
+                                                        <option value="w4">W4</option>
+                                                        <option value="affise">Affise</option>
+                                                        <option value="other">Other</option>
+                                                    </select>
+                                                </Field>
+                                                <ErrorMessage class="text-red-600" name="role"/>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Email</label>
-                                                <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Email" v-model="email">
+                                                <Field type="text" id="input-username" name="email" :class="{'form-control': true, 'border-red-600': errors.email}" placeholder="Email" v-model="email"/>
+                                                <ErrorMessage class="text-red-600" name="email"/>
                                             </div>
                                         </div>
                                     </div>
@@ -76,13 +82,15 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">API KEY</label>
-                                                <input type="text" id="input-username"  :class="{'form-control': true}" placeholder="Name" v-model="api_key">
+                                                <Field type="text" id="input-username" name="api" :class="{'form-control': true, 'border-red-600': errors.api}" placeholder="Name" v-model="api_key"/>
+                                                <ErrorMessage class="text-red-600" name="api"/>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Affiliate ID / Network ID / Domain and Script name </label>
-                                                <input type="text" id="input-username"  :class="{'form-control': true}" placeholder="Name" v-model="affiliate_id">
+                                                <Field type="text" id="input-username" name="affiliatedid" :class="{'form-control': true, 'border-red-600': errors.affiliatedid}" placeholder="Name" v-model="affiliate_id"/>
+                                                <ErrorMessage class="text-red-600" name="affiliatedid"/>
                                             </div>
                                         </div>
                                     </div>
@@ -90,24 +98,22 @@
                                         <div class="col-lg-12 py-0">
                                             <div class="form-group date-picker-3">
                                                 <label class="form-control-label" for="input-username">Fetch Previous Records From</label>
-                                                <datepicker :disabled-date="disabledDates" v-model="date" valueType="format" format="YYYY-MM-DD"></datepicker>
-                                                <div :class="{'date-is-invalid': invalidDate}">
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ invalidDate }}</strong>
-                                                    </span>
-                                                </div>
+                                                <Field name="date" v-model="date" :class="{'border-red-600': errors.date}">
+                                                    <datepicker  name="date" v-model="date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                                </Field>
+                                                <ErrorMessage class="text-red-600" name="date"/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="integrateCpaNetwork">Integrate</button>
+                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Integrate</button>
                                                 <!-- <button type="button" class="btn btn-primary btn-lg btn_animated" @click="linkMore = !linkMore" v-if="report.length > 0">Back</button> -->
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                </Form>
                             </div>
                         </div>
                     </div>
@@ -162,11 +168,20 @@
 </template>
 
 <script>
+import * as yup from 'yup';
+import { Form, Field, ErrorMessage, defineRule } from 'vee-validate';
 import Datepicker from 'vue3-datepicker';
 import moment from 'moment';
+defineRule('required', value => {
+  if (!value || !value.length) {
+    return '{_field_} can not be empty';
+  }
+  return true;
+});
 export default {
     components: {
-        Datepicker
+        Datepicker,
+        Form, Field, ErrorMessage
     },
     data() {
         return {
@@ -208,6 +223,19 @@ export default {
     },
     mounted() {
 
+    },
+    computed: {
+        schema() {
+            return yup.object({
+                role: yup.string().required(),
+                url: yup.string().required(),
+                network: yup.string().required(),
+                date: yup.string().required(),
+                affiliatedid: yup.string().required(),
+                api: yup.string().required(),
+                email: yup.string().required(),
+            });
+        },
     },
     methods: {
         // integrate cpa network

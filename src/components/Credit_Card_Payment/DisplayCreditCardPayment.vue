@@ -50,6 +50,7 @@
                                                             label="From Account Filter" 
                                                             :items="fromAccountFilter"
                                                             v-model="fromAccount"
+                                                            @update:modelValue="filterFromAccount"
                                                             ></v-select>
                                                         </div>
                                                     </v-col>
@@ -61,6 +62,7 @@
                                                             label="To Account Filter" 
                                                             :items="toAccountFilter"
                                                             v-model="toAccount"
+                                                            @update:modelValue="filterToAccount"
                                                             ></v-select>
                                                         </div>
                                                     </v-col>
@@ -161,22 +163,23 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form>
+                    <Form @submit="importCsv" :validation-schema="schema" v-slot="{ errors }">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" accept=".csv" type="file" name="chooseFile" required/>
+                                    <Field @change="chooseFile" name="Choosecsv" title="Choose CSV" class="inputFile form-control-file" :class="{'border-red-600': errors.Choosecsv}" accept=".csv" type="file" required/>
                                 </div>
+                                <ErrorMessage class="text-red-600" name="Choosecsv"/>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
-                            <button type="submit" class="btn btn-primary" @click.prevent="importCsv">Import</button>
+                            <button type="submit" class="btn btn-primary">Import</button>
                         </div>
-                    </form>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -184,7 +187,12 @@
 </template>
 
 <script>
+import * as yup from 'yup';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
+    components: {
+        Form, Field, ErrorMessage
+    },
     data() {
         let today = new Date();
         let startDate = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -230,33 +238,15 @@ export default {
         this.getCreditCardPaymentList();
     },
     computed: {
+        schema() {
+            return yup.object({
+                Choosecsv: yup.string().required(),
+            });
+        },
+        // total row
         sumField() {
             const key = 'amount';
             return this.creditCardPaymentList.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        }
-    },
-    watch: {
-        // from account list filtering
-        fromAccount(val) {
-            if(val) {
-                this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
-                    return val.from_account == this.fromAccount;
-                })
-            }
-            else {
-                this.creditCardPaymentList = this.creditCardPaymentFilter;
-            }
-        },
-        // to account list filtering
-        toAccount(val) {
-            if(val) {
-                this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
-                    return val.to_account == this.toAccount;
-                })
-            }
-            else {
-                this.creditCardPaymentList = this.creditCardPaymentFilter;
-            }
         }
     },
     methods: {        
@@ -278,12 +268,28 @@ export default {
                         val.payment_date.toLowerCase().includes(this.searchInput.toLowerCase())
             })
         },
-        // filtering to account
-        // filterToAccount() {
-        //     this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
-        //         return val.to_account == this.toAccount;
-        //     })
-        // },
+        // from account list filtering
+        filterFromAccount() {
+            if(this.fromAccount == null) {
+                this.creditCardPaymentList = this.creditCardPaymentFilter;
+            }
+            else {
+                this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
+                    return val.from_account == this.fromAccount;
+                })
+            }
+        },
+        // to account list filtering
+        filterToAccount() {
+            if(this.toAccount == null) {
+                this.creditCardPaymentList = this.creditCardPaymentFilter;
+            }
+            else {
+                this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
+                    return val.to_account == this.toAccount;
+                })
+            }
+        },
         // get credit card payment list 
         getCreditCardPaymentList() {
             this.hideShowLoader = true;

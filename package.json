@@ -25,7 +25,8 @@
     "vueified-date-range-picker": "^0.1.2",
     "vuetify": "^3.3.2",
     "vuex": "^4.1.0",
-    "webfontloader": "^1.0.0"
+    "webfontloader": "^1.0.0",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

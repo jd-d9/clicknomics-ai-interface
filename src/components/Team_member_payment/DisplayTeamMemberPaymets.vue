@@ -70,7 +70,9 @@
                                                                 :items="fromAccountFilter"
                                                                 item-value="key"
                                                                 v-model="fromAccount"
+                                                                @update:modelValue="getTeamMemberPaymentList"
                                                                 ></v-select>
+                                                                <!-- <v-select solo :items="fromAccountFilter" label="From Account Filter" :clearable="true" v-model="fromAccount" @change="getTeamMembersPaymentsList"></v-select> -->
                                                             </div>
                                                         </v-col>
                                                         <v-col class="d-flex" cols="12" sm="3">
@@ -82,6 +84,7 @@
                                                                 :items="toAccountFilter"
                                                                 item-value="key"
                                                                 v-model="toAccount"
+                                                                @update:modelValue="getTeamMemberPaymentList"
                                                                 ></v-select>
                                                             </div>
                                                         </v-col>
@@ -292,22 +295,23 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form>
+                    <Form @submit="importCsv" :validation-schema="schema" v-slot="{ errors }">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" name="chooseFile"  required/>
+                                    <Field name="Choosecsv" @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file"  required :class="{'border-red-600': errors.Choosecsv}"/>
                                 </div>
+                                <ErrorMessage class="text-red-600" name="Choosecsv"/>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" @click.prevent="importCsv">Import</button>
+                            <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
+                            <button type="submit" class="btn btn-primary">Import</button>
                         </div>
-                    </form>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -321,15 +325,16 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form>
+                    <Form @submit="addToAccount" :validation-schema="schema" v-slot="{ errors }">
                         <div class="modal-body">
-                            <input type="text" id="input-username" :class="{'form-control': true }" placeholder="Name" v-model="teamMemberName">
+                            <Field name="Name" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model="teamMemberName"/>
+                            <ErrorMessage class="text-red-600" name="Name"/>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" @click.prevent="addToAccount">Save</button>
+                            <button type="button" class="btn btn-secondary" @click.prevent="closeTeamMemberModal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </div>
-                    </form>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -343,15 +348,16 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form>
+                    <Form @submit="addFromAccount" :validation-schema="schema" v-slot="{ errors }">
                         <div class="modal-body">
-                            <input type="text" id="input-username"  :class="{'form-control': true}" placeholder="Name" v-model="teamMemberName">
+                            <Field type="text" name="Name" id="input-username"  :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model="teamMemberName"/>
+                            <ErrorMessage class="text-red-600" name="Name"/>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeFromAccountModal">Close</button>
-                            <button type="submit" class="btn btn-primary" @click.prevent="addFromAccount">Save</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </div>
-                    </form>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -360,7 +366,12 @@
 
 <script>
 // import moment from 'moment';
+import * as yup from 'yup';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
+    components: {
+        Form, Field, ErrorMessage
+    },
     data() {
         return {
             hideShowLoader: false,
@@ -391,111 +402,27 @@ export default {
         }
     },
     computed: {
+        schema() {
+            return yup.object({
+                Choosecsv: yup.string().required(),
+                Name: yup.string().required(),
+                Fromaccount: yup.string().required(),
+                Toaccount: yup.string().required(),
+            });
+        },
+        // total row
         sumField() {
             const key = 'amount';
             return this.teamMemberPaymentList.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         }
     },
-    watch: {
-        // from account list filtering
-        fromAccount(val) {
-                if(val) {
-                this.hideShowLoader = true;
-                this.axios.get(this.$api + '/accounting/teamMemberPayment', {
-                    fromAccount: this.fromAccount,
-                    toAccount: this.toAccount,
-                }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                    }
-                })
-                .then(response => {
-                    if(response.data.success) {
-                        const allData = response.data;
-                        this.teamMemberPaymentList = allData.data.data;
-                        this.teamMemberPaymentFilter = allData.data.data;
-                        this.permissions = allData.permission;
-                        this.fromAccountFilter = [];
-                        allData.allfromAccount.forEach((val) => {
-                            this.fromAccountFilter.push({
-                                title: val.fromaccountlist.team_member_name,
-                                key: val.fromaccountlist.id
-                            })
-                        });
-                        this.toAccountFilter = [];
-                        allData.alltoAccount.forEach((val) => {
-                            this.toAccountFilter.push({
-                                title: val.toaccountlist.team_member_name,
-                                key: val.toaccountlist.id
-                            })
-                        });
-                        this.hideShowLoader = false;
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.hideShowLoader = false;
-                });
-                // this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
-                //     return val.fromaccountlist.team_member_name == this.fromAccount;
-                // })
-            }
-            else {
-                this.teamMemberPaymentList = this.teamMemberPaymentFilter;
-            }
-        },
-        // to account list filtering
-        toAccount(val) {
-            if(val) {
-                this.hideShowLoader = true;
-                this.axios.get(this.$api + '/accounting/teamMemberPayment', {
-                    fromAccount: this.fromAccount,
-                    toAccount: this.toAccount,
-                }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                    }
-                })
-                .then(response => {
-                    if(response.data.success) {
-                        const allData = response.data;
-                        this.teamMemberPaymentList = allData.data.data;
-                        this.teamMemberPaymentFilter = allData.data.data;
-                        this.permissions = allData.permission;
-                        this.fromAccountFilter = [];
-                        allData.allfromAccount.forEach((val) => {
-                            this.fromAccountFilter.push({
-                                title: val.fromaccountlist.team_member_name,
-                                key: val.fromaccountlist.id
-                            })
-                        });
-                        this.toAccountFilter = [];
-                        allData.alltoAccount.forEach((val) => {
-                            this.toAccountFilter.push({
-                                title: val.toaccountlist.team_member_name,
-                                key: val.toaccountlist.id
-                            })
-                        });
-                        this.hideShowLoader = false;
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.hideShowLoader = false;
-                });
-            }
-            else {
-                this.teamMemberPaymentList = this.teamMemberPaymentFilter;
-            }
-        }
-    },
     mounted() {
-        // this.genrateTeamMembersPaymentsReport();
         this.getTeamMemberPaymentList();
     },
     methods: {
+        onLanguageChange() {
+            console.log('change-----')
+        },
         // open/close import csv modal
         openImportCsvModal() {
             window.$('#importCsvModal').modal('show');
@@ -530,8 +457,18 @@ export default {
         },
         // get team member payment details
         getTeamMemberPaymentList() {
+            console.log(`Bearer ${sessionStorage.getItem('Token')}`)
             this.hideShowLoader = true;
-            this.axios.get(this.$api + '/accounting/teamMemberPayment', {
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/accounting/teamMemberPayment';
+            if(this.fromAccount) {
+                queryString.set('fromAccount', this.fromAccount)
+            }
+            if(this.toAccount) {
+                queryString.set('toAccount', this.toAccount)
+            }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            this.axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`

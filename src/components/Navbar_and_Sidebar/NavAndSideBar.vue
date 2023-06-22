@@ -41,26 +41,26 @@
                             <div v-for="subChild in data.child" :key="subChild">
                                 <div class="sidebar-dropdown-menubars p-0" v-if="subChild.children.length !== 0">
                                     <!-- accordian start here -->
-                                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                                    <div class="accordion accordion-flush" :id="'accordionFlushExample' + subChild.id">
                                         <div class="accordion-item">
-                                            <h2 class="accordion-header" id="flush-headingOne">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" aria-controls="flush-collapseOne">
+                                            <h2 class="accordion-header" :id="'flush-heading' + subChild.id">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" :aria-controls="subChild.id">
                                                     {{ subChild.menu }}
                                                 </button>
                                             </h2>
-                                            <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                            <div :id="subChild.id" class="accordion-collapse collapse" :aria-labelledby="'flush-heading' + subChild.id" :data-bs-parent="'#accordionFlushExample' + subChild.id">
                                                 <div class="accordion-body" v-for="childs in subChild.children" :key="childs">
                                                     <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover">{{ childs.menu }}</router-link>
                                                     <!-- <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-if="childs.children.length === 0">{{ childs.menu }}</router-link>
                                                     <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-else>
-                                                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                                                        <div class="accordion accordion-flush" :id="'accordionFlushExample' + subChild.id">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="flush-headingOne">
                                                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" aria-controls="flush-collapseOne">
                                                                         {{ childs.menu }}
                                                                     </button>
                                                                 </h2>
-                                                                <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                                                <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" :data-bs-parent="'#accordionFlushExample' + subChild.id">
                                                                     <div class="accordion-body">
                                                                         <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-for="grandChilds in childs.children" :key="grandChilds">{{ grandChilds.menu }}</router-link>
                                                                     </div>

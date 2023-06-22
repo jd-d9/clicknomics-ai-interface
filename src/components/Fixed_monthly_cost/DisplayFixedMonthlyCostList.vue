@@ -172,22 +172,23 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form>
+                    <Form @submit="importCsv" :validation-schema="schema" v-slot="{ errors }">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" accept=".csv" name="chooseFile"  required/>
+                                    <Field @change="chooseFile" title="Choose CSV" :class="{'border-red-600': errors.chooseFile}" class="inputFile form-control-file" type="file" accept=".csv" name="chooseFile"  required/>
                                 </div>
+                                <ErrorMessage class="text-red-600" name="chooseFile"/>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
-                            <button type="submit" class="btn btn-primary" @click.prevent="importCsv">Import</button>
+                            <button type="submit" class="btn btn-primary">Import</button>
                         </div>
-                    </form>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -202,18 +203,19 @@
                     </div>
                     <div class="modal-body">
                         <div class="col-12">
-                            <form>
+                            <Form @submit="editSelected" :validation-schema="schema" v-slot="{ errors }">
                                 <div class="row" v-for="(item, index) in seletedForEdit" :key="index">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group date-picker-3 date-picker-disabled">
                                             <label class="form-control-label" for="input-username">Date</label>
-                                            <datepicker :disabled="true" v-model="item.date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                            <datepicker name="date" :disabled="true" v-model="item.date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Amount</label>
-                                            <input type="number" id="input-username"  :class="{'form-control': true}" placeholder="Add Amount" v-model="item.amount">
+                                            <Field name="amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.amount}" placeholder="Add Amount" v-model="item.amount"/>
+                                            <ErrorMessage class="text-red-600" name="amount"/>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -222,10 +224,10 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="editSelected">Save</button>
+                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
                                     </div>
                                 </div>
-                            </form>
+                            </Form>
                         </div>
                     </div>
                 </div>
@@ -235,11 +237,14 @@
 </template>
 
 <script>
+import * as yup from 'yup';
+import { Field, Form, ErrorMessage } from 'vee-validate';
 import Datepicker from 'vue3-datepicker';
 // import moment from 'moment';
 export default {
     components: {
-        Datepicker
+        Datepicker,
+        Field, Form, ErrorMessage
     },
     data() {
         return {
@@ -263,6 +268,13 @@ export default {
         }
     },
     computed: {
+        schema() {
+            return yup.object({
+                chooseFile: yup.string().required(),
+                amount: yup.string().required(),
+            });
+        },
+        // total row
         sumField() {
             const key = 'amount';
             return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
@@ -371,6 +383,7 @@ export default {
         },
         // edit bult selected items
         editSelected() {
+            console.log('---import---')
             this.hideShowLoader = true;
             this.axios.post(this.$api + '/accounting/fixedMonthlyCost/saveBulkEditOpsCost', {
                 rowdata: JSON.stringify(this.seletedForEdit)
@@ -456,6 +469,7 @@ export default {
         },
         // choose file and import csv
         importCsv() {
+            console.log('---import---')
             this.hideShowLoader = true;
             this.axios.post(this.$api + '/accounting/fixedMonthlyCost/importOpsCostCSV', {
                 file: this.selectedFile
