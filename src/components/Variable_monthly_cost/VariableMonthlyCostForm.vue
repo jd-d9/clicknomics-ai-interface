@@ -29,17 +29,16 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="col-12">
-                                <form>
+                                <Form @submit="manageVariableMonthlyCost" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group date-picker-3">
                                                 <label class="form-control-label" for="input-username">Date</label>
-                                                <datepicker v-model="date" range="true" :clearable="true" format="YYYY-MM-DD"/>
-                                                    <div :class="{'date-is-invalid': invalidDate}">
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ invalidDate }}</strong>
-                                                    </span>
-                                                </div>
+                                                <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
+                                                    <datepicker v-model="date" range="true" name="Date" :clearable="true" format="YYYY-MM-DD"/>
+                                                </Field>
+                                                <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Date"/> -->
                                                 <!-- <vueified-date-range-picker @selected="cb"></vueified-date-range-picker> -->
                                             </div>
                                             <!-- <div class="form-group date-picker-3" v-else>
@@ -55,7 +54,9 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Amount</label>
-                                                <input type="number" id="input-username"  :class="{'form-control': true}" step=".01" placeholder="Add Amount" v-model="amount">
+                                                <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
+                                                <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Amount"/> -->
                                             </div>
                                         </div>
                                     </div>
@@ -63,25 +64,22 @@
                                         <div class="col-lg-12 py-0 mt-3">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Notes</label>
-                                                <textarea :class="{'form-control': true}"  name="" cols="30" rows="10" v-model="notes"></textarea>
+                                                <Field name="Notes" v-model="notes">
+                                                    <textarea :class="{'form-control': true, 'border-red-600': errors.Notes}" name="Notes" cols="30" rows="10" v-model="notes"></textarea>
+                                                </Field>
+                                                <span class="text-red-600" v-if="errors.Notes">Notes can not be empty</span>
+                                                <ErrorMessage class="text-red-600" name="Notes"/>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row" v-if="toggleElement">
+                                    <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="createVariableMonthlyCost">Save</button>
+                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">{{toggleElement ? 'Save' : 'Update'}}</button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row" v-else>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="updateVariableMonthlyCost">Update</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                </Form>
                             </div>
                         </div>
                     </div>
@@ -94,9 +92,30 @@
 <script>
 import Datepicker from 'vue3-datepicker';
 import moment from 'moment';
+import * as yup from 'yup';
+import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+import { required } from '@vee-validate/rules';
+import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+defineRule('required', required);
+loadLocaleFromURL(
+  'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+);
+configure({
+    generateMessage: localize('en', {
+        messages: {
+            required: '{field} can not be empty!',
+        },
+        // fields: {
+        //     Status: {
+        //         required: 'Status can not be empty!!!'
+        //     }
+        // }
+    }),
+});
 export default {
     components: {
-        Datepicker
+        Datepicker,
+        Form, Field, ErrorMessage
     },
     data() {
         return {
@@ -115,37 +134,80 @@ export default {
             this.toggleElement = false;
         }
     },
-    methods: {
-        // create variable monthly cost
-        createVariableMonthlyCost() {
-            this.hideShowLoader = true;
-            this.axios.post(this.$api + '/accounting/variableCost', {
-                date: '2023-06-01,2023-06-07',
-                // date: moment(this.date).format('YYYY-MM-DD'),
-                amount: this.amount,
-                notes: this.notes,
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$router.push('/accounting/variableMonthlyCost');
-                    this.$toast.open({
-                        message: 'Variable monthly cost created',
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.hideShowLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.hideShowLoader = false;
+    computed: {
+        schema() {
+            return yup.object({
+                Date: yup.string().required(),
+                Amount: yup.string().required(),
+                Notes: yup.string().required(),
             });
+        },
+    },
+    methods: {
+        // create and update variable monthly cost
+        manageVariableMonthlyCost() {
+            // update variable monthly cost
+            if(this.$route.params.id) {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/accounting/variableCost/' + this.$route.params.id, {
+                    _method: 'PUT',
+                    date: moment(this.date).format('YYYY-MM-DD'),
+                    amount: this.amount,
+                    notes: this.notes,
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$router.push('/accounting/variableMonthlyCost');
+                        this.$toast.open({
+                            message: 'Variable monthly cost updated',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
+            }
+            // create variable monthly cost
+            else {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/accounting/variableCost', {
+                    date: '2023-06-01,2023-06-07',
+                    // date: moment(this.date).format('YYYY-MM-DD'),
+                    amount: this.amount,
+                    notes: this.notes,
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$router.push('/accounting/variableMonthlyCost');
+                        this.$toast.open({
+                            message: 'Variable monthly cost created',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
+            }
         },
         // get data for edit
         getDataForEdit() {
@@ -170,38 +232,7 @@ export default {
                 console.log(error);
                 this.hideShowLoader = false;
             });
-        },
-        // update variable monthly cost
-        updateVariableMonthlyCost() {
-            this.hideShowLoader = true;
-            this.axios.post(this.$api + '/accounting/variableCost/' + this.$route.params.id, {
-                _method: 'PUT',
-                date: moment(this.date).format('YYYY-MM-DD'),
-                amount: this.amount,
-                notes: this.notes,
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$router.push('/accounting/variableMonthlyCost');
-                    this.$toast.open({
-                        message: 'Variable monthly cost updated',
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.hideShowLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.hideShowLoader = false;
-            });
-        },
+        }
     }
 }
 </script>

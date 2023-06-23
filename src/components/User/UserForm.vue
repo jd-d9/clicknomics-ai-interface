@@ -7,24 +7,22 @@
                 <div class="col">
                     <div class="card">
                         <div class="card-body">
-                            <form>
+                            <Form @submit="manageUser" :validation-schema="schema" v-slot="{ errors }">
                                 <div class="row">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Name</label>
-                                            <input type="text" id="input-username" class="form-control" :class="{'is-invalid': invalidName}" placeholder="Name" v-model.trim="userName" @keyup="nameIsValid">
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ invalidName }}</strong>
-                                            </span>
+                                            <Field type="text" id="input-username" class="form-control" name="Name" :class="{'border-red-600': errors.Name}" placeholder="Name" v-model.trim="userName"/>
+                                            <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
                                         </div>
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Email</label>
-                                            <input type="email" id="input-username" class="form-control" :class="{'is-invalid': invalidEmail}" placeholder="Email" v-model="userEmail" @keyup="emailIsValid">
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ invalidEmail }}</strong>
-                                            </span>
+                                            <Field type="email" id="input-username" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" placeholder="Email" v-model="userEmail"/>
+                                            <span class="text-red-600" v-if="errors.Email">Email can not be empty</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Email"/> -->
                                             <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         </div>
                                     </div>
@@ -33,19 +31,17 @@
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Password</label>
-                                            <input type="password" id="input-username" class="form-control" :class="{'is-invalid': invalidPassword}" placeholder="Password" v-model="userPassword" @keyup="passwordIsValid">
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ invalidPassword }}</strong>
-                                            </span>
+                                            <Field type="password" id="input-username" name="Password" class="form-control" :class="{'border-red-600': errors.Password}" placeholder="Password" v-model="userPassword"/>
+                                            <span class="text-red-600" v-if="errors.Password">Password can not be empty</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Password"/> -->
                                         </div>
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Confirm Password</label>
-                                            <input type="password" id="input-username" class="form-control" :class="{'is-invalid': invalidConfirmPassword}" placeholder="Confirm Password" v-model="confirmPassword" @keyup="confirmPasswordIsValid">
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ invalidConfirmPassword }}</strong>
-                                            </span>
+                                            <Field type="password" id="input-username" name="Confirmpass" class="form-control" :class="{'border-red-600': errors.Confirmpass}" placeholder="Confirm Password" v-model="confirmPassword"/>
+                                            <span class="text-red-600" v-if="errors.Confirmpass">Confirm password can not be empty</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Password"/> -->
                                         </div>
                                     </div>
                                 </div>
@@ -53,20 +49,23 @@
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Select Country Code</label>
-                                            <select class="form-control" v-model="selectedCountry">
-                                                <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
-                                                    {{item.dial_code}} - {{item.name}}
-                                                </option>
-                                            </select>
+                                            <Field name="Country" v-model="selectedCountry" :class="{'border-red-600': errors.Country}">
+                                                <select class="form-control" name="Country" v-model="selectedCountry" :class="{'border-red-600': errors.Country}">
+                                                    <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
+                                                        {{item.dial_code}} - {{item.name}}
+                                                    </option>
+                                                </select>
+                                            </Field>
+                                            <span class="text-red-600" v-if="errors.Country">Country code can not be empty</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Country"/> -->
                                         </div>
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Mobile Number</label>
-                                            <input type="number" id="input-username" class="form-control" :class="{'is-invalid': invalidContact}" placeholder="Mobile Number" v-model="userContact" @keyup="mobileIsValid">
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ invalidContact }}</strong>
-                                            </span>
+                                            <Field type="number" id="input-username" name="Mobile" class="form-control" :class="{'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="userContact"/>
+                                            <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Mobile"/> -->
                                         </div>
                                     </div>
                                 </div>
@@ -74,36 +73,39 @@
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Role</label>
-                                            <select class="form-control" placeholder="Select Role" v-model="roleId">
-                                                <option value="">Select User Role</option>
-                                                <option :value="role.id" v-for="(role, index) in roles" :key="index">{{role.role_name}}</option>
-                                            </select>
+                                            <Field name="Role" v-model="roleId" :class="{'border-red-600': errors.Role}">
+                                                <select class="form-control" name="Role" placeholder="Select Role" v-model="roleId">
+                                                    <option value="">Select User Role</option>
+                                                    <option :value="role.id" v-for="(role, index) in roles" :key="index">{{role.role_name}}</option>
+                                                </select>
+                                            </Field>
+                                            <span class="text-red-600" v-if="errors.Role">Role can not be empty</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Role"/> -->
                                         </div>
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Status</label>
-                                            <select class="form-control" placeholder="User Status"  v-model="status">
-                                                <option value="1">Active</option>
-                                                <option value="0">In-Active</option>
-                                            </select>
+                                            <Field name="Status" v-model="status" :class="{'border-red-600': errors.Role}">
+                                                <select class="form-control" name="Status" placeholder="User Status"  v-model="status">
+                                                    <option value="1">Active</option>
+                                                    <option value="0">In-Active</option>
+                                                </select>
+                                            </Field>
+                                            <span class="text-red-600" v-if="errors.Status">Status can not be empty</span>
+                                            <ErrorMessage class="text-red-600" name="Status"/>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-6 py-0" v-if="toggleSomeComponent">
+                                    <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="saveAndCreateUser">Save</button>
-                                            <button type="reset" class="btn btn-secondary btn-lg btn_animated" @click.prevent="resetForm">Reset</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0" v-else>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="updateUserDetails">Update</button>
+                                            <button type="submit" class="btn btn-primary btn-lg btn_animated">{{toggleSomeComponent ? 'Save' : 'Update'}}</button>
+                                            <button type="reset" v-if="toggleSomeComponent" class="btn btn-secondary btn-lg btn_animated" @click.prevent="resetForm">Reset</button>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </Form>
                         </div>
                     </div>
                 </div>
@@ -113,8 +115,30 @@
 </template>
 
 <script>
-
+import * as yup from 'yup';
+import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+import { required } from '@vee-validate/rules';
+import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+defineRule('required', required);
+loadLocaleFromURL(
+  'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+);
+configure({
+    generateMessage: localize('en', {
+        messages: {
+            required: '{field} can not be empty!',
+        },
+        // fields: {
+        //     Status: {
+        //         required: 'Status can not be empty!!!'
+        //     }
+        // }
+    }),
+});
 export default {
+    components: {
+        Form, Field, ErrorMessage
+    },
     data() {
         return {
             userEmail: '',
@@ -137,83 +161,65 @@ export default {
             toggleSomeComponent: true,
         }
     },
+    computed: {
+        schema() {
+            return yup.object({
+                Name: yup.string().required(),
+                Email: yup.string().required(),
+                Password: yup.string().required(),
+                Confirmpass: yup.string().required(),
+                Mobile: yup.string().required(),
+                Country: yup.string().required(),
+                Role: yup.string().required(),
+                Status: yup.string().required(),
+            });
+        },
+    },
     methods:{
-        // name validation
-        nameIsValid() {
-            const nameFormate = /^[A-Za-z ]+$/;
-            if(!this.userName) {
-                this.invalidName = 'Name is required.';
+        // save and update user
+        manageUser() {
+            // update user
+            if(this.$route.params.id) {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/settings/user/' + this.$route.params.id, {
+                    name: this.userName,
+                    email: this.userEmail,
+                    password: this.userPassword,
+                    phone_number: this.userContact,
+                    role_id: this.roleId,
+                    status: this.status,
+                    country_code: this.selectedCountry,
+                    _method: 'PUT'
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$router.push('/settings/user');
+                        this.$toast.open({
+                            message: 'User details updated',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
             }
-            else if(!this.userName.match(nameFormate)) {
-                this.invalidName = 'Please enter valid name.';
-            }
-            else {
-                this.invalidName = '';
-            }
-        },
-        // email validation
-        emailIsValid() {
-            const mailFormat = /^[^@]+@\w+(\.\w+)+\w$/;
-            if(!this.userEmail) {
-                this.invalidEmail = 'Email is required.';
-            }
-            else if(!this.userEmail.match(mailFormat)) {
-                this.invalidEmail = 'Please enter valid email.';
-            }
-            else {
-                this.invalidEmail = '';
-            }
-        },
-        // password validation
-        passwordIsValid() {
-            if(!this.userPassword) {
-                this.invalidPassword = 'Password is required.';
-            }
-            else if(this.userPassword.length < 6) {
-                this.invalidPassword = 'Please enter valid password.';
-            }
-            else {
-                this.invalidPassword = '';
-            }
-        },
-        // confirm password validation
-        confirmPasswordIsValid() {
-            if(!this.confirmPassword) {
-                this.invalidConfirmPassword = 'Password is required.';
-            }
-            else if(!this.confirmPassword.match(this.userPassword)) {
-                this.invalidConfirmPassword = 'Please re-enter your password.';
-            }
-            else {
-                this.invalidConfirmPassword = '';
-            }
-        },
-        // mobile number validation
-        mobileIsValid() {
-            const mobileFormat =  /^[0-9]+$/;
-            if(!this.userContact) {
-                this.invalidContact = 'Mobile number is required.';
-            }
-            else if(!this.userContact.toString().match(mobileFormat)) {
-                this.invalidContact = 'Please enter valid mobile number.';
-            }
-            else if(this.userContact.toString().length !== 10) {
-                this.invalidContact = 'Mobile number must be 10 number.';
-            }
-            else {
-                this.invalidContact = '';
-            }
-        },
-        // save and create user
-        saveAndCreateUser() {
-            this.nameIsValid();
-            this.emailIsValid();
-            this.passwordIsValid();
-            this.confirmPasswordIsValid();
-            this.mobileIsValid();
-            if(!this.userEmail || !this.userPassword || !this.confirmPassword || !this.userName || !this.userContact || this.invalidEmail || this.invalidPassword || this.invalidConfirmPassword || this.invalidName || this.invalidContact) {
-                return false;
-            }
+            // create user
             else {
                 this.hideShowLoader = true;
                 this.axios.post(this.$api + '/settings/user', {
@@ -294,47 +300,6 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
-                this.hideShowLoader = false;
-            });
-        },
-        // update(edit) user details
-        updateUserDetails() {
-            this.hideShowLoader = true;
-            this.axios.post(this.$api + '/settings/user/' + this.$route.params.id, {
-                name: this.userName,
-                email: this.userEmail,
-                password: this.userPassword,
-                phone_number: this.userContact,
-                role_id: this.roleId,
-                status: this.status,
-                country_code: this.selectedCountry,
-                _method: 'PUT'
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$router.push('/settings/user');
-                    this.$toast.open({
-                        message: 'User details updated',
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.hideShowLoader = false;
-                }
-            })
-            .catch(error => {
-                this.$toast.open({
-                    message: error.response.data.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
                 console.log(error);
                 this.hideShowLoader = false;
             });

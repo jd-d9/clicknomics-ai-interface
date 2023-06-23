@@ -81,7 +81,30 @@
 
 <script>
     import { useRoute } from 'vue-router';
+    // import * as yup from 'yup';
+    // import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+    // import { required } from '@vee-validate/rules';
+    // import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+    // defineRule('required', required);
+    // loadLocaleFromURL(
+    // 'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+    // );
+    // configure({
+    //     generateMessage: localize('en', {
+    //         messages: {
+    //             required: '{field} can not be empty!',
+    //         },
+    //         // fields: {
+    //         //     Status: {
+    //         //         required: 'Status can not be empty!!!'
+    //         //     }
+    //         // }
+    //     }),
+    // });
     export default {
+        // components: {
+        //     Form, Field, ErrorMessage
+        // },
         data() {
             return {
                 // images: {
@@ -100,6 +123,13 @@
                 userDetailsForm: false,
                 route: useRoute(),
             }
+        },
+        computed: {
+            // schema() {
+            //     return yup.object({
+            //         Authentication: yup.string().required(),
+            //     });
+            // },
         },
         methods: {
             // email validation

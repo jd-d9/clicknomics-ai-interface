@@ -59,19 +59,18 @@
                                         <p class="font-weight-normal m-0 text-color">{{ currentEmail }}</p>
                                     </div>
                                 </div>
-                                <form id="userNameForm" v-show="userEmailToggle" @submit.prevent="updateUserEmail">
+                                <Form @submit="updateUserEmail" :validation-schema="mailSchema" v-slot="{ errors }" v-show="userEmailToggle">
                                     <div class="form-group">
                                         <label  class="d-block form-control-label">Current user email</label>
                                         <p class="font-weight-normal m-0 text-color">{{ currentEmail }}</p>
                                         <label class="d-block form-control-label mt-2">New user email</label>
-                                        <input type="text" id="input-username" :class="{'form-control': true, 'is-invalid': invalidEmail }" placeholder="Email" v-model="email" @keyup="emailIsValid">
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ invalidEmail }}</strong>
-                                        </span>
+                                        <Field type="text" id="input-username" name="UserEmail" :class="{'form-control': true, 'border-red-600': errors.UserEmail}" placeholder="Email" v-model="email"/>
+                                        <span class="text-red-600" v-if="errors.UserEmail">User email can not be empty</span>
+                                        <!-- <ErrorMessage class="text-red-600" name="UserEmail"/> -->
                                     </div>
                                     <button type="submit" class="btn btn-primary btn-lg btn_animated">Update user Email</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="userEmailToggle = !userEmailToggle">Close</button>
-                                </form>
+                                </Form>
                             </div>
                         </div>
                     </div>
@@ -90,30 +89,38 @@
                                 </button>
                             </h6>
                             <div>
-                                <form v-show="profileDetailsToggle" @submit.prevent="updateUserDetails">
+                                <Form @submit="updateUserDetails" :validation-schema="userSchema" v-slot="{ errors }" v-show="profileDetailsToggle">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Name</label>
-                                        <input type="text" id="input-username"  :class="{'form-control': true }" placeholder="Name" v-model="name">
+                                        <Field type="text" id="input-username" name="Name" :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model="name"/>
+                                        <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
+                                        <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-lg-6 py-0">
                                                 <label class="form-control-label" for="input-username">Select Country Code</label>
-                                                <select class="form-control" v-model="countryCode">
-                                                    <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
-                                                        {{item.dial_code}} - {{item.name}}
-                                                    </option>
-                                                </select>
+                                                <Field v-model="countryCode" name="Country" :class="{'border-red-600': errors.Country}">
+                                                    <select class="form-control" name="Country" v-model="countryCode" :class="{'border-red-600': errors.Country}">
+                                                        <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
+                                                            {{item.dial_code}} - {{item.name}}
+                                                        </option>
+                                                    </select>
+                                                </Field>
+                                                <span class="text-red-600" v-if="errors.Country">Country code can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Country"/> -->
                                             </div>
                                             <div class="col-lg-6 py-0">
                                                 <label class="form-control-label" for="input-username">Mobile Number</label>
-                                                <input type="number" id="input-username" :class="{'form-control': true }" placeholder="Mobile Number" v-model="phoneNumber">
+                                                <Field type="number" name="Mobile" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="phoneNumber"/>
+                                                <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Mobile"/> -->
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update User Detail</button>
+                                    <button type="submit" class="btn btn-primary btn-lg btn_animated">Update User Detail</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="profileDetailsToggle = !profileDetailsToggle">Close</button>
-                                </form>
+                                </Form>
                                 <div id="userDetailsForm" v-if="!profileDetailsToggle">
                                     <div class="row">
                                         <div class="form-group col-md-6  py-0 m-0">
@@ -136,31 +143,28 @@
                                 </button>
                             </h6>
                             <div>
-                                <form id="changePasswordForm" v-show="passwordToggle" @submit.prevent="updateUserPassword">
+                                <Form @submit="updateUserPassword" :validation-schema="passSchema" v-slot="{ errors }" v-show="passwordToggle">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Current password</label>
-                                        <input type="password" name="old_password" :class="{'form-control': true, 'is-invalid': invalidCurrentPassword }" v-model="currentPassword" @keyup="currentPasswordIsValid">
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ invalidCurrentPassword }}</strong>
-                                        </span>
+                                        <Field type="password" name="currentPass" :class="{'form-control': true, 'border-red-600': errors.currentPass}" v-model="currentPassword"/>
+                                        <span class="text-red-600" v-if="errors.currentPass">Current password can not be empty</span>
+                                        <!-- <ErrorMessage class="text-red-600" name="currentPass"/> -->
                                     </div>
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">New password</label>
-                                        <input type="password" id="input-username" :class="{'form-control': true, 'is-invalid': invalidPassword }" placeholder="Password" v-model="password" @keyup="passwordIsValid">
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ invalidPassword }}</strong>
-                                        </span>
+                                        <Field type="password" id="input-username" name="newPass" :class="{'form-control': true, 'border-red-600': errors.newPass}" placeholder="Password" v-model="password"/>
+                                        <span class="text-red-600" v-if="errors.newPass">New password can not be empty</span>
+                                        <!-- <ErrorMessage class="text-red-600" name="currentPass"/> -->
                                     </div>
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Repeat New password</label>
-                                        <input type="password" id="input-username" :class="{'form-control': true, 'is-invalid': invalidConfirmPass }" placeholder="Confirm Password" v-model="passwordConfirmation" @keyup="confirmPassValid">
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ invalidConfirmPass }}</strong>
-                                        </span>
+                                        <Field type="password" id="input-username" name="repeatPass" :class="{'form-control': true, 'border-red-600': errors.repeatPass}" placeholder="Confirm Password" v-model="passwordConfirmation"/>
+                                        <span class="text-red-600" v-if="errors.repeatPass">Reapet new password can not be empty</span>
+                                        <!-- <ErrorMessage class="text-red-600" name="repeatPass"/> -->
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update password</button>
+                                    <button type="submit" class="btn btn-primary btn-lg btn_animated">Update password</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="passwordToggle = !passwordToggle">Close</button>
-                                </form>
+                                </Form>
                                 <div id="changePassword" v-if="!passwordToggle">
                                     <h4 class="tx-normal tx-color-04 tx-spacing--2">
                                         <span>XXXX</span>
@@ -176,24 +180,32 @@
                                 </button>
                             </h6>
                             <div>
-                                <form id="changePasswordForm" v-show="TwoFaVerifyToggle" @submit.prevent="update2FaVerify">
+                                <Form @submit="update2FaVerify" :validation-schema="verifySchema" v-slot="{ errors }" v-show="TwoFaVerifyToggle">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">2FA Verification Status</label>
-                                        <select :class="{'form-control': true }" placeholder="User Status"  v-model="verificationStatus">
-                                            <option value="1">Enabled</option>
-                                            <option value="0">Disabled</option>
-                                        </select>
+                                        <Field name="TwoFaVerify" v-model="verificationStatus">
+                                            <select :class="{'form-control': true, 'border-red-600': errors.TwoFaVerify}" name="TwoFaVerify" placeholder="User Status" v-model="verificationStatus">
+                                                <option value="1">Enabled</option>
+                                                <option value="0">Disabled</option>
+                                            </select>
+                                        </Field>
+                                        <span class="text-red-600" v-if="errors.TwoFaVerify">Verification status can not be empty</span>
+                                        <!-- <ErrorMessage class="text-red-600" name="TwoFaVerify"/> -->
                                     </div>
                                     <div class="form-group">
                                         <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
-                                        <select :class="{'form-control': true }" placeholder="User Status"  v-model="remember2Fa">
-                                            <option value="1">Yes</option>
-                                            <option value="0">No</option>
-                                        </select>
+                                        <Field name="Remember" v-model="remember2Fa">
+                                            <select :class="{'form-control': true, 'border-red-600': errors.Remember}" name="Remember" placeholder="User Status" v-model="remember2Fa">
+                                                <option value="1">Yes</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </Field>
+                                        <span class="text-red-600" v-if="errors.Remember">2FA verification can not be empty</span>
+                                        <ErrorMessage class="text-red-600" name="Remember"/>
                                     </div>
-                                    <button class="btn btn-primary btn-lg btn_animated" type="submit">Update</button>
+                                    <button type="submit" class="btn btn-primary btn-lg btn_animated">Update</button>
                                     <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="TwoFaVerifyToggle = !TwoFaVerifyToggle">Close</button>
-                                </form>
+                                </Form>
                                 <div id="changePassword" v-if="!TwoFaVerifyToggle">
                                     <h4 class="tx-normal tx-color-04 tx-spacing--2">
                                         <span class="ml-1">{{ verificationStatus === '1' ? 'Enabled' : 'Disabled' }}</span>
@@ -209,8 +221,31 @@
 </template>
 
 <script>
+    import * as yup from 'yup';
+    import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+    import { required } from '@vee-validate/rules';
+    import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+    defineRule('required', required);
+    loadLocaleFromURL(
+    'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+    );
+    configure({
+        generateMessage: localize('en', {
+            messages: {
+                required: '{field} can not be empty!',
+            },
+            // fields: {
+            //     Status: {
+            //         required: 'Status can not be empty!!!'
+            //     }
+            // }
+        }),
+    });
     export default {
         emits: ['updating-profile-details'],
+        components: {
+            Form, Field, ErrorMessage
+        },
         data() {
             return {
                 // images: {
@@ -236,59 +271,36 @@
                 remember2Fa: '1',
                 hideShowLoader: false,
                 countryDetails: [],
-                invalidEmail: '',
-                invalidCurrentPassword: '',
-                invalidPassword: '',
-                invalidConfirmPass: '',
             }
         },
+        computed: {
+            mailSchema() {
+                return yup.object({
+                    UserEmail: yup.string().required().email(),
+                });
+            },
+            userSchema() {
+                return yup.object({
+                    Name: yup.string().required(),
+                    Country: yup.string().required(),
+                    Mobile: yup.string().required(),
+                });
+            },
+            passSchema() {
+                return yup.object({
+                    currentPass: yup.string().required(),
+                    newPass: yup.string().required(),
+                    repeatPass: yup.string().required(),
+                });
+            },
+            verifySchema() {
+                return yup.object({
+                    TwoFaVerify: yup.string().required(),
+                    Remember: yup.string().required(),
+                });
+            },
+        },
         methods: {
-            // email validation
-            emailIsValid() {
-                const mailFormat = /^[^@]+@\w+(\.\w+)+\w$/;
-                if(!this.email) {
-                    this.invalidEmail = 'Email is required.';
-                }
-                else if(!this.email.match(mailFormat)) {
-                    this.invalidEmail = 'Please enter valid email.';
-                }
-                else {
-                    this.invalidEmail = '';
-                }
-            },
-            // current password validation
-            currentPasswordIsValid() {
-                if(!this.currentPassword) {
-                    this.invalidCurrentPassword = 'Password is required.';
-                }
-                else {
-                    this.invalidCurrentPassword = '';
-                }
-            },
-            // password validation
-            passwordIsValid() {
-                if(!this.password) {
-                    this.invalidPassword = 'Password is required.';
-                }
-                else if(this.password.length < 6) {
-                    this.invalidPassword = 'Please enter valid password.';
-                }
-                else {
-                    this.invalidPassword = '';
-                }
-            },
-            // confirm password validation
-            confirmPassValid() {
-                if(!this.passwordConfirmation) {
-                    this.invalidConfirmPass = 'Field is required.';
-                }
-                else if(!this.passwordConfirmation.match(this.password)) {
-                    this.invalidConfirmPass = 'Please re-enter password.';
-                }
-                else {
-                    this.invalidConfirmPass = '';
-                }
-            },
             // get current loged in user data
             getCurrentUserData() {
                 this.hideShowLoader = true;
@@ -383,47 +395,39 @@
             },
             // updating user email
             updateUserEmail() {
-                this.emailIsValid();
-                if(this.invalidEmail || !this.email) {
-                    console.log('if');
-                    return false;
-                }
-                else {
-                    console.log('else');
-                    this.hideShowLoader = true;
-                    this.axios.post(this.$api + '/userprofiles/updateUserEmail', {
-                        email: this.email
-                    }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                        }
-                    })
-                    .then(response => {
-                        if(response.data.success) {
-                            this.$toast.open({
-                                message: 'User email updated',
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
-                            this.hideShowLoader = false;
-                            this.getCurrentUserData();
-                            this.userEmailToggle = false;
-                            sessionStorage.setItem('Email', this.email);
-                        }
-                    })
-                    .catch(error => {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/userprofiles/updateUserEmail', {
+                    email: this.email
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
                         this.$toast.open({
-                            message: error.response.data.message,
+                            message: 'User email updated',
                             position: 'top-right',
                             duration: '5000',
-                            type: 'error'
+                            type: 'success'
                         });
-                        console.log(error);
                         this.hideShowLoader = false;
+                        this.getCurrentUserData();
+                        this.userEmailToggle = false;
+                        sessionStorage.setItem('Email', this.email);
+                    }
+                })
+                .catch(error => {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
                     });
-                }
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
             },
             // updating profile details
             updateUserDetails() {
@@ -465,51 +469,43 @@
             },
             // updating user password
             updateUserPassword() {
-                this.passwordIsValid();
-                this.confirmPassValid();
-                this.currentPasswordIsValid();
-                if(this.invalidConfirmPass || this.invalidPassword || this.invalidCurrentPassword || !this.password || !this.currentPassword || !this.passwordConfirmation) {
-                    return false;
-                }
-                else {
-                    this.hideShowLoader = true;
-                    this.axios.post(this.$api + '/userprofiles/updateUserPassword', {
-                        currentPassword: this.currentPassword,
-                        password : this.password,
-                        password_confirmation : this.passwordConfirmation
-                    }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                        }
-                    })
-                    .then(response => {
-                        if(response.data.success) {
-                            this.$toast.open({
-                                message: 'Password updated',
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
-                            this.hideShowLoader = false;
-                            this.getCurrentUserData();
-                            this.passwordToggle = false;
-                            this.currentPassword = '';
-                            this.password = '';
-                            this.passwordConfirmation = '';
-                        }
-                    })
-                    .catch(error => {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/userprofiles/updateUserPassword', {
+                    currentPassword: this.currentPassword,
+                    password : this.password,
+                    password_confirmation : this.passwordConfirmation
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
                         this.$toast.open({
-                            message: error.response.data.message,
+                            message: 'Password updated',
                             position: 'top-right',
                             duration: '5000',
-                            type: 'error'
+                            type: 'success'
                         });
-                        console.log(error);
                         this.hideShowLoader = false;
+                        this.getCurrentUserData();
+                        this.passwordToggle = false;
+                        this.currentPassword = '';
+                        this.password = '';
+                        this.passwordConfirmation = '';
+                    }
+                })
+                .catch(error => {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
                     });
-                }
+                    console.log(error);
+                    this.hideShowLoader = false;
+                });
             },
             // updating user 2Fa verification
             update2FaVerify() {
@@ -566,7 +562,6 @@
     color: #e53e3e;
     color: rgba(229,62,62,var(--text-opacity));
 }
-
 .button-border {
     border: none;
 }

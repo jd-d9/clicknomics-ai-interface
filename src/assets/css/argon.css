@@ -7061,3 +7061,7 @@ select{
 .v-dialog > .v-overlay__content {
     overflow-y: auto !important;
 }
+
+.field-wrapper-span.invalid-add .v-field--variant-filled {
+    border: 2px solid red !important;
+}

@@ -34,17 +34,19 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group date-picker-3">
                                                 <label class="form-control-label" for="input-username">Date</label>
-                                                <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
+                                                <Field name="Date" v-model="date" label="Nice Name" :class="{'border-red-600': errors.Date}">
                                                     <datepicker inputFormat="yyyy-MM-dd" v-model="date" :locale="locale" :clearable="true" name="Date"/>
                                                 </Field>
-                                                <ErrorMessage class="text-red-600" name="Date"/>
+                                                <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Date"/> -->
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Amount</label>
                                                 <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
-                                                <ErrorMessage class="text-red-600" name="Amount"/>
+                                                <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Amount"/> -->
                                             </div>
                                         </div>
                                     </div>
@@ -55,7 +57,8 @@
                                                 <Field v-model="fromAccount" name="Fromaccount">
                                                     <v-autocomplete name="Fromaccount" :class="{'form-control': true, 'border-red-600': errors.Fromaccount}" variant="outlined" :items="list" v-model="fromAccount" item-title="title" item-value="key"></v-autocomplete>
                                                 </Field>
-                                                <ErrorMessage class="text-red-600" name="Fromaccount"/>
+                                                <span class="text-red-600" v-if="errors.Fromaccount">From account can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Fromaccount"/> -->
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
@@ -64,7 +67,8 @@
                                                 <Field v-model="toAccount" name="Toaccount">
                                                     <v-select name="Toaccount" :class="{'form-control': true, 'border-red-600': errors.Toaccount}" :items="creditLines" v-model="toAccount" item-title="title" item-value="key"></v-select>
                                                 </Field>
-                                                <ErrorMessage class="text-red-600" name="Toaccount"/>
+                                                <span class="text-red-600" v-if="errors.Toaccount">To account can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Toaccount"/> -->
                                             </div>
                                         </div>
                                     </div>
@@ -74,7 +78,8 @@
                                                 <label class="form-control-label" for="input-username">Status</label>
                                                 <Field v-model="status" name="Status">
                                                     <v-select name="Status" :class="{'form-control': true, 'border-red-600': errors.Status}" :items="statusList" v-model="status"></v-select>
-                                                </Field>    
+                                                </Field>
+                                                <span class="text-red-600" v-if="errors.Status">Status can not be empty</span>
                                                 <ErrorMessage class="text-red-600" name="Status"/>
                                             </div>
                                         </div>
@@ -98,9 +103,27 @@
 
 <script>
 import * as yup from 'yup';
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+import { required } from '@vee-validate/rules';
+import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
 import Datepicker from 'vue3-datepicker';
 import moment from 'moment';
+defineRule('required', required);
+loadLocaleFromURL(
+  'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+);
+configure({
+    generateMessage: localize('en', {
+        messages: {
+            required: '{field} can not be empty!',
+        },
+        // fields: {
+        //     Status: {
+        //         required: 'Status can not be empty!!!'
+        //     }
+        // }
+    }),
+});
 export default {
     components: {
         Datepicker,

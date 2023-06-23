@@ -450,6 +450,7 @@
         border-right: 1px solid #005eb3;
         width: 245px;
         height: 100vh;
+        overflow-y: auto;
     }
     .side-menu-hover:hover {
         background-color: #084c89 !important;

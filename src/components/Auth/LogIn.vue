@@ -28,25 +28,23 @@
                             <div class="text-center logo_responsive">
                                 <img src="/assets/img/brand/logo.png" alt="logo">
                             </div>
-                            <form class="mt-5 login_form" @submit.prevent="submitAndAuthenticateUser">
+                            <Form class="mt-5 login_form" @submit="submitAndAuthenticateUser" :validation-schema="schema" v-slot="{ errors }">
                                 <div class="form-group mb-3 position-relative">
                                     <span class="form_icon">
                                         <img src="/assets/img/icons/envelope.svg">
                                     </span>
-                                    <input id="email" type="email" class="form-control" :class="{'is-invalid': invalidEmail}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail" @keyup="emailIsValid">
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ invalidEmail }}</strong>
-                                    </span>
+                                    <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail"/>
+                                    <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
+                                    <ErrorMessage class="text-red-600" name="Email"/>
                                     <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </div>
                                 <div class="form-group mb-3 position-relative">
                                     <span class="form_icon">
                                         <img src="/assets/img/icons/lock.svg">
                                     </span>
-                                    <input id="password" type="password" class="form-control" :class="{'is-invalid': invalidPassword}" autocomplete="current-password" placeholder="Password" v-model="userPassword" @keyup="passwordIsValid">
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ invalidPassword }}</strong>
-                                    </span>
+                                    <Field id="password" type="password" name="Password" class="form-control" :class="{'border-red-600': errors.Password}" autocomplete="current-password" placeholder="Password" v-model="userPassword"/>
+                                    <!-- <span class="text-red-600" v-if="errors.Password">Password can not be empty</span> -->
+                                    <ErrorMessage class="text-red-600" name="Password"/>
                                 </div>
                                 <div class="row">
                                     <div class="col-6 text-left">
@@ -66,7 +64,7 @@
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Sign In</button>
                                 </div>
-                            </form>
+                            </Form>
                         </div>
                     </div>
                 </div>
@@ -76,7 +74,30 @@
 </template>
 
 <script>
+    import * as yup from 'yup';
+    import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+    import { required } from '@vee-validate/rules';
+    import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+    defineRule('required', required);
+    loadLocaleFromURL(
+    'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+    );
+    configure({
+        generateMessage: localize('en', {
+            messages: {
+                required: '{field} can not be empty!',
+            },
+            // fields: {
+            //     Status: {
+            //         required: 'Status can not be empty!!!'
+            //     }
+            // }
+        }),
+    });
     export default {
+        components: {
+            Form, Field, ErrorMessage
+        },
         data() {
             return {
                 // images: {
@@ -93,69 +114,45 @@
                 userDetailsForm: false
             }
         },
+        computed: {
+            schema() {
+                return yup.object({
+                    Email: yup.string().required().email(),
+                    Password: yup.string().required().min(6),
+                });
+            },
+        },
         methods: {
-            // email validation
-            emailIsValid() {
-                const mailFormat = /^[^@]+@\w+(\.\w+)+\w$/;
-                if(!this.userEmail) {
-                    this.invalidEmail = 'Email is required.';
-                }
-                else if(!this.userEmail.match(mailFormat)) {
-                    this.invalidEmail = 'Please enter valid email.';
-                }
-                else {
-                    this.invalidEmail = '';
-                }
-            },
-            // password validation
-            passwordIsValid() {
-                if(!this.userPassword) {
-                    this.invalidPassword = 'Password is required.';
-                }
-                else if(this.userPassword.length < 6) {
-                    this.invalidPassword = 'Please enter valid password.';
-                }
-                else {
-                    this.invalidPassword = '';
-                }
-            },
             // check validation and signin user
             submitAndAuthenticateUser() {
-                this.emailIsValid();
-                this.passwordIsValid();
-                if(this.invalidEmail || this.invalidPassword || !this.userEmail || !this.userPassword) {
-                    return false;
-                }
-                else{
-                    this.hideShowLoader = true;
-                    this.axios.post(this.$api + '/login', {
-                        email: this.userEmail,
-                        password: this.userPassword
-                    })
-                    .then(response => {
-                        if(response.data.success) {
-                            // this.$session.set('Token', response.data.token);
-                            // this.$session.set('Email', this.userEmail);
-                            // console.log(this.$session, 'vue-session');
-                            sessionStorage.setItem('Token', response.data.token);
-                            sessionStorage.setItem('Email', this.userEmail);
-                            this.$router.push('/authenticator/validate');
-                            this.backendErrorMessage = '';
-                            this.hideShowLoader = false;
-                            this.$toast.open({
-                                message: 'Please scan qr code or can use try another for authentication',
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error, 'error')
-                        this.backendErrorMessage = error.response.data.message;
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/login', {
+                    email: this.userEmail,
+                    password: this.userPassword
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        // this.$session.set('Token', response.data.token);
+                        // this.$session.set('Email', this.userEmail);
+                        // console.log(this.$session, 'vue-session');
+                        sessionStorage.setItem('Token', response.data.token);
+                        sessionStorage.setItem('Email', this.userEmail);
+                        this.$router.push('/authenticator/validate');
+                        this.backendErrorMessage = '';
                         this.hideShowLoader = false;
-                    }); 
-                }
+                        this.$toast.open({
+                            message: 'Please scan qr code or can use try another for authentication',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log(error, 'error')
+                    this.backendErrorMessage = error.response.data.message;
+                    this.hideShowLoader = false;
+                }); 
             },
         }
     }

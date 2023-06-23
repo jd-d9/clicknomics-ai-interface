@@ -30,21 +30,20 @@
                                 <div class="text-center logo_responsive">
                                     <img src="/assets/img/brand/logo.png" style="width:50%">
                                 </div>
-                                <form class="mt-5 login_form" @submit.prevent="sendResetPasswordLink">
+                                <Form class="mt-5 login_form" @submit="sendResetPasswordLink" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="form-group mb-3 position-relative">
                                         <span class="form_icon">
                                             <img src="/assets/img/icons/envelope.svg">
                                         </span>
-                                        <input id="email" type="email" class="form-control" :class="{'is-invalid': invalidEmail}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail" @keyup="emailIsValid">
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ invalidEmail }}</strong>
-                                        </span>
+                                        <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail"/>
+                                        <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
+                                        <ErrorMessage class="text-red-600" name="Email"/>
                                         <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                     </div>
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Send Password Reset Link</button>
                                     </div>
-                                </form>
+                                </Form>
                             </div>
                         </div>
                     </div>
@@ -55,7 +54,30 @@
 </template>
 
 <script>
+    import * as yup from 'yup';
+    import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+    import { required } from '@vee-validate/rules';
+    import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+    defineRule('required', required);
+    loadLocaleFromURL(
+    'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+    );
+    configure({
+        generateMessage: localize('en', {
+            messages: {
+                required: '{field} can not be empty!',
+            },
+            // fields: {
+            //     Status: {
+            //         required: 'Status can not be empty!!!'
+            //     }
+            // }
+        }),
+    });
     export default {
+        components: {
+            Form, Field, ErrorMessage
+        },
         data() {
             return {
                 // images: {
@@ -68,6 +90,13 @@
                 hideShowLoader: false,
             }
         }, 
+        computed: {
+            schema() {
+                return yup.object({
+                    Email: yup.string().required().email(),
+                });
+            },
+        },
         methods: {
             // email validation
             emailIsValid() {

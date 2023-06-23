@@ -29,7 +29,7 @@
                                     <div class="text-center logo_responsive  mb-5">
                                         <img src="/assets/img/brand/logo.png" class="image-height">
                                     </div>
-                                    <form @submit.prevent="checkCodeAndAuthUser">
+                                    <Form @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }">
                                         <div class="text-center">
                                             <div v-html="displayQrCode"></div>
                                         </div>
@@ -37,10 +37,10 @@
                                         <span class="d-block mb-4 font-size">
                                             Unfortunately, you cannot recover your secret keys in your Authenticator app. If you haven't saved the QR codes or secret keys, you should contact the support team of service which you protect with Authenticator and they will help you to restore the access to your account.
                                         </span>
-                                        <span class="mb-2">
-                                            Enter an authenticator app code:
-                                        </span>
-                                        <input name="one_time_password" placeholder="Authenticator app code" class="form-control mb-2" type="text" v-model="authCode">
+                                        <span class="mb-2">Enter an authenticator app code:</span>
+                                        <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
+                                        <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
+                                        <ErrorMessage class="text-red-600" name="Authentication"/>
                                         <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         <div class="form-group">
                                             <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
@@ -53,7 +53,7 @@
                                         <a href="javascript:void(0)" class="text-right" data-bs-toggle="modal" data-bs-target="#confirm2FAModal">Regenerate 2FA click here?</a>
                                         <router-link to="/authenticator/validate/email" class="float-right mb-2" @click="tryAnother === true">Try Another way.</router-link>
                                         <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
-                                    </form>
+                                    </Form>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +94,30 @@
 </template>
 
 <script>
+    import * as yup from 'yup';
+    import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+    import { required } from '@vee-validate/rules';
+    import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+    defineRule('required', required);
+    loadLocaleFromURL(
+    'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+    );
+    configure({
+        generateMessage: localize('en', {
+            messages: {
+                required: '{field} can not be empty!',
+            },
+            // fields: {
+            //     Status: {
+            //         required: 'Status can not be empty!!!'
+            //     }
+            // }
+        }),
+    });
     export default {
+        components: {
+            Form, Field, ErrorMessage
+        },
         data() {
             return {
                 // images: {
@@ -109,6 +132,13 @@
                 tryAnother: false,
                 backendErrorMessage: '',
             }
+        },
+        computed: {
+            schema() {
+                return yup.object({
+                    Authentication: yup.string().required(),
+                });
+            },
         },
         methods: {
             // get and show QR code

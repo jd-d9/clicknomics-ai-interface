@@ -7,15 +7,14 @@
                 <div class=" col ">
                     <div class="card">
                         <div class="card-body">
-                            <form>
+                            <Form @submit.prevent="manageUserRole">
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Role Name</label>
-                                            <input type="text" id="input-username" :class="{'form-control': true, 'is-invalid': roleNameInvalid }" placeholder="Role Name" v-model.trim="roleName" @keyup="roleNameIsValid">
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ roleNameInvalid }}</strong>
-                                            </span>
+                                            <input type="text" name="Rolename" id="input-username" :class="{'form-control': true, 'border-red-600': roleNameInvalid}" placeholder="Role Name" v-model.trim="roleName" @blur="roleNameIsValid"/>
+                                            <span v-if="roleNameInvalid" class="text-red-600">Role name can not be empty</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Rolename"/> -->
                                         </div>
                                     </div>
                                 </div>
@@ -62,19 +61,14 @@
                                     </table>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-6" v-if="!toggleButton">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="createUserRole">Save</button>
-                                            <button type="button" class="btn btn-secondary btn-lg btn_animated" @click.prevent="resetForm">Reset</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6" v-else>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="updateUserRole">Update</button>
+                                            <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
+                                            <button type="button" v-if="!toggleButton" class="btn btn-secondary btn-lg btn_animated" @click.prevent="resetForm">Reset</button>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </Form>
                         </div>
                     </div>
                 </div>
@@ -84,7 +78,30 @@
 </template>
 
 <script>
+// import * as yup from 'yup';
+// import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+// import { required } from '@vee-validate/rules';
+// import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+// defineRule('required', required);
+// loadLocaleFromURL(
+//   'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
+// );
+// configure({
+//     generateMessage: localize('en', {
+//         messages: {
+//             required: '{field} can not be empty!',
+//         },
+//         // fields: {
+//         //     Status: {
+//         //         required: 'Status can not be empty!!!'
+//         //     }
+//         // }
+//     }),
+// });
 export default {
+    // components: {
+    //     Form, Field, ErrorMessage
+    // },
     data() {
         return {
             roleName: '',
@@ -94,6 +111,13 @@ export default {
             toggleButton: false,
         }
     },
+    // computed: {
+    //     schema() {
+    //         return yup.object({
+    //             Rolename: yup.string().required(),
+    //         });
+    //     },
+    // },
     methods: {
         // get all user roles
         getAllUserRole() {
@@ -146,18 +170,16 @@ export default {
                 console.log(error)
             }); 
         },
-        // create new user role
-        createUserRole() {
+        // create and update user role
+        manageUserRole() {
             this.roleNameIsValid();
-            if(!this.roleName || this.roleNameInvalid) {
-                window.scrollTo({top: 0, behavior: 'smooth'});
-                return false
-            }
-            else {
+            // update user role
+            if(this.$route.params.id) {
                 this.hideShowLoader = true;
-                this.axios.post(this.$api + '/settings/role', {
+                this.axios.post(this.$api + '/settings/role/' + this.$route.params.id, {
                     role_name: this.roleName,
-                    role_permission: JSON.stringify(this.menuItem)
+                    role_permission: JSON.stringify(this.menuItem),
+                    _method: 'PUT'
                 }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -166,10 +188,8 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.menuItem = response.data;
-                        console.log(this.menuItem);
                         this.$toast.open({
-                            message: 'New role created',
+                            message: 'Role details updated',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -185,46 +205,53 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    console.log(error)
                     this.hideShowLoader = false;
+                    console.log(error)
                 }); 
             }
-        },
-        // update user role
-        updateUserRole() {
-            this.hideShowLoader = true;
-            this.axios.post(this.$api + '/settings/role/' + this.$route.params.id, {
-                role_name: this.roleName,
-                role_permission: JSON.stringify(this.menuItem),
-                _method: 'PUT'
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+            // create user role
+            else {
+                if(!this.roleName || this.roleNameInvalid) {
+                    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+                    return false;
                 }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$toast.open({
-                        message: 'Role details updated',
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.$router.push('/settings/user_management/user_roles');
-                    this.hideShowLoader = false;
+                else{
+                    this.hideShowLoader = true;
+                    this.axios.post(this.$api + '/settings/role', {
+                        role_name: this.roleName,
+                        role_permission: JSON.stringify(this.menuItem)
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        }
+                    })
+                    .then(response => {
+                        if(response.data.success) {
+                            this.menuItem = response.data;
+                            console.log(this.menuItem);
+                            this.$toast.open({
+                                message: 'New role created',
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                            this.$router.push('/settings/user_management/user_roles');
+                            this.hideShowLoader = false;
+                        }
+                    })
+                    .catch(error => {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        console.log(error)
+                        this.hideShowLoader = false;
+                    }); 
                 }
-            })
-            .catch(error => {
-                this.$toast.open({
-                    message: error.response.data.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
-                this.hideShowLoader = false;
-                console.log(error)
-            }); 
+            }
         },
         // reset form data
         resetForm() {
