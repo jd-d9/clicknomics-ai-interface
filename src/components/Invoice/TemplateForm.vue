@@ -408,7 +408,13 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.log(error)
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.hideShowLoader = false;
                 });
             }
@@ -464,7 +470,13 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
+                console.log(error)
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
                 this.hideShowLoader = false;
             });
         },
@@ -513,8 +525,13 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error);
-                    this.errorMessage = error;
+                    console.log(error)
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.hideShowLoader = false;
                 });
             }
