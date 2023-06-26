@@ -4,7 +4,7 @@
             <div class="container-fluid">
                 <div class="header-body">
                     <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-7 pt-0">
                             <nav aria-label="breadcrumb" class="d-none d-block">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
@@ -14,7 +14,7 @@
                                 </ol>
                             </nav>
                         </div>
-                        <div class="col-lg-6 text-right">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-5 text-right">
                             <router-link to="/accounting/creditCardPayments" class="btn btn-lg btn-neutral btn_animated">View Credit Card Payment Listing</router-link>
                         </div>
                     </div>
