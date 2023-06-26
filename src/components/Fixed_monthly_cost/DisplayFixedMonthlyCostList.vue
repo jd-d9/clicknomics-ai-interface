@@ -172,23 +172,24 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <Form @submit="importCsv" :validation-schema="schema" v-slot="{ errors }">
+                    <form @submit="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <Field @change="chooseFile" title="Choose CSV" :class="{'border-red-600': errors.chooseFile}" class="inputFile form-control-file" type="file" accept=".csv" name="chooseFile"  required/>
+                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" accept=".csv" name="selectFile" required/>
+                                    <!-- <Field @change="chooseFile" title="Choose CSV" :class="{'border-red-600': errors.selectFile}" class="inputFile form-control-file" type="file" accept=".csv" name="selectFile" required/> -->
                                 </div>
-                                <ErrorMessage class="text-red-600" name="chooseFile"/>
+                                <!-- <ErrorMessage class="text-red-600" name="selectFile"/> -->
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
                             <button type="submit" class="btn btn-primary">Import</button>
                         </div>
-                    </Form>
+                    </form>
                 </div>
             </div>
         </div>
@@ -203,7 +204,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="col-12">
-                            <Form @submit="editSelected" :validation-schema="schema" v-slot="{ errors }">
+                            <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
                                 <div class="row" v-for="(item, index) in seletedForEdit" :key="index">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group date-picker-3 date-picker-disabled">
@@ -268,9 +269,8 @@ export default {
         }
     },
     computed: {
-        schema() {
+        editSchema() {
             return yup.object({
-                chooseFile: yup.string().required(),
                 amount: yup.string().required(),
             });
         },
@@ -314,6 +314,7 @@ export default {
                     }
                 })
             })
+            console.log(this.seletedForEdit, '============');
         },
         closeCreateUpdateData() {
             window.$('#createUpdateData').modal('hide');

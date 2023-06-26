@@ -31,10 +31,15 @@
 {
     .dashboard_card.col-md-2{flex: 0 0 20%;max-width: 20%;}
 }
-@media (max-width: 1200px)
+/* @media (max-width: 1199px)
 {
-    
-}
+    .toggle-padding {
+        padding-left: 0 !important;
+    }   
+    .navbar-content {
+        margin-left: 0 !important;
+    }
+} */
 @media (max-width: 1152px)
 {
     .sidebar_mini .navbar-vertical.navbar-expand-xs{width: 60px;}
@@ -48,6 +53,18 @@
 @media (max-width: 1024px)
 {
 
+}
+@media (max-width: 991px)
+{
+    .display-user-name {
+        display: none;
+    }
+    .profile-image {
+        margin-right: 0 !important;
+    }
+    .sidenav-toggler {
+        margin: 0 0 0 auto !important;
+    }
 }
 @media (max-width: 980px)
 {
@@ -84,6 +101,34 @@
 {
     .header-body .px-5 {padding-left: 0rem !important;padding-right: 0rem !important;}
 }
+@media (max-width: 575px) {
+    .form-switch .form-check-input {
+        height: 1.1rem;
+        width: 2rem;
+    }
+    .form-switch {
+        margin: 0 5px 0 10px;
+    }
+    .notification-icon {
+        padding-left: 0px !important;
+    }
+    .notification-icon img {
+        width: 25px !important;
+    }
+    .translate-middle.badge {
+        left: 20px;
+        width: 17px;
+        height: 17px;
+    }
+    .form-switch {
+        margin: 3px 0 0 30px !important;
+    }
+    .profile-image {
+        width: 30px !important;
+        height: 30px !important;
+        margin-right: 0 !important;
+    }
+}
 @media (max-width: 568px)
 {
 
@@ -113,6 +158,23 @@
     .header-body .col-lg-6 {flex: 0 0 100%;max-width: 100%;}
     .logo_responsive img {width: 80% !important;}
 }
+@media (max-width: 400px) {
+    .for-responsive {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .for-responsive a:nth-child(2){
+        margin-bottom: 0 !important;
+    }
+    .profile-image {
+        margin-right: 0 !important;
+    }
+    .sidenav-toggler {
+        margin: 0 auto !important;
+    }
+} 
 @media (max-width: 375px)
 {
     .dashboard_card.col-md-2 {

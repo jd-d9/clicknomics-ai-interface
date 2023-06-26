@@ -37,14 +37,16 @@
                                                 <Field name="Date" v-model="date">
                                                     <datepicker name="Date" inputFormat="yyyy-MM-dd" v-model="date" :locale="locale" :clearable="true"/>
                                                 </Field>
-                                                <ErrorMessage class="text-red-600" name="Date"/>
+                                                <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Date"/> -->
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Amount</label>
                                                 <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
-                                                <ErrorMessage class="text-red-600" name="Amount"/>
+                                                <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Amount"/> -->
                                             </div>
                                         </div>
                                     </div>
@@ -55,7 +57,8 @@
                                                 <Field name="Fromaccount" v-model="fromAccount">
                                                     <v-autocomplete name="Fromaccount" :class="{'form-control': true, 'border-red-600': errors.Fromaccount}" variant="outlined" :items="list" v-model="fromAccount"></v-autocomplete>
                                                 </Field>
-                                                <ErrorMessage class="text-red-600" name="Fromaccount"/>
+                                                <span class="text-red-600" v-if="errors.Fromaccount">From account can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Fromaccount"/> -->
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
@@ -64,7 +67,8 @@
                                                 <Field name="Toaccount" v-model="toAccount">
                                                     <v-select :class="{'form-control': true, 'border-red-600': errors.Toaccount}" :items="creditLines" v-model="toAccount"></v-select>
                                                 </Field>
-                                                <ErrorMessage class="text-red-600" name="Toaccount"/>
+                                                <span class="text-red-600" v-if="errors.Toaccount">To account can not be empty</span>
+                                                <!-- <ErrorMessage class="text-red-600" name="Toaccount"/> -->
                                             </div>
                                         </div>
                                     </div>
@@ -75,6 +79,7 @@
                                                 <Field name="Status" v-model="status">
                                                     <v-select :class="{'form-control': true, 'border-red-600': errors.Status}" :items="statusList" v-model="status"></v-select>
                                                 </Field>
+                                                <!-- <span class="text-red-600" v-if="errors.Status">Status can not be empty</span> -->
                                                 <ErrorMessage class="text-red-600" name="Status"/>
                                             </div>
                                         </div>

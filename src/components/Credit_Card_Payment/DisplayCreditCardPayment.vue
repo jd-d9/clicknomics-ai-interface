@@ -163,23 +163,22 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <Form @submit="importCsv" :validation-schema="schema" v-slot="{ errors }">
+                    <form @submit="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <Field @change="chooseFile" name="Choosecsv" title="Choose CSV" class="inputFile form-control-file" :class="{'border-red-600': errors.Choosecsv}" accept=".csv" type="file" required/>
+                                    <input @change="chooseFile" name="Choosecsv" title="Choose CSV" class="inputFile form-control-file" accept=".csv" type="file" required/>
                                 </div>
-                                <ErrorMessage class="text-red-600" name="Choosecsv"/>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
                             <button type="submit" class="btn btn-primary">Import</button>
                         </div>
-                    </Form>
+                    </form>
                 </div>
             </div>
         </div>
@@ -187,12 +186,7 @@
 </template>
 
 <script>
-import * as yup from 'yup';
-import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
-    components: {
-        Form, Field, ErrorMessage
-    },
     data() {
         let today = new Date();
         let startDate = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -238,11 +232,6 @@ export default {
         this.getCreditCardPaymentList();
     },
     computed: {
-        schema() {
-            return yup.object({
-                Choosecsv: yup.string().required(),
-            });
-        },
         // total row
         sumField() {
             const key = 'amount';

@@ -115,24 +115,28 @@
                                                     <div class="pa-5 pb-4 flex-grow-1 padding-top">
                                                         <v-row>
                                                             <v-col cols="12" md="6">
-                                                                <span class="field-wrapper-span">
+                                                                <span class="field-wrapper-span" :class="{'invalid-add': invalidDescription}">
                                                                     <v-textarea 
                                                                     v-model="product.description"
                                                                     outlined label="Description" 
                                                                     rows="3" hide-details="auto" 
                                                                     placeholder="Description"
+                                                                    @blur="descriptionValidation(product.description)"
                                                                     ></v-textarea>
+                                                                    <span v-if="invalidDescription" class="add-text-danger">{{ invalidDescription }}</span>
                                                                 </span>
                                                             </v-col>
                                                             <v-col cols="12" md="2" sm="4">
-                                                                <span class="field-wrapper-span">
+                                                                <span class="field-wrapper-span" :class="{'invalid-add': invalidCost}">
                                                                     <v-text-field
                                                                     v-model="product.cost"
                                                                     dense min="0"
                                                                     type="number" hide-details="auto"
                                                                     label="Cost" step="any"
                                                                     placeholder="$"
+                                                                    @blur="costValidation(product.cost)"
                                                                     ></v-text-field>
+                                                                    <span v-if="invalidCost" class="add-text-danger">{{ invalidCost }}</span>
                                                                 </span>
                                                             </v-col>
                                                             <v-col cols="12" md="2" sm="4">
@@ -169,8 +173,9 @@
                                         <div class="py-5 px-4">
                                             <div class="d-flex justify-space-between flex-wrap flex-column flex-sm-row">
                                                 <div class="mb-sm-0 col-md-6 pt-0">
-                                                    <span class="field-wrapper-span">
-                                                        <v-textarea auto-grow v-model="invoiceData.bankDetail" outlined label="Bank Detail" rows="3" hide-details="auto" placeholder="Bank Detail"></v-textarea>
+                                                    <span class="field-wrapper-span" :class="{'invalid-add': invalidBankDetails}">
+                                                        <v-textarea auto-grow v-model="invoiceData.bankDetail" @blur="bankDetailsValidation(invoiceData.bankDetail)" outlined label="Bank Detail" rows="3" hide-details="auto" placeholder="Bank Detail"></v-textarea>
+                                                        <span v-if="invalidBankDetails" class="add-text-danger">{{ invalidBankDetails }}</span>
                                                     </span>    
                                                 </div>
                                                 <div>
@@ -299,7 +304,10 @@ export default {
             dynamicBredCrumb: 'Edit Template',
             toggleElement: true,
             isTempInvalid: false,
-            errorMessage: ''
+            errorMessage: '',
+            invalidDescription: '',
+            invalidCost: '',
+            invalidBankDetails: '',
         }
     },
     computed: {
@@ -317,12 +325,47 @@ export default {
     methods: {
         // opening modal
         openModal() {
-            window.$('#createNewTemplateModal').modal('show');
+            this.descriptionValidation();
+            this.costValidation();
+            this.bankDetailsValidation();
+            if(this.invalidDescription || this.invalidCost || this.invalidBankDetails) {
+                return false;
+            }
+            else {
+                window.$('#createNewTemplateModal').modal('show');
+            }
         },
         // closing modal
         closeModal() {
             window.$('#createNewTemplateModal').modal('hide');
         },
+        // description validation
+        descriptionValidation(val) {
+            if(!val) {
+                this.invalidDescription = 'Description can not be empty';
+            }
+            else {
+                this.invalidDescription = '';
+            }
+        },
+        // cost validation
+        costValidation(val) {
+            if(!val) {
+                this.invalidCost = 'Cost can not be empty';
+            }
+            else {
+                this.invalidCost = '';
+            }
+        },
+        // bank details validation
+        bankDetailsValidation(val) {
+            if(!val) {
+                this.invalidBankDetails = 'Bank details can not be empty';
+            }
+            else {
+                this.invalidBankDetails = '';
+            }
+        },  
         // add new product in product table
         addNewItem() {
             this.invoiceData.purchasedProducts.push({
@@ -333,34 +376,42 @@ export default {
         },
         // save invoice
         createInvoice() {
-            this.hideShowLoader = true;
-            this.axios.post(this.$api + '/accounting/invoice', {
-                invoice_number: this.invoiceData.invoiceData.invoiceNumber,
-                invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
-                invoice_due_date: moment(this.invoiceData.invoiceData.dueDate).format('YYYY-MM-DD'),
-                invoiceData: JSON.stringify( this.invoiceData),
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$router.push('/accounting/invoice');
-                    this.$toast.open({
-                        message: 'Invoice created',
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
+            this.descriptionValidation();
+            this.costValidation();
+            this.bankDetailsValidation();
+            if(this.invalidDescription || this.invalidCost || this.invalidBankDetails) {
+                return false;
+            }
+            else {
+                this.hideShowLoader = true;
+                this.axios.post(this.$api + '/accounting/invoice', {
+                    invoice_number: this.invoiceData.invoiceData.invoiceNumber,
+                    invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
+                    invoice_due_date: moment(this.invoiceData.invoiceData.dueDate).format('YYYY-MM-DD'),
+                    invoiceData: JSON.stringify( this.invoiceData),
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$router.push('/accounting/invoice');
+                        this.$toast.open({
+                            message: 'Invoice created',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.hideShowLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
                     this.hideShowLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.hideShowLoader = false;
-            });
+                });
+            }
         },
         // get invoice data for edit
         getInvoiceData() {
@@ -525,5 +576,8 @@ export default {
     }
     .width-adding, .app-invoice-editable .header-inputs {
         width: 130px !important;
+    }
+    .add-text-danger {
+        color: red;
     }
 </style>

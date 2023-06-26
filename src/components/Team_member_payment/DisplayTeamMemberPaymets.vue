@@ -295,23 +295,22 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <Form @submit="importCsv" :validation-schema="schema" v-slot="{ errors }">
+                    <form @submit="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <Field name="Choosecsv" @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file"  required :class="{'border-red-600': errors.Choosecsv}"/>
+                                    <input name="Choosecsv" @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file"  required/>
                                 </div>
-                                <ErrorMessage class="text-red-600" name="Choosecsv"/>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
                             <button type="submit" class="btn btn-primary">Import</button>
                         </div>
-                    </Form>
+                    </form>
                 </div>
             </div>
         </div>
@@ -325,10 +324,11 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <Form @submit="addToAccount" :validation-schema="schema" v-slot="{ errors }">
+                    <Form @submit="addToAccount" :validation-schema="toAccSchema" v-slot="{ errors }">
                         <div class="modal-body">
-                            <Field name="Name" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model="teamMemberName"/>
-                            <ErrorMessage class="text-red-600" name="Name"/>
+                            <Field name="toAccName" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.toAccName}" placeholder="Name" v-model="teamMemberName"/>
+                            <span class="text-red-600" v-if="errors.toAccName">Name can not be empty</span>
+                            <!-- <ErrorMessage class="text-red-600" name="toAccName"/> -->
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeTeamMemberModal">Close</button>
@@ -348,10 +348,11 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <Form @submit="addFromAccount" :validation-schema="schema" v-slot="{ errors }">
+                    <Form @submit="addFromAccount" :validation-schema="fromAccSchema" v-slot="{ errors }">
                         <div class="modal-body">
-                            <Field type="text" name="Name" id="input-username"  :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model="teamMemberName"/>
-                            <ErrorMessage class="text-red-600" name="Name"/>
+                            <Field type="text" name="fromAccName" id="input-username"  :class="{'form-control': true, 'border-red-600': errors.fromAccName}" placeholder="Name" v-model="teamMemberName"/>
+                            <span class="text-red-600" v-if="errors.fromAccName">Name can not be empty</span>
+                            <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeFromAccountModal">Close</button>
@@ -367,10 +368,10 @@
 <script>
 // import moment from 'moment';
 import * as yup from 'yup';
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Form, Field } from 'vee-validate';
 export default {
     components: {
-        Form, Field, ErrorMessage
+        Form, Field
     },
     data() {
         return {
@@ -402,12 +403,14 @@ export default {
         }
     },
     computed: {
-        schema() {
+        fromAccSchema() {
             return yup.object({
-                Choosecsv: yup.string().required(),
-                Name: yup.string().required(),
-                Fromaccount: yup.string().required(),
-                Toaccount: yup.string().required(),
+                fromAccName: yup.string().required(),
+            });
+        },
+        toAccSchema() {
+            return yup.object({
+                toAccName: yup.string().required(),
             });
         },
         // total row

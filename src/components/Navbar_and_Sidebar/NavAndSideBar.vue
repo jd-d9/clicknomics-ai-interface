@@ -91,14 +91,14 @@
     <nav class="navbar-content bg-primary" :class="{'toggle-margin': hideShowSidebar}">
         <div class="container-fluid px-4 pt-0 pb-4">
             <div class="row justify-content-center align-items-center">
-                <div class="col-1">
+                <div class="col-xl-1 col-lg-1 col-md-7 col-sm-5 col-4">
                     <div class="sidenav-toggler" @click="toggleSidebar">
                         <div class="line line-one"></div>
                         <div class="line line-two"></div>
                         <div class="line line-three"></div>
                     </div>
                 </div>
-                <div class="col-11 ms-auto text-end">
+                <div class="col-xl-11 col-lg-11 col-md-5 col-sm-6 col-7 ms-auto text-end">
                     <div class="d-flex justify-content-end align-items-center">
                         <div class="d-flex align-items-start justify-content-center me-3">
                             <small class="swithch-lable text-white">Light</small>
@@ -108,7 +108,7 @@
                             <small class="swithch-lable text-light">Dark</small>
                         </div>
                         <div class="dropdown">
-                            <button class="btn dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="notification-icon btn dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="/assets/img/icons/bell.svg" alt="bell">
                                 <span class="position-absolute translate-middle badge rounded-circle">5</span>
                             </button>
@@ -155,7 +155,7 @@
                                     <div class="profile-image me-2">
                                         <img :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" alt="img">
                                     </div>
-                                    <p class="mb-0 text-white">{{ name }} <i class="fa-solid fa-angle-down"></i></p>
+                                    <p class="display-user-name mb-0 text-white">{{ name }} <i class="fa-solid fa-angle-down"></i></p>
                                 </div>
                             </button>
                             <ul class="dropdown-menu profile-dropdown">
@@ -209,12 +209,16 @@
             this.toggleComponents();
             this.getSidebarMenues();
             this.getCurrentUserData();
-            if(screen.width < 1200) {
-                setTimeout(() => {
+            window.addEventListener('resize', () => {
+                this.toggleComponents();
+                if(screen.width < 1200) {
                     this.hideShowSidebar = false;
-                    this.$emit('move-contents', this.hideShowSidebar);
-                }, 100)
-            }
+                }
+                else {
+                    this.hideShowSidebar = true;
+                }
+                this.$emit('move-contents', this.hideShowSidebar);
+            });
         },
         methods: {
             // get sidebar menu tabs
@@ -242,17 +246,26 @@
             // hide/show components
             toggleComponents() {
                 this.hideShowSidebar = false;
-                if(window.location.pathname === '/dashboard' || this.$route.params.notFound) {
-                    this.hideShowSidebar = true;
-                    this.$emit('move-contents', this.hideShowSidebar);
-                }else {
-                    this.hideShowSidebar = false;
+                if(screen.width > 1199) {
+                    if(window.location.pathname === '/dashboard' || this.$route.params.notFound) {
+                        this.hideShowSidebar = true;
+                    } else {
+                        this.hideShowSidebar = false;
+                    }
                     this.$emit('move-contents', this.hideShowSidebar);
                 }
+                // else {
+                //     if(window.location.pathname === '/dashboard' || this.$route.params.notFound) {
+                //         this.hideShowSidebar = false;
+                //     } else {
+                //         this.hideShowSidebar = true;
+                //     }
+                //     this.$emit('move-contents', this.hideShowSidebar);
+                // }
             },
             // toggle sidebar and dropdown
             toggleSidebar() {
-                if(window.location.pathname === '/dashboard') {  
+                if(window.location.pathname === '/dashboard' && screen.width > 1199) {  
                     this.hideShowSidebar = !this.hideShowSidebar;
                     this.$emit('move-contents', this.hideShowSidebar);
                 } else {

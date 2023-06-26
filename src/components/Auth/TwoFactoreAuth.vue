@@ -50,8 +50,10 @@
                                             </select>
                                             <!-- <span class="text-red-600">error</span> -->
                                         </div>
-                                        <a href="javascript:void(0)" class="text-right" data-bs-toggle="modal" data-bs-target="#confirm2FAModal">Regenerate 2FA click here?</a>
-                                        <router-link to="/authenticator/validate/email" class="float-right mb-2" @click="tryAnother === true">Try Another way.</router-link>
+                                        <div class="for-responsive">
+                                            <a href="javascript:void(0)" class="text-right" data-bs-toggle="modal" data-bs-target="#confirm2FAModal">Regenerate 2FA click here?</a>
+                                            <router-link to="/authenticator/validate/email" class="float-right mb-2" @click="tryAnother === true">Try Another way.</router-link>
+                                        </div>
                                         <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
                                     </Form>
                                 </div>

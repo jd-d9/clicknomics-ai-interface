@@ -44,6 +44,11 @@
                 if(val.fullPath === '/login') {
                     this.toggleContents = true;
                 }
+                if(val.fullPath === '/dashboard') {
+                    if(screen.width < 1200) {
+                        this.toggleContents = false;
+                    }
+                }
             }
         }
     }
@@ -51,7 +56,7 @@
 
 <style>
     .padding-left {
-        padding-left: 0px;
+        padding-left: 0px !important;
     }
     .all-contents {
         padding-left: 300px !important;
