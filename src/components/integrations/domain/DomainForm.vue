@@ -36,7 +36,7 @@
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Email</label>
                                                 <Field type="text" id="input-username" name="Email" :class="{'form-control': true , 'border-red-600':errors.Email }" placeholder="Email" v-model="email"/>
-                                                <span class="text-red-600" v-if="errors.Email">Email can not be empty</span>
+                                                <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
                                                 <ErrorMessage class="text-red-600" name="Email"/>
                                             </div>
                                         </div>
@@ -107,7 +107,7 @@
 
 <script>
 import * as yup from 'yup';
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Form, Field,ErrorMessage } from 'vee-validate';
 export default {
     // props: ['report'],
     components: {
@@ -172,50 +172,6 @@ export default {
                 });
                 this.hideShowLoader = false;
             });
-
-
-
-            // this.hideShowLoader = true;
-            // let formData = new FormData();
-            // formData.append('email', this.email);
-            // formData.append('api_secret', this.api_secret);
-            // formData.append('domain_selected', this.domain_selected);
-            // formData.append('api_key', this.api_key);
-            // formData.append('username', this.username);
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': window.csrf_token
-            // };
-            // axios.post(`/integrateDomain`,formData,{
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // }).then(response => {
-            //     if(response) {
-            //         console.log(response, 'sasa')
-            //         this.hideShowLoader = false;
-            //         this.message = {
-            //             text: response.data.message,
-            //             type: 'success',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '/settings/domain');
-            //     }else {
-            //         this.hideShowLoader = false;
-            //         this.message = {
-            //             text: 'Something Went Wrong!',
-            //             type: 'error',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '');
-            //     }
-            // }).catch(error => {
-            //     this.hideShowLoader = false;
-            //     console.log(error);
-            //     this.message = {
-            //         text: error.response.data.message,
-            //         type: 'error',
-            //     }
-            //     Bus.$emit('flash-message', this.message, '');
-            // })
         },
     }
 }

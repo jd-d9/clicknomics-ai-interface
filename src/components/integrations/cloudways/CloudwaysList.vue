@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-default main-content-height">
+    <div>
         <div class="header bg-primary pb-6">
             <div class="container-fluid">
                 <div class="header-body">
@@ -10,13 +10,13 @@
                                     <li class="breadcrumb-item">
                                         <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Domains List</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Cloudways List</li>
                                 </ol>
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <button @click.prevent="this.$router.push('/settings/domain/integrate')" class="btn btn-lg btn-neutral btn_animated"  :disabled="permissions.create_auth == '0'">
-                                <img src="/assets/img/icons/networks.svg" class="add-width">Integrate Domain
+                            <button @click.prevent="this.$router.push('/settings/cloudways/integrate')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">
+                                <img src="/assets/img/icons/networks.svg" class="add-width">Integrate Cloudways
                             </button>
                         </div>
                     </div>
@@ -31,18 +31,14 @@
                     <v-app>
                         <div class="card">
                             <div class="card-body">
-                                <!-- data table -->
-                                <v-data-table class="table-hover-class elevation-1" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networkHeaders" :items="linkedNewtworks"  :single-expand="singleExpand" item-key="customer_id" :itemsPerPage="itemsPerPage">
+                                <!-- datatable component -->
+                                <v-data-table class="table-hover-class elevation-1" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networkHeaders" :items="listData" :single-expand="singleExpand" item-key="customer_id" :itemsPerPage="itemsPerPage">
                                     <template v-slot:item="{ item }">
                                         <tr class="table-body-back">
                                             <td>{{item.selectable.id}}</td>
                                             <td>{{item.selectable.email ? item.selectable.email : '-' }}</td>
-                                            <td>{{item.selectable.domain_selected}}</td>
                                             <td>{{format_date(item.selectable.created_at)}}</td>
                                             <td>
-                                                <!-- <button @click.prevent="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'" class="disable-button">
-                                                    <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                </button> -->
                                                 <button @click.prevent="showConfirmation(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
                                                     <img src="/assets/img/icons/bin.svg" class="icon-width">
                                                 </button>
@@ -69,7 +65,7 @@
                 <v-dialog v-model="confirmationBox" persistent max-width="400">
                     <v-card>
                         <v-card-title class="text-h5 text-center">Delete Account</v-card-title>
-                        <v-card-text>Are you sure you want to delete your domain record?.</v-card-text>
+                        <v-card-text>Are you sure you want to delete your cloudways record?.</v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="green darken-1" text @click="cancel()"> Cancel </v-btn>
@@ -79,91 +75,35 @@
                 </v-dialog>
             </v-row>
         </template>
-        <template>
-            <v-row justify="center">
-                <v-dialog v-model="showEditForm" persistent max-width="600px">
-                    <v-app>
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title text-white">Edit Your Network Name</h5>
-                            </div>
-                            <div class="modal-body">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-lg-12 p-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Network Name*</label>
-                                                <input type="text" class="form-control" required v-model="network_name">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 p-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Email</label>
-                                                <input type="text" class="form-control" placeholder="Email" v-model="email">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 p-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Company</label>
-                                                <input type="text" class="form-control" placeholder="Company" v-model="company">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 p-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Notes</label>
-                                                <textarea :class="{'form-control': true}"  name="" cols="30" rows="5" v-model="notes"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 py-0 text-right">
-                                            <button type="submit" class="btn btn-secondary btn-lg btn_animated" @click="showEditForm = false">Close</button>
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated" @click="updateNetworkName">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </v-app>
-                </v-dialog>
-            </v-row>
-        </template>
     </div>
 </template>
 
 <script>
-// import Bus from 'path/of/bus';
 import moment from 'moment';
 export default {
-    // props: ['affiliates'],
+    // props: ['cloudwaysList'],
     data() {
         return {
             hideShowLoader: false,
             confirmationBox: false,
-            showEditForm: false,
             accountIdToDelete: '',
-            accountIdEdit: '',
-            network_name: '',
-            notes: '',
-            email: '',
-            company: '',
             singleExpand: true,
             networkHeaders: [
                 { title: 'ID', align: 'start', sortable: true, key: 'id' },
                 { title: 'Email', align: 'start', sortable: true, key: 'email' },
-                { title: 'Domain Selected',  key: 'domain_selected' },
                 { title: 'Date Added',  key: 'created_at' },
                 { title: 'Action',  key: '', sortable: false},
             ],
-            linkedNewtworks: [],
+            listData: [],
             itemsPerPage: -1,
             permissions: {},
         }
     },
     mounted() {
-        this.getDomainListing();
-        // this.linkedNewtworks = this.affiliates;
+        this.getCloudwaysListing();
     },
     methods: {
-        // open and cancle confirmation modal
+        // open and close confirm delete modal
         showConfirmation(id) {
             this.accountIdToDelete = id;
             this.confirmationBox = true;
@@ -172,10 +112,10 @@ export default {
             this.accountIdToDelete = '';
             this.confirmationBox = false;
         },
-        // get domain listing
-        getDomainListing() {
+        // get cloudways listing data
+        getCloudwaysListing() {
             this.hideShowLoader = true;
-            this.axios.get(this.$api + '/settings/domain', {
+            this.axios.get(this.$api + '/settings/cloudways', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -184,20 +124,20 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const data = response.data;
-                    this.linkedNewtworks = data.data.data;
+                    this.listData = data.data.data;
                     this.permissions = data.permission;
                     this.hideShowLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                console.log(error)
                 this.hideShowLoader = false;
             });
         },
-        // delete network name
+        // delete cloudway data
         deleteAccount() {
             this.hideShowLoader = true;
-            this.axios.delete(this.$api + '/settings/domain/' + this.accountIdToDelete, {
+            this.axios.delete(this.$api + '/settings/cloudways/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -211,7 +151,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.getDomainListing();
+                    this.getCloudwaysListing();
                     this.cancel();
                     this.hideShowLoader = false;
                 }
@@ -227,10 +167,9 @@ export default {
                 this.hideShowLoader = false;
             });
         },
-        // format date
         format_date(value){
             if (value) {
-                return moment(String(value)).format('YYYY-MM-DD');
+                return moment(String(value)).format('YYYY-MM-DD')
             }
         },
     }

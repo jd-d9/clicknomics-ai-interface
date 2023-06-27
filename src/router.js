@@ -28,6 +28,9 @@ import NetworksList from './components/integrations/cpa-networks/NetworksList.vu
 import IntegrateNetwork from './components/integrations/cpa-networks/IntegrateNetworkForm.vue';
 import DomainList from './components/integrations/domain/DomainList.vue';
 import DomainForm from './components/integrations/domain/DomainForm.vue';
+import CloudwaysList from './components/integrations/cloudways/CloudwaysList.vue';
+import CloudwaysForm from './components/integrations/cloudways/CloudwaysForm.vue';
+import ManualNetworkList from './components/manual-networks/ManualNetworkList.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -80,6 +83,12 @@ const router = createRouter({
         // settings/integration/domain
         {path: '/settings/domain', component: DomainList, meta: {auth: true}},
         {path: '/settings/domain/integrate', component: DomainForm, meta: {auth: true}},
+        // settings/integration/cloudways
+        {path: '/settings/cloudways', component: CloudwaysList, meta: {auth: true}},
+        {path: '/settings/cloudways/integrate', component: CloudwaysForm, meta: {auth: true}},
+        // network module
+        {path: '/networks/manualNetworks', component: ManualNetworkList, meta: {auth: true}},
+        {path: '/settings/cloudways/integrate', component: CloudwaysForm, meta: {auth: true}},
         // other
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page
