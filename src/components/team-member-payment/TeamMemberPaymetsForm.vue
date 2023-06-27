@@ -229,13 +229,13 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error)
                     this.$toast.open({
                         message: error.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'error'
                     });
+                    console.log(error)
                     this.hideShowLoader = false;
                 });
             }
