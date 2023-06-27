@@ -31,6 +31,8 @@ import DomainForm from './components/integrations/domain/DomainForm.vue';
 import CloudwaysList from './components/integrations/cloudways/CloudwaysList.vue';
 import CloudwaysForm from './components/integrations/cloudways/CloudwaysForm.vue';
 import ManualNetworkList from './components/manual-networks/ManualNetworkList.vue';
+import ManualNetworkRevenueForm from './components/manual-networks-revenue/ManualNetworkRevenueForm.vue';
+import ManualNetworkRevenueList from './components/manual-networks-revenue/ManualNetworkRevenueList.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -88,7 +90,9 @@ const router = createRouter({
         {path: '/settings/cloudways/integrate', component: CloudwaysForm, meta: {auth: true}},
         // network module
         {path: '/networks/manualNetworks', component: ManualNetworkList, meta: {auth: true}},
-        {path: '/settings/cloudways/integrate', component: CloudwaysForm, meta: {auth: true}},
+        // add manual network revenue moule
+        {path: '/networks/manualNetworks/create', component: ManualNetworkRevenueForm, meta: {auth: true}},
+        {path: '/networks/manualNetworks/list', component: ManualNetworkRevenueList, meta: {auth: true}},
         // other
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page

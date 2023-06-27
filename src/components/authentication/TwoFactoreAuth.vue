@@ -168,7 +168,7 @@
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
                 // if scan and enter auth code
-                if(this.displayQrCode && !this.tryAnother || this.verifiedBy == '2fa app') {
+                if(this.displayQrCode && !this.tryAnother || this.verifiedBy == '2fa App') {  // 2fa app
                     this.hideShowLoader = true;
                     this.axios.post(this.$api + '/authenticator/validateCode', {
                         google2fa_secret: this.authCode,

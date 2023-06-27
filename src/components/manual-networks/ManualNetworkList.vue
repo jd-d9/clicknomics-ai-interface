@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-default main-content-height">
         <div class="header bg-primary pb-6">
             <div class="container-fluid">
                 <div class="header-body">
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <LoaderComponent v-if="showLoader"></LoaderComponent>
+        <loader-component v-if="hideShowLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -93,7 +93,7 @@
         <!-- Start confirmation alert box -->
         <template>
             <v-row justify="center">
-                <v-dialog v-model="confirmationBox" persistent max-width="400">
+                <v-dialog v-model="confirmationBox" persistent max-width="400" class="delete-confirm-card">
                     <v-card>
                         <v-card-title class="text-h5 text-center">Delete Account</v-card-title>
                         <v-card-text>Are you sure you want to delete your affiliate?.</v-card-text>
@@ -182,8 +182,9 @@ export default {
     },
     data() {
         return {
-            showLoader: false,
+            hideShowLoader: false,
             dataMetrics: [],
+            dataMetricsFilter: [],
             search: '',
             headers: [
                 { title: 'Network ID', align: 'start', sortable: false, key: 'id' },
@@ -226,13 +227,14 @@ export default {
     methods: {
         // search payment from table
         searchPayments() {
-            this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
-                return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.fromaccountlist.team_member_name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.toaccountlist.team_member_name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.status.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.payment_date.toLowerCase().includes(this.searchInput.toLowerCase())
+            this.dataMetrics = this.dataMetricsFilter.filter((val) => {
+                return  val.id.toString().includes(this.searchInput.toLowerCase()) || 
+                        val.company && val.company.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.email.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.network.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.notes && val.notes.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.platform_type.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.created_at.toLowerCase().includes(this.searchInput.toLowerCase())
             })
         },
         currentItems(currentItems) {
@@ -265,6 +267,7 @@ export default {
                     const data = response.data;
                     console.log(data);
                     this.dataMetrics = data.data.data;
+                    this.dataMetricsFilter = data.data.data;
                     this.permissions = data.permission;
                     this.hideShowLoader = false;
                 }
@@ -279,11 +282,12 @@ export default {
             this.hideShowLoader = true;
             let formData = new FormData();
             formData.append('id', this.list.id);
-            formData.append('name', this.list.name);
+            formData.append('network', this.list.name);
             formData.append('email', this.list.email);
             formData.append('platform_type', this.list.platform_type);
             formData.append('notes', this.list.notes);
             formData.append('company', this.list.company);
+            this.activityType == 'Update' && formData.append('_method', 'PUT');
             const postUrl = this.activityType == 'Create' ? 'network/manualNetworks' : `network/manualNetworks/${this.accountIdToEdit}`;
             this.axios.post(`${this.$api}/${postUrl}`, formData, {
                 headers: {
@@ -293,13 +297,14 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.$router.push('/settings/cloudways');
                     this.$toast.open({
                         message: this.activityType == 'Create' ? 'Manual network created' : 'Manual network updated',
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
+                    this.getManualNetworkListing();
+                    this.closeModal();
                     this.hideShowLoader = false;
                 }
             })
@@ -324,20 +329,21 @@ export default {
             this.list.company = '';
             this.openModal();
         },
-        // edit(id) {
-        //     const data = _.filter(this.dataMetrics, x => { return x.id == id; });
-        //     console.log(data, id)
-        //     this.accountIdToEdit = id;
-        //     const restult = data[0];
-        //     this.activityType = 'Update'
-        //     this.list.id = id;
-        //     this.list.name = restult.network;
-        //     this.list.email = restult.email;
-        //     this.list.platform_type = restult.platform_type;
-        //     this.list.notes = restult.notes ? restult.notes : '';
-        //     this.list.company = restult.company ? restult.company : '';
-        //     this.openModal();
-        // },
+        // get data for edit
+        edit(id) {
+            const restult = this.dataMetrics.find((val) => {
+                return val.id == id
+            });
+            this.accountIdToEdit = id;
+            this.activityType = 'Update'
+            this.list.id = id;
+            this.list.name = restult.network;
+            this.list.email = restult.email;
+            this.list.platform_type = restult.platform_type;
+            this.list.notes = restult.notes ? restult.notes : '';
+            this.list.company = restult.company ? restult.company : '';
+            this.openModal();
+        },
         // open and close delet modal
         showConfirmation(id) {
             this.accountIdToDelete = id;
@@ -350,7 +356,7 @@ export default {
         // delete network
         deleteAccount() {
             this.hideShowLoader = true;
-            this.axios.delete(this.$api + '/settings/cloudways/' + this.accountIdToDelete, {
+            this.axios.delete(this.$api + '/network/manualNetworks/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
