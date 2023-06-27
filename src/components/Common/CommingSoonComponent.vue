@@ -44,7 +44,7 @@ export default {
 
     },
     mounted() {
-        console.log(this.$route.params.routeName, 'routeName');
+        console.log(this.$route.params.routeName, 'Route Name');
     }
 }
 </script>
