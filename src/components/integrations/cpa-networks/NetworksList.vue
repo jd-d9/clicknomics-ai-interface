@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -141,7 +141,7 @@ import moment from 'moment';
 export default {
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             confirmationBox: false,
             showEditForm: false,
             accountIdToDelete: '',
@@ -206,7 +206,7 @@ export default {
         },
         // get cpa network list
         getCpaNetworkist() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/settings/networks', {
                 headers: {
                     "Content-Type": "application/json",
@@ -218,17 +218,17 @@ export default {
                     const allData = response.data;
                     this.linkedNewtworks = allData.data.data;
                     this.permissions = allData.permission;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // delete network list
         deleteCpaNetworkist() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/settings/networks/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
@@ -245,7 +245,7 @@ export default {
                     });
                     this.cancel();
                     this.getCpaNetworkist();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -256,12 +256,12 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // update network list
         updateCpaNetworkist() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/settings/networks/' + this.accountIdEdit, {
                 _method: 'PUT',
                 name: this.network_name,
@@ -284,7 +284,7 @@ export default {
                     });
                     this.close();
                     this.getCpaNetworkist();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -295,7 +295,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
     }

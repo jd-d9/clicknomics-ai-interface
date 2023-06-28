@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -182,7 +182,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             dataMetrics: [],
             dataMetricsFilter: [],
             search: '',
@@ -255,7 +255,7 @@ export default {
         },
         // get manual network listing
         getManualNetworkListing() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/network/manualNetworks', {
                 headers: {
                     "Content-Type": "application/json",
@@ -269,17 +269,17 @@ export default {
                     this.dataMetrics = data.data.data;
                     this.dataMetricsFilter = data.data.data;
                     this.permissions = data.permission;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error)
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // create and update network
         saveManualNetwork() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             let formData = new FormData();
             formData.append('id', this.list.id);
             formData.append('network', this.list.name);
@@ -305,7 +305,7 @@ export default {
                     });
                     this.getManualNetworkListing();
                     this.closeModal();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -316,7 +316,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // open modal for create new network
@@ -355,7 +355,7 @@ export default {
         },
         // delete network
         deleteAccount() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/network/manualNetworks/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
@@ -372,7 +372,7 @@ export default {
                     });
                     this.getManualNetworkListing();
                     this.cancel();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -383,7 +383,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
     }

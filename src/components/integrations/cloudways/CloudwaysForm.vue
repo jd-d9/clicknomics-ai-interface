@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -75,7 +75,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             api_key: '',
             email: '',
         }
@@ -91,7 +91,7 @@ export default {
     methods: {
         // create new cloudway
         integrateCloudwaysServer() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/settings/cloudways', {
                 email: this.email,
                 api_key: this.api_key,
@@ -110,7 +110,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -121,7 +121,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
     }

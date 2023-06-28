@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -152,7 +152,7 @@
 export default {
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             dataMetrics: [],
             dataMetricsFilter: [],
             permissions: {},
@@ -189,7 +189,7 @@ export default {
         },
         // get variable payment list
         getVariablePaymentList() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/variableCost', {
                 headers: {
                     "Content-Type": "application/json",
@@ -202,17 +202,17 @@ export default {
                     this.dataMetrics = allData.data.data;
                     this.dataMetricsFilter = allData.data.data;
                     this.permissions = allData.permission;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // delete variable monthly cost
         deleteData(id) {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/accounting/variableCost/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -228,12 +228,12 @@ export default {
                         type: 'success'
                     });
                     this.getVariablePaymentList();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         }
     }

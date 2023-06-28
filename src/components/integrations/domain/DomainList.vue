@@ -23,7 +23,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -136,7 +136,7 @@ export default {
     // props: ['affiliates'],
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             confirmationBox: false,
             showEditForm: false,
             accountIdToDelete: '',
@@ -174,7 +174,7 @@ export default {
         },
         // get domain listing
         getDomainListing() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/settings/domain', {
                 headers: {
                     "Content-Type": "application/json",
@@ -186,17 +186,17 @@ export default {
                     const data = response.data;
                     this.linkedNewtworks = data.data.data;
                     this.permissions = data.permission;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // delete network name
         deleteAccount() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/settings/domain/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
@@ -213,7 +213,7 @@ export default {
                     });
                     this.getDomainListing();
                     this.cancel();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -224,7 +224,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // format date

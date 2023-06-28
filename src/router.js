@@ -4,6 +4,7 @@ import LogIn from './components/authentication/LogIn.vue';
 import TwoFA from './components/authentication/TwoFactoreAuth.vue';
 import ResetPassword from './components/authentication/ResetPassword.vue';
 import SetNewPassword from './components/authentication/SetNewPassword.vue';
+import ResetTwoFactorAuth from './components/authentication/ResetTwoFactorAuth.vue';
 import DashboardComponent from './components/DashboardComponent.vue';
 import UserProfile from './components/user-profile/UserProfile.vue';
 import DisplayUsers from './components/user/UsersList.vue';
@@ -46,6 +47,7 @@ const router = createRouter({
         {path: '/', redirect: '/dashboard', meta: {auth: true}},
         {path: '/authenticator/validate', component: TwoFA, meta: {auth: true}},
         {path: '/authenticator/validate/email', component: EmailAuth, meta: {auth: true}},
+        {path: '/authenticator/reset2FA', component: ResetTwoFactorAuth, meta: {auth: true}},
         // dashboard
         {path: '/dashboard', component: DashboardComponent, meta: {auth: true}},
         // user profile / user / user role

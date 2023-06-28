@@ -1,6 +1,6 @@
 <template>
     <div class="main-content bg-default height" id="panel">
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
             <div class="main-content">
                 <!-- Header -->
                 <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
@@ -51,7 +51,7 @@
                                             <!-- <span class="text-red-600">error</span> -->
                                         </div>
                                         <div class="for-responsive">
-                                            <a href="javascript:void(0)" class="text-right" data-bs-toggle="modal" data-bs-target="#confirm2FAModal">Regenerate 2FA click here?</a>
+                                            <a href="javascript:void(0)" class="text-right"  @click.prevent="openModal">Regenerate 2FA click here?</a>
                                             <router-link to="/authenticator/validate/email" class="float-right mb-2" @click="tryAnother === true">Try Another way.</router-link>
                                         </div>
                                         <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
@@ -68,7 +68,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title text-white">Confirm</h5>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
                                 <span class="text-white" aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -83,8 +83,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 py-0 text-right">
-                                        <button type="button" class="btn btn-primary btn-lg btn_animated">Yes</button>
-                                        <button type="button" class="btn btn-danger btn-lg btn_animated text-white" data-bs-dismiss="modal">No</button>
+                                        <button type="button" class="btn btn-primary btn-lg btn_animated" @click.prevent="resetTwoFactor">Yes</button>
+                                        <button type="button" class="btn btn-danger btn-lg btn_animated text-white" @click.prevent="closeModal">No</button>
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +125,7 @@
                 // images: {
                 //     logo: require('/assets/img/brand/logo.png'),
                 // },
-                hideShowLoader: false,
+                showLoader: false,
                 displayQrCode: '',
                 authCode: '',
                 key: '',
@@ -143,9 +143,16 @@
             },
         },
         methods: {
+            // open and close reset 2FA modal
+            openModal() {
+                window.$('#confirm2FAModal').modal('show');
+            },
+            closeModal() {
+                window.$('#confirm2FAModal').modal('hide');
+            },
             // get and show QR code
             showAuthQrcode() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.get(this.$api + '/authenticator/getQrcode', {
                     headers: {
                         "Content-Type": "application/json",
@@ -158,18 +165,50 @@
                     this.displayQrCode = getData.inlineUrl;
                     this.key = getData.key;
                     this.verifiedBy = getData.verified_by;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 })
                 .catch(error => {
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     console.log(error)
                 });
+            },
+            // reset 2factor authentication
+            resetTwoFactor() {
+                this.showLoader = true;
+                this.axios.get(this.$api + '/authenticator/reset2FAEmail', {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'We have emailed you a reset 2FA link',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.closeModal();
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                }); 
             },
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
                 // if scan and enter auth code
-                if(this.displayQrCode && !this.tryAnother || this.verifiedBy == '2fa App') {  // 2fa app
-                    this.hideShowLoader = true;
+                if(this.displayQrCode && !this.tryAnother || this.verifiedBy == 'email') {  // 2fa APP
+                    this.showLoader = true;
                     this.axios.post(this.$api + '/authenticator/validateCode', {
                         google2fa_secret: this.authCode,
                         key: this.key,
@@ -188,20 +227,20 @@
                                 duration: '5000',
                                 type: 'success'
                             });
-                            this.hideShowLoader = false;
+                            this.showLoader = false;
                             this.$router.push('/dashboard');
                             this.backendErrorMessage = '';
                         }
                     })
                     .catch(error => {
                         console.log(error);
-                        this.backendErrorMessage = error.response.data.message;
-                        this.hideShowLoader = false;
+                        this.backendErrorMessage = error.response.data.errors[0];
+                        this.showLoader = false;
                     });
                 }
                 // if use try another way method
                 else {
-                    this.hideShowLoader = true;
+                    this.showLoader = true;
                     this.axios.post(this.$api + '/authenticator/validateTwoFactorCode', {
                         two_factor_code: this.authCode,
                         remember_2fa: this.rememberVerification,
@@ -220,15 +259,15 @@
                                 duration: '5000',
                                 type: 'success'
                             });
-                            this.hideShowLoader = false;
+                            this.showLoader = false;
                             this.$router.push('/dashboard');
                             this.backendErrorMessage = '';
                         }
                     })
                     .catch(error => {
                         console.log(error)
-                        this.backendErrorMessage = error.response.data.message;
-                        this.hideShowLoader = false;
+                        this.backendErrorMessage = error.response.data.errors[0];
+                        this.showLoader = false;
                     });
                 }
             }

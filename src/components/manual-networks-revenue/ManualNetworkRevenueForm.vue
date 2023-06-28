@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -108,7 +108,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             date: '',
             amount: '',
             networkSelected: '',
@@ -140,7 +140,7 @@ export default {
     methods: {
         // create manual network metrics
         saveManualNetworkMetrics() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             let formData = new FormData();
             formData.append('date', moment(this.date).format('YYYY-MM-DD'));
             formData.append('amount', this.amount);
@@ -160,7 +160,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.date = '';
                     this.amount = '';
                     this.networkSelected = '';
@@ -175,11 +175,11 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
 
             
-            // this.hideShowLoader = true;
+            // this.showLoader = true;
             // axios.defaults.headers.common = {
             //     'X-Requested-With': 'XMLHttpRequest',
             //     'X-CSRF-TOKEN': window.csrf_token
@@ -191,7 +191,7 @@ export default {
             // }).then(response => {
             //     if(response) {
             //         console.log(response, 'sasa')
-            //         this.hideShowLoader = false;
+            //         this.showLoader = false;
             //         this.message = {
             //             text: response.data.message,
             //             type: 'success',
@@ -201,7 +201,7 @@ export default {
             //             window.location.reload();
             //         }
             //     }else {
-            //         this.hideShowLoader = false;
+            //         this.showLoader = false;
             //         this.message = {
             //             text: 'Something Went Wrong!',
             //             type: 'error',
@@ -209,7 +209,7 @@ export default {
             //         Bus.$emit('flash-message', this.message, '');
             //     }
             // }).catch(error => {
-            //     this.hideShowLoader = false;
+            //     this.showLoader = false;
             //     console.log(error);
             //     this.message = {
             //         text: error.response.data.message,

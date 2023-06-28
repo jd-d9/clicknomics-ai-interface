@@ -9,7 +9,7 @@
                 </router-link>
             </div>
             <div class="sidebar-contents">
-                <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none" v-for="data in allMenues" :key="data" @click="toggleSidebarHover">
+                <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none" :class="{'active-tab-big': addActiveClass(data)}" v-for="data in allMenues" :key="data" @click="changeSidebar(data)">     <!--    -->
                     <img :src="'/assets/img/icons/' + data.icon" alt="icon" title="Dashboard">
                     <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                     <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
@@ -18,7 +18,7 @@
         </div>
     </div>
     <!-- sidebar default end here -->
-    <!-- sidebar hover start here -->
+    <!-- sidebar small start here -->
     <div class="sidebar hide-show-sidebar" v-else>
         <div class="sidebar-inner-wrapper">
             <div class="sidebar-inner">
@@ -29,45 +29,47 @@
                     </router-link>
                 </div>
                 <div class="sidebar-contents">
-                    <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" @mouseleave="hideHoveredDropdown" v-for="data in allMenues" :key="data">
+                    <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" :class="{'active-tab': addActiveClass(data)}" @mouseenter="showHoveredDropdown(data)" :id="ind + 'tab'" v-for="(data, ind) in allMenues" :key="data.id">
                         <img :src="'/assets/img/icons/' + data.icon" alt="icon" :title="data.menu">
                         <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                         <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
-                        <!-- sidebar dropdown start here -->
-                        <div class="sidebar-dropdown-menu" :class="{'d-block': showOnClick}" v-if="data.child">
+                    </router-link>
+                    <!-- sidebar dropdown start here -->
+                    <div v-for="data in selectedMenu" :key="data" @mouseleave="hideHoveredDropdown">
+                        <div class="sidebar-dropdown-menu" :class="{'d-block': showOnClick && data.child}">
                             <div class="sidebar-dropdown-head px-3 py-2">
                                 <p class="mb-0 text-white py-1">{{ data.menu }}</p>
                             </div>
                             <div v-for="subChild in data.child" :key="subChild">
                                 <div class="sidebar-dropdown-menubars p-0" v-if="subChild.children.length !== 0">
                                     <!-- accordian start here -->
-                                    <div class="accordion accordion-flush" :id="'accordionFlushExample' + subChild.id">
+                                    <div class="accordion" id="accordionPanelsStayOpenExample">
                                         <div class="accordion-item">
-                                            <h2 class="accordion-header" :id="'flush-heading' + subChild.id">
+                                            <h2 class="accordion-header" :id="'panelsStayOpen-heading' + subChild.id">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" :aria-controls="subChild.id">
                                                     {{ subChild.menu }}
                                                 </button>
                                             </h2>
-                                            <div :id="subChild.id" class="accordion-collapse collapse" :aria-labelledby="'flush-heading' + subChild.id" :data-bs-parent="'#accordionFlushExample' + subChild.id">
+                                            <div :id="subChild.id" class="accordion-collapse collapse" :aria-labelledby="'panelsStayOpen-heading' + subChild.id" data-bs-parent="#accordionPanelsStayOpenExample">
                                                 <div class="accordion-body" v-for="childs in subChild.children" :key="childs">
-                                                    <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover">{{ childs.menu }}</router-link>
-                                                    <!-- <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-if="childs.children.length === 0">{{ childs.menu }}</router-link>
+                                                    <!-- <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover">{{ childs.menu }}</router-link> -->
+                                                    <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-if="!childs.children">{{ childs.menu }}</router-link>
                                                     <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-else>
-                                                        <div class="accordion accordion-flush" :id="'accordionFlushExample' + subChild.id">
+                                                        <div class="accordion accordion-flush" :id="'accordionPanelsStayOpenExample' + childs.id">
                                                             <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="flush-headingOne">
+                                                                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                                                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" aria-controls="flush-collapseOne">
                                                                         {{ childs.menu }}
                                                                     </button>
                                                                 </h2>
-                                                                <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" :data-bs-parent="'#accordionFlushExample' + subChild.id">
+                                                                <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne" :data-bs-parent="'#accordionPanelsStayOpenExample' + childs.id">
                                                                     <div class="accordion-body">
                                                                         <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-for="grandChilds in childs.children" :key="grandChilds">{{ grandChilds.menu }}</router-link>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </router-link> -->
+                                                    </router-link>
                                                 </div>
                                             </div>
                                         </div>
@@ -79,14 +81,14 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- sidebar dropdown end here -->
-                    </router-link>
+                    </div>
+                    <!-- sidebar dropdown end here -->
                 </div>
             </div>
         </div>
     </div>
-    <!-- sidebar hover end here -->
-    <loader-component v-if="hideShowLoader"></loader-component>
+    <!-- sidebar small end here -->
+    <loader-component v-if="showLoader"></loader-component>
     <!-- navbar start here -->
     <nav class="navbar-content bg-primary" :class="{'toggle-margin': hideShowSidebar}">
         <div class="container-fluid px-4 pt-0 pb-4">
@@ -195,14 +197,14 @@
                 //     user: require('/assets/img/icons/dummy-user.png')
                 // },
                 hideShowSidebar: true,
-                hideShowLoader: false,
+                showLoader: false,
                 showOnClick: false,
                 sideBarData: [],
                 allMenues: [],
+                selectedMenu: [],
                 subDropDownTabs: [],
                 profileImage: '',
                 name: '',
-                rootEmit: '',
             }
         },
         mounted() {
@@ -221,9 +223,29 @@
             });
         },
         methods: {
+            // added css active class for current tab
+            addActiveClass(route) {
+                if(route.routes == '#') {
+                    let active = [];
+                    route.child.map((val) => {
+                        if(val.routes == '#') {
+                            val.children.filter((data) => {
+                                data.routes == window.location.pathname.slice(1) && active.push(val);
+                            })
+                        }
+                        else {
+                            val.routes == window.location.pathname.slice(1) && active.push(val);
+                        }
+                    })
+                    return active.length != 0 ? true : false;
+                }
+                else {
+                    return route.routes == window.location.pathname.slice(1);
+                }
+            },
             // get sidebar menu tabs
             getSidebarMenues() { 
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.get(this.$api + '/settings/menu', {
                     headers: {
                         "Content-Type": "application/json",
@@ -234,20 +256,20 @@
                     if(response.data.success) {
                         this.allMenues = response.data.data;
                         this.allMenues.sort((a, b) => a.position - b.position);
-                        console.log(this.allMenues, 'sidebarAllData')
-                        this.hideShowLoader = false;
+                        console.log(this.allMenues, 'sidebarAllData');
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    this.hideShowLoader = false;
-                    console.log(error)
+                    this.showLoader = false;
+                    console.log(error);
                 });
             },
             // hide/show components
             toggleComponents() {
                 this.hideShowSidebar = false;
                 if(screen.width > 1199) {
-                    if(window.location.pathname === '/dashboard' || this.$route.params.notFound) {
+                    if(window.location.pathname === '/dashboard' || this.$route.params.notFound) {   //  || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers'
                         this.hideShowSidebar = true;
                     } else {
                         this.hideShowSidebar = false;
@@ -269,23 +291,56 @@
                     this.hideShowSidebar = !this.hideShowSidebar;
                     this.$emit('move-contents', this.hideShowSidebar);
                 } else {
+                    // get active menu dropdown data
+                    this.allMenues.filter((elem) => {
+                        if(elem.routes == '#') {
+                            elem.child.map((val) => {
+                                if(val.routes == '#') {
+                                    val.children.filter((data) => {
+                                        data.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
+                                    })
+                                }
+                                else {
+                                    val.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
+                                }
+                            })
+                        }
+                    })
                     this.showOnClick = !this.showOnClick;
                     this.$emit('move-contents', this.showOnClick);
                 }
             },
-            // sidebar behaviour on click and hover
-            toggleSidebarHover() {
-                this.showOnClick = !this.showOnClick;
-                this.hideShowSidebar = !this.hideShowSidebar;
+            // change default sidebar to small(hover) sidebar
+            changeSidebar(data) {
+                if(data.child) {
+                    this.showOnClick = true;
+                    this.hideShowSidebar = !this.hideShowSidebar;
+                }
+                else {
+                    this.showOnClick = false;
+                    // this.hideShowSidebar = !this.hideShowSidebar;
+                }
+                this.selectedMenu = [];
+                this.selectedMenu.push(data);
+                // this.showOnClick = true;
+                // this.showOnClick = !this.showOnClick;
+                // this.hideShowSidebar = !this.hideShowSidebar;
             },
-            // mouse leave function
+            // sidebar show dropdown on hover
+            showHoveredDropdown(data) {
+                this.selectedMenu = [];
+                this.selectedMenu.push(data);
+                this.showOnClick = true;
+            },
+            // sidebar hide dropdown on hover
             hideHoveredDropdown() {
+                // this.selectedMenu = [];
                 this.showOnClick = false;
                 this.$emit('move-contents', this.hideShowSidebar);
             },
             // logout user
             logoutUser() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 const bodyParameters = {
                     key: "value"
                 };
@@ -297,7 +352,7 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         sessionStorage.clear();
                         this.$toast.open({
                             message: 'Logged out',
@@ -316,12 +371,12 @@
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }); 
             },
             // get current loged in user data
             getCurrentUserData() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.get(this.$api + '/settings/getprofileuser', {
                     headers: {
                         "Content-Type": "application/json",
@@ -333,13 +388,13 @@
                         this.profileImage = response.data.data.profile_image;
                         this.name = response.data.data.name;
                         this.backendErrorMessage = '';
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         sessionStorage.setItem('roleId', response.data.data.role_id)
                     }
                 })
                 .catch(error => {
                     this.backendErrorMessage = error.response.data.message;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }); 
             }
         },
@@ -465,11 +520,11 @@
         height: 100vh;
         overflow-y: auto;
     }
-    .side-menu-hover:hover {
+    .side-menu-hover:hover, .active-tab {
         background-color: #084c89 !important;
         border-radius: 0 !important;
     }
-    .side-menu-hover:hover i {
+    .side-menu-hover:hover i, .active-tab i {
         color: white;
     }
     .side-menu-hover:hover .sidebar-dropdown-menu{
@@ -554,10 +609,10 @@
         display: flex;
         justify-content: start;
         align-items: center;
-        border-radius: 8px;
+        border-radius: 6px;
         padding: 7px 12px;
     }
-    .side-menu:hover, .active {
+    .side-menu:hover, .active-tab-big {
         background-color: #e8f0fe;
     }
     .btn {

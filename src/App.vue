@@ -25,7 +25,7 @@
             },
             // dynamically add class for toggle sidebar
             addDynamicClass() {
-                if(!sessionStorage.getItem('Email') || window.location.pathname === '/login' || window.location.pathname === '/password/reset' || window.location.pathname === '/authenticator/validate' || window.location.pathname === '/authenticator/validate/email' || window.location.pathname === '/set_new_password') {  
+                if(!sessionStorage.getItem('Email') || window.location.pathname === '/login' || window.location.pathname === '/password/reset' || window.location.pathname === '/authenticator/validate' || window.location.pathname === '/authenticator/validate/email' || window.location.pathname === '/authenticator/reset2FA' || window.location.pathname === '/set_new_password') {  
                     this.toggleClass = false;
                 }
                 else {

@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -157,7 +157,7 @@ export default {
         let thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 11, 59, 59, 999);
 
         return {
-            hideShowLoader: false,
+            showLoader: false,
             dataMetrics: [],
             search: '',
             // headers: [
@@ -226,7 +226,7 @@ export default {
         },
         // get manual network metrics listing
         getManualNetworksEntry() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/network/manualNetworksMetrics', {
                 headers: {
                     "Content-Type": "application/json",
@@ -240,12 +240,12 @@ export default {
                     console.log(this.dataMetrics, '---')
                     this.dataMetricsFilter = getData.data.data;
                     this.permissions = getData.permission;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         checkOpenPicker() {
@@ -261,7 +261,7 @@ export default {
         deleteData(id) {
             console.log(id);
             if(confirm("Do you really want to delete?")) {
-                // this.hideShowLoader = true;
+                // this.showLoader = true;
                 // axios.defaults.headers.common = {
                 //     'X-Requested-With': 'XMLHttpRequest',
                 //     'X-CSRF-TOKEN': window.csrf_token
@@ -275,7 +275,7 @@ export default {
                 // }).then(response => {
                 //     if(response) {
                 //         console.log(response, 'sasa')
-                //         this.hideShowLoader = false;
+                //         this.showLoader = false;
                 //         this.message = {
                 //             text: response.data.message,
                 //             type: 'success',
@@ -283,7 +283,7 @@ export default {
                 //         Bus.$emit('flash-message', this.message, '');
                 //         this.dataMetrics = _.filter(this.dataMetrics, x => { return x.id !== id; });
                 //     }else {
-                //         this.hideShowLoader = false;
+                //         this.showLoader = false;
                 //         this.message = {
                 //             text: 'Something Went Wrong!',
                 //             type: 'error',
@@ -291,7 +291,7 @@ export default {
                 //         Bus.$emit('flash-message', this.message, '');
                 //     }
                 // }).catch(error => {
-                //     this.hideShowLoader = false;
+                //     this.showLoader = false;
                 //     console.log(error);
                 //     this.message = {
                 //         text: error.response.data.message,
@@ -307,7 +307,7 @@ export default {
             this.file = files;
         },
         uploadCsv() {
-            // this.hideShowLoader = true;
+            // this.showLoader = true;
             // let formData = new FormData();
             // formData.append('file', this.file[0]);
             // axios.defaults.headers.common = {
@@ -321,14 +321,14 @@ export default {
             // }).then(response => {
             //     if(response) {
             //         console.log(response, 'sasa')
-            //         this.hideShowLoader = false;
+            //         this.showLoader = false;
             //         this.message = {
             //             text: response.data.message,
             //             type: 'success',
             //         };
             //         Bus.$emit('flash-message', this.message, '/networks/manualNetworks');
             //     }else {
-            //         this.hideShowLoader = false;
+            //         this.showLoader = false;
             //         this.message = {
             //             text: 'Something Went Wrong!',
             //             type: 'error',
@@ -336,7 +336,7 @@ export default {
             //         Bus.$emit('flash-message', this.message, '');
             //     }
             // }).catch((error) => {
-            //     this.hideShowLoader = false;
+            //     this.showLoader = false;
             //     console.log(error);
             //     this.message = {
             //         text: error.response.data.message,
@@ -369,7 +369,7 @@ export default {
             //         console.log(response, 'sasa')
             //     }
             // }).catch((error) => {
-            //     this.hideShowLoader = false;
+            //     this.showLoader = false;
             //     console.log(error);
             //     this.message = {
             //         text: error.response.data.message,

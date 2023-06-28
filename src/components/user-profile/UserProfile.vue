@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 </div>
-                <loader-component v-if="hideShowLoader"></loader-component>
+                <loader-component v-if="showLoader"></loader-component>
                 <div class="col-xl-8 order-xl-1">
                     <div class="card">
                         <div class="card-header">
@@ -269,7 +269,7 @@
                 currentPassword: '',
                 verificationStatus: '1',
                 remember2Fa: '1',
-                hideShowLoader: false,
+                showLoader: false,
                 countryDetails: [],
             }
         },
@@ -303,7 +303,7 @@
         methods: {
             // get current loged in user data
             getCurrentUserData() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.get(this.$api + '/settings/getprofileuser', {
                     headers: {
                         "Content-Type": "application/json",
@@ -321,18 +321,18 @@
                         this.verificationStatus = this.currentUserDetails.verification_status;
                         this.remember2Fa = this.currentUserDetails.remember_2fa;
                         this.backendErrorMessage = '';
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         console.log(this.currentUserDetails, 'currentUserData');
                     }
                 })
                 .catch(error => {
                     this.backendErrorMessage = error.response.data.errors[0];
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }); 
             },
             // get and set country code
             getAndSetCountry() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.get(this.$api + '/settings/countries', {
                     headers: {
                         "Content-Type": "application/json",
@@ -343,17 +343,17 @@
                     if(response.data.success) {
                         this.countryDetails = response.data.data;
                         this.countryDetails.sort((a, b) => a.name - b.name);
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             },
             // upload image
             updateProfilePhoto(event) {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 const file = event.target.files[0];
                 const reader = new FileReader();
                 reader.onloadend = () => {
@@ -375,7 +375,7 @@
                                 duration: '5000',
                                 type: 'success'
                             });
-                            this.hideShowLoader = false;
+                            this.showLoader = false;
                             this.getCurrentUserData();
                             this.$emit('updating-profile-details', 'update');
                         }
@@ -388,14 +388,14 @@
                             type: 'error'
                         });
                         console.log(error);
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     });
                 }
                 reader.readAsDataURL(file);
             },
             // updating user email
             updateUserEmail() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/userprofiles/updateUserEmail', {
                     email: this.email
                 }, {
@@ -412,7 +412,7 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         this.getCurrentUserData();
                         this.userEmailToggle = false;
                         sessionStorage.setItem('Email', this.email);
@@ -426,12 +426,12 @@
                         type: 'error'
                     });
                     console.log(error);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             },
             // updating profile details
             updateUserDetails() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/userprofiles/updateUserDetail', {
                     name: this.name,
                     phone_number : this.phoneNumber,
@@ -450,7 +450,7 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         this.getCurrentUserData();
                         this.profileDetailsToggle = false;
                         this.$emit('updating-profile-details', 'update');
@@ -464,12 +464,12 @@
                         type: 'error'
                     });
                     console.log(error);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             },
             // updating user password
             updateUserPassword() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/userprofiles/updateUserPassword', {
                     currentPassword: this.currentPassword,
                     password : this.password,
@@ -488,7 +488,7 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         this.getCurrentUserData();
                         this.passwordToggle = false;
                         this.currentPassword = '';
@@ -504,12 +504,12 @@
                         type: 'error'
                     });
                     console.log(error);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             },
             // updating user 2Fa verification
             update2FaVerify() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/userprofiles/update2FAVerificationStatus', {
                     verification_status: this.verificationStatus,
                     remember_2fa: this.remember2Fa
@@ -527,7 +527,7 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         this.getCurrentUserData();
                         this.TwoFaVerifyToggle = false;
                     }
@@ -540,7 +540,7 @@
                         type: 'error'
                     });
                     console.log(error);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         },
