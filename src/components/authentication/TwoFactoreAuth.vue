@@ -168,11 +168,12 @@
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
                 // if scan and enter auth code
-                if(this.displayQrCode && !this.tryAnother || this.verifiedBy == '2fa app') {
+                if(this.displayQrCode && !this.tryAnother || this.verifiedBy == '2fa APP') {
                     this.hideShowLoader = true;
                     this.axios.post(this.$api + '/authenticator/validateCode', {
                         google2fa_secret: this.authCode,
                         key: this.key,
+                        remember_2fa: this.rememberVerification,
                         email: sessionStorage.getItem('Email'),
                     }, {
                         headers: {
@@ -188,6 +189,7 @@
                                 duration: '5000',
                                 type: 'success'
                             });
+                            sessionStorage.setItem('isTwoFactorVerified', true);
                             this.hideShowLoader = false;
                             this.$router.push('/dashboard');
                             this.backendErrorMessage = '';
@@ -220,6 +222,7 @@
                                 duration: '5000',
                                 type: 'success'
                             });
+                            sessionStorage.setItem('isTwoFactorVerified', true);
                             this.hideShowLoader = false;
                             this.$router.push('/dashboard');
                             this.backendErrorMessage = '';
@@ -234,6 +237,14 @@
             }
         },
         mounted() {
+            const isAuthenticated = sessionStorage.getItem('Token');
+            const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
+
+            if(isAuthenticated && isVerified) {
+                this.$router.push('/dashboard');
+            } else if(!isAuthenticated && !isVerified) {
+                this.$router.push('/login');
+            }
             this.showAuthQrcode();
         }
     }
