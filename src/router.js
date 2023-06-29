@@ -1,7 +1,9 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import EmailAuth from './components/authentication/EmailAuth.vue';
+import SignUp from './components/authentication/SignUp.vue';
+import SubscriptionPlans from './components/authentication/SubscriptionPlans.vue';
 import LogIn from './components/authentication/LogIn.vue';
 import TwoFA from './components/authentication/TwoFactoreAuth.vue';
+import EmailAuth from './components/authentication/EmailAuth.vue';
 import ResetPassword from './components/authentication/ResetPassword.vue';
 import SetNewPassword from './components/authentication/SetNewPassword.vue';
 import ResetTwoFactorAuth from './components/authentication/ResetTwoFactorAuth.vue';
@@ -31,6 +33,8 @@ import DomainList from './components/integrations/domain/DomainList.vue';
 import DomainForm from './components/integrations/domain/DomainForm.vue';
 import CloudwaysList from './components/integrations/cloudways/CloudwaysList.vue';
 import CloudwaysForm from './components/integrations/cloudways/CloudwaysForm.vue';
+import PlansList from './components/plans/PlansList.vue';
+import PlansForm from './components/plans/PlansForm.vue';
 import ManualNetworkList from './components/manual-networks/ManualNetworkList.vue';
 import ManualNetworkRevenueForm from './components/manual-networks-revenue/ManualNetworkRevenueForm.vue';
 import ManualNetworkRevenueList from './components/manual-networks-revenue/ManualNetworkRevenueList.vue';
@@ -41,6 +45,8 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         // user login and authentications
+        {path: '/signup', component: SignUp},
+        {path: '/subscribe-plan', component: SubscriptionPlans},
         {path: '/login', component: LogIn},
         {path: '/password/reset', component: ResetPassword},
         {path: '/set_new_password', component: SetNewPassword},
@@ -90,6 +96,10 @@ const router = createRouter({
         // settings/integration/cloudways
         {path: '/settings/cloudways', component: CloudwaysList, meta: {auth: true}},
         {path: '/settings/cloudways/integrate', component: CloudwaysForm, meta: {auth: true}},
+        // settings/plan module
+        {path: '/settings/plan-management', component: PlansList, meta: {auth: true}},
+        {path: '/settings/plan-management/create', component: PlansForm, meta: {auth: true}},
+        {path: '/settings/plan-management/:id/edit', component: PlansForm, meta: {auth: true}},
         // network module
         {path: '/networks/manualNetworks', component: ManualNetworkList, meta: {auth: true}},
         // add manual network revenue moule
