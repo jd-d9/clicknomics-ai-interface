@@ -68,6 +68,17 @@
                                                     <span class="text-red-600" v-if="errors.intervalCount">Interval count can not be empty</span>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 py-0">
+                                                <div class="form-group">
+                                                    <label class="form-control-label" for="input-username">User limit</label>
+                                                    <Field type="number" id="input-username" name="userLimit" :class="{'form-control': true , 'border-red-600':errors.userLimit}" step=".01" placeholder="Interval count" v-model="userLimit"/>
+                                                    <span class="text-red-600" v-if="errors.userLimit">User limit can not be empty</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-lg-6 py-0">
                                                 <div class="custom-control custom-control-alternative custom-checkbox d-flex flex-column">
                                                     <div class="add-padding">
@@ -115,6 +126,7 @@ export default {
             intervalCount: null,
             trialPeriod: 0,
             trialPeriodDuplicate: 0,
+            userLimit: null,
             hasTrial: false,
             toggleButton: true,
             breadCrumbText: 'Create',
@@ -142,6 +154,7 @@ export default {
                 Interval: yup.string().required(),
                 Amount: yup.string().required(),
                 intervalCount: yup.string().required(),
+                userLimit: yup.string().required(),
             });
         },
     },
@@ -170,6 +183,7 @@ export default {
                     this.intervalCount = Data.interval_count;
                     this.trialPeriod = Data.trial_period_days;
                     this.trialPeriodDuplicate = Data.trial_period_days;
+                    this.userLimit = Data.user_limit;
                     this.hasTrial = Data.trial_period_days == 0 ? false : true;
                     this.showLoader = false;
                 }
@@ -183,7 +197,6 @@ export default {
         managePlan() {
             // update plan
             if(this.$route.params.id) {
-                console.log('update');
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('name', this.name);
@@ -191,6 +204,7 @@ export default {
                 formData.append('interval', this.intervalSelected);
                 formData.append('interval_count', this.intervalCount);
                 formData.append('trial_period_days', this.trialPeriod);
+                formData.append('user_limit', this.userLimit);
                 formData.append('_method', 'PUT');
                 this.axios.post(this.$api + '/settings/plan/' + this.$route.params.id, formData, {
                     headers: {
@@ -230,6 +244,7 @@ export default {
                 formData.append('interval', this.intervalSelected);
                 formData.append('interval_count', this.intervalCount);
                 formData.append('trial_period_days', this.trialPeriod);
+                formData.append('user_limit', this.userLimit);
                 this.axios.post(this.$api + '/settings/plan', formData, {
                     headers: {
                         "Content-Type": "application/json",

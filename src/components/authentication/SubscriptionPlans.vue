@@ -22,12 +22,20 @@
         <!-- Page content -->
         <div class="container mt--7 mt-lg--8 pb-5">
             <div class="row justify-content-center">
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6" v-for="plan in plans" :key="plan">
                     <div class="card bg-secondary border-0 mb-0">
                         <div class="card-body px-lg-5 py-lg-5">
                             <div class="plan">
-                                <span class="plan-heading fw-bold">Free</span>
-                                
+                                <h2 class="plan-heading text-center fw-bold">{{plan.name}}</h2>
+                                <p class="plan-price text-center mb-0">${{plan.amount}}</p>
+                                <p class="mb-0 text-center text-size">Per Month</p>
+                                <hr class="my-4 dropdown-divider">
+                                <div class="plan-content">
+                                    <p>1 Seat</p>
+                                    <p>1 Runner</p>
+                                    <p>300 Pipeline GB-minute</p>
+                                    <router-link to="/signup" class="btn btn-primary mt-4 btn-block btn_animated">Select Plan</router-link>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -42,6 +50,7 @@
         data() {
             return {
                 showLoader: false,
+                plans: [],
                 userName: '',
                 userEmail: '',
                 userPassword: '',
@@ -51,11 +60,32 @@
                 backendErrorMessage: '',
             }
         },
-        computed: {
-
+        mounted() {
+            this.getPlans();
         },
         methods: {
-
+            // get plans listing
+            getPlans() {
+                this.showLoader = true;
+                this.axios.get(this.$api + '/subscription')
+                .then(response => {
+                    if(response.data.success) {
+                        this.plans = response.data.data;
+                        console.log(this.plans)
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                }); 
+            }
         }
     }
 </script>
@@ -74,6 +104,27 @@
         width: 32px;
     }
     .plan-heading {
-        font-size: 28px;
+        position: relative;
+        font-size: 25px;
+        margin-bottom: 30px;
+    }
+    .plan-heading::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 40%;
+        width: 20%;
+        height: 4px;
+        background-color: #005eb3;
+    }
+    .plan-price {
+        font-size: 45px;
+        line-height: 1;
+    }
+    .text-size {
+        font-size: 12px;
+    }
+    .dropdown-divider {
+        border-top: 1px solid #e5e5e5 !important;
     }
 </style>

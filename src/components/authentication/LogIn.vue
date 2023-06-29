@@ -61,8 +61,9 @@
                                         </router-link>
                                     </div>
                                 </div>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Sign In</button>
+                                <div>
+                                    <button type="submit" class="btn btn-primary mt-4 mb-3 btn-block btn_animated">Sign In</button>
+                                    Don't have any account? <router-link to="/subscribe-plan"> Register</router-link>
                                 </div>
                             </Form>
                         </div>
@@ -122,36 +123,65 @@
                 });
             },
         },
+        mounted() {
+            const isAuthenticated = sessionStorage.getItem('Token');
+            const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
+            const verifiedBy = sessionStorage.getItem('verifiedBy');
+            console.log(isAuthenticated, isVerified)
+            if(isAuthenticated && isVerified) {
+                this.$router.push('/dashboard');
+            } else if(isAuthenticated && !isVerified) {
+                verifiedBy === 'email' ? this.$router.push('/authenticator/validate/email') :this.$router.push('/authenticator/validate');
+            }
+        },
         methods: {
             // check validation and signin user
             submitAndAuthenticateUser() {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/login', {
-                    email: this.userEmail,
-                    password: this.userPassword
-                })
-                .then(response => {
-                    if(response.data.success) {
-                        // this.$session.set('Token', response.data.token);
-                        // this.$session.set('Email', this.userEmail);
-                        // console.log(this.$session, 'vue-session');
-                        sessionStorage.setItem('Token', response.data.token);
-                        sessionStorage.setItem('Email', this.userEmail);
-                        this.$router.push('/authenticator/validate');
-                        this.backendErrorMessage = '';
+                // this.axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(res => {
+                this.axios.get('http://192.168.1.7:8080/sanctum/csrf-cookie').then(res => {
+                    console.log(res, '212121')
+                    this.axios.post(this.$api + '/login', {
+                        email: this.userEmail,
+                        password: this.userPassword
+                    })
+                    .then(response => {
+                        if(response.data.success) {
+                            // this.$session.set('Token', response.data.token);
+                            // this.$session.set('Email', this.userEmail);
+                            // console.log(this.$session, 'vue-session');
+                            const responseData = response.data;
+                            sessionStorage.setItem('Token', responseData.token);
+                            sessionStorage.setItem('Email', this.userEmail);
+                            sessionStorage.setItem('verifiedBy', responseData.verified_by);
+                            sessionStorage.setItem('isTwoFactorVerified', responseData.isTwoFactorVerified);
+                            
+                            if(responseData.isTwoFactorVerified) {
+                                this.$router.push('/dashboard');
+                            } else {
+                                if(responseData.verified_by === 'email') {
+                                    this.$router.push('/authenticator/validate/email');
+                                } else {
+                                    this.$router.push('/authenticator/validate');
+                                }
+
+                            }
+                            
+                            this.backendErrorMessage = '';
+                            this.showLoader = false;
+                            this.$toast.open({
+                                message: 'Please scan qr code or can use try another for authentication',
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error, 'error')
+                        this.backendErrorMessage = error.response.data.message;
                         this.showLoader = false;
-                        this.$toast.open({
-                            message: 'Please scan qr code or can use try another for authentication',
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.log(error, 'error')
-                    this.backendErrorMessage = error.response.data.message;
-                    this.showLoader = false;
+                    }); 
                 }); 
             },
         }
