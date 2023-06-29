@@ -7,6 +7,8 @@ import App from './App.vue';
 import router from './router.js';
 import { loadFonts } from './plugins/webfontloader';
 import axios from 'axios';
+axios.defaults.withCredentials = true;
+
 import VueAxios from 'vue-axios';
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
@@ -26,8 +28,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // date range picker
 // import DateRangePicker from 'vue2-daterange-picker';
 // import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
-import LoaderComponent from './components/Common/LoaderComponent.vue';
-import NavAndSideBar from './components/Navbar_and_Sidebar/NavAndSideBar.vue';
+import LoaderComponent from './components/common/LoaderComponent.vue';
+import NavAndSideBar from './components/navbar-and-sidebar/NavAndSideBar.vue';
 
 loadFonts();
 // const myCustomLightTheme = {

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-default main-content-height">
         <loader-component v-if="hideShowLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
