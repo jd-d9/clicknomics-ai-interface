@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -119,7 +119,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             date: '',
             amount: '',
             notes: '',
@@ -148,7 +148,7 @@ export default {
         manageVariableMonthlyCost() {
             // update variable monthly cost
             if(this.$route.params.id) {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/variableCost/' + this.$route.params.id, {
                     _method: 'PUT',
                     date: moment(this.date).format('YYYY-MM-DD'),
@@ -169,17 +169,17 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
             // create variable monthly cost
             else {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/variableCost', {
                     date: '2023-06-01,2023-06-07',
                     // date: moment(this.date).format('YYYY-MM-DD'),
@@ -200,18 +200,18 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         },
         // get data for edit
         getDataForEdit() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/variableCost/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -225,12 +225,12 @@ export default {
                     this.date = new Date(data.date),
                     this.amount = data.amount,
                     this.notes = data.notes,
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         }
     }

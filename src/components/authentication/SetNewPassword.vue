@@ -1,6 +1,6 @@
 <template>
     <div class="main-content bg-default height">
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Header -->
         <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
             <div class="container">
@@ -112,7 +112,7 @@
                 //     envelope: require('/assets/img/icons/envelope.svg'),
                 //     lock: require('/assets/img/icons/lock.svg'),
                 // },
-                hideShowLoader: false,
+                showLoader: false,
                 userEmail: '',
                 newPassword: '',
                 confirmNewPassword: '',
@@ -177,7 +177,7 @@
                     return false;
                 }
                 else{
-                    this.hideShowLoader = true;
+                    this.showLoader = true;
                     this.axios.post(this.$api + '/resetpassword', {
                         token: this.route.query.token,
                         email: this.route.query.email,
@@ -188,7 +188,7 @@
                         if(response.data.success) {
                             this.$router.push('/login');
                             this.backendErrorMessage = '';
-                            this.hideShowLoader = false;
+                            this.showLoader = false;
                             this.$toast.open({
                                 message: 'New password successfully set',
                                 position: 'top-right',
@@ -199,7 +199,7 @@
                     })
                     .catch(error => {
                         this.backendErrorMessage = error.response.data.message;
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }); 
                 }
             },

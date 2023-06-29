@@ -1,6 +1,6 @@
 <template>
     <div class="bg-default">
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Main content -->
         <div class="main-content height" id="panel">
             <!-- Header -->
@@ -87,7 +87,7 @@
                 userEmail: '',
                 invalidEmail: '',
                 backendErrorMessage: '',
-                hideShowLoader: false,
+                showLoader: false,
             }
         }, 
         computed: {
@@ -113,7 +113,7 @@
             },
             // send reset password link in mail
             sendResetPasswordLink() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.emailIsValid();
                 if(!this.userEmail || this.invalidEmail) {
                     return false;
@@ -132,13 +132,13 @@
                                 type: 'success'
                             });
                             this.backendErrorMessage = '';
-                            this.hideShowLoader = false;
+                            this.showLoader = false;
                         }
                     })
                     .catch(error => {
                         console.log(error.response);
                         this.backendErrorMessage = error.response.data.errors[0];
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     });
                 }
             }

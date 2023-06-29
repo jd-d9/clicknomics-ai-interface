@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -192,7 +192,7 @@ export default {
         let startDate = new Date(today.getFullYear(), today.getMonth(), 1);
         let endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 11, 59, 59, 999);
         return {
-            hideShowLoader: false,
+            showLoader: false,
             creditCardPaymentList: [],
             creditCardPaymentFilter: [],
             permissions: {},
@@ -281,7 +281,7 @@ export default {
         },
         // get credit card payment list 
         getCreditCardPaymentList() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/creditCardPayments', {
                 headers: {
                     "Content-Type": "application/json",
@@ -304,17 +304,17 @@ export default {
                             title: val.to_account,
                         })
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // delete card payment list 
         deleteData(id) {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/accounting/creditCardPayments/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -340,7 +340,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // downloading csv
@@ -378,12 +378,12 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // choose file and import csv
         importCsv() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/creditCardPayments/importCreditCardPayment', {
                 file: this.selectedFile
             }, {
@@ -396,7 +396,7 @@ export default {
                 if(response.data.success) {
                     this.closeImportCsvModal();
                     this.getCreditCardPaymentList();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({
                         message: 'File imported',
@@ -414,7 +414,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // select csv file

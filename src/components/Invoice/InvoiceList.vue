@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -306,7 +306,7 @@ export default {
                 { title: 'Invoice Number Edited', key: 'is_invoice_edited', sortable: this.isSortable },
                 { title: 'Action', key: 'actions', sortable: this.isSortable },
             ],
-            hideShowLoader: false,
+            showLoader: false,
             search: '',
             item: {},
             singleExpand: true,
@@ -367,7 +367,7 @@ export default {
         },
         // get network list data
         fetchNetworkList() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/invoices/fetchInvoiceList', {
                 headers: {
                     "Content-Type": "application/json",
@@ -383,12 +383,12 @@ export default {
                             this.networkFilter.push(val.network_name);
                         }
                     })
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // invoice list filter using selected network
@@ -413,7 +413,7 @@ export default {
         },
         // get invoices list
         getInvoicesList() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/invoice', {
                 headers: {
                     "Content-Type": "application/json",
@@ -425,17 +425,17 @@ export default {
                     this.invoiceList = response.data.data.invoiceList;
                     this.invoiceFilter = response.data.data.invoiceList;
                     console.log(response.data.data.invoiceList, 'this.invoiceList')
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                this.hideShowLoader = false;
+                this.showLoader = false;
                 console.log(error)
             });
         },
         // delete invoice
         deleteInvoice(id) {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/accounting/invoice/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -451,7 +451,7 @@ export default {
                         type: 'success'
                     });
                     this.getInvoicesList();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -462,7 +462,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // edit invoice
@@ -501,7 +501,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // open share invoice modal
@@ -516,7 +516,7 @@ export default {
         },
         // share invoice in mail
         shareInvoice() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/invoices/sendEmailInvoice', {
                 id: this.selectedInvoiceId,
                 emailList: JSON.stringify(this.emailList)
@@ -534,7 +534,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.dialog = false;
                     this.emailList = [{email: ''}];
                 }
@@ -547,7 +547,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // open/close modals is invoice edited modal
@@ -563,7 +563,7 @@ export default {
         },
         // update invoice numbered is edited
         isInvoiceEdited() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/invoices/updateInvoiceEditedData', {
                 id: this.editedModal.id,
                 is_invoice_edited: this.editedModal.is_invoice_edited
@@ -575,7 +575,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.closeNumberEditedModal();
                     this.getInvoicesList();
                 }
@@ -588,7 +588,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // open/close create network modals
@@ -615,7 +615,7 @@ export default {
         },
         // adding cpa network
         addCpaNetwork() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/invoices/addNetworkCompanyToInvoice', {
                 id: this.networkModal.id,
                 network_name: this.networkModal.networkName,
@@ -628,7 +628,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.closeCreateNetworkModal();
                     this.getInvoicesList();
                     this.fetchNetworkList();
@@ -642,7 +642,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         }
     }

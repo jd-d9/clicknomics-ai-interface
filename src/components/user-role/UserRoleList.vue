@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -78,14 +78,14 @@ export default {
             //     bin: require('/assets/img/icons/bin.svg'),
             // },
             items: [],
-            hideShowLoader: false,
+            showLoader: false,
             rolePermission: {},
         }
     },
     methods: {
         // get all user role
         getUserRole() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/settings/role', {
                 headers: {
                     "Content-Type": "application/json",
@@ -97,11 +97,11 @@ export default {
                     console.log(response.data.data.roles);
                     this.items = response.data.data.roles;
                     this.rolePermission = response.data.data.permission;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                this.hideShowLoader = false;
+                this.showLoader = false;
                 console.log(error)
             }); 
         },
@@ -115,7 +115,7 @@ export default {
         },
         // delete user role
         deleteRole(id) {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/settings/role/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -124,7 +124,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.$toast.open({
                         message: 'Role deleted',
                         position: 'top-right',
@@ -135,7 +135,7 @@ export default {
                 }
             })
             .catch(error => {
-                this.hideShowLoader = false;
+                this.showLoader = false;
                 this.$toast.open({
                     message: error.response.data.message,
                     position: 'top-right',

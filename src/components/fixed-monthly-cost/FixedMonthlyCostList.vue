@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -249,7 +249,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             dataMetrics: [],
             dataMetricsFilter: [],
             searchInput: '',
@@ -329,7 +329,7 @@ export default {
         },
         // get all data of fixed monthly cost list
         getFixedMonthlyCostList() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/fixedMonthlyCost', {
                 headers: {
                     "Content-Type": "application/json",
@@ -343,19 +343,19 @@ export default {
                     this.dataMetricsFilter = getData.data.data;
                     this.permissions = getData.permission;
                     console.log(getData, 'getData');
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // delete selected items
         deleteSelected() {
             const confirmDelete = window.confirm('Do you really want to delete?');
             if(confirmDelete) {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/fixedMonthlyCost/deleteMutipleRows', {
                     id: JSON.stringify(this.selectedId)
                 }, {
@@ -373,7 +373,7 @@ export default {
                             type: 'success'
                         });
                         this.getFixedMonthlyCostList();
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -384,14 +384,14 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         },
         // edit bult selected items
         editSelected() {
             console.log('---import---')
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/fixedMonthlyCost/saveBulkEditOpsCost', {
                 rowdata: JSON.stringify(this.seletedForEdit)
             }, {
@@ -410,7 +410,7 @@ export default {
                     });
                     this.closeCreateUpdateData();
                     this.getFixedMonthlyCostList();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -421,12 +421,12 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // delete from table
         deleteData(id) {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/accounting/fixedMonthlyCost/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -442,7 +442,7 @@ export default {
                         type: 'success'
                     });
                     this.getFixedMonthlyCostList();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -453,7 +453,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // downloading csv
@@ -490,13 +490,13 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // choose file and import csv
         importCsv() {
             console.log('---import---')
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/fixedMonthlyCost/importOpsCostCSV', {
                 file: this.selectedFile
             }, {
@@ -509,7 +509,7 @@ export default {
                 if(response.data.success) {
                     this.closeImportCsvModal();
                     this.getFixedMonthlyCostList();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({
                         message: 'File imported',
@@ -527,7 +527,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // select csv file

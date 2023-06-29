@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -105,7 +105,7 @@
                 ],
                 itemsPerPage: -1,
                 roleId: sessionStorage.getItem('roleId'),
-                hideShowLoader: false,
+                showLoader: false,
                 items: [],
                 userFilter: [],
                 userPermissions: {},
@@ -115,7 +115,7 @@
         methods: {
             // get regestered user data
             getUsersData() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.get(this.$api + '/settings/user', {
                     headers: {
                         "Content-Type": "application/json",
@@ -128,11 +128,11 @@
                         this.items = response.data.data.user.data;
                         this.userFilter = response.data.data.user.data;
                         this.userPermissions = response.data.data.permission;
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     console.log(error)
                 }); 
             },
@@ -156,7 +156,7 @@
             // delete regestered user
             deleteUser(id) {
                 console.log(id, 'id')
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.delete(this.$api + '/settings/user/' + id, {
                     headers: {
                         "Content-Type": "application/json",
@@ -165,7 +165,7 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         this.$toast.open({
                             message: 'User deleted',
                             position: 'top-right',
@@ -183,7 +183,7 @@
                         type: 'error'
                     });
                     console.log(error)
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }); 
             }
         },

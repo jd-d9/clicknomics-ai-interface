@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -131,7 +131,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             date: '',
             amount: '',
             fromAccount: '',
@@ -175,7 +175,7 @@ export default {
     methods: {
         // get data for edit
         getDataForEdit() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -190,19 +190,19 @@ export default {
                     this.fromAccount = getData.from_account;
                     this.toAccount = getData.to_account;
                     this.status = getData.status,
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // create and update team member payment
         manageTeamMemberPayment() {
             // update team member payment
             if(this.$route.params.id) {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
                     _method: 'PUT',
                     payment_date: moment(this.date).format('YYYY-MM-DD'),
@@ -225,7 +225,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -236,12 +236,12 @@ export default {
                         type: 'error'
                     });
                     console.log(error)
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
             // create team member payment
             else {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/teamMemberPayment', {
                     payment_date: moment(this.date).format('YYYY-MM-DD'),
                     amount: this.amount,
@@ -263,7 +263,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -274,13 +274,13 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         },
         // get fromaccount and toaccount dropdown data
         getFromToAccountDropdownData() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/teamMemberPayments/teammemberlist', {
                 headers: {
                     "Content-Type": "application/json",
@@ -308,12 +308,12 @@ export default {
                             key: val.id
                         })
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
     }

@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -121,7 +121,7 @@ export default {
             //     download: require('/assets/img/icons/download.svg'),
             //     share: require('/assets/img/icons/share.svg'),
             // },
-            hideShowLoader: false,
+            showLoader: false,
             search: '',
             headers: [
                 { title: 'ID', key: 'id'},
@@ -169,7 +169,7 @@ export default {
         },
         // get templates
         getTemplateData() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/invoices/invoiceTemplate', {
                 headers: {
                     "Content-Type": "application/json",
@@ -181,17 +181,17 @@ export default {
                     console.log(response.data.data, 'data')
                     this.templateList = response.data.data;
                     this.templateFilter = response.data.data;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // deleting template
         deleteTemplate(id) {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/invoices/deleteInvoiceTemplate', {  // must use post method for this(from backend side)
                 id: id,
             }, {
@@ -209,7 +209,7 @@ export default {
                         type: 'success'
                     });
                     this.getTemplateData();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -220,13 +220,13 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // open modal and get template name
         editTemplateName(id) {
             this.openModal();
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/invoices/invoicetemplateShow/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -237,7 +237,7 @@ export default {
                 if(response.data.success) {
                     this.selectedTemplateName = response.data.data.template_name;
                     this.selectedTemplateId = response.data.data.id;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -248,12 +248,12 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // update template name
         updateTemplateName() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/invoices/updateInvoiceTemplateName', {
                 id: this.selectedTemplateId,
                 template_name: this.selectedTemplateName
@@ -273,7 +273,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -284,7 +284,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // create invoice from template redirect link

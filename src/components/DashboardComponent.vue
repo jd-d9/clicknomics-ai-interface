@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LoaderComponent v-if="hideShowLoader"></LoaderComponent>
+        <LoaderComponent v-if="showLoader"></LoaderComponent>
         <div class="container-fluid mt--3">
             <div class="row justify-content-center mt--3">
                 <div class="col">
@@ -417,7 +417,7 @@
         endDate.setDate(endDate.getDate() + 6)
         return {
             dateRange: {startDate, endDate},
-            hideShowLoader: false,
+            showLoader: false,
             itemsPerPage: 5,
         }
     },

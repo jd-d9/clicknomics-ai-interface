@@ -1,6 +1,6 @@
 <template>
     <div class="main-content bg-default height">
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Header -->
         <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
             <div class="container">
@@ -105,7 +105,7 @@
                 //     envelope: require('/assets/img/icons/envelope.svg'),
                 //     lock: require('/assets/img/icons/lock.svg'),
                 // },
-                hideShowLoader: false,
+                showLoader: false,
                 userEmail: '',
                 userPassword: '',
                 invalidEmail: '',
@@ -136,7 +136,7 @@
         methods: {
             // check validation and signin user
             submitAndAuthenticateUser() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(res => {
                     console.log(res, '212121')
                     this.axios.post(this.$api + '/login', {
@@ -166,7 +166,7 @@
                             }
                             
                             this.backendErrorMessage = '';
-                            this.hideShowLoader = false;
+                            this.showLoader = false;
                             this.$toast.open({
                                 message: 'Please scan qr code or can use try another for authentication',
                                 position: 'top-right',
@@ -178,7 +178,7 @@
                     .catch(error => {
                         console.log(error, 'error')
                         this.backendErrorMessage = error.response.data.message;
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }); 
                 }); 
             },

@@ -1,6 +1,6 @@
 <template>
     <div class="bg-default main-content-height">
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -64,7 +64,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                            <button type="button" v-if="!toggleButton" class="btn btn-secondary btn-lg btn_animated" @click.prevent="resetForm">Reset</button>
+                                            <button type="reset" v-if="!toggleButton" class="btn btn-secondary btn-lg btn_animated">Reset</button>  <!--  @click.prevent="resetForm"  -->
                                         </div>
                                     </div>
                                 </div>
@@ -106,7 +106,7 @@ export default {
         return {
             roleName: '',
             roleNameInvalid: '',
-            hideShowLoader: false,
+            showLoader: false,
             menuItem: [],
             toggleButton: false,
         }
@@ -121,7 +121,7 @@ export default {
     methods: {
         // get all user roles
         getAllUserRole() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/settings/rolemenulist', {
                 headers: {
                     "Content-Type": "application/json",
@@ -132,11 +132,11 @@ export default {
                 if(response.data.success) {
                     this.menuItem = response.data.data;
                     console.log(this.menuItem);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                this.hideShowLoader = false;
+                this.showLoader = false;
                 console.log(error)
             }); 
         },
@@ -151,7 +151,7 @@ export default {
         },
         // get user role data for edit user role
         getUserRole() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/settings/role/' + this.$route.params.id + '/edit', {
                 headers: {
                     "Content-Type": "application/json",
@@ -162,11 +162,11 @@ export default {
                 if(response.data.success) {
                     this.menuItem = response.data.data.menus;
                     this.roleName = response.data.data.role.role_name;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                this.hideShowLoader = false;
+                this.showLoader = false;
                 console.log(error)
             }); 
         },
@@ -175,39 +175,45 @@ export default {
             this.roleNameIsValid();
             // update user role
             if(this.$route.params.id) {
-                this.hideShowLoader = true;
-                this.axios.post(this.$api + '/settings/role/' + this.$route.params.id, {
-                    role_name: this.roleName,
-                    role_permission: JSON.stringify(this.menuItem),
-                    _method: 'PUT'
-                }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                    }
-                })
-                .then(response => {
-                    if(response.data.success) {
+                if(!this.roleName || this.roleNameInvalid) {
+                    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+                    return false;
+                }
+                else {
+                    this.showLoader = true;
+                    this.axios.post(this.$api + '/settings/role/' + this.$route.params.id, {
+                        role_name: this.roleName,
+                        role_permission: JSON.stringify(this.menuItem),
+                        _method: 'PUT'
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        }
+                    })
+                    .then(response => {
+                        if(response.data.success) {
+                            this.$toast.open({
+                                message: 'Role details updated',
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                            this.$router.push('/settings/user_management/user_roles');
+                            this.showLoader = false;
+                        }
+                    })
+                    .catch(error => {
                         this.$toast.open({
-                            message: 'Role details updated',
+                            message: error.response.data.message,
                             position: 'top-right',
                             duration: '5000',
-                            type: 'success'
+                            type: 'error'
                         });
-                        this.$router.push('/settings/user_management/user_roles');
-                        this.hideShowLoader = false;
-                    }
-                })
-                .catch(error => {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.hideShowLoader = false;
-                    console.log(error)
-                }); 
+                        this.showLoader = false;
+                        console.log(error)
+                    }); 
+                }
             }
             // create user role
             else {
@@ -216,7 +222,7 @@ export default {
                     return false;
                 }
                 else{
-                    this.hideShowLoader = true;
+                    this.showLoader = true;
                     this.axios.post(this.$api + '/settings/role', {
                         role_name: this.roleName,
                         role_permission: JSON.stringify(this.menuItem)
@@ -237,7 +243,7 @@ export default {
                                 type: 'success'
                             });
                             this.$router.push('/settings/user_management/user_roles');
-                            this.hideShowLoader = false;
+                            this.showLoader = false;
                         }
                     })
                     .catch(error => {
@@ -248,7 +254,7 @@ export default {
                             type: 'error'
                         });
                         console.log(error)
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }); 
                 }
             }

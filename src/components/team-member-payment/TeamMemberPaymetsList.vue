@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -375,7 +375,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             teamMemberPaymentList: [],
             teamMemberPaymentFilter: [],
             permissions: {},
@@ -462,7 +462,7 @@ export default {
         // get team member payment details
         getTeamMemberPaymentList() {
             console.log(`Bearer ${sessionStorage.getItem('Token')}`)
-            this.hideShowLoader = true;
+            this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/accounting/teamMemberPayment';
             if(this.fromAccount) {
@@ -498,17 +498,17 @@ export default {
                             key: val.toaccountlist.id
                         })
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // delete team member payment
         deleteData(id) {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.delete(this.$api + '/accounting/teamMemberPayment/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -524,7 +524,7 @@ export default {
                         type: 'success'
                     });
                     this.getTeamMemberPaymentList();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -535,12 +535,12 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // adding to account
         addToAccount() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/teamMemberPayments/addToAccountMembers', {
                 team_member_name: this.teamMemberName
             }, {
@@ -557,7 +557,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.getTeamMemberPaymentList();
                     this.closeTeamMemberModal();
                     this.teamMemberName = '';
@@ -571,12 +571,12 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // adding from account
         addFromAccount() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/teamMemberPayments/addFromAccountMembers', {
                 team_member_name: this.teamMemberName
             }, {
@@ -593,7 +593,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.getTeamMemberPaymentList();
                     this.closeFromAccountModal();
                     this.teamMemberName = '';
@@ -607,12 +607,12 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // generate report
         genrateTeamMembersPaymentsReport() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport', {
                 // startDate: moment(new Date()).format('YYYY-MM-DD'),
                 // endDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -627,7 +627,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.cardMemberList = response.data.data;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -638,7 +638,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // downloading csv
@@ -675,12 +675,12 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // choose file and import csv
         importCsv() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/creditCardPayments/importCreditCardPayment', {
                 file: this.selectedFile
             }, {
@@ -693,7 +693,7 @@ export default {
                 if(response.data.success) {
                     this.closeImportCsvModal();
                     this.getTeamMemberPaymentList();
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({
                         message: 'File imported',
@@ -711,7 +711,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // select csv file

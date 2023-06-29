@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -205,7 +205,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             network_name: '',
             login_url: '',
             network_selected: '',
@@ -261,7 +261,7 @@ export default {
     methods: {
         // check url
         checkUrl() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/settings/networks/checkNetworkUrl', {
                 url: this.login_url,
             }, {
@@ -273,18 +273,18 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.backendValidationMessage = '';
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 this.backendValidationMessage = error.response.data.errors[0];
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // integrate cpa network
         integrateCpaNetwork() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/settings/networks', {
                 name: this.network_name,
                 email: this.email,
@@ -308,7 +308,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -319,7 +319,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
     }

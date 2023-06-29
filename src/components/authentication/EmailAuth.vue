@@ -1,6 +1,6 @@
 <template>
     <div class="bg-default">
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Main content -->
         <div class="main-content height" id="panel">
             <div class="main-content">
@@ -57,7 +57,7 @@
                 // images: {
                 //     logo: require('/assets/img/brand/logo.png'),
                 // },
-                hideShowLoader: false,
+                showLoader: false,
             }
         },
         mounted() {
@@ -73,7 +73,7 @@
         methods: {
             // send validation code in email(try another way method)
             sendCodeInEmail() {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.get(this.$api + '/authenticator/sendVerifyEmail', {
                     headers: {
                         "Content-Type": "application/json",
@@ -89,7 +89,7 @@
                             type: 'success'
                         });
                         this.$router.push('/authenticator/validate');
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -100,7 +100,7 @@
                         type: 'error'
                     });
                     console.log(error)
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         }

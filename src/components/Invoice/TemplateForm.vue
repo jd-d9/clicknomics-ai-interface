@@ -25,7 +25,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
                 <div class="col">
@@ -272,7 +272,7 @@ export default {
     data() {
         return {      
             appLogo: '',
-            hideShowLoader: false,
+            showLoader: false,
             isIssueDateMenuOpen: false,
             isDueDateMenuOpen: false,
             clients: [],
@@ -383,7 +383,7 @@ export default {
                 return false;
             }
             else {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/invoice', {
                     invoice_number: this.invoiceData.invoiceData.invoiceNumber,
                     invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
@@ -404,7 +404,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -415,13 +415,13 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         },
         // get invoice data for edit
         getInvoiceData() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/invoices/invoicetemplateShow/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -434,17 +434,17 @@ export default {
                     this.invoiceData = JSON.parse(response.data.data.invoiceData);
                     this.invoiceData.invoiceData.issuedDate = new Date(this.invoiceData.invoiceData.issuedDate);
                     this.invoiceData.invoiceData.dueDate = new Date(this.invoiceData.invoiceData.dueDate);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // update template
         updateTemplate() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.post(this.$api + '/accounting/invoices/updateTemplate/' + this.$route.params.id, {
                 template_name: this.CurrentTemplateName,
                 invoice_number: this.invoiceData.invoiceData.invoiceNumber,
@@ -466,7 +466,7 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -477,7 +477,7 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // template name validation
@@ -498,7 +498,7 @@ export default {
                 return false;
             }
             else {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/invoices/saveTemplate', {
                     template_name: this.templateName,
                     invoice_number: this.invoiceData.invoiceData.invoiceNumber,
@@ -521,7 +521,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -532,7 +532,7 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         },

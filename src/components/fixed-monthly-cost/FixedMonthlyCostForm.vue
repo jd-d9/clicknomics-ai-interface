@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -77,7 +77,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             breadCrumbText: 'Add',
             date: '',
             amount: '',
@@ -105,7 +105,7 @@ export default {
             console.log('sss')
             // update fixed monthly cost
             if(this.$route.params.id) {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/fixedMonthlyCost/' + this.$route.params.id, {
                     _method: 'PUT',
                     date: moment(this.date).format('YYYY-MM-DD'),
@@ -125,7 +125,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -136,12 +136,12 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
             // create fixed monthly cost
             else {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/fixedMonthlyCost', {
                     date: '2023-06-01,2023-06-07',
                     // date: moment(this.date).format('YYYY-MM-DD'),
@@ -162,7 +162,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -173,13 +173,13 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         },
         // get data for edit details
         getDataForEdit() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/fixedMonthlyCost/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -192,12 +192,12 @@ export default {
                     console.log(getData);
                     this.date = new Date(getData.date);
                     this.amount = getData.amount;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
     }

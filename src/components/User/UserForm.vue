@@ -1,6 +1,6 @@
 <template>
     <div class="bg-default main-content-height">
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -155,7 +155,7 @@ export default {
             phone_number: '',
             roleId: '',
             status: '1',
-            hideShowLoader: false,
+            showLoader: false,
             roles: [],
             countryDetails: [],
             toggleSomeComponent: true,
@@ -180,7 +180,7 @@ export default {
         manageUser() {
             // update user
             if(this.$route.params.id) {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/settings/user/' + this.$route.params.id, {
                     name: this.userName,
                     email: this.userEmail,
@@ -205,7 +205,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -216,12 +216,12 @@ export default {
                         type: 'error'
                     });
                     console.log(error);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
             // create user
             else {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/settings/user', {
                     name: this.userName,
                     email: this.userEmail,
@@ -239,7 +239,7 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.$router.push('/settings/user');
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                         this.backendErrorMessage = '';
                         this.$toast.open({
                             message: 'New user created',
@@ -253,13 +253,13 @@ export default {
                     console.log(error.response);
                     this.backendErrorMessage = error.response.data.message;
                     this.backendErrorMessage = error.response.data.errors[0];
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }); 
             }
         },
         // get all user data
         getUserRole() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/settings/role', {
                 headers: {
                     "Content-Type": "application/json",
@@ -270,17 +270,17 @@ export default {
                 if(response.data.success) {
                     this.roles = response.data.data.roles;
                     console.log(this.roles, 'this.roles')
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             }); 
         },
         // edit user details
         editUserDetails(id) {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/settings/user/' + id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -296,17 +296,17 @@ export default {
                     this.roleId = response.data.data.role_id
                     this.status = response.data.data.status
                     this.selectedCountry = response.data.data.country_code
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // get and set country code
         getAndSetCountry() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/settings/countries', {
                 headers: {
                     "Content-Type": "application/json",
@@ -317,12 +317,12 @@ export default {
                 if(response.data.success) {
                     this.countryDetails = response.data.data;
                     this.countryDetails.sort((a, b) => a.name - b.name);
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
         // reset form data

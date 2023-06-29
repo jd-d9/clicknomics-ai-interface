@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <loader-component v-if="hideShowLoader"></loader-component>
+        <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
@@ -113,7 +113,7 @@ export default {
     },
     data() {
         return {
-            hideShowLoader: false,
+            showLoader: false,
             date: '',
             amount: '',
             fromAccount: '',
@@ -190,7 +190,7 @@ export default {
         manageCreditCardPayment() {
             // update credit card payment
             if(this.$route.params.id) {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/creditCardPayments/' + this.$route.params.id, {
                     _method: 'PUT',
                     payment_date: moment(this.date).format('YYYY-MM-DD'),
@@ -213,7 +213,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -224,12 +224,12 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
             // create credit card payment
             else {
-                this.hideShowLoader = true;
+                this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/creditCardPayments', {
                     payment_date: moment(this.date).format('YYYY-MM-DD'),
                     amount: this.amount,
@@ -251,7 +251,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.hideShowLoader = false;
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -262,13 +262,13 @@ export default {
                         duration: '5000',
                         type: 'error'
                     });
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 });
             }
         },
         // get data for edit credit card payment
         getSingleForEdit() {
-            this.hideShowLoader = true;
+            this.showLoader = true;
             this.axios.get(this.$api + '/accounting/creditCardPayments/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
@@ -282,12 +282,12 @@ export default {
                     this.fromAccount = response.data.data.from_account;
                     this.toAccount = response.data.data.to_account;
                     this.status = response.data.data.status;
-                    this.hideShowLoader = false;
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
                 console.log(error);
-                this.hideShowLoader = false;
+                this.showLoader = false;
             });
         },
     }
