@@ -7,6 +7,8 @@ import App from './App.vue';
 import router from './router.js';
 import { loadFonts } from './plugins/webfontloader';
 import axios from 'axios';
+axios.defaults.withCredentials = true;
+
 import VueAxios from 'vue-axios';
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';

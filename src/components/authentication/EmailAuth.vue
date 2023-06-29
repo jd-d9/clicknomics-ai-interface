@@ -59,6 +59,16 @@
                 // },
                 showLoader: false,
             }
+        },
+        mounted() {
+            const isAuthenticated = sessionStorage.getItem('Token');
+            const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
+
+            if(isAuthenticated && isVerified) {
+                this.$router.push('/dashboard');
+            } else if(!isAuthenticated && !isVerified) {
+                this.$router.push('/login');
+            }
         }, 
         methods: {
             // send validation code in email(try another way method)
