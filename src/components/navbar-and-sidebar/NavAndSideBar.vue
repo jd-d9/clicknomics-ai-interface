@@ -30,9 +30,11 @@
                 </div>
                 <div class="sidebar-contents">
                     <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" :class="{'active-tab': addActiveClass(data)}" @mouseenter="showHoveredDropdown(data)" :id="ind + 'tab'" v-for="(data, ind) in allMenues" :key="data.id">
-                        <img :src="'/assets/img/icons/' + data.icon" alt="icon" :title="data.menu">
+                        <img :src="'/assets/img/icons/' + data.icon" alt="icon">
                         <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                         <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
+                        <!-- add tooltip -->
+                        <v-tooltip activator="parent" location="bottom" v-if="!data.child">{{data.menu}}</v-tooltip>
                     </router-link>
                     <!-- sidebar dropdown start here -->
                     <div v-for="data in selectedMenu" :key="data" @mouseleave="hideHoveredDropdown">

@@ -1,5 +1,5 @@
 <template>
-    <div class="main-content bg-default height">
+    <div class="bg-default main-content-height">
         <loader-component v-if="showLoader"></loader-component>
         <!-- Header -->
         <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
@@ -22,19 +22,91 @@
         <!-- Page content -->
         <div class="container mt--7 mt-lg--8 pb-5">
             <div class="row justify-content-center">
-                <div class="col-lg-4 col-md-6" v-for="plan in plans" :key="plan">
-                    <div class="card bg-secondary border-0 mb-0">
-                        <div class="card-body px-lg-5 py-lg-5">
-                            <div class="plan">
-                                <h2 class="plan-heading text-center fw-bold">{{plan.name}}</h2>
-                                <p class="plan-price text-center mb-0">${{plan.amount}}</p>
-                                <p class="mb-0 text-center text-size">Per Month</p>
-                                <hr class="my-4 dropdown-divider">
-                                <div class="plan-content">
-                                    <p>1 Seat</p>
-                                    <p>1 Runner</p>
-                                    <p>300 Pipeline GB-minute</p>
-                                    <router-link to="/signup" class="btn btn-primary mt-4 btn-block btn_animated">Select Plan</router-link>
+                <div class="card bg-transparent">
+                    <div class="card-header bg-transparent">
+                        <div class="nav-wrapper report_tabpanel">
+                            <ul class="nav nav-pills nav-fill flex-column flex-md-row justify-content-center" id="tabs-icons-text" role="tablist">
+                                <li class="nav-item">
+                                    <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-2-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false">
+                                        <span class="btn-inner--text">All</span>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item">
+                                    <router-link to="" class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false">
+                                        <span class="btn-inner--text">Monthly</span>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item">
+                                    <router-link to="" class="nav-link mb-sm-4 mb-md-0" id="tabs-icons-text-4-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false">
+                                        <span class="btn-inner--text">Yearly</span>
+                                    </router-link>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="finance_data tab-content myTabContent">
+                            <div class="tab-pane fade show active" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-4 col-md-6 mb-4" v-for="plan in allPlans" :key="plan">
+                                        <div class="card bg-secondary border-0 mb-0">
+                                            <div class="card-body px-lg-5 py-lg-5">
+                                                <div class="plan">
+                                                    <h2 class="plan-heading text-center fw-bold">{{plan.name}}</h2>
+                                                    <p class="plan-price text-center mb-0">${{plan.amount}}</p>
+                                                    <p class="mb-0 text-center text-size">Per {{plan.interval}}</p>
+                                                    <hr class="my-4 dropdown-divider">
+                                                    <div class="plan-content">
+                                                        <p>{{plan.trial_period_days}} Trial period day</p>
+                                                        <p>{{plan.user_limit}} User access limit</p>
+                                                        <router-link to='' class="btn btn-primary mt-4 btn-block btn_animated" @click="selectPlan(plan.id)">Select Plan</router-link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade show" id="tabs-icons-text-3" role="tabpanel" aria-labelledby="tabs-icons-text-3-tab">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-4 col-md-6 mb-4" v-for="plan in monthlyPlans" :key="plan">
+                                        <div class="card bg-secondary border-0 mb-0">
+                                            <div class="card-body px-lg-5 py-lg-5">
+                                                <div class="plan">
+                                                    <h2 class="plan-heading text-center fw-bold">{{plan.name}}</h2>
+                                                    <p class="plan-price text-center mb-0">${{plan.amount}}</p>
+                                                    <p class="mb-0 text-center text-size">Per {{plan.interval}}</p>
+                                                    <hr class="my-4 dropdown-divider">
+                                                    <div class="plan-content">
+                                                        <p>{{plan.trial_period_days}} Trial period day</p>
+                                                        <p>{{plan.user_limit}} User access limit</p>
+                                                        <router-link to='' class="btn btn-primary mt-4 btn-block btn_animated" @click="selectPlan(plan.id)">Select Plan</router-link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade show" id="tabs-icons-text-4" role="tabpanel" aria-labelledby="tabs-icons-text-4-tab">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-4 col-md-6 mb-4" v-for="plan in yearlyPlans" :key="plan">
+                                        <div class="card bg-secondary border-0 mb-0">
+                                            <div class="card-body px-lg-5 py-lg-5">
+                                                <div class="plan">
+                                                    <h2 class="plan-heading text-center fw-bold">{{plan.name}}</h2>
+                                                    <p class="plan-price text-center mb-0">${{plan.amount}}</p>
+                                                    <p class="mb-0 text-center text-size">Per {{plan.interval}}</p>
+                                                    <hr class="my-4 dropdown-divider">
+                                                    <div class="plan-content">
+                                                        <p>{{plan.trial_period_days}} Trial period day</p>
+                                                        <p>{{plan.user_limit}} User access limit</p>
+                                                        <router-link to='' class="btn btn-primary mt-4 btn-block btn_animated" @click="selectPlan(plan.id)">Select Plan</router-link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +122,9 @@
         data() {
             return {
                 showLoader: false,
-                plans: [],
+                allPlans: [],
+                monthlyPlans: [],
+                yearlyPlans: [],
                 userName: '',
                 userEmail: '',
                 userPassword: '',
@@ -70,8 +144,13 @@
                 this.axios.get(this.$api + '/subscription')
                 .then(response => {
                     if(response.data.success) {
-                        this.plans = response.data.data;
-                        console.log(this.plans)
+                        this.allPlans = response.data.data;
+                        this.monthlyPlans = this.allPlans.filter((val) => {
+                            return val.interval.toLowerCase() == 'month';
+                        });
+                        this.yearlyPlans = this.allPlans.filter((val) => {
+                            return val.interval.toLowerCase() == 'year';
+                        });
                         this.showLoader = false;
                     }
                 })
@@ -85,6 +164,17 @@
                     });
                     this.showLoader = false;
                 }); 
+            },
+            // select plan and redirect to register page
+            selectPlan(id) {
+                // this.$toast.open({
+                //     message: 'Plan selected, please register your self',
+                //     position: 'top-right',
+                //     duration: '5000',
+                //     type: 'success'
+                // });
+                sessionStorage.setItem('subscriptionPlanId', id);
+                this.$router.push('/signup');
             }
         }
     }
@@ -126,5 +216,26 @@
     }
     .dropdown-divider {
         border-top: 1px solid #e5e5e5 !important;
+    }
+    .card {
+        box-shadow: none;
+    }
+    .card-header {
+        border-bottom: none;
+    }
+    .card-header {
+        padding: 0;
+    }
+    .nav-fill .nav-item {
+        flex: unset;
+    }
+    .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+        color: #005eb3 !important;
+        background-color: #fff !important;
+    }
+    .report_tabpanel .nav-pills .nav-link {
+        color: #fff;
+        background-color: transparent;
+        border: 1px solid white;
     }
 </style>

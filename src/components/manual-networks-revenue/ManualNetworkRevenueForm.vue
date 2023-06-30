@@ -44,7 +44,7 @@
                                                     <Field name="Date" v-model="date">
                                                         <datepicker :class="{'border-red-600':errors.Date}" v-model="date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                                     </Field>
-                                                    <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                                    <!-- <span class="text-red-600" v-if="errors.Date">Date can not be empty</span> -->
                                                     <ErrorMessage class="text-red-600" name="Date"/>
                                                 </div>
                                             </div>
@@ -52,7 +52,7 @@
                                                 <div class="form-group select-network-filter select-network-filter-height">
                                                     <label class="form-control-label" for="input-username">Network</label>
                                                     <Field name="Network" v-model="networkSelected">
-                                                        <v-select :class="{'form-control': true , 'border-red-600':errors.Network}" :items="network" v-model="networkSelected"></v-select> <!-- item-value="key" -->
+                                                        <v-select :class="{'form-control': true , 'border-red-600':errors.Network}" :items="network" item-value="key" v-model="networkSelected"></v-select> <!-- item-value="key" -->
                                                     </Field>
                                                     <span class="text-red-600" v-if="errors.Network">Network can not be empty</span>
                                                     <!-- <ErrorMessage class="text-red-600" name="Date"/> -->

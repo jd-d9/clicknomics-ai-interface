@@ -33,7 +33,7 @@
                                     <span class="form_icon">
                                         <img src="/assets/img/icons/envelope.svg">
                                     </span>
-                                    <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail"/>
+                                    <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
                                     <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
                                     <ErrorMessage class="text-red-600" name="Email"/>
                                     <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
@@ -139,7 +139,7 @@
             submitAndAuthenticateUser() {
                 this.showLoader = true;
                 // this.axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(res => {
-                this.axios.get('http://192.168.1.7:8080/sanctum/csrf-cookie').then(res => {
+                this.axios.get('http://192.168.1.4:8080/sanctum/csrf-cookie').then(res => {
                     console.log(res, '212121')
                     this.axios.post(this.$api + '/login', {
                         email: this.userEmail,

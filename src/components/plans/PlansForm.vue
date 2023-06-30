@@ -216,15 +216,17 @@ export default {
                     if(response.data.success) {
                         this.$router.push('/settings/plan-management')
                         this.$toast.open({
-                            message: 'Plan created',
+                            message: 'Plan updated',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
+                        this.backendErrorMessage = '';
                     }
                 })
                 .catch(error => {
                     console.log(error)
+                    this.backendErrorMessage = error.response.data.message;
                     this.$toast.open({
                         message: error.message,
                         position: 'top-right',
@@ -232,7 +234,6 @@ export default {
                         type: 'error'
                     });
                     this.showLoader = false;
-                    this.backendErrorMessage = '';
                 });
             }
             // create new plan
@@ -265,7 +266,7 @@ export default {
                 })
                 .catch(error => {
                     console.log(error)
-                    this.backendErrorMessage = error.response.data.errors[0];
+                    this.backendErrorMessage = error.response.data.message;
                     this.$toast.open({
                         message: error.message,
                         position: 'top-right',
