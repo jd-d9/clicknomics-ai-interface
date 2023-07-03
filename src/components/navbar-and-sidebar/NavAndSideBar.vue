@@ -1,6 +1,6 @@
 <template>
     <!-- sidebar default start here -->
-    <div class="sidebar" v-if="hideShowSidebar">
+    <div class="sidebar navbar-vertical navbar-light" v-if="hideShowSidebar">
         <div class="sidebar-inner">
             <div class="text-center bg-white py-3 px-2 sticky-top">
                 <router-link to="/dashboard" class="sidebar-logo">
@@ -19,7 +19,7 @@
     </div>
     <!-- sidebar default end here -->
     <!-- sidebar small start here -->
-    <div class="sidebar hide-show-sidebar" v-else>
+    <div class="sidebar navbar-vertical navbar-light hide-show-sidebar" v-else>
         <div class="sidebar-inner-wrapper">
             <div class="sidebar-inner">
                 <div class="text-center py-3 px-2">
@@ -38,7 +38,7 @@
                     </router-link>
                     <!-- sidebar dropdown start here -->
                     <div v-for="data in selectedMenu" :key="data" @mouseleave="hideHoveredDropdown">
-                        <div class="sidebar-dropdown-menu" :class="{'d-block': showOnClick && data.child}">
+                        <div class="sidebar-dropdown-menu side_submenuitem" :class="{'d-block': showOnClick && data.child}">
                             <div class="sidebar-dropdown-head px-3 py-2">
                                 <p class="mb-0 text-white py-1">{{ data.menu }}</p>
                             </div>
@@ -79,7 +79,7 @@
                                     <!-- accordian end here -->
                                 </div>
                                 <div class="sidebar-dropdown-menubars" v-else>
-                                    <router-link :to="subChild.routes === '#' ? '' : '/' + subChild.routes">{{ subChild.menu }}</router-link>
+                                    <router-link :to="subChild.routes === '#' ? '' : '/' + subChild.routes" class="text-primary">{{ subChild.menu }}</router-link>
                                 </div>
                             </div>
                         </div>
@@ -107,7 +107,7 @@
                         <div class="d-flex align-items-start justify-content-center me-3">
                             <small class="swithch-lable text-white">Light</small>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" @change="changeTheme" v-model="darkTheme">
                             </div>
                             <small class="swithch-lable text-light">Dark</small>
                         </div>
@@ -207,12 +207,14 @@
                 subDropDownTabs: [],
                 profileImage: '',
                 name: '',
+                darkTheme: localStorage.getItem('dark-theme') ? localStorage.getItem('dark-theme') : false,
             }
         },
         mounted() {
             this.toggleComponents();
             this.getSidebarMenues();
             this.getCurrentUserData();
+            this.addDarkThemeClass();
             window.addEventListener('resize', () => {
                 this.toggleComponents();
                 if(screen.width < 1200) {
@@ -398,6 +400,25 @@
                     this.backendErrorMessage = error.response.data.message;
                     this.showLoader = false;
                 }); 
+            },
+            // change theme light and dark
+            changeTheme(e) {
+                localStorage.setItem('dark-theme', e.target.checked);
+                if(e.target.checked) {
+                    document.body.classList.add('dark-mode');
+                }
+                else {
+                    document.body.classList.remove('dark-mode');
+                }
+            },
+            // add dark theme class to body
+            addDarkThemeClass() {
+                if(this.darkTheme) {
+                    document.body.classList.add('dark-mode');
+                }
+                else {
+                    document.body.classList.remove('dark-mode');
+                }
             }
         },
         watch: {
@@ -589,6 +610,9 @@
         background-color: #e3ecf9;
     }
     .profile-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 40px;
         height: 40px;
         border-radius: 50%;

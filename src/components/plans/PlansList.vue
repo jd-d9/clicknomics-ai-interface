@@ -49,7 +49,11 @@
                                             <tr class="table-body-back">
                                                 <th>{{item.selectable.id}}</th>
                                                 <td>{{item.selectable.name}}</td>
-                                                <td>${{item.selectable.amount}} {{item.selectable.currency}}</td>
+                                                <!-- currently working on this portion -->
+                                                <td v-for="data in item.selectable.planData" :key="data">
+                                                    <span v-if="item.selectable.planData.length == 1">${{data.amount}}</span>
+                                                    <!-- <span v-if="item.selectable.planData.length > 1 && data.interval == 'month'">${{data.amount}}</span> -->
+                                                </td>
                                                 <td>{{item.selectable.status == 0 ? 'Inactive' : 'Active'}}</td>
                                                 <td class="text-center">
                                                     <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="editPlan(item.selectable.id)">
@@ -126,8 +130,11 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const data = response.data;
-                    console.log(data, 'response.data');
-                    this.items = data.data;
+                    // this.items = data.data;
+                    this.items = data.data.map((val) => {
+                        return {...val,planData: JSON.parse(val.planData)}
+                    })
+                    console.log(this.items)
                     this.plansFilter = data.data;
                     this.permissions = data.permission;
                     this.showLoader = false;

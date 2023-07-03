@@ -7065,3 +7065,12 @@ select{
 .field-wrapper-span.invalid-add .v-field--variant-filled {
     border: 2px solid red !important;
 }
+
+/* plan form style */
+.add-style-to-close-button {
+    position: absolute;
+    top: -35px;
+    right: -15px;
+    width: 30px !important;
+    height: 30px !important;
+}

@@ -88,7 +88,14 @@
                                             <span class="form_icon">
                                                 <img src="/assets/img/icons/country.png">
                                             </span>
-                                            <Field id="confirm_password" type="text" name="Country" class="form-control" :class="{'border-red-600': errors.Country}" autocomplete="current-password" placeholder="Country code" v-model="countryCode"/>
+                                            <Field v-model="countryCode" name="Country" :class="{'border-red-600': errors.Country}">
+                                                <select class="form-control" name="Country" v-model="countryCode" :class="{'border-red-600': errors.Country}">
+                                                    <option value="">Select country code</option>
+                                                    <option :value="item.dial_code" v-for="(item, index) in countryCodeListing" :key="index">
+                                                        {{item.dial_code}} - {{item.name}}
+                                                    </option>
+                                                </select>
+                                            </Field>
                                             <span class="text-red-600" v-if="errors.Country">Country code can not be empty</span>
                                             <!-- <ErrorMessage class="text-red-600" name="Country"/> -->
                                         </div>
@@ -127,6 +134,7 @@
         data() {
             return {
                 showLoader: false,
+                countryCodeListing: [],
                 userName: '',
                 userEmail: '',
                 userPassword: '',
@@ -149,6 +157,9 @@
                 });
             },
         },
+        mounted() {
+            this.getAndSetCountryCode();
+        },
         methods: {
             // submit data and signup user
             signUpUser() {
@@ -161,6 +172,7 @@
                     country_code: this.countryCode,
                     phone_number: this.mobileNumber,
                     profile_image: this.profileImage,
+                    plan_id: sessionStorage.getItem('subscriptionPlanId'),
                 })
                 .then(response => {
                     if(response.data.success) {
@@ -190,6 +202,23 @@
                     this.profileImage = profileImage64;
                 }
                 reader.readAsDataURL(file);
+            },
+            // get and set country code
+            getAndSetCountryCode() {
+                this.showLoader = true;
+                this.axios.get(this.$api + '/countries')
+                .then(response => {
+                    if(response.data.success) {
+                        this.countryCodeListing = response.data.data;
+                        this.countryCodeListing.sort((a, b) => a.name - b.name);
+                        console.log(this.countryCodeListing, 'countryCodeListing');
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.showLoader = false;
+                });
             },
         }
     }
