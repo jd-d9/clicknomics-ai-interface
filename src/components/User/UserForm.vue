@@ -21,13 +21,13 @@
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Email</label>
                                             <Field type="email" id="input-username" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" placeholder="Email" v-model="userEmail"/>
-                                            <span class="text-red-600" v-if="errors.Email">Email can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Email"/> -->
+                                            <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
+                                            <ErrorMessage class="text-red-600" name="Email"/>
                                             <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" v-if="toggleSomeComponent">
+                                <div class="row" v-if="toggleComponent">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Password</label>
@@ -39,9 +39,10 @@
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Confirm Password</label>
-                                            <Field type="password" id="input-username" name="Confirmpass" class="form-control" :class="{'border-red-600': errors.Confirmpass}" placeholder="Confirm Password" v-model="confirmPassword"/>
+                                            <Field type="password" id="input-username" name="Confirmpass" class="form-control" :class="{'border-red-600': errors.Confirmpass || invalidConfirmPassword}" placeholder="Confirm Password" @blur="confirmPasswordValid" v-model="confirmPassword"/>
                                             <span class="text-red-600" v-if="errors.Confirmpass">Confirm password can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Password"/> -->
+                                            <span class="text-red-600" v-if="invalidConfirmPassword">{{invalidConfirmPassword}}</span>
+                                            <!-- <ErrorMessage class="text-red-600" name="Confirmpass"/> -->
                                         </div>
                                     </div>
                                 </div>
@@ -64,7 +65,7 @@
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Mobile Number</label>
                                             <Field type="number" id="input-username" name="Mobile" class="form-control" :class="{'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="userContact"/>
-                                            <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty</span>
+                                            <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty or should be enter minimum 10 character</span>
                                             <!-- <ErrorMessage class="text-red-600" name="Mobile"/> -->
                                         </div>
                                     </div>
@@ -100,8 +101,8 @@
                                 <div class="row">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated">{{toggleSomeComponent ? 'Save' : 'Update'}}</button>
-                                            <button type="reset" v-if="toggleSomeComponent" class="btn btn-secondary btn-lg btn_animated" @click.prevent="resetForm">Reset</button>
+                                            <button type="submit" class="btn btn-primary btn-lg btn_animated">{{toggleComponent ? 'Save' : 'Update'}}</button>
+                                            <button type="reset" v-if="toggleComponent" class="btn btn-secondary btn-lg btn_animated">Reset</button>  <!--  @click.prevent="resetForm"  -->
                                         </div>
                                     </div>
                                 </div>
@@ -116,25 +117,7 @@
 
 <script>
 import * as yup from 'yup';
-import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
-import { required } from '@vee-validate/rules';
-import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
-defineRule('required', required);
-loadLocaleFromURL(
-  'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
-);
-configure({
-    generateMessage: localize('en', {
-        messages: {
-            required: '{field} can not be empty!',
-        },
-        // fields: {
-        //     Status: {
-        //         required: 'Status can not be empty!!!'
-        //     }
-        // }
-    }),
-});
+import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
     components: {
         Form, Field, ErrorMessage
@@ -146,11 +129,7 @@ export default {
             confirmPassword: '',
             userName: '',
             userContact: '',
-            invalidEmail: '',
-            invalidPassword: '',
             invalidConfirmPassword: '',
-            invalidName: '',
-            invalidContact: '',
             selectedCountry: '91',
             phone_number: '',
             roleId: '',
@@ -158,17 +137,25 @@ export default {
             showLoader: false,
             roles: [],
             countryDetails: [],
-            toggleSomeComponent: true,
+            toggleComponent: true,
+        }
+    },
+    mounted() {
+        this.getUserRole();
+        this.getAndSetCountry();
+        if(this.$route.params.id) {       
+            this.toggleComponent = false;
+            this.editUserDetails(this.$route.params.id);
         }
     },
     computed: {
         schema() {
             return yup.object({
                 Name: yup.string().required(),
-                Email: yup.string().required(),
-                Password: yup.string().required(),
-                Confirmpass: yup.string().required(),
-                Mobile: yup.string().required(),
+                Email: yup.string().required().email(),
+                Password: !this.toggleComponent ? '' : yup.string().required(),
+                Confirmpass: !this.toggleComponent ? '' : yup.string().required(),
+                Mobile: yup.string().required().min(10),
                 Country: yup.string().required(),
                 Role: yup.string().required(),
                 Status: yup.string().required(),
@@ -176,6 +163,15 @@ export default {
         },
     },
     methods:{
+        // confirm password validation
+        confirmPasswordValid() {
+            if(this.confirmPassword != this.userPassword) {
+                this.invalidConfirmPassword = 'Please re-enter password';
+            }
+            else {
+                this.invalidConfirmPassword = '';
+            }
+        },
         // save and update user
         manageUser() {
             // update user
@@ -221,40 +217,46 @@ export default {
             }
             // create user
             else {
-                this.showLoader = true;
-                this.axios.post(this.$api + '/settings/user', {
-                    name: this.userName,
-                    email: this.userEmail,
-                    password: this.userPassword,
-                    phone_number: this.userContact,
-                    role_id: this.roleId,
-                    status: this.status,
-                    country_code: this.selectedCountry,
-                }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                    }
-                })
-                .then(response => {
-                    if(response.data.success) {
-                        this.$router.push('/settings/user');
+                this.confirmPasswordValid();
+                if(this.invalidConfirmPassword) {
+                    return false;
+                }
+                else {
+                    this.showLoader = true;
+                    this.axios.post(this.$api + '/settings/user', {
+                        name: this.userName,
+                        email: this.userEmail,
+                        password: this.userPassword,
+                        phone_number: this.userContact,
+                        role_id: this.roleId,
+                        status: this.status,
+                        country_code: this.selectedCountry,
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        }
+                    })
+                    .then(response => {
+                        if(response.data.success) {
+                            this.$router.push('/settings/user');
+                            this.showLoader = false;
+                            this.backendErrorMessage = '';
+                            this.$toast.open({
+                                message: 'New user created',
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error.response);
+                        this.backendErrorMessage = error.response.data.message;
+                        this.backendErrorMessage = error.response.data.errors[0];
                         this.showLoader = false;
-                        this.backendErrorMessage = '';
-                        this.$toast.open({
-                            message: 'New user created',
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.log(error.response);
-                    this.backendErrorMessage = error.response.data.message;
-                    this.backendErrorMessage = error.response.data.errors[0];
-                    this.showLoader = false;
-                }); 
+                    }); 
+                }
             }
         },
         // get all user data
@@ -326,17 +328,9 @@ export default {
             });
         },
         // reset form data
-        resetForm() {
-            window.location.reload();
-        }
-    },
-    mounted() {
-        this.getUserRole();
-        this.getAndSetCountry();
-        if(this.$route.params.id) {       
-            this.toggleSomeComponent = false;
-            this.editUserDetails(this.$route.params.id);
-        }
+        // resetForm() {
+        //     window.location.reload();
+        // }
     }
 }
 </script>

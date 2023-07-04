@@ -33,7 +33,7 @@
                                     <span class="form_icon">
                                         <img src="/assets/img/icons/envelope.svg">
                                     </span>
-                                    <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail"/>
+                                    <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
                                     <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
                                     <ErrorMessage class="text-red-600" name="Email"/>
                                     <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
@@ -61,8 +61,9 @@
                                         </router-link>
                                     </div>
                                 </div>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Sign In</button>
+                                <div>
+                                    <button type="submit" class="btn btn-primary mt-4 mb-3 btn-block btn_animated">Sign In</button>
+                                    Don't have any account? <router-link to="/subscribe-plan"> Register</router-link>
                                 </div>
                             </Form>
                         </div>
@@ -137,7 +138,7 @@
             // check validation and signin user
             submitAndAuthenticateUser() {
                 this.showLoader = true;
-                this.axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(res => {
+                this.axios.get(this.$api + '/sanctum/csrf-cookie').then(res => {
                     console.log(res, '212121')
                     this.axios.post(this.$api + '/login', {
                         email: this.userEmail,

@@ -124,14 +124,15 @@
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Network Name</label>
-                                            <Field type="text" name="Name" id="input-username" :class="{'form-control': true , 'border-red-600':errors.Name}" placeholder="Add Name" v-model="list.name"/>
-                                            <span class="text-red-600" v-if="errors.Name">Network name can not be empty</span>
+                                            <Field type="text" name="Name" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Name}" placeholder="Add Name" v-model="list.name"/>
+                                            <span class="text-red-600" v-if="errors.Name">Network name is required field</span>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Email</label>
-                                            <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Email" v-model="list.email">
+                                            <Field type="text" name="Email" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Email}" placeholder="Email" v-model="list.email"/>
+                                            <ErrorMessage class="text-red-600" name="Email"/>
                                         </div>
                                     </div>
                                 </div>
@@ -139,7 +140,8 @@
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Platform Type</label>
-                                            <input type="text" id="input-username"  :class="{'form-control': true}" placeholder="Type" v-model="list.platform_type">
+                                            <Field type="text" name="Platform" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Platform}" placeholder="Type" v-model="list.platform_type"/>
+                                            <span class="text-red-600" v-if="errors.Name">Platform type is required field</span>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 py-0">
@@ -174,11 +176,11 @@
 <script>
 import moment from 'moment';
 import * as yup from 'yup';
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
     // props: ['networks'],
     components: {
-        Form, Field
+        Form, Field, ErrorMessage
     },
     data() {
         return {
@@ -218,6 +220,8 @@ export default {
         schema() {
             return yup.object({
                 Name: yup.string().required(),
+                Email: yup.string().required().email(),
+                Platform: yup.string().required()
             });
         },
     },

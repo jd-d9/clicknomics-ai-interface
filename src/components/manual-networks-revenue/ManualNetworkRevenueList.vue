@@ -237,7 +237,7 @@ export default {
                 if(response.data.success) {
                     const getData = response.data;
                     this.dataMetrics = getData.data.data;
-                    console.log(this.dataMetrics, '---')
+                    console.log(this.dataMetrics, 'this.dataMetrics---')
                     this.dataMetricsFilter = getData.data.data;
                     this.permissions = getData.permission;
                     this.showLoader = false;

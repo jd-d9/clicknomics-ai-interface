@@ -1,6 +1,6 @@
 <template>
     <!-- sidebar default start here -->
-    <div class="sidebar" v-if="hideShowSidebar">
+    <div class="sidebar navbar-vertical navbar-light" v-if="hideShowSidebar">
         <div class="sidebar-inner">
             <div class="text-center bg-white py-3 px-2 sticky-top">
                 <router-link to="/dashboard" class="sidebar-logo">
@@ -19,7 +19,7 @@
     </div>
     <!-- sidebar default end here -->
     <!-- sidebar small start here -->
-    <div class="sidebar hide-show-sidebar" v-else>
+    <div class="sidebar navbar-vertical navbar-light hide-show-sidebar" v-else>
         <div class="sidebar-inner-wrapper">
             <div class="sidebar-inner">
                 <div class="text-center py-3 px-2">
@@ -30,13 +30,15 @@
                 </div>
                 <div class="sidebar-contents">
                     <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" :class="{'active-tab': addActiveClass(data)}" @mouseenter="showHoveredDropdown(data)" :id="ind + 'tab'" v-for="(data, ind) in allMenues" :key="data.id">
-                        <img :src="'/assets/img/icons/' + data.icon" alt="icon" :title="data.menu">
+                        <img :src="'/assets/img/icons/' + data.icon" alt="icon">
                         <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                         <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
+                        <!-- add tooltip -->
+                        <v-tooltip activator="parent" location="bottom" v-if="!data.child">{{data.menu}}</v-tooltip>
                     </router-link>
                     <!-- sidebar dropdown start here -->
                     <div v-for="data in selectedMenu" :key="data" @mouseleave="hideHoveredDropdown">
-                        <div class="sidebar-dropdown-menu" :class="{'d-block': showOnClick && data.child}">
+                        <div class="sidebar-dropdown-menu side_submenuitem" :class="{'d-block': showOnClick && data.child}">
                             <div class="sidebar-dropdown-head px-3 py-2">
                                 <p class="mb-0 text-white py-1">{{ data.menu }}</p>
                             </div>
@@ -46,11 +48,11 @@
                                     <div class="accordion" id="accordionPanelsStayOpenExample">
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" :id="'panelsStayOpen-heading' + subChild.id">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" :aria-controls="subChild.id">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#panelsStayOpen-collapse' + subChild.id" aria-expanded="false" :aria-controls="'panelsStayOpen-collapse' + subChild.id">
                                                     {{ subChild.menu }}
                                                 </button>
                                             </h2>
-                                            <div :id="subChild.id" class="accordion-collapse collapse" :aria-labelledby="'panelsStayOpen-heading' + subChild.id" data-bs-parent="#accordionPanelsStayOpenExample">
+                                            <div :id="'panelsStayOpen-collapse' + subChild.id" class="accordion-collapse collapse" :aria-labelledby="'panelsStayOpen-heading' + subChild.id" data-bs-parent="#accordionPanelsStayOpenExample">
                                                 <div class="accordion-body" v-for="childs in subChild.children" :key="childs">
                                                     <!-- <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover">{{ childs.menu }}</router-link> -->
                                                     <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-if="!childs.children">{{ childs.menu }}</router-link>
@@ -77,7 +79,7 @@
                                     <!-- accordian end here -->
                                 </div>
                                 <div class="sidebar-dropdown-menubars" v-else>
-                                    <router-link :to="subChild.routes === '#' ? '' : '/' + subChild.routes">{{ subChild.menu }}</router-link>
+                                    <router-link :to="subChild.routes === '#' ? '' : '/' + subChild.routes" class="text-primary">{{ subChild.menu }}</router-link>
                                 </div>
                             </div>
                         </div>
@@ -217,12 +219,14 @@
                 subDropDownTabs: [],
                 profileImage: '',
                 name: '',
+                darkTheme: localStorage.getItem('dark-theme') ? localStorage.getItem('dark-theme') : false,
             }
         },
         mounted() {
             this.toggleComponents();
             this.getSidebarMenues();
             this.getCurrentUserData();
+            this.addDarkThemeClass();
             window.addEventListener('resize', () => {
                 this.toggleComponents();
                 if(screen.width < 1200) {
@@ -408,6 +412,25 @@
                     this.backendErrorMessage = error.response.data.message;
                     this.showLoader = false;
                 }); 
+            },
+            // change theme light and dark
+            changeTheme(e) {
+                localStorage.setItem('dark-theme', e.target.checked);
+                if(e.target.checked) {
+                    document.body.classList.add('dark-mode');
+                }
+                else {
+                    document.body.classList.remove('dark-mode');
+                }
+            },
+            // add dark theme class to body
+            addDarkThemeClass() {
+                if(this.darkTheme) {
+                    document.body.classList.add('dark-mode');
+                }
+                else {
+                    document.body.classList.remove('dark-mode');
+                }
             }
         },
         watch: {
@@ -599,6 +622,9 @@
         background-color: #e3ecf9;
     }
     .profile-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 40px;
         height: 40px;
         border-radius: 50%;

@@ -212,6 +212,25 @@
                                     </h4>
                                 </div>
                             </div>
+                            <!-- subscription plan section -->
+                            <hr class="my-4">
+                            <h6 class="heading-small text-muted mb-4">Subscription Plan
+                                <button class="btn btn-sm float-right button-border" v-if="!subscriptionPlanToggle" type="button" @click="subscriptionPlanToggle = !subscriptionPlanToggle">
+                                    <img src="/assets/img/icons/eye.svg" class="image-width">
+                                </button>
+                            </h6>
+                            <div>
+                                <div v-show="subscriptionPlanToggle">
+                                    <label for="formGroupExampleInput2" class="d-block form-control-label">Plan Name</label>
+                                    <h3 class="tx-color-04 tx-spacing--2">{{subscriptionPlan ? subscriptionPlan : 'Example plan name'}}</h3>
+                                    <label for="formGroupExampleInput2" class="d-block form-control-label mt-3">Trial Days</label>
+                                    <h3 class="tx-color-04 tx-spacing--2">{{trialEndsAt ? trialEndsAt : 'Example trial duration'}}</h3>
+                                    <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="subscriptionPlanToggle = !subscriptionPlanToggle">Close</button>
+                                </div>
+                                <div id="changePassword" v-if="!subscriptionPlanToggle">
+                                    <h4 class="tx-normal tx-color-04 tx-spacing--2">{{subscriptionPlan ? subscriptionPlan : 'Example plan name'}}</h4>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -257,6 +276,7 @@
                 profileDetailsToggle: false,
                 passwordToggle: false,
                 TwoFaVerifyToggle: false,
+                subscriptionPlanToggle: false,
                 currentUserDetails: {},
                 profileImage: '',
                 email: '',
@@ -269,6 +289,8 @@
                 currentPassword: '',
                 verificationStatus: '1',
                 remember2Fa: '1',
+                subscriptionPlan: '',
+                trialEndsAt: '',
                 showLoader: false,
                 countryDetails: [],
             }
@@ -320,6 +342,8 @@
                         this.phoneNumber = this.currentUserDetails.phone_number;
                         this.verificationStatus = this.currentUserDetails.verification_status;
                         this.remember2Fa = this.currentUserDetails.remember_2fa;
+                        this.subscriptionPlan = this.currentUserDetails.subscriptions;
+                        this.trialEndsAt = this.currentUserDetails.trial_ends_at;
                         this.backendErrorMessage = '';
                         this.showLoader = false;
                         console.log(this.currentUserDetails, 'currentUserData');

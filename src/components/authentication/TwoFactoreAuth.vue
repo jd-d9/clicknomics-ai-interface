@@ -40,7 +40,6 @@
                                         <span class="mb-2">Enter an authenticator app code:</span>
                                         <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
                                         <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
-                                        <ErrorMessage class="text-red-600" name="Authentication"/>
                                         <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         <div class="form-group">
                                             <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
@@ -97,28 +96,10 @@
 
 <script>
     import * as yup from 'yup';
-    import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
-    import { required } from '@vee-validate/rules';
-    import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
-    defineRule('required', required);
-    loadLocaleFromURL(
-    'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
-    );
-    configure({
-        generateMessage: localize('en', {
-            messages: {
-                required: '{field} can not be empty!',
-            },
-            // fields: {
-            //     Status: {
-            //         required: 'Status can not be empty!!!'
-            //     }
-            // }
-        }),
-    });
+    import { Form, Field } from 'vee-validate';
     export default {
         components: {
-            Form, Field, ErrorMessage
+            Form, Field
         },
         data() {
             return {
