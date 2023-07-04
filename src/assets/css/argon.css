@@ -6320,13 +6320,14 @@ table img:hover{transform:translateY(-5px);transition:all .3s ease-in-out;}
 
 .dashboard_card .card-title{
     text-align: center;
-    padding: 10px 12px;
+    padding: 5px 12px !important;
     background: #084c89;
     border-radius: 5px 5px 0px 0px;
     color: #fff;
-    font-weight: 500;
-    font-size: 15px;
+    font-weight: 500 !important;
+    font-size: 15px !important;
     text-transform: capitalize;
+    margin: 0px;
 }
 .dashboard_card h2{
     /* font-size: 34px; */
@@ -6536,7 +6537,7 @@ select{
 .tagline_class hr{
     margin: 10px;
     opacity: 1;
-    border-top: 1px solid rgba(0, 0, 0, 1);
+    border-top:1px solid rgb(0 205 0);
 }
 .tagline_class p{
     text-align: center;
@@ -6863,7 +6864,7 @@ select{
     padding: 10px 15px !important;
     background: #e8f0fe;
     color: #000;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     font-size: 1.0625rem !important;
     border-bottom: 1px solid rgb(4 206 4);
 }

@@ -53,7 +53,7 @@ body.dark-mode {background-color: #051139 !important;}
     background-color: hsla(0,0%,100%,.13) !important;
     color: #fff !important;
     opacity: .8 !important;
-    box-shadow: 0 0 2rem 0 rgb(0 0 0 / 15%) !important;
+    /* box-shadow: 0 0 2rem 0 rgb(0 0 0 / 15%) !important; */
 }
 .dark-mode .card{
     background-color: #111c44;

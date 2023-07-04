@@ -90,99 +90,111 @@
         </div>
     </div>
     <!-- sidebar small end here -->
+    
     <loader-component v-if="showLoader"></loader-component>
+
     <!-- navbar start here -->
-    <nav class="navbar-content bg-primary" :class="{'toggle-margin': hideShowSidebar}">
-        <div class="container-fluid px-4 pt-0 pb-4">
-            <div class="row justify-content-center align-items-center">
-                <div class="col-xl-1 col-lg-1 col-md-7 col-sm-5 col-4">
-                    <div class="sidenav-toggler" @click="toggleSidebar">
-                        <div class="line line-one"></div>
-                        <div class="line line-two"></div>
-                        <div class="line line-three"></div>
-                    </div>
+    <v-layout :class="{'toggle-margin': hideShowSidebar}" class="navbar-content">
+        <v-app-bar color="primary" style="position:relative">
+            <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
+            <v-spacer></v-spacer>
+            <div class="d-flex align-items-start justify-content-center me-3">
+                <small class="swithch-lable text-white">Light</small>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
                 </div>
-                <div class="col-xl-11 col-lg-11 col-md-5 col-sm-6 col-7 ms-auto text-end">
-                    <div class="d-flex justify-content-end align-items-center">
-                        <div class="d-flex align-items-start justify-content-center me-3">
-                            <small class="swithch-lable text-white">Light</small>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" @change="changeTheme" v-model="darkTheme">
-                            </div>
-                            <small class="swithch-lable text-light">Dark</small>
-                        </div>
-                        <div class="dropdown">
-                            <button class="notification-icon btn dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="/assets/img/icons/bell.svg" alt="bell">
-                                <span class="position-absolute translate-middle badge rounded-circle">5</span>
-                            </button>
-                            <ul class="dropdown-menu notification-dropdown">
-                                <li class="notification-head"><small>You have <span class="text-primary">5</span> notification</small></li>
-                                <li>
-                                    <div class="dropdown-item">
-                                        <p class="mb-0 text-black">5 months ago</p>
-                                        <p class="mb-0">Microsoft Ads Account Web Redad Impression Equal To Zero</p>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="dropdown-item">
-                                        <p class="mb-0 text-black">5 months ago</p>
-                                        <p class="mb-0">Campaign Name RexMD ED Telemedicine (Display,Native) - US Only Network VERVE (Edwin) has conversion rate or EPC condition true</p>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="dropdown-item">
-                                        <p class="mb-0 text-black">5 months ago</p>
-                                        <p class="mb-0">Campaign Name (128585) [WEB+MOB] InstaHeat - CTC $59,95 /US (CPS) - CPA - $40.00 Network ClickDealer (Main) has conversion rate or EPC condition true</p>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="dropdown-item">
-                                        <p class="mb-0 text-black">5 months ago</p>
-                                        <p class="mb-0">Campaign Name [s] - EXCLUSIVE - Splash Wines - Christmas Holiday Special - 15 Bottles + A Chance to Win $100 Gift Card + Free Shipping - Sale Network W4 (Main) has conversion rate or EPC condition true</p>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="dropdown-item border-0">
-                                        <p class="mb-0 text-black">5 months ago</p>
-                                        <p class="mb-0">Campaign Name Beyond Body - eComm / Digital - SS - [All GEOs] Network GuruMedia has conversion rate or EPC condition true</p>
-                                    </div>
-                                </li>
-                                <li class="text-center pt-2">
-                                    <router-link to="/notification-list" class="view-all-notification d-block text-primary">View All</router-link>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="dropdown">
-                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="d-flex align-items-center justify-content-end">
-                                    <div class="profile-image me-2">
-                                        <img :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" alt="img">
-                                    </div>
-                                    <p class="display-user-name mb-0 text-white">{{ name }} <i class="fa-solid fa-angle-down"></i></p>
-                                </div>
-                            </button>
-                            <ul class="dropdown-menu profile-dropdown">
-                                <li><small class="welcome">WELCOME!</small></li>
-                                <li>
-                                    <router-link to="/my_profile" class="dropdown-item">
-                                        <i class="fa-solid fa-user"></i>
-                                        <span class="profile-name ms-4">My Profile</span>
-                                    </router-link>
-                                </li>
-                                <li>
-                                    <router-link to="" class="dropdown-item border-0" id="logout-button" @click="logoutUser">
-                                        <i class="fa-solid fa-person-running"></i>
-                                        <span class="profile-name ms-4">Logout</span>
-                                    </router-link>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <small class="swithch-lable text-light">Dark</small>
             </div>
-        </div>
-    </nav>
+
+            <v-menu>
+                <template v-slot:activator="{ props }">
+                    <v-btn class="text-none" stacked v-bind="props">
+                        <v-badge content="5" color="success">
+                            <v-icon>mdi-bell-outline</v-icon>
+                        </v-badge>
+                    </v-btn>
+                </template>
+                <v-card width="400">
+                    <v-list lines="three" class="pa-0">
+                        <v-list-subheader>
+                            <small>You have <span class="text-primary">5</span> notification</small>
+                        </v-list-subheader>
+
+                        <v-list-item>
+                            <v-list-item-title>5 months ago</v-list-item-title>
+                            <v-list-item-subtitle>
+                                Microsoft Ads Account Web Redad Impression Equal To Zero
+                            </v-list-item-subtitle>
+                        </v-list-item>
+                        <v-divider class="border-opacity-75 ma-0" color="success"></v-divider>
+
+                        <v-list-item>
+                            <v-list-item-title>5 months ago</v-list-item-title>
+                            <v-list-item-subtitle>
+                                Campaign Name RexMD ED Telemedicine (Display,Native) - US Only Network VERVE (Edwin) has conversion rate or EPC condition true
+                            </v-list-item-subtitle>
+                        </v-list-item>
+                        <v-divider class="border-opacity-75 ma-0" color="success"></v-divider>
+
+                        <v-list-item>
+                            <v-list-item-title>5 months ago</v-list-item-title>
+                            <v-list-item-subtitle>
+                                Campaign Name (128585) [WEB+MOB] InstaHeat - CTC $59,95 /US (CPS) - CPA - $40.00 Network ClickDealer (Main) has conversion rate or EPC condition true
+                            </v-list-item-subtitle>
+                        </v-list-item>
+                        <v-divider class="border-opacity-75 ma-0" color="success"></v-divider>
+
+                        <v-list-item>
+                            <v-list-item-title>5 months ago</v-list-item-title>
+                            <v-list-item-subtitle>
+                                Campaign Name [s] - EXCLUSIVE - Splash Wines - Christmas Holiday Special - 15 Bottles + A Chance to Win $100 Gift Card + Free Shipping - Sale Network W4 (Main) has conversion rate or EPC condition true
+                            </v-list-item-subtitle>
+                        </v-list-item>
+                        <v-divider class="border-opacity-75 ma-0" color="success"></v-divider>
+                    </v-list>
+                    <v-list class="pa-0 text-center">
+                        <router-link to="/notification-list" class="view-all-notification d-block text-primary">View All</router-link>
+                    </v-list>
+                </v-card>
+            </v-menu>
+
+            <v-menu>
+                <template v-slot:activator="{ props }">
+                    <v-btn class="text-none" stacked v-bind="props">
+                        <div class="d-flex align-center">
+                            <v-avatar size="36px">
+                                <v-img alt="Avatar" :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" ></v-img>
+                            </v-avatar>
+                            <v-list-item-title class="text-subtitle-2 ml-2">
+                                {{ name }} <i class="fa-solid fa-angle-down"></i>
+                            </v-list-item-title>
+                        </div>
+                    </v-btn>
+                </template>
+                <v-card width="200">
+                    <v-list class="pa-0">
+                        <v-list-subheader>
+                            <small class="welcome pa-0">WELCOME!</small>
+                        </v-list-subheader>
+
+                        <v-list-item class="pa-0">
+                            <router-link to="/my_profile" class="dropdown-item py-2 px-4">
+                                <i class="fa-solid fa-user"></i>
+                                <span class="profile-name ms-4">My Profile</span>
+                            </router-link>
+                        </v-list-item>
+
+                        <v-list-item class="pa-0">
+                            <router-link to="" class="dropdown-item border-0 py-2 px-4" id="logout-button" @click="logoutUser">
+                                <i class="fa-solid fa-person-running"></i>
+                                <span class="profile-name ms-4">Logout</span>
+                            </router-link>
+                        </v-list-item>
+                    </v-list>
+                </v-card>
+            </v-menu>
+        </v-app-bar>
+    </v-layout>
     <!-- navbar end here -->
 </template>
 

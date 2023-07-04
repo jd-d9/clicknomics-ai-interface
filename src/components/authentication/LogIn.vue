@@ -126,8 +126,8 @@
         mounted() {
             const isAuthenticated = sessionStorage.getItem('Token');
             const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
-            const verifiedBy = sessionStorage.getItem('verifiedBy');
-            console.log(isAuthenticated, isVerified)
+            const verifiedBy = JSON.parse(sessionStorage.getItem('verifiedBy'));
+
             if(isAuthenticated && isVerified) {
                 this.$router.push('/dashboard');
             } else if(isAuthenticated && !isVerified) {
@@ -138,8 +138,7 @@
             // check validation and signin user
             submitAndAuthenticateUser() {
                 this.showLoader = true;
-                // this.axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(res => {
-                this.axios.get('http://192.168.1.6:8080/sanctum/csrf-cookie').then(res => {
+                this.axios.get(this.$api + '/sanctum/csrf-cookie').then(res => {
                     console.log(res, '212121')
                     this.axios.post(this.$api + '/login', {
                         email: this.userEmail,
