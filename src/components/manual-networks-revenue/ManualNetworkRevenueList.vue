@@ -15,7 +15,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <button @click.prevent="abcd" class="btn btn-lg btn-neutral btn_animated">
+                            <button @click.prevent="downloadCsv" class="btn btn-lg btn-neutral btn_animated">
                                 <div>
                                     <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i></span>
                                     <span class="btn-inner--text">Demo.csv</span>
@@ -32,15 +32,9 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="permissions.view == '1'">
                     <v-app>
                         <div class="card">
-                            <!-- <div class="card-header">
-                                <h3 class="mb-0 float-left pt-3">Manual Network Metrics</h3>
-                                <div class="float-right">
-                                    <a href="/networks/manualNetworks/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</a>
-                                </div>
-                            </div> -->
                             <div class="card-body">
                                 <div class="finance_data">
                                     <v-app>
@@ -52,15 +46,19 @@
                                                             <v-select
                                                             clearable
                                                             variant="solo"
-                                                            label="Network Name Filter" 
+                                                            label="Network Name Filter"
                                                             :items="networkNameFilter"
+                                                            item-value="key"
                                                             v-model="networkName"
                                                             @update:modelValue="getManualNetworksEntry"
                                                             ></v-select>
                                                         </div>
                                                     </v-col>
                                                     <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                        datepicker
+                                                        <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                                                            <i class="fa fa-calendar"></i>&nbsp;
+                                                            <span></span> <i class="fa fa-caret-down"></i>
+                                                        </div>
                                                     </v-col>
                                                     <div class="col-3 ms-auto mt-2 add-height">
                                                         <div class="ms-auto search-input position-relative">
@@ -76,17 +74,17 @@
                                                         <td>{{item.selectable.date}}</td>
                                                         <td>
                                                             <div class="text-ellipsis">
-                                                                {{item.selectable.network_id}}
+                                                                {{item.selectable.manual_network.network}}
                                                             </div>
                                                         </td>
                                                         <td>{{item.selectable.amount}}</td>
                                                         <td>
-                                                            <a href="javascript:void(0);" @click="edit(item.selectable.id)">
+                                                            <button @click.prevent="this.$router.push('/networks/manualNetworks/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
                                                                 <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                            </a>
-                                                            <a href="javascript:void(0);" @click="deleteData(item.selectable.id)">
+                                                            </button>
+                                                            <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
                                                                 <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                            </a>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 </template>
@@ -106,6 +104,13 @@
                         </div>
                     </v-app>
                 </div>
+                <div class="col" v-else>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -117,7 +122,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form @submit.prevent="uploadCsv">
+                    <form @submit.prevent="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
@@ -140,25 +145,13 @@
 </template>
 
 <script>
+// import moment from 'moment';
 export default {
     data() {
-        let today = new Date();
-        let startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-        let endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 11, 59, 59, 999);
-
-        let presentDate = new Date();
-        presentDate.setHours(0, 0, 0, 0);
-
-        let yesterday = new Date();
-        yesterday.setDate(presentDate.getDate() - 1);
-        yesterday.setHours(0, 0, 0, 0);
-
-        let thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-        let thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 11, 59, 59, 999);
-
         return {
             showLoader: false,
             dataMetrics: [],
+            dataMetricsFilter: [],
             search: '',
             // headers: [
             //     { title: 'Date', align: 'start', sortable: false, key: 'date' },
@@ -166,20 +159,11 @@ export default {
             //     { title: 'Amount', key: 'amount' },
             //     { title: 'Action', key: '' },
             // ],
-            dateRange: {startDate, endDate},
             file: '',
             currentItemsTable: [],
             itemsPerPage: -1,
             networkNameFilter: [],
             networkName: null,
-            customRanges: {
-                'Today': [presentDate, presentDate],
-                'Yesterday': [yesterday, yesterday],
-                'This month': [thisMonthStart, thisMonthEnd],
-                'Last month': [new Date(today.getFullYear(), today.getMonth() - 1, 1), new Date(today.getFullYear(), today.getMonth(), 0)],
-                'This year': [new Date(today.getFullYear(), 0, 1), new Date(today.getFullYear(), 11, 31)],
-                'Last year': [new Date((today.getFullYear() -1), 0, 1), new Date((today.getFullYear() -1), 11, 31)],
-            },
             selectedFile: '',
             isSortable: true,
             searchInput: '',
@@ -203,8 +187,58 @@ export default {
     mounted() {
         this.getManualNetworksEntry();
         this.updateCsvWithTodayDate('ipm-manual-networks-metrics-demo.csv');
+        this.datePicker();
     },
     methods: {
+        datePicker() {
+            // window.$(document).ready(function() {
+            //     var start = moment().subtract(29, 'days');
+            //     var end = moment();
+            //     console.log(start, end._d, ']]]]]][[[[[[[[[')
+
+            //     function cb(start, end) {
+            //         console.log(start, end)
+            //         window.$('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            //     }
+            //     console.log(window.$('#reportrange'), '----------============')
+            //     window.$('#reportrange').daterangepicker({
+            //         startDate: start,
+            //         endDate: end,
+            //         ranges: {
+            //             'Today': [moment(), moment()],
+            //             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            //             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            //             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            //             'This Month': [moment().startOf('month'), moment().endOf('month')],
+            //             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            //         }
+            //     }, cb);
+            //     cb(start, end);
+            // });
+            // window.$(function() {
+            //     var start = moment().subtract(29, 'days');
+            //     var end = moment();
+
+            //     function cb(start, end) {
+            //         window.$('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            //     }
+
+            //     console.log(window.$('#reportrange'), '----------=======================')
+            //     window.$('#reportrange').daterangepicker({
+            //         startDate: start,
+            //         endDate: end,
+            //         ranges: {
+            //         'Today': [moment(), moment()],
+            //         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            //         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            //         'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            //         'This Month': [moment().startOf('month'), moment().endOf('month')],
+            //         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            //         }
+            //     }, cb);
+            //     cb(start, end);
+            // });
+        },
         // open and close modal
         openModal() {
             window.$('#exampleModalCenter').modal('show');
@@ -216,18 +250,21 @@ export default {
         searchPayments() {
             this.dataMetrics = this.dataMetricsFilter.filter((val) => {
                 return  val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.company && val.company.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.email.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.network.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.notes && val.notes.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.platform_type.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.created_at.toLowerCase().includes(this.searchInput.toLowerCase())
+                        val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.date.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                        val.manual_network.network.toLowerCase().includes(this.searchInput.toLowerCase())
             })
         },
         // get manual network metrics listing
         getManualNetworksEntry() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/network/manualNetworksMetrics', {
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/network/manualNetworksMetrics';
+            if(this.networkName) {
+                queryString.set('networkName', this.networkName)
+            }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            this.axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -236,9 +273,17 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data;
+                    console.log(getData, 'getData');
                     this.dataMetrics = getData.data.data;
-                    console.log(this.dataMetrics, 'this.dataMetrics---')
                     this.dataMetricsFilter = getData.data.data;
+                    getData.allNetworks.forEach((val) => {
+                        this.networkNameFilter.push(
+                            {
+                                key: val.manual_network.id,
+                                title: val.manual_network.network
+                            }
+                        )
+                    });
                     this.permissions = getData.permission;
                     this.showLoader = false;
                 }
@@ -248,102 +293,117 @@ export default {
                 this.showLoader = false;
             });
         },
-        checkOpenPicker() {
-            setTimeout(() => {
-                this.getManualNetworksEntry();
-            },100)
-        },
-        // edit data
-        edit(id) {
-            window.location.href = `/networks/manualNetworks/${id}/edit`;
-        },
+        // checkOpenPicker() {
+        //     setTimeout(() => {
+        //         this.getManualNetworksEntry();
+        //     },100)
+        // },
         // delete data
         deleteData(id) {
-            console.log(id);
             if(confirm("Do you really want to delete?")) {
-                // this.showLoader = true;
-                // axios.defaults.headers.common = {
-                //     'X-Requested-With': 'XMLHttpRequest',
-                //     'X-CSRF-TOKEN': window.csrf_token
-                // };
-                // let formData = new FormData();
-                // formData.append('id', id);
-                // axios.post(`/networks/manualNetworks/deleteManualNetworksRow`, formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data'
-                //     },
-                // }).then(response => {
-                //     if(response) {
-                //         console.log(response, 'sasa')
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: response.data.message,
-                //             type: 'success',
-                //         };
-                //         Bus.$emit('flash-message', this.message, '');
-                //         this.dataMetrics = _.filter(this.dataMetrics, x => { return x.id !== id; });
-                //     }else {
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: 'Something Went Wrong!',
-                //             type: 'error',
-                //         }
-                //         Bus.$emit('flash-message', this.message, '');
-                //     }
-                // }).catch(error => {
-                //     this.showLoader = false;
-                //     console.log(error);
-                //     this.message = {
-                //         text: error.response.data.message,
-                //         type: 'error',
-                //     }
-                //     Bus.$emit('flash-message', this.message, '');
-                // });
+                this.showLoader = true;
+                this.axios.delete(this.$api + '/network/manualNetworksMetrics/' + id, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'Record deleted',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.getManualNetworksEntry();
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                });
             }
         },
-        handleUpload(event) {
-            const files = event.target.files;
-            console.log(files[0].name, '2121212')
-            this.file = files;
+        // download csv file
+        downloadCsv() {
+            this.axios.post(this.$api + '/settings/downloadfile', {
+                filename: 'manualnetworksmetrics'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                },
+                responseType: 'blob',
+            })
+            .then(response => {
+                let blob = new Blob([response.data], { type:'application/csv' } );
+                const _url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = _url;
+                link.setAttribute('download', 'demo.csv');
+                document.body.appendChild(link);
+                link.click();
+                this.$toast.open({
+                    message: 'File downloaded',
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'success'
+                });
+            })
+            .catch(error => {
+                console.log(error)
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.showLoader = false;
+            });
         },
-        uploadCsv() {
-            // this.showLoader = true;
-            // let formData = new FormData();
-            // formData.append('file', this.file[0]);
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': window.csrf_token
-            // };
-            // axios.post(`/importManualNetworksMetrics`,formData,{
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // }).then(response => {
-            //     if(response) {
-            //         console.log(response, 'sasa')
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: response.data.message,
-            //             type: 'success',
-            //         };
-            //         Bus.$emit('flash-message', this.message, '/networks/manualNetworks');
-            //     }else {
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: 'Something Went Wrong!',
-            //             type: 'error',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '');
-            //     }
-            // }).catch((error) => {
-            //     this.showLoader = false;
-            //     console.log(error);
-            //     this.message = {
-            //         text: error.response.data.message,
-            //         type: 'error',
-            //     }
-            //     Bus.$emit('flash-message', this.message, '');
-            // });
+        // choose file and import csv
+        importCsv() {
+            this.showLoader = true;
+            this.axios.post(this.$api + '/network/manualNetworksMetrics/importManualNetworksMetrics', {
+                file: this.selectedFile
+            }, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.closeModal();
+                    this.getManualNetworksEntry();
+                    this.showLoader = false;
+                    this.selectedFile = '';
+                    this.$toast.open({
+                        message: 'File imported',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.showLoader = false;
+            });
         },
         // select csv file
         chooseFile(e) {
