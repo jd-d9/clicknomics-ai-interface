@@ -38,6 +38,7 @@ import PlansForm from './components/plans/PlansForm.vue';
 import ManualNetworkList from './components/manual-networks/ManualNetworkList.vue';
 import ManualNetworkRevenueForm from './components/manual-networks-revenue/ManualNetworkRevenueForm.vue';
 import ManualNetworkRevenueList from './components/manual-networks-revenue/ManualNetworkRevenueList.vue';
+import EmailNotificationList from './components/email-notification/EmailNotificationList.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -104,7 +105,10 @@ const router = createRouter({
         {path: '/networks/manualNetworks', component: ManualNetworkList, meta: {auth: true}},
         // add manual network revenue moule
         {path: '/networks/manualNetworks/create', component: ManualNetworkRevenueForm, meta: {auth: true}},
+        {path: '/networks/manualNetworks/:id/edit', component: ManualNetworkRevenueForm, meta: {auth: true}},
         {path: '/networks/manualNetworks/list', component: ManualNetworkRevenueList, meta: {auth: true}},
+        // email notification module
+        {path: '/settings/emailNotification', component: EmailNotificationList, meta: {auth: true}},
         // other
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page

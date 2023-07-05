@@ -50,9 +50,9 @@
                                                 <th>{{item.selectable.id}}</th>
                                                 <td>{{item.selectable.name}}</td>
                                                 <!-- currently working on this portion -->
-                                                <td v-for="data in item.selectable.planData" :key="data">
-                                                    <span v-if="item.selectable.planData.length == 1">${{data.amount}}</span>
-                                                    <!-- <span v-if="item.selectable.planData.length > 1 && data.interval == 'month'">${{data.amount}}</span> -->
+                                                <td>
+                                                    ${{displayAmount(item.selectable.plan_data)}}
+                                                    <!-- <span v-if="item.selectable.plan_data.length > 1 && data.interval == 'month'">${{data.amount}}</span> -->
                                                 </td>
                                                 <td>{{item.selectable.status == 0 ? 'Inactive' : 'Active'}}</td>
                                                 <td class="text-center">
@@ -130,10 +130,10 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const data = response.data;
-                    // this.items = data.data;
-                    this.items = data.data.map((val) => {
-                        return {...val,planData: JSON.parse(val.planData)}
-                    })
+                    this.items = data.data;
+                    // this.items = data.data.map((val) => {
+                    //     return {...val,planData: JSON.parse(val.planData)}
+                    // })
                     console.log(this.items)
                     this.plansFilter = data.data;
                     this.permissions = data.permission;
@@ -144,6 +144,18 @@ export default {
                 this.showLoader = false;
                 console.log(error)
             }); 
+        },
+        // for display amount value which has interval value month
+        displayAmount(data) {
+            if(data.length > 1) {
+                const Data = data.find((val) => {
+                    return val.interval == 'month'
+                })
+                return Data ? Data.amount : data[0].amount;
+            }
+            else if(data.length == 1){
+                return data[0].amount;
+            }
         },
         // add new plan
         addNewPlan() {

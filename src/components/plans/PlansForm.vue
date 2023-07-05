@@ -18,7 +18,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <a href="/settings/plan-management" class="btn btn-lg btn-neutral btn_animated">View Plans</a>
+                            <router-link to="/settings/plan-management" class="btn btn-lg btn-neutral btn_animated">View Plans</router-link>
                         </div>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                                                     <div class="form-group select-network-filter select-network-filter-height">
                                                         <label class="form-control-label" for="input-username">Interval</label>
                                                         <Field name="Interval" v-model="data.intervalSelected">
-                                                            <v-select :class="{'form-control': true , 'border-red-600':errors.Interval}" :items="interval" item-value="key" v-model="data.intervalSelected"></v-select>
+                                                            <v-select :class="{'form-control': true , 'border-red-600':errors.Interval}" :items="intervalData" item-value="key" v-model="data.interval"></v-select>
                                                         </Field>
                                                         <span class="text-red-600" v-if="errors.Interval">Interval can not be empty</span>
                                                     </div>
@@ -83,8 +83,8 @@
                                                 <div class="col-lg-6 py-0">
                                                     <div class="form-group">
                                                         <label class="form-control-label" for="input-username">Original Price</label>
-                                                        <Field type="number" name="originalPrice" id="input-username" :class="{'form-control': true , 'border-red-600':errors.originalPrice}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.originalPrice"/>
-                                                        <span class="text-red-600" v-if="errors.originalPrice">Original price can not be empty</span>
+                                                        <Field type="number" name="original_price" id="input-username" :class="{'form-control': true , 'border-red-600':errors.original_price}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.original_price"/>
+                                                        <span class="text-red-600" v-if="errors.original_price">Original price can not be empty</span>
                                                     </div>
                                                     <v-btn class="add-style-to-close-button" v-if="index != 0" icon small @click="addMultipleField.splice(index, 1)">
                                                         <v-icon size="20">{{ 'mdi-close' }}</v-icon>
@@ -95,15 +95,15 @@
                                                 <div class="col-lg-6 py-0">
                                                     <label class="form-control-label add-translate" for="input-username">Discount Type :</label>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioFlat' + index" value="flat" v-model="data.discountType">
+                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioFlat' + index" value="flat" v-model="data.discount_type">
                                                         <label class="form-check-label form-control-label" :for="'inlineRadioFlat' + index">Flat</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioPercentage' + index" value="percentage" v-model="data.discountType">
+                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioPercentage' + index" value="percentage" v-model="data.discount_type">
                                                         <label class="form-check-label form-control-label" :for="'inlineRadioPercentage' + index">Percentage</label>
                                                     </div>
-                                                    <Field type="number" id="input-username" name="discountValue" :class="{'form-control': true, 'border-red-600':errors.discountValue}" :placeholder="data.discountType == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discountValue"/>
-                                                    <span class="text-red-600" v-if="errors.discountValue">Discount can not be empty</span>
+                                                    <Field type="number" id="input-username" name="discount_value" :class="{'form-control': true, 'border-red-600':errors.discount_value}" :placeholder="data.discount_type == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discount_value"/>
+                                                    <span class="text-red-600" v-if="errors.discount_value">Discount can not be empty</span>
                                                 </div>
                                                 <div class="col-lg-6 py-0">
                                                     <div class="form-group">
@@ -112,21 +112,14 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <v-btn color="primary" class="mb-4" variant="outlined" @click="addMoreField">Add More</v-btn>
-                                        <div class="row">
-                                            <div class="col-lg-6 py-0">
-                                                <div class="custom-control custom-control-alternative custom-checkbox d-flex flex-column">
-                                                    <div class="add-padding">
-                                                        <input class="custom-control-input" type="checkbox" name="remember" id="customCheckLogin" v-model="hasTrial">
-                                                        <label class="custom-control-label" for="customCheckLogin">
-                                                            <span class="text-muted">Trial Period</span>
-                                                        </label>
-                                                    </div>
-                                                    <input v-if="hasTrial" class="mt-2" type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Trial Period" v-model="trialPeriod"/>
+                                            <div class="row">
+                                                <div class="col-lg-6 py-0">
+                                                    <label class="form-control-label" for="input-username">Trial Period</label>
+                                                    <input class="mt-2" type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Trial Period" v-model="data.trial_period_days"/>
                                                 </div>
                                             </div>
                                         </div>
+                                        <v-btn color="primary" class="mb-4" variant="outlined" @click="addMoreField">Add More</v-btn>
                                         <div class="row mt-4">
                                             <div class="col-lg-6 py-0">
                                                 <div class="form-group">
@@ -171,13 +164,13 @@
                                                 <div class="col-lg-6 py-0">
                                                     <div class="form-group select-network-filter select-network-filter-height">
                                                         <label class="form-control-label" for="input-username">Interval</label>
-                                                        <v-select :class="{'form-control': true}" :items="interval" item-value="key" v-model="data.intervalSelected"></v-select>
+                                                        <v-select :class="{'form-control': true}" :items="intervalData" item-value="key" v-model="data.interval"></v-select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 py-0">
                                                     <div class="form-group">
                                                         <label class="form-control-label" for="input-username">Original Price</label>
-                                                        <input type="number" name="originalPrice" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.originalPrice"/>
+                                                        <input type="number" name="original_price" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.original_price"/>
                                                     </div>
                                                     <v-btn class="add-style-to-close-button" v-if="index != 0" icon small @click="addMultipleField.splice(index, 1)">
                                                         <v-icon size="20">{{ 'mdi-close' }}</v-icon>
@@ -188,14 +181,14 @@
                                                 <div class="col-lg-6 py-0">
                                                     <label class="form-control-label add-translate" for="input-username">Discount Type :</label>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioFlat' + index" value="flat" v-model="data.discountType">
+                                                        <input class="form-check-input" type="radio" :name="'inlineRadioOptions' + index" :id="'inlineRadioFlat' + index" value="flat" v-model="data.discount_type" @change="calculateAmount(index)">
                                                         <label class="form-check-label" :for="'inlineRadioFlat' + index">Flat</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioPercentage' + index" value="percentage" v-model="data.discountType">
+                                                        <input class="form-check-input" type="radio" :name="'inlineRadioOptions'  + index" :id="'inlineRadioPercentage' + index" value="percentage" v-model="data.discount_type" @change="calculateAmount(index)">
                                                         <label class="form-check-label" :for="'inlineRadioPercentage' + index">Percentage</label>
                                                     </div>
-                                                    <input type="number" id="input-username" name="discountValue" :class="{'form-control': true}" :placeholder="data.discountType == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discountValue"/>
+                                                    <input type="number" id="input-username" name="discount_value" :class="{'form-control': true}" :placeholder="data.discount_type == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discount_value" :max="data.discount_type != 'flat' && 100"/>
                                                 </div>
                                                 <div class="col-lg-6 py-0">
                                                     <div class="form-group">
@@ -204,21 +197,14 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <v-btn color="primary" class="mb-4" variant="outlined" @click="addMoreField">Add More</v-btn>
-                                        <div class="row">
-                                            <div class="col-lg-6 py-0">
-                                                <div class="custom-control custom-control-alternative custom-checkbox d-flex flex-column">
-                                                    <div class="add-padding">
-                                                        <input class="custom-control-input" type="checkbox" name="remember" id="customCheckLogin" v-model="hasTrial">
-                                                        <label class="custom-control-label" for="customCheckLogin">
-                                                            <span class="text-muted">Trial Period</span>
-                                                        </label>
-                                                    </div>
-                                                    <input v-if="hasTrial" class="mt-2" type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Trial Period" v-model="trialPeriod"/>
+                                            <div class="row">
+                                                <div class="col-lg-6 py-0">
+                                                    <label class="form-control-label" for="input-username">Trial Period</label>
+                                                    <input class="mt-2" type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Trial Period" v-model="data.trial_period_days"/>
                                                 </div>
                                             </div>
                                         </div>
+                                        <v-btn color="primary" class="mb-4" variant="outlined" @click="addMoreField">Add More</v-btn>
                                         <div class="row mt-4">
                                             <div class="col-lg-6 py-0">
                                                 <div class="form-group">
@@ -251,23 +237,21 @@ export default {
             name: '',
             addMultipleField: [
                 {
-                    intervalSelected: 'month',
-                    originalPrice: '',
-                    discountType: 'flat',
-                    discountValue: '',
-                    amount: '',
+                    interval: 'month',
+                    original_price: '',
+                    discount_type: 'flat',
+                    discount_value: '',
+                    trial_period_days: 0,
+                    amount: 0,
                 }
             ],
             description: '',
             addAccountLimit: '',
             networkAccountLimit: '',
-            trialPeriod: 0,
-            trialPeriodDuplicate: 0,
-            hasTrial: false,
             toggleButton: true,
             breadCrumbText: 'Create',
             backendErrorMessage: '',
-            interval: [
+            intervalData: [
                 {title: 'Month', key: 'month'},
                 {title: '3 Month', key: '3month'},
                 {title: '6 Month', key: '6month'},
@@ -288,20 +272,15 @@ export default {
     //         return yup.object({
     //             Name: yup.string().required(),
     //             Interval: yup.string().required(),
-    //             originalPrice: yup.string().required(),
+    //             original_price: yup.string().required(),
     //             Amount: yup.string().required(),
-    //             discountValue: yup.string().required(),
+    //             discount_value: yup.string().required(),
     //             addAccountLimit: yup.string().required(),
     //             networkAccountLimit: yup.string().required(),
     //             Description: yup.string().required(),
     //         });
     //     },
     // },
-    watch: {
-        hasTrial(val) {
-            !val ? this.trialPeriod = 0 : this.trialPeriod = this.trialPeriodDuplicate;
-        }
-    },
     methods: {
         // get data for edit plan
         getDataForEdit() {
@@ -316,14 +295,11 @@ export default {
                 if(response.data.success) {
                     console.log(response.data, 'response.data---edit');
                     const Data = response.data.data;
+                    this.addMultipleField = Data.plan_data;
                     this.name = Data.name;
-                    this.originalPrice = Data.amount;
-                    this.intervalSelected = Data.interval;
-                    this.addAccountLimit = Data.interval_count;
-                    this.addMultipleField = Data.planData;
-                    this.trialPeriod = Data.trial_period_days;
-                    this.trialPeriodDuplicate = Data.trial_period_days;
-                    this.networkAccountLimit = Data.user_limit;
+                    this.addAccountLimit = Data.add_account_limit;
+                    this.networkAccountLimit = Data.network_account_limit;
+                    this.description = Data.description;
                     this.hasTrial = Data.trial_period_days == 0 ? false : true;
                     this.showLoader = false;
                 }
@@ -335,21 +311,22 @@ export default {
         },
         // calculate amount using price and discount
         calculateAmount(ind) {
-            if(this.addMultipleField[ind].discountType == 'flat') {
-                this.addMultipleField[ind].amount = this.addMultipleField[ind].originalPrice - this.addMultipleField[ind].discountValue;
+            if(this.addMultipleField[ind].discount_type == 'flat') {
+                this.addMultipleField[ind].amount = this.addMultipleField[ind].original_price - this.addMultipleField[ind].discount_value;
             }
             else {
-                this.addMultipleField[ind].amount = this.addMultipleField[ind].originalPrice - ((this.addMultipleField[ind].originalPrice * this.addMultipleField[ind].discountValue)/100);
+                this.addMultipleField[ind].amount = this.addMultipleField[ind].original_price - ((this.addMultipleField[ind].original_price * this.addMultipleField[ind].discount_value)/100);
             }
         },
         // add more fields
         addMoreField() {
             this.addMultipleField.push({
-                intervalSelected: 'month',
-                originalPrice: '',
-                discountType: 'flat',
-                discountValue: '',
-                amount: '',
+                interval: 'month',
+                original_price: '',
+                discount_type: 'flat',
+                discount_value: '',
+                trial_period_days: 0,
+                amount: 0,
             });
         },
         // update plan and create new plan
@@ -359,9 +336,8 @@ export default {
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('name', this.name);
-                formData.append('addAccountLimit', this.addAccountLimit);
-                formData.append('trialPeriodDays', this.trialPeriod);
-                formData.append('networkAccountLimit', this.networkAccountLimit);
+                formData.append('add_account_limit', this.addAccountLimit);
+                formData.append('network_account_limit', this.networkAccountLimit);
                 formData.append('description', this.description);
                 formData.append('planData', JSON.stringify(this.addMultipleField));
                 formData.append('_method', 'PUT');
@@ -400,9 +376,8 @@ export default {
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('name', this.name);
-                formData.append('addAccountLimit', this.addAccountLimit);
-                formData.append('trialPeriodDays', this.trialPeriod);
-                formData.append('networkAccountLimit', this.networkAccountLimit);
+                formData.append('add_account_limit', this.addAccountLimit);
+                formData.append('network_account_limit', this.networkAccountLimit);
                 formData.append('description', this.description);
                 formData.append('planData', JSON.stringify(this.addMultipleField));
                 this.axios.post(this.$api + '/settings/plan', formData, {
