@@ -201,7 +201,7 @@
             </v-row>
         </v-container>
 
-        <v-container class="mb-5">
+        <v-container class="mb-3">
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
                     <v-sheet rounded="lg">
@@ -491,24 +491,3 @@
     },
  }
 </script>
-<style scoped>
-    .padding-only {
-        padding-bottom: 30px;
-    }
-    .v-layout--full-height {
-        height: unset !important;
-        border-radius: 5px;
-    }
-    .slot {
-        background-color: #aaa;
-        padding: 0.5rem;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .text-black {
-        color: #000;
-    }
-</style>
