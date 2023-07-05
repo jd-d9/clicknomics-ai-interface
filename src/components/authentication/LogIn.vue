@@ -138,7 +138,7 @@
             // check validation and signin user
             submitAndAuthenticateUser() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/sanctum/csrf-cookie').then(res => {
+                this.axios.get(this.$api_main + '/sanctum/csrf-cookie').then(res => {
                     console.log(res, '212121')
                     this.axios.post(this.$api + '/login', {
                         email: this.userEmail,
