@@ -56,7 +56,7 @@
                                         <v-expansion-panels>
                                             <v-expansion-panel v-for="subChild in data.child" :key="subChild">
                                                 <div v-if="subChild.children.length !== 0">
-                                                    <v-expansion-panel-title expand-icon="mdi-menu-down">
+                                                    <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
                                                         {{ subChild.menu }}
                                                     </v-expansion-panel-title>
                                                     <v-expansion-panel-text v-for="childs in subChild.children" :key="childs">
@@ -145,14 +145,7 @@
                 <v-app-bar color="primary" style="position:relative; width: 100%;left: 0 !important;">
                     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
                     <v-spacer></v-spacer>
-                    <div class="d-flex align-items-start justify-content-center me-3">
-                        <small class="swithch-lable text-white">Light</small>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
-                        </div>
-                        <small class="swithch-lable text-light">Dark</small>
-                    </div>
-
+                    <v-switch color="black" hide-details inset true-value="Dark" false-value="Light" class="ms-auto d-inline-flex justify-content-end mr-2"></v-switch>
                     <v-menu>
                         <template v-slot:activator="{ props }">
                             <v-btn class="text-none" stacked v-bind="props">

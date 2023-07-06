@@ -2,11 +2,14 @@
     font-family: fontAwesomeFont;
     src: url(../../../public/assets/fonts/font_awesome/fa-solid-900.ttf);
 }
+.v-container {max-width: 100%;}
+
+
 .padding-left {padding-left: 0px !important;}
 .all-contents {padding-left: 300px !important;transition: all 0.2s ease;}
 .toggle-padding {padding-left: 60px !important;transition: all 0.2s ease;}
 .v-table__wrapper {border-bottom: 1px solid #e0e0e0;}
-.v-field__outline {display: none !important;}
+/* .v-field__outline {display: none !important;} */
 .v-data-table-header__content {color: #136ab9 !important;font-size: 14px !important;}
 .v-data-table__td {background: #f0f0f0 !important;}
 .v-data-table-footer {font-size: 14px !important;}
@@ -23,7 +26,7 @@
 .navbar-content {margin-left: 60px;} 
 .navbar-content-default {margin-left: 300px;}
 .toggle-margin {margin-left: 300px;transition: all 0.2s ease;}
-.bg-primary {background-color: #005eb3 !important;}
+.bg-primary {background:transparent linear-gradient(270deg, #0d47a1 0%, #005eb3 100%) 0% 0% no-repeat padding-box !important;}
 .text-primary {color: #005eb3 !important;}
 .text-light {color: rgba(255, 255, 255, 0.5) !important;}
 .form-switch .form-check-input {height: 1.5rem;width: 3.1rem;}
@@ -68,11 +71,8 @@
 .profile-image + p i {font-size: 12px;}
 .side-menu {display: flex;justify-content: start;align-items: center;border-radius: 6px;padding: 7px 12px;}
 .side-menu:hover, .active-tab-big {background-color: #e8f0fe;}
-.btn {padding: 5px 0 5px 20px;}
-.btn:not(:last-child) {margin-right: unset !important;}
-.side-menu i {font-size: 12px;font-weight: 900 !important;}
-.side-menu img {width: 30px;margin-right: 8px;}
-.side-menu-hover img {width: 30px;margin-right: 5px !important;}
+.side-menu img {width: 25px;margin-right: 8px;}
+.side-menu-hover img {width: 25px;margin-right: 5px !important;}
 .side-menu span {font-size: .875rem;}
 .sidebar-dropdown-head {background-color: #084c89;}
 /* .active-menu,  */
@@ -109,12 +109,51 @@
     background: #fff !important;
     border-radius: 0px;
 }
-.side_submenuitem .v-expansion-panel-title__icon{color: #00cd00;}
+.side_submenuitem .v-expansion-panel-title__icon{color: #005eb3;}
 .side_submenuitem .v-expansion-panel-title{font-size: 14px;color: #000;padding: 15px 20px;min-height: auto;}
 .side_submenuitem .v-expansion-panel-title:hover{background: #81df8d;}
 .side_submenuitem .v-expansion-panel-title__overlay{display: none;}
 .side_submenuitem .v-expansion-panel--active {background: #fff;}
-.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper {padding: 10px 10px 10px 20px;margin: 0 10px;}
+.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper {padding: 10px 10px 10px 20px;margin: 0;border-left: 7px solid #fff;}
 .side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper a{color: #000; font-size: 14px;}
-.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper:hover{background: #005eb3 !important;border-radius: 10px;}
-.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper:hover a{color: #fff;}
+.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper:hover{
+    background: #81df8d !important;
+    border-left: 7px solid #00cd00;
+    padding-left: 30px;
+}
+
+.v-breadcrumbs{
+    padding:0px 0px;
+    color: #000;
+    font-weight: 600;
+}
+.card_design{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 1px 3px #00000029 !important;
+    border: none;
+    border-radius: 0px;
+    padding: 20px;
+}
+.card_design .v-card-title{
+    font-size: 18px !important;
+    background: none;
+    padding: 0px !important;
+    border: none;
+    margin-bottom: 20px;
+    font-weight: 700 !important;
+    color: #071052;
+}
+
+.v-label.v-field-label{font-size: 14px;color: #000;font-weight: 500;}
+.v-field__input {
+    padding: 13px 15px;
+    width: 100%;
+    overflow: hidden;
+    align-items: center;
+    color: #7E7E7E;
+    font-size: 14px;
+    font-weight: 500;
+}
+.v-input__control, .v-field__field{height: 55px;}
+.v-field--variant-outlined .v-field__outline{box-shadow: 1px 2px 2px #00000029;}
+.v-card .v-card-text{font-size: 13px;}
