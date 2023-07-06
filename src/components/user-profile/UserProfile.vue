@@ -1,87 +1,26 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <!-- header contents -->
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">My Profile</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/dashboard" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col-xl-4 order-xl-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="mb-0">My Profile</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="bg-white border-0">
-                                <div class="row align-items-center">
-                                    <div class="col-12 text-center mt-3">
-                                        <div>
-                                            <span class="avatar avatar-lg rounded-circle mr-4 wd-100 ht-100">
-                                                <img :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" alt="profile image">
-                                            </span>
-                                        </div>
-                                        <div class="file_select">
-                                            <a href="javascript:void(0)" class="btn btn-primary btn-lg btn_animated">Choose File</a>
-                                            <input class="cursor-pointer" type="file" accept="image/*" id="file-input" @change="updateProfilePhoto">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="my-4">
-                            <!-- user email section -->
-                            <h6 class="heading-small text-muted mb-4">User Email
-                                <button class="btn btn-sm float-right button-border" v-if="!userEmailToggle" type="button" @click="userEmailToggle = !userEmailToggle">
-                                    <img src="/assets/img/icons/edit.svg" class="image-width">
-                                </button>
-                            </h6>
-                            <div>
-                                <div id="userName" v-if="!userEmailToggle">
-                                    <div class="form-group m-0">
-                                        <p class="font-weight-normal m-0 text-color">{{ currentEmail }}</p>
-                                    </div>
-                                </div>
-                                <Form @submit="updateUserEmail" :validation-schema="mailSchema" v-slot="{ errors }" v-show="userEmailToggle">
-                                    <div class="form-group">
-                                        <label  class="d-block form-control-label">Current user email</label>
-                                        <p class="font-weight-normal m-0 text-color">{{ currentEmail }}</p>
-                                        <label class="d-block form-control-label mt-2">New user email</label>
-                                        <Field type="text" id="input-username" name="UserEmail" :class="{'form-control': true, 'border-red-600': errors.UserEmail}" placeholder="Email" v-model="email"/>
-                                        <span class="text-red-600" v-if="errors.UserEmail">User email can not be empty</span>
-                                        <!-- <ErrorMessage class="text-red-600" name="UserEmail"/> -->
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-lg btn_animated">Update user Email</button>
-                                    <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="userEmailToggle = !userEmailToggle">Close</button>
-                                </Form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <loader-component v-if="showLoader"></loader-component>
-                <div class="col-xl-8 order-xl-1">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="mb-0">My Profile</h3>
-                        </div>
-                        <div class="card-body">
+        <loader-component v-if="showLoader"></loader-component>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard">
+                            <v-icon icon="mdi-view-dashboard"></v-icon>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-3" color="#00cd00"></v-icon>
+                        <span>My Profile</span>
+                        <v-btn href="/dashboard" class="ms-auto text-none bg-blue-darken-4" prepend-icon="mdi-keyboard-backspace" >
+                            Back
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+                <!-- profile form -->
+                <v-col cols="12" sm="12" md="7" lg="8" class="py-0">
+                    <v-card class="card_design">
+                        <v-card-title>My Profile</v-card-title>
+                        <v-card-subtitle>
+                            <div class="card-body">
                             <!-- user profile section -->
                             <h6 class="heading-small text-muted mb-4">Profile Details
                                 <button class="btn btn-sm float-right button-border" v-if="!profileDetailsToggle" type="button" @click="profileDetailsToggle = !profileDetailsToggle">
@@ -232,10 +171,60 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </v-card-subtitle>
+                    </v-card>
+                </v-col>
+
+                <!-- profile photo and email-->
+                <v-col cols="12" sm="12" md="5" lg="4" class="py-0">
+                    <v-card class="card_design">
+                        <v-card-title>My Profile</v-card-title>
+                        <v-divider class="border-opacity-100 my-3" color="success" />
+
+                        <!-- profile image -->
+                        <v-card-subtitle class="pa-0">
+                            Profile Image
+                        </v-card-subtitle>
+                        <div class="d-flex align-center justify-space-between">
+                            <v-avatar size="70" color="primary">
+                                <v-img :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" alt="profile image"></v-img>
+                            </v-avatar>
+                            <v-file-input accept="image/*" id="file-input" @change="updateProfilePhoto" prepend-icon="mdi-camera" label="Avatar" variant="outlined" class="ml-5 mt-3"></v-file-input>
+                        </div>
+
+                        <!-- User Email id -->
+                        <v-divider class="border-opacity-100 my-3" color="success" />
+                        <v-card-subtitle class="pa-0">
+                            User Email
+                        </v-card-subtitle>
+                        <v-card-text class="px-0">
+                            <div id="userName" v-if="!userEmailToggle" class="font-weight-medium d-flex justify-space-between">
+                                {{ currentEmail }}
+                                <v-icon v-if="!userEmailToggle" @click="userEmailToggle = !userEmailToggle" icon="mdi-email-edit-outline" size="large" color="#00cd00"></v-icon>
+                            </div>
+                            <div>
+                                <Form @submit="updateUserEmail" :validation-schema="mailSchema" v-show="userEmailToggle">
+                                    <p class="text-subtitle-2 mb-0">Current user email</p>
+                                    <span class="font-weight-medium">{{ currentEmail }}</span>
+
+                                    <p class="text-subtitle-2 mb-2 mt-3">New user email</p>
+                                    <div class="mb-2">
+                                        <v-text-field label="Email" variant="outlined" id="input-username" name="UserEmail" v-model="email" :rules="emailRules"></v-text-field>
+                                    </div>
+                                    <!-- <Field type="text" id="input-username" name="UserEmail" :class="{'form-control': true, 'border-red-600': errors.UserEmail}" placeholder="Email" v-model="email"/> -->
+                                    <!-- <span class="text-red-600" v-if="errors.UserEmail">User email can not be empty</span> -->
+                                    <div>
+                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Update</button>
+                                        <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="userEmailToggle = !userEmailToggle">Close</button>
+                                    </div>
+                                </Form>
+                            </div>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+        <!-- page content -->
     </div>
 </template>
 
@@ -293,6 +282,12 @@
                 trialEndsAt: '',
                 showLoader: false,
                 countryDetails: [],
+                emailRules:[
+                    value => {
+                    if (value) return true
+                        return 'User email can not be empty.'
+                    },
+                ],
             }
         },
         computed: {
@@ -574,7 +569,7 @@
         }
     }
 </script>
-
+<!-- 
 <style scoped>
 .border-red-600 {
     --border-opacity: 1;
@@ -598,4 +593,4 @@
 .cursor-pointer {
     cursor: pointer;
 }
-</style>
+</style> -->
