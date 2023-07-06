@@ -10,7 +10,7 @@
                                     <li class="breadcrumb-item">
                                         <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Management System Local</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Management System Residential VPS</li>
                                 </ol>
                             </nav>
                         </div>
@@ -21,7 +21,7 @@
                                     <span class="btn-inner--text">Demo.csv</span>
                                 </div>
                             </router-link>
-                            <router-link to="" @click="openModal" class="btn btn-lg btn-neutral btn_animated">Import CSV</router-link>
+                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Import CSV</router-link>
                             <button class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'" @click.prevent="createActivity">Add New Record</button>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1'">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -43,14 +43,14 @@
                                                 <!-- <v-spacer></v-spacer> -->
                                                 <v-row>
                                                     <v-col class="d-flex" cols="12" sm="3" v-if="false">
-                                                        <v-select solo :items="descriptionFilter" label="Description Filter" :clearable="true" v-model="descriptionValue" @change="getLocalManagementSystemReport"></v-select>
+                                                        <v-select solo :items="descriptionFilter" label="Description Filter" :clearable="true" v-model="descriptionValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
                                                     </v-col>
                                                     <v-col class="d-flex" cols="12" sm="3" v-if="false">
-                                                        <v-select solo :items="transactionTypeFilter" label="Transaction Type Filter" :clearable="true" v-model="transactionTypeValue" @change="getLocalManagementSystemReport"></v-select>
+                                                        <v-select solo :items="transactionTypeFilter" label="Transaction Type Filter" :clearable="true" v-model="transactionTypeValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
                                                     </v-col>
                                                     <v-col class="d-flex" cols="12" sm="3" v-if="false">
-                                                        <!-- <template>
-                                                            <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
+                                                        <template>
+                                                            <!-- <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
                                                                 <div slot="header" slot-scope="header" class="slot">
                                                                     <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
                                                                 </div>
@@ -78,24 +78,20 @@
                                                                         <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
                                                                     </div>
                                                                 </div>
-                                                            </date-range-picker>
-                                                        </template> -->
+                                                            </date-range-picker> -->
+                                                        </template>
                                                     </v-col>
                                                     <v-col class="d-flex search_width" cols="12" sm="3">
                                                         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
                                                     </v-col>
                                                 </v-row>
                                             </v-card-title>
-                                            <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" class="table-hover-class table-with-checkbox" :itemsPerPage="itemsPerPage">
-                                                <template v-slot:[`item.type`]="{ item }">
-                                                    <td>{{item.selectable.type}}</td>
+                                            <v-data-table class="table-hover-class table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!-- @current-items="currentItems"  -->
+                                                <template v-slot:[`item.company`]="{ item }">
+                                                    <td>{{item.selectable.company}}</td>
                                                 </template>
-                                                <template v-slot:[`item.country`]="{ item }">
-                                                    <!-- <td>{{item.selectable.country}}</td> -->
-                                                    <td>{{item.selectable.country.name}}</td>
-                                                </template>
-                                                <template v-slot:[`item.city`]="{ item }">
-                                                    <td>{{item.selectable.city}}</td>
+                                                <template v-slot:[`item.ip`]="{ item }">
+                                                    <td>{{item.selectable.ip}}</td>
                                                 </template>
                                                 <template v-slot:[`item.notes`]="{ item }">
                                                     <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
@@ -131,7 +127,7 @@
                         </div>
                     </v-app>
                 </div>
-                <div class="col" v-else>
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="text-center">You have no access for this page</h4>
@@ -145,7 +141,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Import Management System Local</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Import Management System Residential VPS</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -157,7 +153,7 @@
                                     <div class="file-select-button" id="fileName">Choose File</div>
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" name="chooseFile" required/>
+                                    <input @change="chooseFile" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile" required/>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +171,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Report</h5>
-                        <button type="button" class="close" aria-label="Close" @click.prevent="closeViewModal">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -185,7 +181,7 @@
                         </p>
                         <p>
                             <span class="font-weight-bold"> Amount :</span> {{viewModalDetail.amount}}
-                        </p> <!--  {{viewModalDetail.amount | toCurrency}}   -->
+                        </p> <!--   {{viewModalDetail.amount | toCurrency}}   -->
                         <p>
                             <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description}}
                         </p>
@@ -198,7 +194,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Local</h5>
+                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Residential VPS</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeRmAmexModal">
                             <span style="color:#fff;" aria-hidden="true">&times;</span>
                         </button>
@@ -206,33 +202,25 @@
                     <div class="modal-body">
                         <div class="card-body">
                             <div class="col-12">
-                                <Form @submit="saveLocalManagementSystem" :validation-schema="schema" v-slot="{ errors }">
+                                <Form @submit="saveResidentialVpcManagementSystem" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Type</label>
-                                                <Field name="Type" v-model="activity.type">
-                                                    <v-select name="Type" :class="{'form-control': true , 'border-red-600':errors.Type }" :items="statusList" v-model="activity.type"></v-select>
-                                                </Field>
-                                                <span class="text-red-600" v-if="errors.Type">Type Can not be empty</span>
+                                                <label class="form-control-label" for="input-username">Name</label>
+                                                <Field type="text" id="input-username" name="Company" :class="{'form-control': true , 'border-red-600':errors.Company }" v-model="activity.company"/>
+                                                <span class="text-red-600" v-if="errors.Company">Name Can not be empty</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Country</label>
-                                                <Field name="Country" v-model="activity.country">
-                                                    <v-select name="Country" :class="{'form-control': true , 'border-red-600':errors.Country }" :items="countryList" item-value="key" v-model="activity.country"></v-select>
-                                                </Field>
-                                                <span class="text-red-600" v-if="errors.Country">Country Can not be empty</span>
+                                                <label class="form-control-label" for="input-username">IP</label>
+                                                <Field type="text" id="input-username" name="Ip" :class="{'form-control': true , 'border-red-600':errors.Ip }" v-model="activity.ip"/>
+                                                <span class="text-red-600" v-if="errors.Ip">IP Can not be empty</span>
+                                                <!-- <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span> -->
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-lg-12 py-0">
-                                            <label class="form-control-label" for="input-username">City</label>
-                                            <Field type="text" name="City" id="input-username" :class="{'form-control': true , 'border-red-600':errors.City }" v-model="activity.city"/>
-                                            <span class="text-red-600" v-if="errors.City">City Can not be empty</span>
-                                        </div>
                                         <div class="col-lg-12 py-0 mt-3">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Notes</label>
@@ -261,7 +249,6 @@
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 export default {
-    // props: [ 'countries'],
     components: {
         Form, Field
     },
@@ -274,9 +261,8 @@ export default {
             dataMetrics: [],
             search: '',
             headers: [
-                { title: 'Type', align: 'start', sortable: false, key: 'type' },
-                { title: 'Country ', key: 'country' },
-                { title: 'City', key: 'city' },
+                { title: 'Name', align: 'start', sortable: false, key: 'company' },
+                { title: 'IP ', key: 'ip' },
                 { title: 'Notes', key: 'notes' },
                 { title: 'Action', key: 'action' },
             ],
@@ -284,23 +270,12 @@ export default {
             file: '',
             selected: [],
             viewModalDetail: {},
+            currentItemsTable: [],
             itemsPerPage: -1,
-            statusList: [
-                {
-                    title: 'House'
-                },
-                {
-                    title: 'Apartment'
-                },
-                {
-                    title: 'Office'
-                },
-            ],
             activity: {
                 id: '',
-                type : '',
-                country : '',
-                city : '',
+                company : '',
+                ip : '',
                 notes : '',
             },
             activityType: 'Create',
@@ -312,10 +287,10 @@ export default {
             items: [ 'CREDIT','DEBIT'],
             selectedtTransactionType: [ 'CREDIT','DEBIT'],
             cardMemberList: [],
-            countryList: [],
             showImportIcon: true,
             permissions: {},
             selectedFile: '',
+            // backendErrorMessage: '',
         }
     },
     filters: {
@@ -335,19 +310,13 @@ export default {
         },
         schema() {
             return yup.object({
-                Type: yup.string().required(),
-                Country: yup.string().required(),
-                City: yup.string().required(),
+                Company: yup.string().required(),
+                Ip: yup.string().required(),
             });
         },
     },
     mounted() {
-        this.getLocalManagementSystemReport();
-        this.getAndSetCountry();
-        // this.countryList = this.countries.map((data) => {
-        //     data.text = data.name;
-        //     return data;
-        // });
+        this.getDatacenterVpcManagementSystemReport();
     },
     methods: {
         // open and close modal
@@ -358,23 +327,16 @@ export default {
             window.$('#exampleModalCenter').modal('hide');
         },
         // open and close view details modal
-        openViewModal() {
-            window.$('#viewDetail').modal('show');
-        },
-        closeViewModal() {
-            window.$('#viewDetail').modal('hide');
-        },
-        // open and close view details modal
         openRmAmexModal() {
             window.$('#createUpdateData').modal('show');
         },
         closeRmAmexModal() {
             window.$('#createUpdateData').modal('hide');
         },
-        // get management system data
-        getLocalManagementSystemReport() {
+        // get data center vps listings data
+        getDatacenterVpcManagementSystemReport() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/management_system/local', {
+            this.axios.get(this.$api + '/management_system/residentialvps', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -390,32 +352,6 @@ export default {
             })
             .catch(error => {
                 console.log(error)
-                this.showLoader = false;
-            });
-        },
-        // get and set country code
-        getAndSetCountry() {
-            this.showLoader = true;
-            this.axios.get(this.$api + '/settings/countries', {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    response.data.data.forEach((val) => {
-                        this.countryList.push({
-                            key: val.id,
-                            title: val.name
-                        })
-                    });
-                    this.countryList.sort((a, b) => a.name - b.name);
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
                 this.showLoader = false;
             });
         },
@@ -447,7 +383,7 @@ export default {
         checkOpenPicker(e) {
             console.log(e)
             setTimeout(() => {
-                this.getLocalManagementSystemReport();
+                this.getDatacenterVpcManagementSystemReport();
             },100)
         },
         // edit data
@@ -455,22 +391,19 @@ export default {
             const result = this.dataMetrics.find((val) => {
                 return val.id == id
             });
-            console.log(result, 'result')
-            this.activityType = 'Update';
+            this.activityType = 'Update'
             this.activity.id = id;
-            this.activity.type = result.type;
-            this.activity.country = result.country_id;
-            this.activity.city = result.city;
+            this.activity.company = result.company;
+            this.activity.ip = result.ip;
             this.activity.notes = result.notes ? result.notes : '';
             this.openRmAmexModal();
         },
-        // create new
+        // create new data
         createActivity() {
             this.activityType = 'Create';
             this.activity.id = '';
-            this.activity.type = '';
-            this.activity.country = '';
-            this.activity.city = '';
+            this.activity.company = '';
+            this.activity.ip = '';
             this.activity.notes = '';
             this.openRmAmexModal();
         },
@@ -478,7 +411,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/management_system/local/' + id, {
+                this.axios.delete(this.$api + '/management_system/residentialvps/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -492,7 +425,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.getLocalManagementSystemReport();
+                        this.getDatacenterVpcManagementSystemReport();
                         this.showLoader = false;
                     }
                 })
@@ -508,7 +441,7 @@ export default {
                 });
             }
         },
-        // delete selected / multiple delete
+        // delete selected/multiple delete
         deleteSelected() {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
@@ -518,7 +451,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('selectedRecord', JSON.stringify(multipleRow));
-                this.axios.post(this.$api + '/management_system/local/deleteMutipleRecord', formData, {
+                this.axios.post(this.$api + '/management_system/residentialvps/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -533,7 +466,7 @@ export default {
                             type: 'success'
                         });
                         this.selected = [];
-                        this.getLocalManagementSystemReport();
+                        this.getDatacenterVpcManagementSystemReport();
                         this.showLoader = false;
                     }
                 })
@@ -549,23 +482,22 @@ export default {
                 });
             }
         },
-        // view selected
+        // view
         view(id) {
             console.log(id)
             // this.viewModalDetail = _.find(this.dataMetrics, ['id', id]);
-            this.openViewModal();
+            window.$('#viewDetail').modal('show');
         },
-        // save and update management system
-        saveLocalManagementSystem() {
+        // save and update
+        saveResidentialVpcManagementSystem() {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('id', this.activity.id);
-            formData.append('type', this.activity.type);
-            formData.append('country_id', this.activity.country);
-            formData.append('city', this.activity.city);
+            formData.append('company', this.activity.company);
+            formData.append('ip', this.activity.ip);
             formData.append('notes', this.activity.notes);
             this.activityType != 'Create' && formData.append('_method', 'PUT');
-            const postUrl = this.activityType == 'Create' ? '/management_system/local' : `/management_system/local/${this.activity.id}`
+            const postUrl = this.activityType == 'Create' ? '/management_system/residentialvps' : `/management_system/residentialvps/${this.activity.id}`
             this.axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
@@ -581,12 +513,14 @@ export default {
                         type: 'success'
                     });
                     this.closeRmAmexModal();
-                    this.getLocalManagementSystemReport();
+                    this.getDatacenterVpcManagementSystemReport();
                     this.showLoader = false;
+                    // this.backendErrorMessage = '';
                 }
             })
             .catch(error => {
                 console.log(error)
+                // this.backendErrorMessage = error.response.data.errors[0]
                 this.$toast.open({
                     message: error.message,
                     position: 'top-right',
@@ -599,7 +533,7 @@ export default {
         // downloading csv
         downloadCsv() {
             this.axios.post(this.$api + '/settings/downloadfile', {
-                filename: 'localmanagementsystem'
+                filename: 'datacenterVpcManagementSystem'
             }, {
                 headers: {
                     "Content-Type": "application/json",
@@ -638,7 +572,7 @@ export default {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('file', this.selectedFile);
-            this.axios.post(this.$api + '/management_system/local/importLocalCSV', formData, {
+            this.axios.post(this.$api + '/management_system/residentialvps/importLocalCSV', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -647,7 +581,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.closeModal();
-                    this.getLocalManagementSystemReport();
+                    this.getDatacenterVpcManagementSystemReport();
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({

@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="bg-default main-content-height">
         <div class="header bg-primary pb-6">
             <div class="container-fluid">
                 <div class="header-body">
-                    <div class="row align-items-center">
+                    <div class="row align-items-center mt--4">
                         <div class="col-lg-6 col-7 pt-0">
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
@@ -15,14 +15,14 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right" v-if="showImportIcon">
-                            <router-link to="/admin/img/doc/ipm-management-system-datavps-demo.csv" class="btn btn-lg btn-neutral btn_animated" download>
+                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
                                 <div>
                                     <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
                                     <span class="btn-inner--text">Demo.csv</span>
                                 </div>
                             </router-link>
-                            <router-link to="" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-lg btn-neutral btn_animated">Import CSV</router-link>
-                            <router-link to="" @click="createActivity" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
+                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Import CSV</router-link>
+                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'" @click.prevent="createActivity">Add New Record</button>
                         </div>
                     </div>
                 </div>
@@ -30,9 +30,9 @@
         </div>
         <loader-component v-if="showLoader"></loader-component>
         <!-- Page content -->
-        <div class="container-fluid mt--6">
+        <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="permissions.view == '1'">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -87,23 +87,34 @@
                                                 </v-row>
                                             </v-card-title>
                                             <v-data-table class="table-hover-class table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!-- @current-items="currentItems"  -->
-                                                <!-- <template v-slot:item.action="{ item }">
+                                                <template v-slot:[`item.company`]="{ item }">
+                                                    <td>{{item.selectable.company}}</td>
+                                                </template>
+                                                <template v-slot:[`item.ip`]="{ item }">
+                                                    <td>{{item.selectable.ip}}</td>
+                                                </template>
+                                                <template v-slot:[`item.notes`]="{ item }">
+                                                    <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
+                                                </template>
+                                                <template v-slot:[`item.action`]="{ item }">
                                                     <td>
-                                                        <a href="javascript:void(0);" @click="edit(item.id)">
-                                                            <img src="/admin/img/icons/edit.svg" style="width:30px">
-                                                        </a>
-                                                        <a href="javascript:void(0);" @click="deleteData(item.id)">
-                                                            <img src="/admin/img/icons/bin.svg" style="width:30px">
-                                                        </a>
+                                                        <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="edit(item.selectable.id)">
+                                                            <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit">
+                                                        </button>
+                                                        <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deleteData(item.selectable.id)">
+                                                            <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete">
+                                                        </button>
                                                     </td>
-                                                </template> -->
+                                                </template>
                                                 <template v-slot:top v-if="selected.length > 0">
                                                     <div class="p-2 text-right">
                                                         <v-btn
                                                             elevation="2"
-                                                            outlined
+                                                            variant="outlined"
                                                             raised
-                                                            rounded
+                                                            rounded="xl"
+                                                            class="me-1 disable-button"
+                                                            :disabled="permissions.delete_auth == '0'"
                                                             @click="deleteSelected"
                                                         >Remove Selected</v-btn>
                                                     </div>
@@ -116,6 +127,13 @@
                         </div>
                     </v-app>
                 </div>
+                <div class="col" v-else>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- Start Import CSV Modal -->
@@ -124,7 +142,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Import Management System Datacenter VPS</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -133,14 +151,14 @@
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
-                                    <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
+                                    <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
+                                    <input @change="chooseFile" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile" required/>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" @click.prevent="closeModal">Close</button>
                             <button type="submit" class="btn btn-primary">Import</button>
                         </div>
                     </form>
@@ -177,25 +195,28 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Datacenter VPS</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" aria-label="Close" @click.prevent="closeRmAmexModal">
                             <span style="color:#fff;" aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="card-body">
                             <div class="col-12">
-                                <form @submit.prevent="saveDatacenterVpcManagementSystem">
+                                <Form @submit="saveDatacenterVpcManagementSystem" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Name</label>
-                                                <input type="text" id="input-username"  :class="{'form-control': true , 'border-red-600':errors!= '' ? true : false }" v-model="activity.company">
+                                                <Field type="text" id="input-username" name="Company" :class="{'form-control': true , 'border-red-600':errors.Company }" v-model="activity.company"/>
+                                                <span class="text-red-600" v-if="errors.Company">Name Can not be empty</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">IP</label>
-                                                <input type="text" id="input-username"  :class="{'form-control': true , 'border-red-600':errors!= '' ? true : false }" v-model="activity.ip">
+                                                <Field type="text" id="input-username" name="Ip" :class="{'form-control': true , 'border-red-600':errors.Ip }" v-model="activity.ip"/>
+                                                <span class="text-red-600" v-if="errors.Ip">IP Can not be empty</span>
+                                                <!-- <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span> -->
                                             </div>
                                         </div>
                                     </div>
@@ -204,9 +225,6 @@
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Notes</label>
                                                 <textarea :class="{'form-control': true}"  name="" cols="30" rows="10" v-model="activity.notes"></textarea>
-                                                <!-- <ValidationProvider v-slot="{ errors }" rules="required" name="Notes">
-                                                    <span class="text-red-600">{{ errors[0] }}</span>
-                                                </ValidationProvider> -->
                                             </div>
                                         </div>
                                     </div>
@@ -217,7 +235,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                </Form>
                             </div>
                         </div>
                     </div>
@@ -228,22 +246,11 @@
 </template>
 
 <script>
-// Vue.filter('toCurrency', function (value) {
-//     // value =  parseInt(value);
-//     // if (typeof value !== "number") {
-//     //     return value;
-//     // }
-//     value = parseFloat(value).toFixed(2);
-//     var formatter = new Intl.NumberFormat('en-US', {
-//         style: 'currency',
-//         currency: 'USD',
-//         minimumFractionDigits: 2
-//     });
-//     return formatter.format(value);
-// });
+import * as yup from 'yup';
+import { Form, Field } from 'vee-validate';
 export default {
     components: {
-
+        Form, Field
     },
     data() {
         let today = new Date();
@@ -280,7 +287,10 @@ export default {
             items: [ 'CREDIT','DEBIT'],
             selectedtTransactionType: [ 'CREDIT','DEBIT'],
             cardMemberList: [],
-            showImportIcon: true
+            showImportIcon: true,
+            permissions: {},
+            selectedFile: '',
+            // backendErrorMessage: '',
         }
     },
     filters: {
@@ -296,242 +306,180 @@ export default {
     computed: {
         sumField() {
             const key = 'amount';
-            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        }
+            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+        },
+        schema() {
+            return yup.object({
+                Company: yup.string().required(),
+                Ip: yup.string().required(),
+            });
+        },
     },
     mounted() {
         this.getDatacenterVpcManagementSystemReport();
     },
     methods: {
+        // open and close modal
+        openModal() {
+            window.$('#exampleModalCenter').modal('show');
+        },
+        closeModal() {
+            window.$('#exampleModalCenter').modal('hide');
+        },
+        // open and close view details modal
+        openRmAmexModal() {
+            window.$('#createUpdateData').modal('show');
+        },
+        closeRmAmexModal() {
+            window.$('#createUpdateData').modal('hide');
+        },
+        // get data center vps listings data
         getDatacenterVpcManagementSystemReport() {
             this.showLoader = true;
-            // let formData = new FormData();
-            // formData.append('startDate', this.dateRange.startDate.toDateString());
-            // formData.append('endDate', this.dateRange.endDate.toDateString());
-            // if(this.descriptionValue) {
-            //     formData.append('descriptionValue', this.descriptionValue);
-            // }
-            // if(this.transactionTypeValue) {
-            //     formData.append('transactionTypeValue', this.transactionTypeValue);
-            // }
-            // const csrf = document.querySelector('meta[name="csrf-token"]').content;
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': csrf
-            // };
-            // axios.post('/getDatacenterVpcManagementSystemReport' , formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // })
-            // .then(response => {
-            //     console.log(response);
-            //     if(response) {
-            //         const result = response.data.data;
-            //         // result.map((data) => {
-            //         //     data.date = data.date.split(' ')[0];
-            //         // });
-            //         this.dataMetrics = result;
-            //         // response.data.allDescription.map((data) => {
-            //         //     this.descriptionFilter.push({'text' : data.description});
-            //         // });
-            //         // response.data.allTransactionType.map((data) => {
-            //         //     this.transactionTypeFilter.push({'text' : data.transaction_type});
-            //         // });
-            //     }
-            //     this.showLoader = false;
-
-            // }).catch((error) => {
-            //     console.log(error)
-            //     this.showLoader = false;
-            // })
+            this.axios.get(this.$api + '/management_system/datacenter', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const Data = response.data;
+                    this.dataMetrics = Data.data.data;
+                    this.permissions = Data.permission;
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                this.showLoader = false;
+            });
         },
-        filterIPMChaseInkActivity() {
-            // this.showLoader = true;
-            // let formData = new FormData();
-            // formData.append('startDate', this.dateRangeTabReport.startDate.toDateString());
-            // formData.append('endDate', this.dateRangeTabReport.endDate.toDateString());
-            // this.selectedtTransactionType.length == this.items.length ? formData.append('transactionTypeValue', 'ALL') : formData.append('transactionTypeValue', this.selectedtTransactionType);
-            // const csrf = document.querySelector('meta[name="csrf-token"]').content;
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': csrf
-            // };
-            // axios.post('/filterIPMChaseInkActivity' , formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // })
-            // .then(response => {
-            //     // console.log(response);
-            //     this.cardMemberList = response.data.data;
-            //     this.showLoader = false;
+        // filterIPMChaseInkActivity() {
+        //     this.showLoader = true;
+        //     let formData = new FormData();
+        //     formData.append('startDate', this.dateRangeTabReport.startDate.toDateString());
+        //     formData.append('endDate', this.dateRangeTabReport.endDate.toDateString());
+        //     this.selectedtTransactionType.length == this.items.length ? formData.append('transactionTypeValue', 'ALL') : formData.append('transactionTypeValue', this.selectedtTransactionType);
+        //     const csrf = document.querySelector('meta[name="csrf-token"]').content;
+        //     axios.defaults.headers.common = {
+        //         'X-Requested-With': 'XMLHttpRequest',
+        //         'X-CSRF-TOKEN': csrf
+        //     };
+        //     axios.post('/filterIPMChaseInkActivity' , formData, {
+        //         headers: {
+        //             'Content-Type': 'multipart/form-data'
+        //         },
+        //     })
+        //     .then(response => {
+        //         // console.log(response);
+        //         this.cardMemberList = response.data.data;
+        //         this.showLoader = false;
 
-            // }).catch((error) => {
-            //     this.showLoader = false;
-            // })
-        },
+        //     }).catch((error) => {
+        //         this.showLoader = false;
+        //     })
+        // },
         checkOpenPicker(e) {
             console.log(e)
             setTimeout(() => {
                 this.getDatacenterVpcManagementSystemReport();
             },100)
         },
-        checkOpenPickerTabReport() {
-             setTimeout(() => {
-                // this.filterIPMChaseInkActivity();
-            },100)
-        },
+        // edit data
         edit(id) {
-            console.log(id)
-            // window.location.href = `/bank_accounts/ipmchase/${id}/edit`;
-            // const data = _.filter(this.dataMetrics, x => { return x.id == id; });
-            // const restult = data[0];
-            // this.activityType = 'Update'
-            // this.activity.id = id;
-            // this.activity.company = restult.company;
-            // this.activity.ip = restult.ip;
-            // this.activity.notes = restult.notes ? restult.notes : '';
-            // window.$('#createUpdateData').modal('show');
+            const result = this.dataMetrics.find((val) => {
+                return val.id == id
+            });
+            this.activityType = 'Update'
+            this.activity.id = id;
+            this.activity.company = result.company;
+            this.activity.ip = result.ip;
+            this.activity.notes = result.notes ? result.notes : '';
+            this.openRmAmexModal();
         },
+        // create new data
         createActivity() {
             this.activityType = 'Create';
             this.activity.id = '';
             this.activity.company = '';
             this.activity.ip = '';
             this.activity.notes = '';
-            window.$('#createUpdateData').modal('show');
+            this.openRmAmexModal();
         },
+        // delete data
         deleteData(id) {
-            console.log(id)
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                // axios.defaults.headers.common = {
-                //     'X-Requested-With': 'XMLHttpRequest',
-                //     'X-CSRF-TOKEN': window.csrf_token
-                // };
-                // let formData = new FormData();
-                // formData.append('id', id);
-                // axios.post(`/deleteDatacenterVpcManagementSystemRow`, formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data'
-                //     },
-                // }).then(response => {
-                //     if(response) {
-                //         console.log(response, 'sasa')
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: response.data.message,
-                //             type: 'success',
-                //         };
-                //         Bus.$emit('flash-message', this.message, '');
-                //         this.dataMetrics = _.filter(this.dataMetrics, x => { return x.id !== id; });
-                //     }else {
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: 'Something Went Wrong!',
-                //             type: 'error',
-                //         }
-                //         Bus.$emit('flash-message', this.message, '');
-                //     }
-                // }).catch(error => {
-                //     this.showLoader = false;
-                //     console.log(error);
-                //     this.message = {
-                //         text: error.response.data.message,
-                //         type: 'error',
-                //     }
-                //     Bus.$emit('flash-message', this.message, '');
-                // });
+                this.axios.delete(this.$api + '/management_system/datacenter/' + id, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'Data deleted',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.getDatacenterVpcManagementSystemReport();
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                });
             }
-        },
-        handleUpload(event) {
-            const files = event.target.files;
-            console.log(files[0].name, '2121212')
-            this.file = files;
-        },
-        // upload csv file
-        uploadCsv() {
-            this.showLoader = true;
-            // let formData = new FormData();
-            // formData.append('file', this.file[0]);
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': window.csrf_token
-            // };
-            // axios.post(`/importDatacenterVpcManagementSystemCSV`,formData,{
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // }).then(response => {
-            //     if(response) {
-            //         console.log(response, 'sasa')
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: response.data.message,
-            //             type: 'success',
-            //         };
-            //         Bus.$emit('flash-message', this.message, '/management_system/datavps');
-            //     }else {
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: 'Something Went Wrong!',
-            //             type: 'error',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '');
-            //     }
-            // }).catch((error) => {
-            //     this.showLoader = false;
-            //     console.log(error);
-            //     this.message = {
-            //         text: error.response.data.message,
-            //         type: 'error',
-            //     }
-            //     Bus.$emit('flash-message', this.message, '');
-            // });
         },
         // delete selected/multiple delete
         deleteSelected() {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                // axios.defaults.headers.common = {
-                //     'X-Requested-With': 'XMLHttpRequest',
-                //     'X-CSRF-TOKEN': window.csrf_token
-                // };
-                // let formData = new FormData();
-                // formData.append('selectedRow', JSON.stringify(this.selected));
-                // axios.post(`/deleteDatacenterVpcManagementSystemMutipleRows`, formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data'
-                //     },
-                // }).then(response => {
-                //     if(response) {
-                //         console.log(response, 'sasa')
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: response.data.message,
-                //             type: 'success',
-                //         };
-                //         Bus.$emit('flash-message', this.message, '');
-                //         this.dataMetrics = this.dataMetrics.filter(ar => !this.selected.find(rm => (rm.id === ar.id) ));
-                //         this.selected = [];
-                //     }else {
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: 'Something Went Wrong!',
-                //             type: 'error',
-                //         }
-                //         Bus.$emit('flash-message', this.message, '');
-                //     }
-                // }).catch(error => {
-                //     this.showLoader = false;
-                //     console.log(error);
-                //     this.message = {
-                //         text: error.response.data.message,
-                //         type: 'error',
-                //     }
-                //     Bus.$emit('flash-message', this.message, '');
-                // });
+                let formData = new FormData();
+                let multipleRow = [];
+                this.selected.forEach((val) => {
+                    multipleRow.push({id: val});
+                })
+                formData.append('selectedRecord', JSON.stringify(multipleRow));
+                this.axios.post(this.$api + '/management_system/datacenter/deleteMutipleRecord', formData, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'Data deleted',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.selected = [];
+                        this.getDatacenterVpcManagementSystemReport();
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                });
             }
         },
         // view
@@ -540,54 +488,124 @@ export default {
             // this.viewModalDetail = _.find(this.dataMetrics, ['id', id]);
             window.$('#viewDetail').modal('show');
         },
-        currentItems(currentItems) {
-            this.currentItemsTable = currentItems;
-        },
         // save and update
         saveDatacenterVpcManagementSystem() {
             this.showLoader = true;
-            // let formData = new FormData();
-            // formData.append('id', this.activity.id);
-            // formData.append('company', this.activity.company);
-            // formData.append('ip', this.activity.ip);
-            // formData.append('notes', this.activity.notes);
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': window.csrf_token
-            // };
-            // const postUrl = this.activityType == 'Create' ? 'saveDatacenterVpcManagementSystem' : 'updateDatacenterVpcManagementSystem'
-            // axios.post(`/${postUrl}`,formData,{
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // }).then(response => {
-            //     if(response) {
-            //         console.log(response, 'sasa')
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: response.data.message,
-            //             type: 'success',
-            //         };
-            //         Bus.$emit('flash-message', this.message, '');
-            //         $('#createUpdateData').modal('hide');
-            //         this.getDatacenterVpcManagementSystemReport();
-            //     }else {
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: 'Something Went Wrong!',
-            //             type: 'error',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '');
-            //     }
-            // }).catch((error) => {
-            //     this.showLoader = false;
-            //     console.log(error);
-            //     this.message = {
-            //         text: error.response.data.message,
-            //         type: 'error',
-            //     }
-            //     Bus.$emit('flash-message', this.message, '');
-            // });
+            let formData = new FormData();
+            formData.append('id', this.activity.id);
+            formData.append('company', this.activity.company);
+            formData.append('ip', this.activity.ip);
+            formData.append('notes', this.activity.notes);
+            this.activityType != 'Create' && formData.append('_method', 'PUT');
+            const postUrl = this.activityType == 'Create' ? '/management_system/datacenter' : `/management_system/datacenter/${this.activity.id}`
+            this.axios.post(`${this.$api}${postUrl}`, formData, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: 'Data saved',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.closeRmAmexModal();
+                    this.getDatacenterVpcManagementSystemReport();
+                    this.showLoader = false;
+                    // this.backendErrorMessage = '';
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                // this.backendErrorMessage = error.response.data.errors[0]
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.showLoader = false;
+            });
+        },
+        // downloading csv
+        downloadCsv() {
+            this.axios.post(this.$api + '/settings/downloadfile', {
+                filename: 'datacenterVpcManagementSystem'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                },
+                responseType: 'blob',
+            })
+            .then(response => {
+                let blob = new Blob([response.data], { type:'application/csv' } );
+                const _url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = _url;
+                link.setAttribute('download', 'demo.csv');
+                document.body.appendChild(link);
+                link.click();
+                this.$toast.open({
+                    message: 'File downloaded',
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'success'
+                });
+            })
+            .catch(error => {
+                console.log(error)
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.showLoader = false;
+            });
+        },
+        // upload csv file
+        uploadCsv() {
+            this.showLoader = true;
+            let formData = new FormData();
+            formData.append('file', this.selectedFile);
+            this.axios.post(this.$api + '/management_system/datacenter/importLocalCSV', formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.closeModal();
+                    this.getDatacenterVpcManagementSystemReport();
+                    this.showLoader = false;
+                    this.selectedFile = '';
+                    this.$toast.open({
+                        message: 'File imported',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.showLoader = false;
+            });
+        },
+        // select csv file
+        chooseFile(e) {
+            this.selectedFile = e.target.files[0];
         }
     }
 }

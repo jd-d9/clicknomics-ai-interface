@@ -34,7 +34,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1'">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-header">
@@ -88,7 +88,9 @@
                                                                 ></v-select>
                                                             </div>
                                                         </v-col>
-                                                        <v-col class="d-flex justify-content-end" cols="12" sm="3"></v-col>
+                                                        <v-col class="d-flex justify-content-end" cols="12" sm="3">
+                                                            <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                                        </v-col>
                                                         <div class="col-3 ms-auto">
                                                             <div class="ms-auto search-input position-relative">
                                                                 <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
@@ -137,37 +139,7 @@
                                                 <v-card-title>
                                                     <v-row>
                                                         <v-col class="d-flex justify-content-center" cols="12" sm="12">
-                                                            <!-- <template>
-                                                                <date-range-picker class="report" v-model="dateRangeTabReport" format="mm/dd/yyyy" @update="checkOpenPickerTabReport">
-                                                                    <div slot="header" slot-scope="header" class="slot">
-                                                                        <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                                                    </div>
-                                                                    <template #input="picker" style="min-width: 350px;">
-                                                                        {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                                                                    </template>
-                                                                    <template #date="data">
-                                                                        <span class="small">{{ data.date | dateCell }}</span>
-                                                                    </template>
-                                                                    <template #ranges="ranges">
-                                                                        <div class="ranges">
-                                                                            <ul>
-                                                                            <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                                                                <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                                                                {{ range[1].toDateString() }}</small>
-                                                                            </li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </template>
-                                                                    <div slot="footer" slot-scope="data" class="slot">
-                                                                        <div>
-                                                                            <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                                                        </div>
-                                                                        <div style="margin-left: auto">
-                                                                            <router-link tock="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</router-link>
-                                                                        </div>
-                                                                    </div>
-                                                                </date-range-picker>
-                                                            </template> -->
+                                                            <date-range-picker :value="selectedRangeTwo" @update:value="updateRangeTwo"></date-range-picker>
                                                         </v-col>
                                                     </v-row>
                                                 </v-card-title>
@@ -276,7 +248,7 @@
                         </div>
                     </v-app>
                 </div>
-                <div class="col" v-else>
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="text-center">You have no access for this page</h4>
@@ -366,12 +338,15 @@
 </template>
 
 <script>
-// import moment from 'moment';
+import DateRangePicker from '../common/DateRangePicker.vue';
+import moment from 'moment';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 export default {
     components: {
-        Form, Field
+        Form, 
+        Field,
+        DateRangePicker
     },
     data() {
         return {
@@ -401,6 +376,8 @@ export default {
             showImportIcon: true,
             selectedFile: '',
             searchInput: '',
+            selectedRange: 'Thu Jun 15 2023 - Sun Jul 23 2023',
+            selectedRangeTwo: 'Thu Jun 15 2023 - Sun Jul 23 2023'
         }
     },
     computed: {
@@ -424,9 +401,6 @@ export default {
         this.getTeamMemberPaymentList();
     },
     methods: {
-        onLanguageChange() {
-            console.log('change-----')
-        },
         // open/close import csv modal
         openImportCsvModal() {
             window.$('#importCsvModal').modal('show');
@@ -448,6 +422,16 @@ export default {
         closeTeamMemberModal() {
             window.$('#teamMemberModal').modal('hide');
         },
+        // update date range
+        updateRange(range) {
+            this.selectedRange = range;
+            this.getTeamMemberPaymentList();
+        },
+        // update date range
+        updateRangeTwo(range) {
+            this.selectedRangeTwo = range;
+            this.genrateTeamMembersPaymentsReport();
+        },
         // search payment from table
         searchPayments() {
             this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
@@ -461,10 +445,13 @@ export default {
         },
         // get team member payment details
         getTeamMemberPaymentList() {
-            console.log(`Bearer ${sessionStorage.getItem('Token')}`)
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/accounting/teamMemberPayment';
+            if(this.selectedRange) {
+                queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+            }
             if(this.fromAccount) {
                 queryString.set('fromAccount', this.fromAccount)
             }
@@ -614,10 +601,8 @@ export default {
         genrateTeamMembersPaymentsReport() {
             this.showLoader = true;
             this.axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport', {
-                // startDate: moment(new Date()).format('YYYY-MM-DD'),
-                // endDate: moment(new Date()).format('YYYY-MM-DD'),
-                startDate: '2022-06-19',
-                endDate: '2023-06-30',
+                startDate: moment(this.selectedRangeTwo.split('-').shift()).format('DD-MM-YYYY'),
+                endDate: moment(this.selectedRangeTwo.split('-').pop()).format('DD-MM-YYYY'),
             }, {
                 headers: {
                     "Content-Type": "application/json",

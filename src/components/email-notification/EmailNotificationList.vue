@@ -25,7 +25,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1'">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -73,7 +73,7 @@
                         </div>
                     </v-app>
                 </div>
-                <div class="col" v-else>
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="text-center">You have no access for this page</h4>
@@ -328,22 +328,22 @@ export default {
             console.log(id)
             this.openModal();
             // const data = _.filter(this.dataMetrics, x => { return x.id == id; });
-            const restult = this.dataMetrics.find((val) => {
+            const result = this.dataMetrics.find((val) => {
                 return val.id == id
             });
             this.activityType = 'Update'
             this.activity.id = id;
-            this.activity.email = restult.email;
-            this.activity.daily_report = restult.daily_report;
-            this.activity.monthly_report = restult.monthly_report;
-            this.activity.weekly_report = restult.weekly_report
-            this.activity.url_uptime_report = restult.url_uptime_report;
-            this.activity.account_monitoring_report = restult.account_monitoring_report;
-            this.activity.networks_monitoring_report = restult.networks_monitoring_report;
-            this.activity.ads_issue_report = restult.ads_issue_report;
-            this.activity.domain_expires_report = restult.domain_expires_report;
-            this.activity.payment_declined_report = restult.payment_declined_report;
-            this.activity.speed_test_report = restult.speed_test_report;
+            this.activity.email = result.email;
+            this.activity.daily_report = result.daily_report;
+            this.activity.monthly_report = result.monthly_report;
+            this.activity.weekly_report = result.weekly_report
+            this.activity.url_uptime_report = result.url_uptime_report;
+            this.activity.account_monitoring_report = result.account_monitoring_report;
+            this.activity.networks_monitoring_report = result.networks_monitoring_report;
+            this.activity.ads_issue_report = result.ads_issue_report;
+            this.activity.domain_expires_report = result.domain_expires_report;
+            this.activity.payment_declined_report = result.payment_declined_report;
+            this.activity.speed_test_report = result.speed_test_report;
         },
         // open model for create and set field values
         createActivity() {
