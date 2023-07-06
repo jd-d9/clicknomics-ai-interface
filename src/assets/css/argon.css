@@ -7075,3 +7075,7 @@ select{
     width: 30px !important;
     height: 30px !important;
 }
+/* email notification list */
+.v-selection-control {
+    justify-content: center;
+}

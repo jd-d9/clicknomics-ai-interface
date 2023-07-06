@@ -39,6 +39,10 @@ import ManualNetworkList from './components/manual-networks/ManualNetworkList.vu
 import ManualNetworkRevenueForm from './components/manual-networks-revenue/ManualNetworkRevenueForm.vue';
 import ManualNetworkRevenueList from './components/manual-networks-revenue/ManualNetworkRevenueList.vue';
 import EmailNotificationList from './components/email-notification/EmailNotificationList.vue';
+import ProcessEmailReportComponent from './components/process-email-report/ProcessEmailReportComponent.vue';
+import GoogleEliminatedAccountList from './components/archived-traffic-source/GoogleEliminatedAccountList.vue';
+import MicrosoftEliminatedAccountList from './components/archived-traffic-source/MicrosoftEliminatedAccountList.vue';
+import LocalManagementSystem from './components/management-system/LocalManagementSystem.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -109,6 +113,13 @@ const router = createRouter({
         {path: '/networks/manualNetworks/list', component: ManualNetworkRevenueList, meta: {auth: true}},
         // email notification module
         {path: '/settings/emailNotification', component: EmailNotificationList, meta: {auth: true}},
+        // process email report module
+        {path: '/settings/processEmailReport', component: ProcessEmailReportComponent, meta: {auth: true}},
+        // archived traffic source module
+        {path: '/settings/archived-accounts-google', component: GoogleEliminatedAccountList, meta: {auth: true}},
+        {path: '/settings/archived-accounts-microsoft', component: MicrosoftEliminatedAccountList, meta: {auth: true}},
+        // management system module
+        {path: '/management_system/local', component: LocalManagementSystem, meta: {auth: true}},
         // other
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page

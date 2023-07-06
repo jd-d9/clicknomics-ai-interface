@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-default main-content-height">
         <div class="header bg-primary pb-6">
             <div class="container-fluid">
                 <div class="header-body">
@@ -251,11 +251,17 @@ export default {
             toggleButton: true,
             breadCrumbText: 'Create',
             backendErrorMessage: '',
+            // intervalData: [
+            //     {title: 'Month', key: 'month'},
+            //     {title: '3 Month', key: '3month'},
+            //     {title: '6 Month', key: '6month'},
+            //     {title: 'Year', key: 'year'}
+            // ],
             intervalData: [
-                {title: 'Month', key: 'month'},
-                {title: '3 Month', key: '3month'},
-                {title: '6 Month', key: '6month'},
-                {title: 'Year', key: 'year'}
+                {title: 'Month', key: '30'},
+                {title: '3 Month', key: '90'},
+                {title: '6 Month', key: '180'},
+                {title: 'Year', key: '360'}
             ],
             
         }
@@ -300,7 +306,6 @@ export default {
                     this.addAccountLimit = Data.add_account_limit;
                     this.networkAccountLimit = Data.network_account_limit;
                     this.description = Data.description;
-                    this.hasTrial = Data.trial_period_days == 0 ? false : true;
                     this.showLoader = false;
                 }
             })
