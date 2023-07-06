@@ -57,16 +57,6 @@
                                         <strong>{{ invalidConfirmPass }}</strong>
                                     </span>
                                 </div>
-                                <div class="row">
-                                    <div class="col-6 text-left">
-                                        <div class="custom-control custom-control-alternative custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" name="remember" id="customCheckLogin">
-                                            <label class="custom-control-label" for="customCheckLogin">
-                                                <span class="text-muted">Remember me</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Reset Password</button>
                                 </div>

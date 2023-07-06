@@ -59,9 +59,9 @@
                                                     <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="editPlan(item.selectable.id)">
                                                         <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
                                                     </button>
-                                                    <!-- <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deletePlan(item.selectable.id)">
+                                                    <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deletePlan(item.selectable.id)">
                                                         <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
-                                                    </button> -->
+                                                    </button>
                                                 </td>
                                             </tr>
                                         </template>
@@ -166,36 +166,36 @@ export default {
             this.$router.push('/settings/plan-management/' + id + '/edit');
         },
         // delete plan
-        // deletePlan(id) {
-        //     this.showLoader = true;
-        //     this.axios.delete(this.$api + '/settings/plan/' + id, {
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-        //         }
-        //     })
-        //     .then(response => {
-        //         if(response.data.success) {
-        //             this.showLoader = false;
-        //             this.$toast.open({
-        //                 message: 'Plan deleted',
-        //                 position: 'top-right',
-        //                 duration: '5000',
-        //                 type: 'success'
-        //             });
-        //             this.getPlans();
-        //         }
-        //     })
-        //     .catch(error => {
-        //         this.showLoader = false;
-        //         this.$toast.open({
-        //             message: error.response.data.message,
-        //             position: 'top-right',
-        //             duration: '5000',
-        //             type: 'error'
-        //         });
-        //     }); 
-        // },
+        deletePlan(id) {
+            this.showLoader = true;
+            this.axios.delete(this.$api + '/settings/plan/' + id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.showLoader = false;
+                    this.$toast.open({
+                        message: 'Plan deleted',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.getPlans();
+                }
+            })
+            .catch(error => {
+                this.showLoader = false;
+                this.$toast.open({
+                    message: error.response.data.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+            }); 
+        },
     }
 }
 </script>
