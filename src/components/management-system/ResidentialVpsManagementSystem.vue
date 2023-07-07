@@ -10,7 +10,7 @@
                                     <li class="breadcrumb-item">
                                         <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Management System Datacenter VPS</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Management System Residential VPS</li>
                                 </ol>
                             </nav>
                         </div>
@@ -141,7 +141,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Import Management System Datacenter VPS</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Import Management System Residential VPS</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -194,7 +194,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Datacenter VPS</h5>
+                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Residential VPS</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeRmAmexModal">
                             <span style="color:#fff;" aria-hidden="true">&times;</span>
                         </button>
@@ -202,7 +202,7 @@
                     <div class="modal-body">
                         <div class="card-body">
                             <div class="col-12">
-                                <Form @submit="saveDatacenterVpcManagementSystem" :validation-schema="schema" v-slot="{ errors }">
+                                <Form @submit="saveResidentialVpcManagementSystem" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
@@ -336,7 +336,7 @@ export default {
         // get data center vps listings data
         getDatacenterVpcManagementSystemReport() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/management_system/datacenter', {
+            this.axios.get(this.$api + '/management_system/residentialvps', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -411,7 +411,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/management_system/datacenter/' + id, {
+                this.axios.delete(this.$api + '/management_system/residentialvps/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -451,7 +451,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('selectedRecord', JSON.stringify(multipleRow));
-                this.axios.post(this.$api + '/management_system/datacenter/deleteMutipleRecord', formData, {
+                this.axios.post(this.$api + '/management_system/residentialvps/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -489,7 +489,7 @@ export default {
             window.$('#viewDetail').modal('show');
         },
         // save and update
-        saveDatacenterVpcManagementSystem() {
+        saveResidentialVpcManagementSystem() {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('id', this.activity.id);
@@ -497,7 +497,7 @@ export default {
             formData.append('ip', this.activity.ip);
             formData.append('notes', this.activity.notes);
             this.activityType != 'Create' && formData.append('_method', 'PUT');
-            const postUrl = this.activityType == 'Create' ? '/management_system/datacenter' : `/management_system/datacenter/${this.activity.id}`
+            const postUrl = this.activityType == 'Create' ? '/management_system/residentialvps' : `/management_system/residentialvps/${this.activity.id}`
             this.axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
@@ -572,7 +572,7 @@ export default {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('file', this.selectedFile);
-            this.axios.post(this.$api + '/management_system/datacenter/importLocalCSV', formData, {
+            this.axios.post(this.$api + '/management_system/residentialvps/importLocalCSV', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`

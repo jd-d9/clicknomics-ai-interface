@@ -35,7 +35,7 @@
                                             <div class="form-group date-picker-3">
                                                 <label class="form-control-label" for="input-username">Date</label>
                                                 <Field name="date" v-model="date" :class="{'border-red-600': errors.date}">
-                                                    <datepicker v-model="date" valueType="format" :clearable="true" format="YYYY-MM-DD"></datepicker>
+                                                    <datepicker v-model="date" valueType="format" :clearable="true" format="YYYY-MM-DD" :range="true"></datepicker>
                                                 </Field>
                                                 <ErrorMessage class="text-red-600" name="date"/>
                                             </div>

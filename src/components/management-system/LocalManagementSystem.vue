@@ -22,7 +22,7 @@
                                 </div>
                             </router-link>
                             <router-link to="" @click="openModal" class="btn btn-lg btn-neutral btn_animated">Import CSV</router-link>
-                            <router-link to="" @click="createActivity" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
+                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'" @click.prevent="createActivity">Add New Record</button>
                         </div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -49,8 +49,8 @@
                                                         <v-select solo :items="transactionTypeFilter" label="Transaction Type Filter" :clearable="true" v-model="transactionTypeValue" @change="getLocalManagementSystemReport"></v-select>
                                                     </v-col>
                                                     <v-col class="d-flex" cols="12" sm="3" v-if="false">
-                                                        <template>
-                                                            <!-- <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
+                                                        <!-- <template>
+                                                            <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
                                                                 <div slot="header" slot-scope="header" class="slot">
                                                                     <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
                                                                 </div>
@@ -78,8 +78,8 @@
                                                                         <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
                                                                     </div>
                                                                 </div>
-                                                            </date-range-picker> -->
-                                                        </template>
+                                                            </date-range-picker>
+                                                        </template> -->
                                                     </v-col>
                                                     <v-col class="d-flex search_width" cols="12" sm="3">
                                                         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
@@ -91,13 +91,14 @@
                                                     <td>{{item.selectable.type}}</td>
                                                 </template>
                                                 <template v-slot:[`item.country`]="{ item }">
+                                                    <!-- <td>{{item.selectable.country}}</td> -->
                                                     <td>{{item.selectable.country.name}}</td>
                                                 </template>
                                                 <template v-slot:[`item.city`]="{ item }">
                                                     <td>{{item.selectable.city}}</td>
                                                 </template>
                                                 <template v-slot:[`item.notes`]="{ item }">
-                                                    <td>{{item.selectable.notes}}</td>
+                                                    <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
                                                 </template>
                                                 <template v-slot:[`item.action`]="{ item }">
                                                     <td>
@@ -113,9 +114,11 @@
                                                     <div class="p-2 text-right">
                                                         <v-btn
                                                             elevation="2"
-                                                            outlined
+                                                            variant="outlined"
                                                             raised
-                                                            rounded
+                                                            rounded="xl"
+                                                            class="me-1 disable-button"
+                                                            :disabled="permissions.delete_auth == '0'"
                                                             @click="deleteSelected"
                                                         >Remove Selected</v-btn>
                                                     </div>
@@ -127,6 +130,13 @@
                             </div>
                         </div>
                     </v-app>
+                </div>
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -142,14 +152,14 @@
                     </div>
                     <form @submit.prevent="uploadCsv">
                         <div class="modal-body">
-                                <div class="file-upload">
-                                    <div class="file-select">
-                                        <div class="file-select-button" id="fileName">Choose File</div>
-                                        <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
-                                        <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                        <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
-                                    </div>
+                            <div class="file-upload">
+                                <div class="file-select">
+                                    <div class="file-select-button" id="fileName">Choose File</div>
+                                    <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
+                                    <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
+                                    <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" name="chooseFile" required/>
                                 </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click.prevent="closeModal">Close</button>
@@ -189,40 +199,44 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Local</h5>
-                        <button type="button" class="close" aria-label="Close" @click.prevent="openRmAmexModal">
+                        <button type="button" class="close" aria-label="Close" @click.prevent="closeRmAmexModal">
                             <span style="color:#fff;" aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="card-body">
                             <div class="col-12">
-                                <form @submit.prevent="saveLocalManagementSystem">
+                                <Form @submit="saveLocalManagementSystem" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Type</label>
-                                                <v-select :class="{'form-control': true , 'border-red-600':errors!= '' ? true : false }" :items="statusList" v-model="activity.type"></v-select>
+                                                <Field name="Type" v-model="activity.type">
+                                                    <v-select name="Type" :class="{'form-control': true , 'border-red-600':errors.Type }" :items="statusList" v-model="activity.type"></v-select>
+                                                </Field>
+                                                <span class="text-red-600" v-if="errors.Type">Type Can not be empty</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Country</label>
-                                                <v-select :class="{'form-control': true , 'border-red-600':errors!= '' ? true : false }" :items="countryList" v-model="activity.country"></v-select>
+                                                <Field name="Country" v-model="activity.country">
+                                                    <v-select name="Country" :class="{'form-control': true , 'border-red-600':errors.Country }" :items="countryList" item-value="key" v-model="activity.country"></v-select>
+                                                </Field>
+                                                <span class="text-red-600" v-if="errors.Country">Country Can not be empty</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12 py-0">
                                             <label class="form-control-label" for="input-username">City</label>
-                                            <input type="text" id="input-username"  :class="{'form-control': true , 'border-red-600':errors!= '' ? true : false }" v-model="activity.city">
+                                            <Field type="text" name="City" id="input-username" :class="{'form-control': true , 'border-red-600':errors.City }" v-model="activity.city"/>
+                                            <span class="text-red-600" v-if="errors.City">City Can not be empty</span>
                                         </div>
                                         <div class="col-lg-12 py-0 mt-3">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Notes</label>
                                                 <textarea :class="{'form-control': true}"  name="" cols="30" rows="10" v-model="activity.notes"></textarea>
-                                                <!-- <ValidationProvider v-slot="{ errors }" rules="required" name="Notes">
-                                                    <span class="text-red-600">{{ errors[0] }}</span>
-                                                </ValidationProvider> -->
                                             </div>
                                         </div>
                                     </div>
@@ -233,7 +247,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                </Form>
                             </div>
                         </div>
                     </div>
@@ -244,10 +258,12 @@
 </template>
 
 <script>
+import * as yup from 'yup';
+import { Form, Field } from 'vee-validate';
 export default {
     // props: [ 'countries'],
     components: {
-
+        Form, Field
     },
     data() {
         let today = new Date();
@@ -268,7 +284,6 @@ export default {
             file: '',
             selected: [],
             viewModalDetail: {},
-            currentItemsTable: [],
             itemsPerPage: -1,
             statusList: [
                 {
@@ -317,10 +332,18 @@ export default {
         sumField() {
             const key = 'amount';
             return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        }
+        },
+        schema() {
+            return yup.object({
+                Type: yup.string().required(),
+                Country: yup.string().required(),
+                City: yup.string().required(),
+            });
+        },
     },
     mounted() {
         this.getLocalManagementSystemReport();
+        this.getAndSetCountry();
         // this.countryList = this.countries.map((data) => {
         //     data.text = data.name;
         //     return data;
@@ -370,55 +393,78 @@ export default {
                 this.showLoader = false;
             });
         },
-        filterIPMChaseInkActivity() {
-            // this.showLoader = true;
-            // let formData = new FormData();
-            // formData.append('startDate', this.dateRangeTabReport.startDate.toDateString());
-            // formData.append('endDate', this.dateRangeTabReport.endDate.toDateString());
-            // this.selectedtTransactionType.length == this.items.length ? formData.append('transactionTypeValue', 'ALL') : formData.append('transactionTypeValue', this.selectedtTransactionType);
-            // const csrf = document.querySelector('meta[name="csrf-token"]').content;
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': csrf
-            // };
-            // axios.post('/filterIPMChaseInkActivity' , formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // })
-            // .then(response => {
-            //     // console.log(response);
-            //     this.cardMemberList = response.data.data;
-            //     this.showLoader = false;
-
-            // }).catch((error) => {
-            //     this.showLoader = false;
-            // })
+        // get and set country code
+        getAndSetCountry() {
+            this.showLoader = true;
+            this.axios.get(this.$api + '/settings/countries', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    response.data.data.forEach((val) => {
+                        this.countryList.push({
+                            key: val.id,
+                            title: val.name
+                        })
+                    });
+                    this.countryList.sort((a, b) => a.name - b.name);
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.showLoader = false;
+            });
         },
+        // filterIPMChaseInkActivity() {
+        //     this.showLoader = true;
+        //     let formData = new FormData();
+        //     formData.append('startDate', this.dateRangeTabReport.startDate.toDateString());
+        //     formData.append('endDate', this.dateRangeTabReport.endDate.toDateString());
+        //     this.selectedtTransactionType.length == this.items.length ? formData.append('transactionTypeValue', 'ALL') : formData.append('transactionTypeValue', this.selectedtTransactionType);
+        //     const csrf = document.querySelector('meta[name="csrf-token"]').content;
+        //     axios.defaults.headers.common = {
+        //         'X-Requested-With': 'XMLHttpRequest',
+        //         'X-CSRF-TOKEN': csrf
+        //     };
+        //     axios.post('/filterIPMChaseInkActivity' , formData, {
+        //         headers: {
+        //             'Content-Type': 'multipart/form-data'
+        //         },
+        //     })
+        //     .then(response => {
+        //         // console.log(response);
+        //         this.cardMemberList = response.data.data;
+        //         this.showLoader = false;
+
+        //     }).catch((error) => {
+        //         this.showLoader = false;
+        //     })
+        // },
         checkOpenPicker(e) {
             console.log(e)
             setTimeout(() => {
                 this.getLocalManagementSystemReport();
             },100)
         },
-        checkOpenPickerTabReport() {
-             setTimeout(() => {
-                // this.filterIPMChaseInkActivity();
-            },100)
-        },
+        // edit data
         edit(id) {
-            // window.location.href = `/bank_accounts/ipmchase/${id}/edit`;
-            console.log(id);
-            // const data = _.filter(this.dataMetrics, x => { return x.id == id; });
-            // const restult = data[0];
-            // this.activityType = 'Update'
-            // this.activity.id = id;
-            // this.activity.type = restult.type;
-            // this.activity.country = restult.country;
-            // this.activity.city = restult.city;
-            // this.activity.notes = restult.notes ? restult.notes : '';
+            const result = this.dataMetrics.find((val) => {
+                return val.id == id
+            });
+            console.log(result, 'result')
+            this.activityType = 'Update';
+            this.activity.id = id;
+            this.activity.type = result.type;
+            this.activity.country = result.country_id;
+            this.activity.city = result.city;
+            this.activity.notes = result.notes ? result.notes : '';
             this.openRmAmexModal();
         },
+        // create new
         createActivity() {
             this.activityType = 'Create';
             this.activity.id = '';
@@ -428,143 +474,86 @@ export default {
             this.activity.notes = '';
             this.openRmAmexModal();
         },
+        // delete data
         deleteData(id) {
-            console.log(id)
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                // axios.defaults.headers.common = {
-                //     'X-Requested-With': 'XMLHttpRequest',
-                //     'X-CSRF-TOKEN': window.csrf_token
-                // };
-                // let formData = new FormData();
-                // formData.append('id', id);
-                // axios.post(`/deleteLocalManagementSystemRow`, formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data'
-                //     },
-                // }).then(response => {
-                //     if(response) {
-                //         console.log(response, 'sasa')
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: response.data.message,
-                //             type: 'success',
-                //         };
-                //         Bus.$emit('flash-message', this.message, '');
-                //         this.dataMetrics = _.filter(this.dataMetrics, x => { return x.id !== id; });
-                //     }else {
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: 'Something Went Wrong!',
-                //             type: 'error',
-                //         }
-                //         Bus.$emit('flash-message', this.message, '');
-                //     }
-                // }).catch(error => {
-                //     this.showLoader = false;
-                //     console.log(error);
-                //     this.message = {
-                //         text: error.response.data.message,
-                //         type: 'error',
-                //     }
-                //     Bus.$emit('flash-message', this.message, '');
-                // });
+                this.axios.delete(this.$api + '/management_system/local/' + id, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'Data deleted',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.getLocalManagementSystemReport();
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                });
             }
         },
-        handleUpload(event) {
-            const files = event.target.files;
-            console.log(files[0].name, '2121212')
-            this.file = files;
-        },
-        uploadCsv() {
-            this.showLoader = true;
-            let formData = new FormData();
-            formData.append('file', this.file[0]);
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': window.csrf_token
-            // };
-            // axios.post(`/importLocalManagementSystemCSV`,formData,{
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // }).then(response => {
-            //     if(response) {
-            //         console.log(response, 'sasa')
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: response.data.message,
-            //             type: 'success',
-            //         };
-            //         Bus.$emit('flash-message', this.message, '/management_system/local');
-            //     }else {
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: 'Something Went Wrong!',
-            //             type: 'error',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '');
-            //     }
-            // }).catch((error) => {
-            //     this.showLoader = false;
-            //     console.log(error);
-            //     this.message = {
-            //         text: error.response.data.message,
-            //         type: 'error',
-            //     }
-            //     Bus.$emit('flash-message', this.message, '');
-            // });
-        },
+        // delete selected / multiple delete
         deleteSelected() {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                // axios.defaults.headers.common = {
-                //     'X-Requested-With': 'XMLHttpRequest',
-                //     'X-CSRF-TOKEN': window.csrf_token
-                // };
-                // let formData = new FormData();
-                // formData.append('selectedRow', JSON.stringify(this.selected));
-                // axios.post(`/deleteLocalManagementSystemMutipleRows`, formData, {
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data'
-                //     },
-                // }).then(response => {
-                //     if(response) {
-                //         console.log(response, 'sasa')
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: response.data.message,
-                //             type: 'success',
-                //         };
-                //         Bus.$emit('flash-message', this.message, '');
-                //         this.dataMetrics = this.dataMetrics.filter(ar => !this.selected.find(rm => (rm.id === ar.id) ));
-                //         this.selected = [];
-                //     }else {
-                //         this.showLoader = false;
-                //         this.message = {
-                //             text: 'Something Went Wrong!',
-                //             type: 'error',
-                //         }
-                //         Bus.$emit('flash-message', this.message, '');
-                //     }
-                // }).catch(error => {
-                //     this.showLoader = false;
-                //     console.log(error);
-                //     this.message = {
-                //         text: error.response.data.message,
-                //         type: 'error',
-                //     }
-                //     Bus.$emit('flash-message', this.message, '');
-                // });
+                let formData = new FormData();
+                let multipleRow = [];
+                this.selected.forEach((val) => {
+                    multipleRow.push({id: val});
+                })
+                formData.append('selectedRecord', JSON.stringify(multipleRow));
+                this.axios.post(this.$api + '/management_system/local/deleteMutipleRecord', formData, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'Data deleted',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.selected = [];
+                        this.getLocalManagementSystemReport();
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                });
             }
         },
+        // view selected
         view(id) {
             console.log(id)
             // this.viewModalDetail = _.find(this.dataMetrics, ['id', id]);
             this.openViewModal();
-        },
-        currentItems(currentItems) {
-            this.currentItemsTable = currentItems;
         },
         // save and update management system
         saveLocalManagementSystem() {
@@ -572,46 +561,117 @@ export default {
             let formData = new FormData();
             formData.append('id', this.activity.id);
             formData.append('type', this.activity.type);
-            formData.append('country', this.activity.country);
+            formData.append('country_id', this.activity.country);
             formData.append('city', this.activity.city);
             formData.append('notes', this.activity.notes);
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': window.csrf_token
-            // };
-            // const postUrl = this.activityType == 'Create' ? 'saveLocalManagementSystem' : 'updateLocalManagementSystem'
-            // axios.post(`/${postUrl}`,formData,{
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // }).then(response => {
-            //     if(response) {
-            //         console.log(response, 'sasa')
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: response.data.message,
-            //             type: 'success',
-            //         };
-            //         Bus.$emit('flash-message', this.message, '');
-            //         this.closeRmAmexModal();
-            //         this.getLocalManagementSystemReport();
-            //     }else {
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: 'Something Went Wrong!',
-            //             type: 'error',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '');
-            //     }
-            // }).catch((error) => {
-            //     this.showLoader = false;
-            //     console.log(error);
-            //     this.message = {
-            //         text: error.response.data.message,
-            //         type: 'error',
-            //     }
-            //     Bus.$emit('flash-message', this.message, '');
-            // });
+            this.activityType != 'Create' && formData.append('_method', 'PUT');
+            const postUrl = this.activityType == 'Create' ? '/management_system/local' : `/management_system/local/${this.activity.id}`
+            this.axios.post(`${this.$api}${postUrl}`, formData, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: 'Data saved',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.closeRmAmexModal();
+                    this.getLocalManagementSystemReport();
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.showLoader = false;
+            });
+        },
+        // downloading csv
+        downloadCsv() {
+            this.axios.post(this.$api + '/settings/downloadfile', {
+                filename: 'localmanagementsystem'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                },
+                responseType: 'blob',
+            })
+            .then(response => {
+                let blob = new Blob([response.data], { type:'application/csv' } );
+                const _url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = _url;
+                link.setAttribute('download', 'demo.csv');
+                document.body.appendChild(link);
+                link.click();
+                this.$toast.open({
+                    message: 'File downloaded',
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'success'
+                });
+            })
+            .catch(error => {
+                console.log(error)
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.showLoader = false;
+            });
+        },
+        // upload csv file
+        uploadCsv() {
+            this.showLoader = true;
+            let formData = new FormData();
+            formData.append('file', this.selectedFile);
+            this.axios.post(this.$api + '/management_system/local/importLocalCSV', formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.closeModal();
+                    this.getLocalManagementSystemReport();
+                    this.showLoader = false;
+                    this.selectedFile = '';
+                    this.$toast.open({
+                        message: 'File imported',
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.$toast.open({
+                    message: error.message,
+                    position: 'top-right',
+                    duration: '5000',
+                    type: 'error'
+                });
+                this.showLoader = false;
+            });
+        },
+        // select csv file
+        chooseFile(e) {
+            this.selectedFile = e.target.files[0];
         }
     }
 }

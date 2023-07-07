@@ -251,19 +251,12 @@ export default {
             toggleButton: true,
             breadCrumbText: 'Create',
             backendErrorMessage: '',
-            // intervalData: [
-            //     {title: 'Month', key: 'month'},
-            //     {title: '3 Month', key: '3month'},
-            //     {title: '6 Month', key: '6month'},
-            //     {title: 'Year', key: 'year'}
-            // ],
             intervalData: [
-                {title: 'Month', key: '30'},
-                {title: '3 Month', key: '90'},
-                {title: '6 Month', key: '180'},
-                {title: 'Year', key: '360'}
-            ],
-            
+                {title: 'Month', key: 'month'},
+                {title: '3 Month', key: '3month'},
+                {title: '6 Month', key: '6month'},
+                {title: 'Year', key: 'year'}
+            ],            
         }
     },
     mounted() {
@@ -344,7 +337,7 @@ export default {
                 formData.append('add_account_limit', this.addAccountLimit);
                 formData.append('network_account_limit', this.networkAccountLimit);
                 formData.append('description', this.description);
-                formData.append('planData', JSON.stringify(this.addMultipleField));
+                formData.append('plan', JSON.stringify(this.addMultipleField));
                 formData.append('_method', 'PUT');
                 this.axios.post(this.$api + '/settings/plan/' + this.$route.params.id, formData, {
                     headers: {
@@ -384,7 +377,7 @@ export default {
                 formData.append('add_account_limit', this.addAccountLimit);
                 formData.append('network_account_limit', this.networkAccountLimit);
                 formData.append('description', this.description);
-                formData.append('planData', JSON.stringify(this.addMultipleField));
+                formData.append('plan', JSON.stringify(this.addMultipleField));
                 this.axios.post(this.$api + '/settings/plan', formData, {
                     headers: {
                         "Content-Type": "application/json",

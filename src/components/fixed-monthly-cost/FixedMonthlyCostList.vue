@@ -32,7 +32,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1'">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -42,41 +42,10 @@
                                             <v-card-title>
                                                 <v-spacer></v-spacer>
                                                 <v-row class="align-items-center">
-                                                    <v-col class="d-flex" cols="12" sm="4">daterange</v-col>
-                                                    <!-- <v-col class="d-flex" cols="12" sm="4"></v-col>
+                                                    <v-col class="d-flex" cols="12" sm="5"></v-col>
                                                     <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                        <template>
-                                                            <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
-                                                                <div slot="header" slot-scope="header" class="slot">
-                                                                    <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                                                </div>
-                                                                <template #input="picker" style="min-width: 350px;">
-                                                                    {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                                                                </template>
-                                                                <template #date="data">
-                                                                    <span class="small">{{ data.date | dateCell }}</span>
-                                                                </template>
-                                                                <template #ranges="ranges">
-                                                                    <div class="ranges">
-                                                                        <ul>
-                                                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                                                            {{ range[1].toDateString() }}</small>
-                                                                        </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </template>
-                                                                <div slot="footer" slot-scope="data" class="slot">
-                                                                    <div>
-                                                                        <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                                                    </div>
-                                                                    <div style="margin-left: auto">
-                                                                        <router-link tock="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</router-link>
-                                                                    </div>
-                                                                </div>
-                                                            </date-range-picker>
-                                                        </template>
-                                                    </v-col> -->
+                                                        <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                                    </v-col>
                                                     <div class="col-3 ms-auto">
                                                         <div class="ms-auto search-input position-relative">
                                                             <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchCosts">
@@ -86,20 +55,6 @@
                                             </v-card-title>
                                             <!-- data table component -->
                                             <v-data-table class="table-hover-class adding-font-size elevation-1" :headers="headers" :items="dataMetrics" :itemsPerPage="itemsPerPage" show-select v-model="selected">
-                                                <!-- <template v-slot:item="{ item }">
-                                                    <tr class="table-body-back">
-                                                        <td>{{item.selectable.date}}</td>
-                                                        <td>${{item.selectable.amount}}</td>
-                                                        <td>
-                                                            <router-link :to="'/accounting/fixedMonthlyCost/'+ item.selectable.id +'/edit'">
-                                                                <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                            </router-link>
-                                                            <router-link to="" @click="deleteData(item.selectable.id)">
-                                                                <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                            </router-link>
-                                                        </td>
-                                                    </tr>
-                                                </template> -->
                                                 <template v-slot:[`item.date`]="{ item }">
                                                     <td>{{item.selectable.date}}</td>
                                                 </template>
@@ -154,7 +109,7 @@
                         </div>
                     </v-app>
                 </div>
-                <div class="col" v-else>
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="text-center">You have no access for this page</h4>
@@ -241,12 +196,15 @@
 import * as yup from 'yup';
 import { Field, Form, ErrorMessage } from 'vee-validate';
 import Datepicker from 'vue3-datepicker';
-// import 'vue3-datepicker/index.css';
-// import moment from 'moment';
+import DateRangePicker from '../common/DateRangePicker.vue';
+import moment from 'moment';
 export default {
     components: {
         Datepicker,
-        Field, Form, ErrorMessage
+        DateRangePicker,
+        Field, 
+        Form, 
+        ErrorMessage,
     },
     data() {
         return {
@@ -266,7 +224,8 @@ export default {
             selectedId: [],
             seletedForEdit: [],
             selectedFile: '',
-            permissions: {}
+            permissions: {},
+            selectedRange: 'Thu Jun 15 2023 - Sun Jul 23 2023'
         }
     },
     computed: {
@@ -321,6 +280,11 @@ export default {
             window.$('#createUpdateData').modal('hide');
             this.seletedForEdit = [];
         },
+        // update date range
+        updateRange(range) {
+            this.selectedRange = range;
+            this.getFixedMonthlyCostList();
+        },
         // search costs from table
         searchCosts() {
             this.dataMetrics = this.dataMetricsFilter.filter((val) => {
@@ -331,7 +295,14 @@ export default {
         // get all data of fixed monthly cost list
         getFixedMonthlyCostList() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/fixedMonthlyCost', {
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/accounting/fixedMonthlyCost';
+            if(this.selectedRange) {
+                queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+            }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            this.axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -554,5 +525,9 @@ export default {
     }
     .adding-font-size tbody tr td{
         font-size: 14px !important;
+    }
+    /* date range picker */
+    .v-calendar {
+        position: unset !important;
     }
 </style>

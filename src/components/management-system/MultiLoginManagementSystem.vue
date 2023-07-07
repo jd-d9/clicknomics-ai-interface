@@ -8,9 +8,9 @@
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
+                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Management System Datacenter VPS</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Management System Multilogin</li>
                                 </ol>
                             </nav>
                         </div>
@@ -87,11 +87,11 @@
                                                 </v-row>
                                             </v-card-title>
                                             <v-data-table class="table-hover-class table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!-- @current-items="currentItems"  -->
-                                                <template v-slot:[`item.company`]="{ item }">
-                                                    <td>{{item.selectable.company}}</td>
+                                                <template v-slot:[`item.profile_name`]="{ item }">
+                                                    <td>{{item.selectable.profile_name}}</td>
                                                 </template>
-                                                <template v-slot:[`item.ip`]="{ item }">
-                                                    <td>{{item.selectable.ip}}</td>
+                                                <template v-slot:[`item.ip_provider`]="{ item }">
+                                                    <td>{{item.selectable.ip_provider}}</td>
                                                 </template>
                                                 <template v-slot:[`item.notes`]="{ item }">
                                                     <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
@@ -141,7 +141,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Import Management System Datacenter VPS</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Import Management System Multilogin</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -172,7 +172,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Report</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -194,7 +194,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Datacenter VPS</h5>
+                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Multilogin</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeRmAmexModal">
                             <span style="color:#fff;" aria-hidden="true">&times;</span>
                         </button>
@@ -202,20 +202,20 @@
                     <div class="modal-body">
                         <div class="card-body">
                             <div class="col-12">
-                                <Form @submit="saveDatacenterVpcManagementSystem" :validation-schema="schema" v-slot="{ errors }">
+                                <Form @submit="saveMultiloginManagementSystem" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Name</label>
-                                                <Field type="text" id="input-username" name="Company" :class="{'form-control': true , 'border-red-600':errors.Company }" v-model="activity.company"/>
-                                                <span class="text-red-600" v-if="errors.Company">Name Can not be empty</span>
+                                                <label class="form-control-label" for="input-username">Profile Name</label>
+                                                <Field type="text" id="input-username" name="Profile" :class="{'form-control': true , 'border-red-600':errors.Profile }" v-model="activity.profile_name"/>
+                                                <span class="text-red-600" v-if="errors.Profile">Profile name Can not be empty</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
-                                                <label class="form-control-label" for="input-username">IP</label>
-                                                <Field type="text" id="input-username" name="Ip" :class="{'form-control': true , 'border-red-600':errors.Ip }" v-model="activity.ip"/>
-                                                <span class="text-red-600" v-if="errors.Ip">IP Can not be empty</span>
+                                                <label class="form-control-label" for="input-username">IP Provider</label>
+                                                <Field type="text" id="input-username" name="IpProvider" :class="{'form-control': true , 'border-red-600':errors.IpProvider }" v-model="activity.ip_provider"/>
+                                                <span class="text-red-600" v-if="errors.IpProvider">IP provider Can not be empty</span>
                                                 <!-- <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span> -->
                                             </div>
                                         </div>
@@ -261,8 +261,8 @@ export default {
             dataMetrics: [],
             search: '',
             headers: [
-                { title: 'Name', align: 'start', sortable: false, key: 'company' },
-                { title: 'IP ', key: 'ip' },
+                { title: 'Profile Name', align: 'start', sortable: false, key: 'profile_name' },
+                { title: 'IP Provider ', key: 'ip_provider' },
                 { title: 'Notes', key: 'notes' },
                 { title: 'Action', key: 'action' },
             ],
@@ -274,8 +274,8 @@ export default {
             itemsPerPage: -1,
             activity: {
                 id: '',
-                company : '',
-                ip : '',
+                profile_name : '',
+                ip_provider : '',
                 notes : '',
             },
             activityType: 'Create',
@@ -290,7 +290,6 @@ export default {
             showImportIcon: true,
             permissions: {},
             selectedFile: '',
-            // backendErrorMessage: '',
         }
     },
     filters: {
@@ -310,13 +309,13 @@ export default {
         },
         schema() {
             return yup.object({
-                Company: yup.string().required(),
-                Ip: yup.string().required(),
+                Profile: yup.string().required(),
+                IpProvider: yup.string().required(),
             });
         },
     },
     mounted() {
-        this.getDatacenterVpcManagementSystemReport();
+        this.getMultiloginManagementSystemReport();
     },
     methods: {
         // open and close modal
@@ -334,9 +333,9 @@ export default {
             window.$('#createUpdateData').modal('hide');
         },
         // get data center vps listings data
-        getDatacenterVpcManagementSystemReport() {
+        getMultiloginManagementSystemReport() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/management_system/datacenter', {
+            this.axios.get(this.$api + '/management_system/multilogin', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -380,38 +379,31 @@ export default {
         //         this.showLoader = false;
         //     })
         // },
-        checkOpenPicker(e) {
-            console.log(e)
-            setTimeout(() => {
-                this.getDatacenterVpcManagementSystemReport();
-            },100)
-        },
         // edit data
         edit(id) {
             const result = this.dataMetrics.find((val) => {
                 return val.id == id
             });
-            this.activityType = 'Update'
+            this.activityType = 'Update';
             this.activity.id = id;
-            this.activity.company = result.company;
-            this.activity.ip = result.ip;
+            this.activity.profile_name = result.profile_name;
+            this.activity.ip_provider = result.ip_provider;
             this.activity.notes = result.notes ? result.notes : '';
             this.openRmAmexModal();
         },
-        // create new data
+        // create data
         createActivity() {
             this.activityType = 'Create';
             this.activity.id = '';
-            this.activity.company = '';
-            this.activity.ip = '';
+            this.activity.profile_name = '';
+            this.activity.ip_provider = '';
             this.activity.notes = '';
             this.openRmAmexModal();
         },
-        // delete data
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/management_system/datacenter/' + id, {
+                this.axios.delete(this.$api + '/management_system/multilogin/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -425,7 +417,7 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
-                        this.getDatacenterVpcManagementSystemReport();
+                        this.getMultiloginManagementSystemReport();
                         this.showLoader = false;
                     }
                 })
@@ -441,7 +433,7 @@ export default {
                 });
             }
         },
-        // delete selected/multiple delete
+        // delete selected / multipler delete
         deleteSelected() {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
@@ -451,7 +443,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('selectedRecord', JSON.stringify(multipleRow));
-                this.axios.post(this.$api + '/management_system/datacenter/deleteMutipleRecord', formData, {
+                this.axios.post(this.$api + '/management_system/multilogin/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -466,7 +458,7 @@ export default {
                             type: 'success'
                         });
                         this.selected = [];
-                        this.getDatacenterVpcManagementSystemReport();
+                        this.getMultiloginManagementSystemReport();
                         this.showLoader = false;
                     }
                 })
@@ -482,22 +474,16 @@ export default {
                 });
             }
         },
-        // view
-        view(id) {
-            console.log(id)
-            // this.viewModalDetail = _.find(this.dataMetrics, ['id', id]);
-            window.$('#viewDetail').modal('show');
-        },
-        // save and update
-        saveDatacenterVpcManagementSystem() {
+        //  save and update data
+        saveMultiloginManagementSystem() {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('id', this.activity.id);
-            formData.append('company', this.activity.company);
-            formData.append('ip', this.activity.ip);
+            formData.append('profile_name', this.activity.profile_name);
+            formData.append('ip_provider', this.activity.ip_provider);
             formData.append('notes', this.activity.notes);
             this.activityType != 'Create' && formData.append('_method', 'PUT');
-            const postUrl = this.activityType == 'Create' ? '/management_system/datacenter' : `/management_system/datacenter/${this.activity.id}`
+            const postUrl = this.activityType == 'Create' ? '/management_system/multilogin' : `/management_system/multilogin/${this.activity.id}`
             this.axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
@@ -513,7 +499,7 @@ export default {
                         type: 'success'
                     });
                     this.closeRmAmexModal();
-                    this.getDatacenterVpcManagementSystemReport();
+                    this.getMultiloginManagementSystemReport();
                     this.showLoader = false;
                     // this.backendErrorMessage = '';
                 }
@@ -533,7 +519,7 @@ export default {
         // downloading csv
         downloadCsv() {
             this.axios.post(this.$api + '/settings/downloadfile', {
-                filename: 'datacenterVpcManagementSystem'
+                filename: 'multilogin'
             }, {
                 headers: {
                     "Content-Type": "application/json",
@@ -572,7 +558,7 @@ export default {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('file', this.selectedFile);
-            this.axios.post(this.$api + '/management_system/datacenter/importLocalCSV', formData, {
+            this.axios.post(this.$api + '/management_system/multilogin/importLocalCSV', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -581,7 +567,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.closeModal();
-                    this.getDatacenterVpcManagementSystemReport();
+                    this.getMultiloginManagementSystemReport();
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({

@@ -43,6 +43,9 @@ import ProcessEmailReportComponent from './components/process-email-report/Proce
 import GoogleEliminatedAccountList from './components/archived-traffic-source/GoogleEliminatedAccountList.vue';
 import MicrosoftEliminatedAccountList from './components/archived-traffic-source/MicrosoftEliminatedAccountList.vue';
 import LocalManagementSystem from './components/management-system/LocalManagementSystem.vue';
+import DatacenterVpsManagementSystem from './components/management-system/DatacenterVpsManagementSystem.vue';
+import ResidentialVpsManagementSystem from './components/management-system/ResidentialVpsManagementSystem.vue';
+import MultiLoginManagementSystem from './components/management-system/MultiLoginManagementSystem.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -120,7 +123,10 @@ const router = createRouter({
         {path: '/settings/archived-accounts-microsoft', component: MicrosoftEliminatedAccountList, meta: {auth: true}},
         // management system module
         {path: '/management_system/local', component: LocalManagementSystem, meta: {auth: true}},
-        // other
+        {path: '/management_system/datavps', component: DatacenterVpsManagementSystem, meta: {auth: true}},
+        {path: '/management_system/residentialvps', component: ResidentialVpsManagementSystem, meta: {auth: true}},
+        {path: '/management_system/multilogin', component: MultiLoginManagementSystem, meta: {auth: true}},
+        // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page
         {path: '/:notFound(.*)', component: NotFoundPage},

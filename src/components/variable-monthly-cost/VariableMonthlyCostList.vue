@@ -25,7 +25,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1'">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -33,41 +33,12 @@
                                     <v-app>
                                         <v-card>
                                             <v-card-title>
+                                                <v-spacer></v-spacer>
                                                 <v-row class="align-items-center">
-                                                    <v-col class="d-flex" cols="12" sm="4">daterange</v-col>
-                                                    <!-- <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                        <template>
-                                                            <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
-                                                                <div slot="header" slot-scope="header" class="slot">
-                                                                    <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                                                </div>
-                                                                <template #input="picker" style="min-width: 350px;">
-                                                                    {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                                                                </template>
-                                                                <template #date="data">
-                                                                    <span class="small">{{ data.date | dateCell }}</span>
-                                                                </template>
-                                                                <template #ranges="ranges">
-                                                                    <div class="ranges">
-                                                                        <ul>
-                                                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                                                            {{ range[1].toDateString() }}</small>
-                                                                        </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </template>
-                                                                <div slot="footer" slot-scope="data" class="slot">
-                                                                    <div>
-                                                                        <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                                                    </div>
-                                                                    <div style="margin-left: auto">
-                                                                        <router-link tock="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</router-link>
-                                                                    </div>
-                                                                </div>
-                                                            </date-range-picker>
-                                                        </template>
-                                                    </v-col> -->
+                                                    <v-col class="d-flex" cols="12" sm="5"></v-col>
+                                                    <v-col class="d-flex justify-content-end" cols="12" sm="4">
+                                                        <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                                    </v-col>
                                                     <div class="col-3 ms-auto">
                                                         <div class="ms-auto search-input position-relative">
                                                             <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
@@ -108,7 +79,7 @@
                         </div>
                     </v-app>
                 </div>
-                <div class="col" v-else>
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="text-center">You have no access for this page</h4>
@@ -128,14 +99,14 @@
                     </div>
                         <form>
                         <div class="modal-body">
-                                <div class="file-upload">
-                                    <div class="file-select">
-                                        <div class="file-select-button" id="fileName">Choose File</div>
-                                        <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
-                                        <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                        <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
-                                    </div>
+                            <div class="file-upload">
+                                <div class="file-select">
+                                    <div class="file-select-button" id="fileName">Choose File</div>
+                                    <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
+                                    <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
+                                    <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
                                 </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -149,7 +120,12 @@
 </template>
 
 <script>
+import DateRangePicker from '../common/DateRangePicker.vue';
+import moment from 'moment';
 export default {
+    component: {
+        DateRangePicker,
+    },
     data() {
         return {
             showLoader: false,
@@ -166,7 +142,8 @@ export default {
             // dateRange: {startDate, endDate},
             file: '',
             currentItemsTable: [],
-            itemsPerPage: -1
+            itemsPerPage: -1,
+            selectedRange: 'Thu Jun 15 2023 - Sun Jul 23 2023'
         }
     },
     computed: {
@@ -179,6 +156,11 @@ export default {
         this.getVariablePaymentList();
     },
     methods: {
+        // update date range
+        updateRange(range) {
+            this.selectedRange = range;
+            this.getVariablePaymentList();
+        },
         // search payment from table
         searchPayments() {
             this.dataMetrics = this.dataMetricsFilter.filter((val) => {
@@ -190,7 +172,14 @@ export default {
         // get variable payment list
         getVariablePaymentList() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/variableCost', {
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/accounting/variableCost';
+            if(this.selectedRange) {
+                queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+            }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            this.axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
