@@ -32,7 +32,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1'">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -104,7 +104,7 @@
                         </div>
                     </v-app>
                 </div>
-                <div class="col" v-else>
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="text-center">You have no access for this page</h4>
