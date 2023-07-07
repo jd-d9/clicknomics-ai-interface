@@ -14,7 +14,7 @@
                                 </ol>
                             </nav>
                         </div>
-                        <div class="col-lg-8 text-right">
+                        <div class="col-lg-8 text-right" v-if="showImportIcon">
                             <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
                                 <div>
                                     <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
@@ -41,7 +41,7 @@
                                 <div class="nav-wrapper report_tabpanel">
                                     <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
                                         <li class="nav-item">
-                                            <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false">
+                                            <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="this.showImportIcon = true">
                                                 <span class="btn-inner--text">Payments</span>
                                             </router-link>
                                         </li>
@@ -599,6 +599,17 @@ export default {
         },
         // generate report
         genrateTeamMembersPaymentsReport() {
+            this.showImportIcon = false;
+            // window.$('a[data-bs-toggle="tab"]').on('shown.bs.tab', (e) =>  {
+            //     console.log(this.showImportIcon, e.target, '111')
+            //     if(window.$(e.target).attr('href') == '#tabs-icons-text-3') {
+            //         console.log(this.showImportIcon, '222')
+            //         this.showImportIcon = true;
+            //     }else {
+            //         console.log(this.showImportIcon, '333')
+            //         this.showImportIcon = false;
+            //     }
+            // });
             this.showLoader = true;
             this.axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport', {
                 startDate: moment(this.selectedRangeTwo.split('-').shift()).format('DD-MM-YYYY'),

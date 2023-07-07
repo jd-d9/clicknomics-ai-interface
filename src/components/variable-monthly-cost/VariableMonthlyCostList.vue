@@ -35,7 +35,9 @@
                                             <v-card-title>
                                                 <v-spacer></v-spacer>
                                                 <v-row class="align-items-center">
-                                                    <v-col class="d-flex" cols="12" sm="5"></v-col>
+                                                    <v-col class="d-flex" cols="12" sm="5">
+                                                        <v-date-picker range="true"></v-date-picker>
+                                                    </v-col>
                                                     <v-col class="d-flex justify-content-end" cols="12" sm="4">
                                                         <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                                     </v-col>
@@ -123,7 +125,7 @@
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 export default {
-    component: {
+    components: {
         DateRangePicker,
     },
     data() {

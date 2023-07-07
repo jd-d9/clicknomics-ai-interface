@@ -32,19 +32,19 @@
                                 <Form @submit="manageFixedMonthlyCost" :validation-schema="schema" v-slot="{ errors }"> <!--  -->
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
-                                            <div class="form-group date-picker-3">
+                                            <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Date</label>
-                                                <Field name="date" v-model="date" :class="{'border-red-600': errors.date}">
-                                                    <datepicker v-model="date" valueType="format" :clearable="true" format="YYYY-MM-DD" :range="true"></datepicker>
+                                                <Field name="Date" v-model="date" :class="{'border-red-600': errors.date}">
+                                                    <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :range="toggleElement"></datepicker>
                                                 </Field>
-                                                <ErrorMessage class="text-red-600" name="date"/>
+                                                <span class="text-red-600" v-if="errors.Date">Date is a required field</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Amount</label>
-                                                <Field name="amount" type="number" step=".01" placeholder="Add Amount" v-model="amount" :class="{'form-control': true, 'border-red-600': errors.amount}"/>
-                                                <ErrorMessage class="text-red-600" name="amount"/>
+                                                <Field name="Amount" type="number" step=".01" placeholder="Add Amount" v-model="amount" :class="{'form-control': true, 'border-red-600': errors.amount}"/>
+                                                <ErrorMessage class="text-red-600" name="Amount"/>
                                             </div>
                                         </div>
                                     </div>
@@ -68,7 +68,8 @@
 <script>
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-import Datepicker from 'vue3-datepicker';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 export default {
     components: {
@@ -94,12 +95,15 @@ export default {
     computed: {
         schema() {
             return yup.object({
-                amount: yup.string().required(),
-                date: yup.string().required(),
+                Amount: yup.string().required(),
+                Date: this.toggleElement ? yup.array().required() : yup.string().required(),
             });
         },
     },
     methods: {
+        checkDate() {
+            console.log(this.date)
+        },
         // create and update fixed monthly cost
         manageFixedMonthlyCost() {
             console.log('sss')
@@ -142,9 +146,9 @@ export default {
             // create fixed monthly cost
             else {
                 this.showLoader = true;
+                const dateRange = this.date[0].concat(",", this.date[1]);
                 this.axios.post(this.$api + '/accounting/fixedMonthlyCost', {
-                    date: '2023-06-01,2023-06-07',
-                    // date: moment(this.date).format('YYYY-MM-DD'),
+                    date: dateRange,
                     amount: this.amount
     
                 }, {
@@ -190,7 +194,7 @@ export default {
                 if(response.data.success) {
                     const getData = response.data.data;
                     console.log(getData);
-                    this.date = new Date(getData.date);
+                    this.date = getData.date;
                     this.amount = getData.amount;
                     this.showLoader = false;
                 }

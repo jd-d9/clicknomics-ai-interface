@@ -363,7 +363,6 @@ export default {
         },
         // delete single data
         deleteData(id) {
-            console.log(id)
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
                 this.axios.delete(this.$api + '/settings/emailNotification/' + id, {

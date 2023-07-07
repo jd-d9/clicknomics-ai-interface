@@ -46,6 +46,9 @@ import LocalManagementSystem from './components/management-system/LocalManagemen
 import DatacenterVpsManagementSystem from './components/management-system/DatacenterVpsManagementSystem.vue';
 import ResidentialVpsManagementSystem from './components/management-system/ResidentialVpsManagementSystem.vue';
 import MultiLoginManagementSystem from './components/management-system/MultiLoginManagementSystem.vue';
+import ServerListComponent from './components/server/ServerListComponent.vue';
+import EranetDomainComponent from './components/domains/manual-domain/EranetDomainComponent.vue';
+import FlokinetDomainComponent from './components/domains/manual-domain/FlokinetDomainComponent.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -126,6 +129,11 @@ const router = createRouter({
         {path: '/management_system/datavps', component: DatacenterVpsManagementSystem, meta: {auth: true}},
         {path: '/management_system/residentialvps', component: ResidentialVpsManagementSystem, meta: {auth: true}},
         {path: '/management_system/multilogin', component: MultiLoginManagementSystem, meta: {auth: true}},
+        // domains module
+        {path: '/domains/eranet', component: EranetDomainComponent, meta: {auth: true}},
+        {path: '/domains/flokinet', component: FlokinetDomainComponent, meta: {auth: true}},
+        // server module
+        {path: '/servers', component: ServerListComponent, meta: {auth: true}},
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page

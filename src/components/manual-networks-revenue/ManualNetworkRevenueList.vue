@@ -55,10 +55,7 @@
                                                         </div>
                                                     </v-col>
                                                     <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                        <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-                                                            <i class="fa fa-calendar"></i>&nbsp;
-                                                            <span></span> <i class="fa fa-caret-down"></i>
-                                                        </div>
+                                                        <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                                     </v-col>
                                                     <div class="col-3 ms-auto mt-2 add-height">
                                                         <div class="ms-auto search-input position-relative">
@@ -145,8 +142,12 @@
 </template>
 
 <script>
-// import moment from 'moment';
+import DateRangePicker from '../common/DateRangePicker.vue';
+import moment from 'moment';
 export default {
+    components: {
+        DateRangePicker
+    },
     data() {
         return {
             showLoader: false,
@@ -167,7 +168,8 @@ export default {
             selectedFile: '',
             isSortable: true,
             searchInput: '',
-            permissions: {}
+            permissions: {},
+            selectedRange: 'Thu Jun 15 2023 - Sun Jul 23 2023'
         }
     },
     computed: {
@@ -187,64 +189,19 @@ export default {
     mounted() {
         this.getManualNetworksEntry();
         this.updateCsvWithTodayDate('ipm-manual-networks-metrics-demo.csv');
-        this.datePicker();
     },
     methods: {
-        datePicker() {
-            // window.$(document).ready(function() {
-            //     var start = moment().subtract(29, 'days');
-            //     var end = moment();
-            //     console.log(start, end._d, ']]]]]][[[[[[[[[')
-
-            //     function cb(start, end) {
-            //         console.log(start, end)
-            //         window.$('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            //     }
-            //     console.log(window.$('#reportrange'), '----------============')
-            //     window.$('#reportrange').daterangepicker({
-            //         startDate: start,
-            //         endDate: end,
-            //         ranges: {
-            //             'Today': [moment(), moment()],
-            //             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            //             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            //             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            //             'This Month': [moment().startOf('month'), moment().endOf('month')],
-            //             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            //         }
-            //     }, cb);
-            //     cb(start, end);
-            // });
-            // window.$(function() {
-            //     var start = moment().subtract(29, 'days');
-            //     var end = moment();
-
-            //     function cb(start, end) {
-            //         window.$('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            //     }
-
-            //     console.log(window.$('#reportrange'), '----------=======================')
-            //     window.$('#reportrange').daterangepicker({
-            //         startDate: start,
-            //         endDate: end,
-            //         ranges: {
-            //         'Today': [moment(), moment()],
-            //         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            //         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            //         'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            //         'This Month': [moment().startOf('month'), moment().endOf('month')],
-            //         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            //         }
-            //     }, cb);
-            //     cb(start, end);
-            // });
-        },
         // open and close modal
         openModal() {
             window.$('#exampleModalCenter').modal('show');
         },
         closeModal() {
             window.$('#exampleModalCenter').modal('hide');
+        },
+        // update date range
+        updateRange(range) {
+            this.selectedRange = range;
+            this.getManualNetworksEntry();
         },
         // search payment from table
         searchPayments() {
@@ -262,6 +219,10 @@ export default {
             const ajaxUrl = this.$api + '/network/manualNetworksMetrics';
             if(this.networkName) {
                 queryString.set('networkName', this.networkName)
+            }
+            if(this.selectedRange) {
+                queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
             this.axios.get(url, {

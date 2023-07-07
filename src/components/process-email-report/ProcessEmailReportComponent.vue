@@ -30,12 +30,12 @@
                                     <Form @submit="genrateEmailDailyReport" :validation-schema="schema" v-slot="{ errors }">
                                         <div class="row">
                                             <div class="col-lg-6 py-0">
-                                                <div class="form-group date-picker-3">
+                                                <div class="form-group">
                                                     <label class="form-control-label" for="input-username">Date</label>
-                                                    <Field name="date" v-model="date" :class="{'border-red-600': errors.date}">
-                                                        <datepicker name="date" v-model="date" valueType="format" :clearable="true" format="YYYY-MM-DD"></datepicker>
+                                                    <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
+                                                        <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                                     </Field>
-                                                    <span class="text-red-600" v-if="errors.date">Date can not be empty</span>
+                                                    <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -70,8 +70,8 @@
 <script>
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
-import Datepicker from 'vue3-datepicker';
-// import moment from 'moment';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 export default {
     // props: ['network'],
     components: {
@@ -94,7 +94,7 @@ export default {
     computed: {
         schema() {
             return yup.object({
-                date: yup.string().required(),
+                Date: yup.string().required(),
             });
         },
     },

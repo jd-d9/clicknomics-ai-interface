@@ -45,49 +45,14 @@
                                                     <!-- @change="filterUsingNetwork" -->
                                                 </div>
                                             </v-col>
+                                            
                                             <!-- <v-col class="d-flex" cols="12" sm="4">
                                                 <v-text-field label="Search" variant="solo"></v-text-field>
                                                 <v-text-field label="Search" variant="underlined"></v-text-field>
                                             </v-col> -->
-                                            <div class="col-4">
-
-                                                <!-- <DateRangePickerWrapper/> -->
-
-                                                <!-- <date-range-picker
-                                                    v-model="dateRange"
-                                                    :date-format="dateFormat"
-                                                ></date-range-picker> -->
-
-                                                <!-- <date-range-picker :dateRange="dateRange" @input="$emit('update:modelValue', $event.target.value)">
-                                                    <template v-slot:header>
-                                                        <h3>Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                                    </template>
-                                                    <template #input="picker">
-                                                        {{ picker.startDate  }} - {{ picker.endDate }}
-                                                    </template>
-                                                    <template #date="data">
-                                                        <span class="small">{{ data.date  }}</span>
-                                                    </template>
-                                                    <template #ranges="ranges">
-                                                    <div class="ranges">
-                                                        <ul>
-                                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                                            {{ range[1].toDateString() }}</small>
-                                                        </li>
-                                                        </ul>
-                                                    </div>
-                                                    </template>
-                                                    <template v-slot:footer>
-                                                        <div>
-                                                            <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                                        </div>
-                                                        <div style="margin-left: auto">
-                                                            <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
-                                                        </div>
-                                                    </template>
-                                                </date-range-picker> -->
-                                            </div>
+                                            <v-col class="d-flex justify-content-end" cols="12" sm="4">
+                                                <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                            </v-col>
                                             <div class="col-3 ms-auto">
                                                 <div class="ms-auto search-input position-relative">
                                                     <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchInvoice">
@@ -267,12 +232,12 @@
 </template>
 
 <script>
-// import DateRangePickerWrapper from '../Common/DateRangePickerWrapper.vue';
-// import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
+import DateRangePicker from '../common/DateRangePicker.vue';
+import moment from 'moment';
 export default {
     name: "SlotsDemo",
     components: {
-        // DateRangePickerWrapper,
+        DateRangePicker,
     },
     filters: {
         dateCell (value) {
@@ -284,12 +249,7 @@ export default {
         }
     },
     data() {
-        // let today = new Date();
-        // let startDate = today;
-        // let endDate = today;
-        // endDate.setDate(endDate.getDate() + 6)
         return {
-            // dateRange: {startDate, endDate},
             // images: {
             //     logo: require('/assets/img/brand/logo.png'),
             //     edit: require('/assets/img/icons/edit.svg'),
@@ -334,11 +294,8 @@ export default {
             isSortable: true,
             dialog: false,
             selectedInvoiceId: '',
-            dateRange: {
-                startDate: '2019-12-26',
-                endDate: '2019-12-28',
-            },
             searchInput: '',
+            selectedRange: 'Thu Jun 15 2023 - Sun Jul 23 2023'
         }
     },
     mounted() {
@@ -359,16 +316,29 @@ export default {
         }
     },
     methods: {
+        // setting date formate
         dateFormat (classes, date) {
             if (!classes.disabled) {
                 classes.disabled = date.getTime() < new Date()
             }
             return classes
         },
+        // update date range
+        updateRange(range) {
+            this.selectedRange = range;
+            this.fetchNetworkList();
+        },
         // get network list data
         fetchNetworkList() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/invoices/fetchInvoiceList', {
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/accounting/invoices/fetchInvoiceList';
+            if(this.selectedRange) {
+                queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+            }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            this.axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
