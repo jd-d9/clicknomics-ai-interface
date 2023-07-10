@@ -243,3 +243,13 @@ td.v-data-table__td {
     padding: 4px 15px;
     min-height: 40px;
 }
+.form-control.autocomplete .v-field__input{
+    padding: 13px 0px;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 50px;
+    color: #000;
+    opacity: 1;
+}
+.form-control.autocomplete .v-field{padding: 0px;}
+.form-control.autocomplete .v-field .v-field__outline{display: none;}

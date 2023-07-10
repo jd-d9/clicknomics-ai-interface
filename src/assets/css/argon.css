@@ -6477,19 +6477,29 @@ select{
 .theme--light.v-text-field.v-select>.v-input__control>.v-input__slot:before{
     border-color: #ffffff !important;
 }
-
+/* 
 .v-select.form-control {
     height: 48px;
     padding: 0.625rem 0.75rem;
     margin: 0;
-}
-
+} */
 .mx-datepicker .mx-input {
-    height: 48px !important;
-    border: 1px solid #b9bbbc !important;
-    border-radius: 12px !important;
+    padding: 13px 15px;
+    width: 100%;
+    overflow: hidden;
+    align-items: center;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 50px;
+    border-radius: 0px;
+    box-shadow: 1px 2px 2px #00000029;
+    border: 1px solid #D6D6D6;
 }
-
+.mx-icon-calendar, .mx-icon-clear {
+    right: 15px;
+}
+.mx-datepicker.border-red-600 .mx-input{--border-opacity:1;border-color:#e53e3e;border-color:rgba(229,62,62,var(--border-opacity));}
 .invoice-date-picker.mx-datepicker .mx-input {
     height: 40px !important;
     width: 122px !important;

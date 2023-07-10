@@ -1,107 +1,91 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Invoice</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right">
-                            <router-link to="/accounting/invoice/template" class="btn btn-lg btn-neutral btn_animated">Templates</router-link>
-                            <router-link to="/accounting/invoice/create" class="btn btn-lg btn-neutral btn_animated">Add New Invoice</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <v-app>
-                                <v-card>
-                                    <v-card-title>
-                                        <v-row class="align-items-center">
-                                            <v-col class="d-flex" cols="12" sm="4">
-                                                <div class="select-network-filter">
-                                                    <v-select
-                                                    clearable
-                                                    variant="solo"
-                                                    label="Network Filter" 
-                                                    :items="networkFilter"
-                                                    v-model="networkSelected"
-                                                    ></v-select>
-                                                    <!-- @change="filterUsingNetwork" -->
-                                                </div>
-                                            </v-col>
-                                            
-                                            <!-- <v-col class="d-flex" cols="12" sm="4">
-                                                <v-text-field label="Search" variant="solo"></v-text-field>
-                                                <v-text-field label="Search" variant="underlined"></v-text-field>
-                                            </v-col> -->
-                                            <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                            </v-col>
-                                            <div class="col-3 ms-auto">
-                                                <div class="ms-auto search-input position-relative">
-                                                    <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchInvoice">
-                                                </div>
-                                            </div>
-                                        </v-row>
-                                    </v-card-title>
-                                    <!-- data table component -->
-                                    <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="invoiceList" :search="search"  :single-expand="singleExpand" class="elevation-1 table-expand" :itemsPerPage="itemsPerPage">
-                                        <template v-slot:item="{ item }">
-                                            <tr class="table-body-back">
-                                                <th>{{item.selectable.id}}</th>
-                                                <td>{{item.selectable.invoice_number}}</td>
-                                                <td>
-                                                    <router-link to="" @click="openCreateNetworkModal(item.selectable.id, item.selectable.network_add_type, item.selectable.network_name)">
-                                                        {{item.selectable.network_name ? item.selectable.network_name : '-'}}
-                                                    </router-link>
-                                                </td>
-                                                <td>{{item.selectable.invoice_issue_date}}</td>
-                                                <td>{{item.selectable.invoice_due_date}}</td>
-                                                <td>
-                                                    <router-link to="" @click="openNumberEditedModal(item.selectable.id, item.selectable.is_invoice_edited)">{{item.selectable.is_invoice_edited == '1' ? 'Yes' : 'No'}}</router-link>
-                                                </td>
-                                                <td>
-                                                    <button class="disable-button" @click.prevent="editInvoice(item.selectable.id)">
-                                                        <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit invoice">
-                                                    </button>
-                                                    <button class="disable-button" @click.prevent="downloadInvoice(item.selectable.id)">
-                                                        <img src="/assets/img/icons/download.svg" class="icon-width" title="Download invoice">
-                                                    </button>
-                                                    <button class="disable-button" @click.prevent="openShareInvoice(item.selectable.id)">
-                                                        <img src="/assets/img/icons/share.svg" class="icon-width" title="Share invoice in email">
-                                                    </button>
-                                                    <button class="disable-button" @click.prevent="deleteInvoice(item.selectable.id)">
-                                                        <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete invoice">
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </v-data-table>
-                                </v-card>
-                            </v-app>
-                            <!-- <div class="v-card v-sheet theme--light">
-                            </div> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Invoice</span>
+                        <v-spacer />
+                        <v-btn href="accounting/invoice/template" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-layers">
+                            Templates
+                        </v-btn>
+
+                        <v-btn href="accounting/invoice/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Invoice
+                            <v-row>
+                                <v-spacer></v-spacer>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                    <select v-model="networkSelected" class="form-control serch_table">
+                                        <option disabled selected>Network Filter</option>
+                                        <option :value="val.title" v-for="(val, index) of networkFilter" :key="index">
+                                            {{ val.title }}
+                                        </option>
+                                    </select>
+                                    <!-- <div class="select-network-filter">
+                                        <v-select clearable variant="solo" label="Network Filter" :items="networkFilter" v-model="networkSelected"></v-select>
+                                    </div> -->
+                                </v-col>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchInvoice"/>
+                                </v-col>
+                            </v-row>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="invoiceList" :search="search"  :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                            <template v-slot:item="{ item }">
+                                <tr class="table-body-back">
+                                    <th>{{item.selectable.id}}</th>
+                                    <td>{{item.selectable.invoice_number}}</td>
+                                    <td>
+                                        <router-link to="" @click="openCreateNetworkModal(item.selectable.id, item.selectable.network_add_type, item.selectable.network_name)">
+                                            {{item.selectable.network_name ? item.selectable.network_name : '-'}}
+                                        </router-link>
+                                    </td>
+                                    <td>{{item.selectable.invoice_issue_date}}</td>
+                                    <td>{{item.selectable.invoice_due_date}}</td>
+                                    <td>
+                                        <router-link to="" @click="openNumberEditedModal(item.selectable.id, item.selectable.is_invoice_edited)">{{item.selectable.is_invoice_edited == '1' ? 'Yes' : 'No'}}</router-link>
+                                    </td>
+                                    <td>
+                                        <button class="disable-button" @click.prevent="editInvoice(item.selectable.id)">
+                                            <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit invoice">
+                                        </button>
+                                        <button class="disable-button" @click.prevent="downloadInvoice(item.selectable.id)">
+                                            <img src="/assets/img/icons/download.svg" class="icon-width" title="Download invoice">
+                                        </button>
+                                        <button class="disable-button" @click.prevent="openShareInvoice(item.selectable.id)">
+                                            <img src="/assets/img/icons/share.svg" class="icon-width" title="Share invoice in email">
+                                        </button>
+                                        <button class="disable-button" @click.prevent="deleteInvoice(item.selectable.id)">
+                                            <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete invoice">
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <template>
             <v-row justify="center">
                 <v-dialog v-model="dialog" class="add-dialog-max-width">
