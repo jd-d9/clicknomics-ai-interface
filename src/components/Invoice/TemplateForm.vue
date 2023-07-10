@@ -57,23 +57,11 @@
                                                     </div>
                                                     <div class="mt-3 d-flex align-center justify-end">
                                                         <span class="me-2">Date Issued: </span>
-                                                        <datepicker
-                                                        inputFormat="yyyy-MM-dd"
-                                                        v-model="invoiceData.invoiceData.issuedDate"
-                                                        :lowerLimit="new Date()"
-                                                        :locale="locale"
-                                                        :clearable="true"
-                                                        />
+                                                        <datepicker v-model:value="invoiceData.invoiceData.issuedDate" :lowerLimit="new Date()" valueType="format" format="YYYY-MM-DD"></datepicker>
                                                     </div>
                                                     <div class="mt-3 d-flex align-center justify-end">
                                                         <span class="me-2">Due Date: </span>
-                                                        <datepicker
-                                                        inputFormat="yyyy-MM-dd"
-                                                        v-model="invoiceData.invoiceData.dueDate"
-                                                        :locale="locale"
-                                                        :lowerLimit="invoiceData.invoiceData.issuedDate"
-                                                        :clearable="true"
-                                                        />
+                                                        <datepicker v-model:value="invoiceData.invoiceData.dueDate" :lowerLimit="invoiceData.invoiceData.issuedDate" valueType="format" format="YYYY-MM-DD"></datepicker>
                                                     </div>
                                                 </div>
                                             </div>
@@ -263,7 +251,8 @@
 </template>
 
 <script>
-import Datepicker from 'vue3-datepicker';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 export default {
     components: {
@@ -432,8 +421,6 @@ export default {
                 if(response.data.success) {
                     this.CurrentTemplateName = response.data.data.template_name;
                     this.invoiceData = JSON.parse(response.data.data.invoiceData);
-                    this.invoiceData.invoiceData.issuedDate = new Date(this.invoiceData.invoiceData.issuedDate);
-                    this.invoiceData.invoiceData.dueDate = new Date(this.invoiceData.invoiceData.dueDate);
                     this.showLoader = false;
                 }
             })

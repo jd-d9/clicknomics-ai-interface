@@ -32,10 +32,10 @@
                                 <Form @submit="manageCreditCardPayment" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
-                                            <div class="form-group date-picker-3">
+                                            <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Date</label>
                                                 <Field name="Date" v-model="date">
-                                                    <datepicker name="Date" inputFormat="yyyy-MM-dd" v-model="date" :locale="locale" :clearable="true"/>
+                                                    <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                                 </Field>
                                                 <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
                                                 <!-- <ErrorMessage class="text-red-600" name="Date"/> -->
@@ -104,7 +104,8 @@
 <script>
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-import Datepicker from 'vue3-datepicker';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 export default {
     components: {
@@ -277,7 +278,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.date = new Date(response.data.data.payment_date);
+                    this.date = response.data.data.payment_date;
                     this.amount = response.data.data.amount;
                     this.fromAccount = response.data.data.from_account;
                     this.toAccount = response.data.data.to_account;

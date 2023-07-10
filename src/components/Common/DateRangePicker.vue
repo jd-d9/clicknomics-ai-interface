@@ -40,8 +40,6 @@ export default {
       const picker = $(inputRef.value).data('daterangepicker');
       const start = picker.startDate.format('ddd MMM DD YYYY');
       const end = picker.endDate.format('ddd MMM DD YYYY');
-      // const start = picker.startDate.format('YYYY-MM-DD');
-      // const end = picker.endDate.format('YYYY-MM-DD');
       const range = `${start} - ${end}`;
       selectedRange.value = range;
       emit('update:value', range);
@@ -53,8 +51,6 @@ export default {
       const picker = $(inputRef.value).data('daterangepicker');
       picker.setStartDate(moment(start, 'ddd MMM DD YYYY'));
       picker.setEndDate(moment(end, 'ddd MMM DD YYYY'));
-      // picker.setStartDate(moment(start, 'YYYY-MM-DD'));
-      // picker.setStartDate(moment(end, 'YYYY-MM-DD'));
     });
 
     onMounted(() => {
@@ -74,8 +70,6 @@ export default {
         $(inputRef.value).daterangepicker({
           startDate: moment(start, 'ddd MMM DD YYYY'),
           endDate: moment(end, 'ddd MMM DD YYYY'),
-          // startDate: moment(start, 'YYYY-MM-DD'),
-          // endDate: moment(end, 'YYYY-MM-DD'),
           opens: 'center',
           autoUpdateInput: false,
           ranges: predefinedRanges

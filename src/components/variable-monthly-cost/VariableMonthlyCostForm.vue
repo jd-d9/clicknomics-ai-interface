@@ -32,10 +32,10 @@
                                 <Form @submit="manageVariableMonthlyCost" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
-                                            <div class="form-group date-picker-3">
+                                            <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Date</label>
                                                 <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
-                                                    <datepicker v-model="date" range="true" name="Date" :clearable="true" format="YYYY-MM-DD"/>
+                                                    <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :range="toggleElement"></datepicker>
                                                 </Field>
                                                 <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
                                                 <!-- <ErrorMessage class="text-red-600" name="Date"/> -->
@@ -90,7 +90,8 @@
 </template>
 
 <script>
-import Datepicker from 'vue3-datepicker';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 import * as yup from 'yup';
 import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
@@ -137,7 +138,7 @@ export default {
     computed: {
         schema() {
             return yup.object({
-                Date: yup.string().required(),
+                Date: this.toggleElement ? yup.array().required() : yup.string().required(),
                 Amount: yup.string().required(),
                 Notes: yup.string().required(),
             });
@@ -180,9 +181,9 @@ export default {
             // create variable monthly cost
             else {
                 this.showLoader = true;
+                const dateRange = this.date[0].concat(",", this.date[1]);
                 this.axios.post(this.$api + '/accounting/variableCost', {
-                    date: '2023-06-01,2023-06-07',
-                    // date: moment(this.date).format('YYYY-MM-DD'),
+                    date: dateRange,
                     amount: this.amount,
                     notes: this.notes,
                 }, {
@@ -222,7 +223,7 @@ export default {
                 if(response.data.success) {
                     const data = response.data.data;
                     console.log(data)
-                    this.date = new Date(data.date),
+                    this.date = data.date,
                     this.amount = data.amount,
                     this.notes = data.notes,
                     this.showLoader = false;

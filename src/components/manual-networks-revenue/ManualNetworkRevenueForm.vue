@@ -33,10 +33,10 @@
                                     <Form @submit="saveManualNetworkMetrics" :validation-schema="schema" v-slot="{ errors }">
                                         <div class="row">
                                             <div class="col-lg-6 py-0">
-                                                <div class="form-group date-picker-3">
+                                                <div class="form-group">
                                                     <label class="form-control-label" for="input-username">Date</label>
                                                     <Field name="Date" v-model="date">
-                                                        <datepicker :class="{'border-red-600':errors.Date}" name="Date" v-model="date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                                        <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                                     </Field>
                                                     <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
                                                 </div>
@@ -89,7 +89,8 @@
 <script>
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
-import Datepicker from 'vue3-datepicker';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 export default {
     // props: ['network'],
@@ -221,7 +222,7 @@ export default {
                     const getData = response.data.data.data.find((val) => {
                         return val.id == this.$route.params.id;
                     })
-                    this.date = new Date(getData.date);
+                    this.date = getData.date;
                     this.amount = getData.amount;
                     this.networkSelected = getData.manual_network.id;
                     this.conversions = getData.conversions;

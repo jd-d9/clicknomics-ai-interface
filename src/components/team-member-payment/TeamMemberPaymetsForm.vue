@@ -32,10 +32,10 @@
                                 <Form @submit="manageTeamMemberPayment" :validation-schema="schema" v-slot="{ errors }">
                                     <div class="row">
                                         <div class="col-lg-6 py-0">
-                                            <div class="form-group date-picker-3">
+                                            <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Date</label>
                                                 <Field name="Date" v-model="date" label="Nice Name" :class="{'border-red-600': errors.Date}">
-                                                    <datepicker inputFormat="yyyy-MM-dd" v-model="date" :locale="locale" :clearable="true" name="Date"/>
+                                                    <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                                 </Field>
                                                 <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
                                                 <!-- <ErrorMessage class="text-red-600" name="Date"/> -->
@@ -106,7 +106,8 @@ import * as yup from 'yup';
 import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
 import { required } from '@vee-validate/rules';
 import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
-import Datepicker from 'vue3-datepicker';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 defineRule('required', required);
 loadLocaleFromURL(
@@ -185,7 +186,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data.data;
-                    this.date = new Date(getData.payment_date);
+                    this.date = getData.payment_date;
                     this.amount = getData.amount;
                     this.fromAccount = getData.from_account;
                     this.toAccount = getData.to_account;
