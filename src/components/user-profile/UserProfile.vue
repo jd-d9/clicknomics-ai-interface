@@ -5,10 +5,11 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard">
-                            <v-icon icon="mdi-view-dashboard"></v-icon>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
                         </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-3" color="#00cd00"></v-icon>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>My Profile</span>
                         <v-btn href="/dashboard" class="ms-auto text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
@@ -18,163 +19,113 @@
                 <!-- profile form -->
                 <v-col cols="12" sm="12" md="7" lg="8" class="py-0">
                     <v-card class="card_design mb-4">
-                        <v-card-title class="mb-0 d-flex justify-space-between">
+                        <v-card-title class="d-flex justify-space-between">
                             Personal Details
                             <v-icon v-if="!profileDetailsToggle" @click="profileDetailsToggle = !profileDetailsToggle" icon="mdi-pencil" size="small" color="#00cd00"></v-icon>
                         </v-card-title>
-                        <v-divider class="border-opacity-100 my-3" color="success" />
-
                         <div>
                             <!-- user profile section -->
-                            <div>
-                                <Form @submit="updateUserDetails" :validation-schema="userSchema" v-slot="{ errors }" v-show="profileDetailsToggle">
-                                    <v-row>
-                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                            <label>Name</label>
-                                            <v-text-field placeholder="Email" variant="outlined" id="input-username" name="Name" v-model="name" :error-messages="errors.Name"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                            <label>Select Country Code</label>
-                                            <!-- <v-select
-                                                :items="countryDetails"
-                                                label="Compact"
-                                                item-title="item.name"
-                                                item-value="item.dial_code"
-                                            ></v-select> -->
-                                            <Field v-model="countryCode" name="Country" :class="{'border-red-600': errors.Country}">
-                                                <select class="form-control" name="Country" v-model="countryCode" :class="{'border-red-600': errors.Country}">
-                                                    <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
-                                                        {{item.dial_code}} - {{item.name}}
-                                                    </option>
-                                                </select>
-                                            </Field>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                            <label>Name</label>
-                                            <v-text-field placeholder="Email" variant="outlined" id="input-username" name="Name" v-model="name" :error-messages="errors.Name"></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                    <!-- <div>
-                                        <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update Email</v-btn>
-
-                                        <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click="userEmailToggle = !userEmailToggle">Close</v-btn>
-                                    </div> -->
-                                    <div class="form-group">
-                                        <label for="formGroupExampleInput2" class="d-block form-control-label">Name</label>
+                            <v-row id="userDetailsForm" v-if="!profileDetailsToggle">
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label>Name : 
+                                        <span class="font-weight-medium text-blue-darken-4">{{ name }}</span>
+                                    </label>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label>Phone number : 
+                                        <span class="font-weight-medium text-blue-darken-4" v-if="phoneNumber">{{ countryCode }} - {{ phoneNumber }}</span>
+                                        <span class="font-weight-medium text-blue-darken-4" v-else></span>
+                                    </label>
+                                </v-col>
+                            </v-row>
+                            <Form @submit="updateUserDetails" :validation-schema="userSchema" v-slot="{ errors }" v-show="profileDetailsToggle">
+                                <v-row>
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label>Name</label>
                                         <Field type="text" id="input-username" name="Name" :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model="name"/>
                                         <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-lg-6 py-0">
-                                                <label class="form-control-label" for="input-username">Select Country Code</label>
-                                                <Field v-model="countryCode" name="Country" :class="{'border-red-600': errors.Country}">
-                                                    <select class="form-control" name="Country" v-model="countryCode" :class="{'border-red-600': errors.Country}">
-                                                        <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
-                                                            {{item.dial_code}} - {{item.name}}
-                                                        </option>
-                                                    </select>
-                                                </Field>
-                                                <span class="text-red-600" v-if="errors.Country">Country code can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="Country"/> -->
-                                            </div>
-                                            <div class="col-lg-6 py-0">
-                                                <label class="form-control-label" for="input-username">Mobile Number</label>
-                                                <Field type="number" name="Mobile" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="phoneNumber"/>
-                                                <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="Mobile"/> -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-lg btn_animated">Update User Detail</button>
-                                    <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="profileDetailsToggle = !profileDetailsToggle">Close</button>
-                                </Form>
-                                <v-row id="userDetailsForm" v-if="!profileDetailsToggle">
-                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                        <label>Name : 
-                                            <span class="font-weight-medium text-blue-darken-4">{{ name }}</span>
-                                        </label>
                                     </v-col>
+
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                        <label>Phone number : 
-                                            <span class="font-weight-medium text-blue-darken-4" v-if="phoneNumber">{{ countryCode }} - {{ phoneNumber }}</span>
-                                            <span class="font-weight-medium text-blue-darken-4" v-else></span>
-                                        </label>
+                                        <label>Select Country Code</label>
+                                        <Field v-model="countryCode" name="Country" :class="{'border-red-600': errors.Country}">
+                                            <select class="form-control" name="Country" v-model="countryCode" :class="{'border-red-600': errors.Country}">
+                                                <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
+                                                    {{item.dial_code}} - {{item.name}}
+                                                </option>
+                                            </select>
+                                        </Field>
+                                        <span class="text-red-600" v-if="errors.Country">Country Code can not be empty</span>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label>Mobile Number</label>
+                                        <Field type="number" name="Mobile" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="phoneNumber"/>
+                                        <span class="text-red-600" v-if="errors.Mobile">Mobile Number can not be empty</span>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="12" md="12" lg="12">
+                                        <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update</v-btn>    
+                                        <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="profileDetailsToggle = !profileDetailsToggle">Close</v-btn>
                                     </v-col>
                                 </v-row>
-                            </div>
-                            <hr class="my-4">
-                            <!-- password section -->
-                            <h6 class="heading-small text-muted mb-4">Password
-                                <button class="btn btn-sm float-right button-border" v-if="!passwordToggle" type="button" @click="passwordToggle = !passwordToggle">
-                                    <img src="/assets/img/icons/edit.svg" class="image-width">
-                                </button>
-                            </h6>
+                            </Form>
+                        </div>
+
+                        <v-divider class="border-opacity-100 my-4" color="success" />      
+
+                        <!-- password section -->
+                        <div>
+                            <v-card-title class="d-flex justify-space-between">
+                                Password
+                                <v-icon v-if="!passwordToggle" @click="passwordToggle = !passwordToggle" icon="mdi-pencil" size="small" color="#00cd00"></v-icon>
+                            </v-card-title>
                             <div>
-                                <Form @submit="updateUserPassword" :validation-schema="passSchema" v-slot="{ errors }" v-show="passwordToggle">
-                                    <div class="form-group">
-                                        <label for="formGroupExampleInput2" class="d-block form-control-label">Current password</label>
-                                        <Field type="password" name="currentPass" :class="{'form-control': true, 'border-red-600': errors.currentPass}" v-model="currentPassword"/>
-                                        <span class="text-red-600" v-if="errors.currentPass">Current password can not be empty</span>
-                                        <!-- <ErrorMessage class="text-red-600" name="currentPass"/> -->
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="formGroupExampleInput2" class="d-block form-control-label">New password</label>
-                                        <Field type="password" id="input-username" name="newPass" :class="{'form-control': true, 'border-red-600': errors.newPass}" placeholder="Password" v-model="password"/>
-                                        <span class="text-red-600" v-if="errors.newPass">New password can not be empty</span>
-                                        <!-- <ErrorMessage class="text-red-600" name="currentPass"/> -->
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="formGroupExampleInput2" class="d-block form-control-label">Repeat New password</label>
-                                        <Field type="password" id="input-username" name="repeatPass" :class="{'form-control': true, 'border-red-600': errors.repeatPass}" placeholder="Confirm Password" v-model="passwordConfirmation"/>
-                                        <span class="text-red-600" v-if="errors.repeatPass">Reapet new password can not be empty</span>
-                                        <!-- <ErrorMessage class="text-red-600" name="repeatPass"/> -->
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-lg btn_animated">Update password</button>
-                                    <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="passwordToggle = !passwordToggle">Close</button>
-                                </Form>
                                 <v-row v-if="!passwordToggle">
-                                    <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
+                                    <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal">
                                         <label>
                                             <span class="font-weight-medium text-blue-darken-4">XXXX XXXX</span>
                                         </label>
                                     </v-col>
                                 </v-row>
+                                <Form @submit="updateUserPassword" :validation-schema="passSchema" v-slot="{ errors }" v-show="passwordToggle">
+                                    <v-row>
+                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                            <label>Current Password</label>
+                                            <Field type="password" name="currentPass" :class="{'form-control outlined': true, 'border-red-600': errors.currentPass}" placeholder="Current Password" v-model="currentPassword"/>
+                                            <span class="text-red-600" v-if="errors.currentPass">Current Password can not be empty</span>
+                                        </v-col>
+
+                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                            <label>New Password</label>
+                                            <Field type="password" id="input-username" name="newPass" :class="{'form-control': true, 'border-red-600': errors.newPass}" placeholder="New Password" v-model="password"/>
+                                            <span class="text-red-600" v-if="errors.newPass">New Password can not be empty</span>
+                                        </v-col>
+
+                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                            <label>Confirm Password</label>
+                                            <Field type="password" id="input-username" name="repeatPass" :class="{'form-control': true, 'border-red-600': errors.repeatPass}" placeholder="Confirm Password" v-model="passwordConfirmation"/>
+                                            <span class="text-red-600" v-if="errors.repeatPass">Confirm Password can not be empty</span>
+                                        </v-col>
+
+                                        <v-col cols="12" sm="12" md="12" lg="12">
+                                            <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update</v-btn>        
+                                            <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="passwordToggle = !passwordToggle">Close</v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </Form>                                
                             </div>
-                            <!-- 2fa section -->
-                            <hr class="my-4">
-                            <h6 class="heading-small text-muted mb-4">2FA Verification
-                                <button class="btn btn-sm float-right button-border" v-if="!TwoFaVerifyToggle" type="button" @click="TwoFaVerifyToggle = !TwoFaVerifyToggle">
-                                    <img src="/assets/img/icons/edit.svg" class="image-width">
-                                </button>
-                            </h6>
+                        </div>
+
+                        <v-divider class="border-opacity-100 my-4" color="success" />   
+
+                        <!-- 2fa section -->
+                        <div>
+                            <v-card-title class="d-flex justify-space-between">
+                                2FA Verification
+                                <v-icon v-if="!TwoFaVerifyToggle" @click="TwoFaVerifyToggle = !TwoFaVerifyToggle" icon="mdi-pencil" size="small" color="#00cd00"></v-icon>
+                            </v-card-title>
                             <div>
-                                <Form @submit="update2FaVerify" :validation-schema="verifySchema" v-slot="{ errors }" v-show="TwoFaVerifyToggle">
-                                    <div class="form-group">
-                                        <label for="formGroupExampleInput2" class="d-block form-control-label">2FA Verification Status</label>
-                                        <Field name="TwoFaVerify" v-model="verificationStatus">
-                                            <select :class="{'form-control': true, 'border-red-600': errors.TwoFaVerify}" name="TwoFaVerify" placeholder="User Status" v-model="verificationStatus">
-                                                <option value="1">Enabled</option>
-                                                <option value="0">Disabled</option>
-                                            </select>
-                                        </Field>
-                                        <span class="text-red-600" v-if="errors.TwoFaVerify">Verification status can not be empty</span>
-                                        <!-- <ErrorMessage class="text-red-600" name="TwoFaVerify"/> -->
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
-                                        <Field name="Remember" v-model="remember2Fa">
-                                            <select :class="{'form-control': true, 'border-red-600': errors.Remember}" name="Remember" placeholder="User Status" v-model="remember2Fa">
-                                                <option value="1">Yes</option>
-                                                <option value="0">No</option>
-                                            </select>
-                                        </Field>
-                                        <span class="text-red-600" v-if="errors.Remember">2FA verification can not be empty</span>
-                                        <ErrorMessage class="text-red-600" name="Remember"/>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-lg btn_animated">Update</button>
-                                    <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="TwoFaVerifyToggle = !TwoFaVerifyToggle">Close</button>
-                                </Form>
                                 <v-row v-if="!TwoFaVerifyToggle">
                                     <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                         <label>
@@ -184,22 +135,48 @@
                                         </label>
                                     </v-col>
                                 </v-row>
+                                <Form @submit="update2FaVerify" :validation-schema="verifySchema"  v-slot="{ errors }" v-show="TwoFaVerifyToggle">
+                                    <v-row>
+                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                            <label>Select Verification Status</label>
+                                            <Field name="TwoFaVerify" v-model="verificationStatus">
+                                                <select :class="{'form-control': true, 'border-red-600': errors.TwoFaVerify}" name="TwoFaVerify" placeholder="User Status" v-model="verificationStatus">
+                                                    <option value="1">Enabled</option>
+                                                    <option value="0">Disabled</option>
+                                                </select>
+                                            </Field>
+                                            <span class="text-red-600" v-if="errors.TwoFaVerify">Verification status can not be empty</span>
+                                        </v-col>
+
+                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                            <label>Remember For 30 Days.</label>
+                                            <Field name="Remember" v-model="remember2Fa">
+                                                <select :class="{'form-control': true, 'border-red-600': errors.Remember}" name="Remember" placeholder="User Status" v-model="remember2Fa">
+                                                    <option value="1">Yes</option>
+                                                    <option value="0">No</option>
+                                                </select>
+                                            </Field>
+                                            <span class="text-red-600" v-if="errors.Remember">2FA verification can not be empty</span>
+                                        </v-col>
+
+                                        <v-col cols="12" sm="12" md="12" lg="12">
+                                            <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update</v-btn>        
+                                            <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="TwoFaVerifyToggle = !TwoFaVerifyToggle">Close</v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </Form>
                             </div>
-                            <!-- subscription plan section -->
-                            <hr class="my-4">
-                            <h6 class="heading-small text-muted mb-4">Subscription Plan
-                                <button class="btn btn-sm float-right button-border" v-if="!subscriptionPlanToggle" type="button" @click="subscriptionPlanToggle = !subscriptionPlanToggle">
-                                    <img src="/assets/img/icons/eye.svg" class="image-width">
-                                </button>
-                            </h6>
+                        </div>
+
+                        <v-divider class="border-opacity-100 my-4" color="success" />   
+
+                         <!-- subscription plan section -->
+                        <div>
+                            <v-card-title class="d-flex justify-space-between">
+                                Subscription Plan
+                                <v-icon v-if="!subscriptionPlanToggle" @click="subscriptionPlanToggle = !subscriptionPlanToggle" icon="mdi-pencil" size="small" color="#00cd00"></v-icon>
+                            </v-card-title>
                             <div>
-                                <div v-show="subscriptionPlanToggle">
-                                    <label for="formGroupExampleInput2" class="d-block form-control-label">Plan Name</label>
-                                    <h3 class="tx-color-04 tx-spacing--2">{{subscriptionPlan ? subscriptionPlan : 'Example plan name'}}</h3>
-                                    <label for="formGroupExampleInput2" class="d-block form-control-label mt-3">Trial Days</label>
-                                    <h3 class="tx-color-04 tx-spacing--2">{{trialEndsAt ? trialEndsAt : 'Example trial duration'}}</h3>
-                                    <button class="btn btn-secondary btn-lg btn_animated" type="button" @click="subscriptionPlanToggle = !subscriptionPlanToggle">Close</button>
-                                </div>
                                 <v-row v-if="!subscriptionPlanToggle">
                                     <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                         <label>
@@ -209,6 +186,27 @@
                                         </label>
                                     </v-col>
                                 </v-row>
+                                <v-row v-show="subscriptionPlanToggle">
+                                    <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
+                                        <label>Plan Name : 
+                                            <span class="font-weight-medium text-blue-darken-4">
+                                                {{subscriptionPlan ? subscriptionPlan : 'Example plan name'}}
+                                            </span>
+                                        </label>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
+                                        <label>Trial Days : 
+                                            <span class="font-weight-medium text-blue-darken-4">
+                                                {{trialEndsAt ? trialEndsAt : 'Example trial duration'}}
+                                            </span>
+                                        </label>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="12" md="12" lg="12">    
+                                        <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="subscriptionPlanToggle = !subscriptionPlanToggle">Close</v-btn>
+                                    </v-col>
+                                </v-row>                                
                             </div>
                         </div>
                     </v-card>
@@ -248,13 +246,13 @@
 
                                     <div class="font-medium font-weight-normal">
                                         <label class="font-medium mb-2">New User Email</label>
-                                        <div class="mb-2">
-                                            <v-text-field placeholder="Email" variant="outlined" id="input-username" name="UserEmail" v-model="email" :error-messages="errors.UserEmail"></v-text-field>
+                                        <div class="mb-4">
+                                            <Field type="text" id="input-username" name="UserEmail" :class="{'form-control': true, 'border-red-600': errors.UserEmail}" placeholder="Email" v-model="email"/>
+                                            <span class="text-red-600" v-if="errors.UserEmail">Email can not be empty</span>
                                         </div>
                                     </div>
                                     <div>
                                         <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update Email</v-btn>
-
                                         <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click="userEmailToggle = !userEmailToggle">Close</v-btn>
                                     </div>
                                 </Form>
@@ -272,7 +270,8 @@
     import * as yup from 'yup';
     import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
     import { required } from '@vee-validate/rules';
-    import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+    // import { Form, defineRule, configure } from 'vee-validate';
+    import { Form, Field, defineRule, configure } from 'vee-validate';
     defineRule('required', required);
     loadLocaleFromURL(
     'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
@@ -292,7 +291,9 @@
     export default {
         emits: ['updating-profile-details'],
         components: {
-            Form, Field, ErrorMessage
+            Form,
+            Field, 
+            // ErrorMessage
         },
         data() {
             return {
@@ -603,28 +604,3 @@
         }
     }
 </script>
-<!-- 
-<style scoped>
-.border-red-600 {
-    --border-opacity: 1;
-    border-color: #e53e3e;
-    border-color: rgba(229,62,62,var(--border-opacity));
-}
-.text-red-600 {
-    --text-opacity: 1;
-    color: #e53e3e;
-    color: rgba(229,62,62,var(--text-opacity));
-}
-.button-border {
-    border: none;
-}
-.image-width {
-    width: 1.875rem;
-}
-.text-color {
-    color: #525f7f;
-}
-.cursor-pointer {
-    cursor: pointer;
-}
-</style> -->

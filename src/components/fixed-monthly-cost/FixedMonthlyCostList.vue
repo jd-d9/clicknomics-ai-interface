@@ -1,123 +1,103 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Fixed Monthly Cost List</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right">
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </router-link>
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openImportCsvModal">Import CSV</router-link>
-                            <button @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/create')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-spacer></v-spacer>
-                                                <v-row class="align-items-center">
-                                                    <v-col class="d-flex" cols="12" sm="5"></v-col>
-                                                    <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                        <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                                    </v-col>
-                                                    <div class="col-3 ms-auto">
-                                                        <div class="ms-auto search-input position-relative">
-                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchCosts">
-                                                        </div>
-                                                    </div>
-                                                </v-row>
-                                            </v-card-title>
-                                            <!-- data table component -->
-                                            <v-data-table class="table-hover-class adding-font-size elevation-1" :headers="headers" :items="dataMetrics" :itemsPerPage="itemsPerPage" show-select v-model="selected">
-                                                <template v-slot:[`item.date`]="{ item }">
-                                                    <td>{{item.selectable.date}}</td>
-                                                </template>
-                                                <template v-slot:[`item.amount`]="{ item }">
-                                                    <td>{{item.selectable.amount}}</td>
-                                                </template>
-                                                <template v-slot:[`item.action`]="{ item }">
-                                                    <td>
-                                                        <button @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
-                                                            <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                        </button>
-                                                        <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
-                                                            <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                        </button>
-                                                    </td>
-                                                </template>
-                                                <template v-slot:top v-if="selected.length > 0">
-                                                    <div class="p-2 text-right">
-                                                        <v-btn
-                                                            elevation="2"
-                                                            variant="outlined"
-                                                            raised
-                                                            rounded="xl"
-                                                            @click="deleteSelected"
-                                                            class="me-1 disable-button"
-                                                            :disabled="permissions.delete_auth == '0'"
-                                                        >Remove Selected</v-btn>
-                                                        <v-btn
-                                                            elevation="2"
-                                                            raised
-                                                            variant="outlined"
-                                                            rounded="xl"
-                                                            @click="openCreateUpdateData"
-                                                            class="disable-button"
-                                                            :disabled="permissions.update_auth == '0'"
-                                                        >Edit Selected</v-btn>
-                                                    </div>
-                                                </template>
-                                                <template v-slot:tbody v-if="dataMetrics.length > 0">
-                                                    <tr class="total_table table-body-back">
-                                                        <td>-</td>
-                                                        <td>Totals</td>
-                                                        <td>${{ sumField }}</td>
-                                                        <td>-</td>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Fixed Monthly Cost List</span>
+                        <v-spacer />
+                        <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                            Demo.csv
+                        </v-btn>
+
+                        <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                            Import CSV
+                        </v-btn>
+
+                        <v-btn  @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Personal Details
+                            <v-spacer></v-spacer>
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                            <div class="col-3 pr-1">
+                                <Field type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchCosts"/>
                             </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="dataMetrics" :itemsPerPage="itemsPerPage" show-select v-model="selected">
+                            <template v-slot:[`item.date`]="{ item }">
+                                {{item.selectable.date}}
+                            </template>
+                            <template v-slot:[`item.amount`]="{ item }">
+                                {{item.selectable.amount}}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn
+                                    class="ma-2 bg-green-lighten-4"
+                                    variant="text"
+                                    icon="mdi-pencil"
+                                    color="green-darken-2"
+                                    @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/'+ item.selectable.id +'/edit')" 
+                                    :disabled="permissions.update_auth == '0'"
+                                ></v-btn>
+
+                                <v-btn
+                                    class="ma-2 bg-red-lighten-4"
+                                    variant="text"
+                                    icon="mdi-delete-empty"
+                                    color="red-darken-4"
+                                    @click.prevent="deleteData(item.selectable.id)" 
+                                    :disabled="permissions.delete_auth == '0'" 
+                                ></v-btn>
+                                                            
+                            </template>
+                            <template v-slot:top v-if="selected.length > 0">
+                                <div class="p-2 text-right">
+                                    <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                        Remove
+                                    </v-btn>
+                                    <v-btn @click="openCreateUpdateData" :disabled="permissions.update_auth == '0'" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-pencil">
+                                        Edit
+                                    </v-btn>
+                                </div>
+                            </template>
+                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                    <td></td>
+                                    <td>Totals</td>
+                                    <td class="text-center">${{ sumField }}</td>
+                                    <td class="text-center"></td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
+        <!-- Page content -->
         <div class="modal fade" id="importCsvModal" tabindex="-1" role="dialog" aria-labelledby="importCsvModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -214,8 +194,8 @@ export default {
             searchInput: '',
             headers: [
                 { title: 'Date', align: 'start', sortable: false, key: 'date' },
-                { title: 'Amount', key: 'amount' },
-                { title: 'Action', key: 'action' },
+                { title: 'Amount', key: 'amount', align: 'center' },
+                { title: 'Action', key: 'action', align: 'center' },
             ],
             file: '',
             currentItemsTable: [],
@@ -510,7 +490,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<!-- <style scoped>
     button[disabled] {
         cursor: not-allowed !important;
     }
@@ -530,4 +510,4 @@ export default {
     .v-calendar {
         position: unset !important;
     }
-</style>
+</style> -->
