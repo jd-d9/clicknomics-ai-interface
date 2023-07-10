@@ -205,7 +205,7 @@ export default {
             seletedForEdit: [],
             selectedFile: '',
             permissions: {},
-            selectedRange: 'Thu Jun 15 2023 - Sun Jul 23 2023'
+            selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
     },
     computed: {
@@ -254,7 +254,6 @@ export default {
                     }
                 })
             })
-            console.log(this.seletedForEdit, '============');
         },
         closeCreateUpdateData() {
             window.$('#createUpdateData').modal('hide');

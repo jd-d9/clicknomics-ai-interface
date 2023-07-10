@@ -46,8 +46,8 @@
                                     <!-- add tooltip -->
                                     <v-tooltip activator="parent" location="bottom" v-if="!data.child">{{data.menu}}</v-tooltip>
                                 </router-link>
-                                <!-- sidebar dropdown start here -->
 
+                                <!-- sidebar dropdown start here -->
                                 <div v-for="data in selectedMenu" :key="data" @mouseleave="hideHoveredDropdown">
                                     <div class="sidebar-dropdown-menu side_submenuitem" :class="{'d-block': showOnClick && data.child}">
                                         <div class="sidebar-dropdown-head px-3 py-2">
@@ -55,36 +55,40 @@
                                         </div>
                                         <v-expansion-panels>
                                             <v-expansion-panel v-for="subChild in data.child" :key="subChild">
+                                                <!-- accordian start here -->
                                                 <div v-if="subChild.children.length !== 0">
                                                     <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
                                                         {{ subChild.menu }}
                                                     </v-expansion-panel-title>
                                                     <v-expansion-panel-text v-for="childs in subChild.children" :key="childs">
-                                                        <div v-if="!childs.children">
+                                                        <div v-if="childs.children.length == 0">
                                                             <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes">
                                                                 {{ childs.menu }}
                                                             </router-link>
                                                         </div>
+                                                        <!-- child accordian start here -->
                                                         <div v-else>
                                                             <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes">
                                                                 <div class="accordion accordion-flush" :id="'accordionPanelsStayOpenExample' + childs.id">
                                                                     <div class="accordion-item">
                                                                         <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" aria-controls="flush-collapseOne">
-                                                                                (1,2) {{ childs.menu }}
+                                                                                {{ childs.menu }}
                                                                             </button>
                                                                         </h2>
                                                                         <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne" :data-bs-parent="'#accordionPanelsStayOpenExample' + childs.id">
                                                                             <div class="accordion-body">
-                                                                                <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-for="grandChilds in childs.children" :key="grandChilds">{{ grandChilds.menu }}</router-link>
+                                                                                <router-link :to="grandChilds.routes === '#' ? '' : '/' + grandChilds.routes" class="accordian-hover" v-for="grandChilds in childs.children" :key="grandChilds">{{ grandChilds.menu }}</router-link>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </router-link>
                                                         </div>
+                                                        <!-- child accordian end here -->
                                                     </v-expansion-panel-text>
                                                 </div>
+                                                <!-- accordian end here -->
                                                 <div v-else class="sidebar-dropdown-menubars">
                                                     <router-link :to="subChild.routes === '#' ? '' : '/' + subChild.routes">{{ subChild.menu }}</router-link>
                                                 </div>

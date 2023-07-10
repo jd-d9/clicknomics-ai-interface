@@ -22,7 +22,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col"> <!--  v-if="permissions.view == '1' && !showLoader"  -->
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -34,7 +34,7 @@
                                             <td>{{item.selectable.number}}</td>
                                             <td>{{format_date(item.selectable.deleted_at)}}</td>
                                             <td>
-                                                <button class="disable-button" @click.prevent="restoreMicrosoftAdsAccount(item.selectable.id)">  <!--  :disabled="permissions.update_auth == '0'"  -->
+                                                <button class="disable-button" @click.prevent="restoreMicrosoftAdsAccount(item.selectable.id)" :disabled="permissions.update_auth == '0'">
                                                     <img src="/assets/img/icons/restore.svg" class="icon-width" title="Restore">
                                                 </button>
                                             </td>
@@ -45,20 +45,20 @@
                         </div>
                     </v-app>
                 </div>
-                <!-- <div class="col" v-if="permissions.view != '1' && !showLoader">
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="text-center">You have no access for this page</h4>
                         </div>
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import moment from 'moment'
+import moment from 'moment';
 export default {
     // props: ['list'],
     components: {
@@ -75,20 +75,43 @@ export default {
                 { title: 'Action',  key: '', sortable: false},
             ],
             linkedNewtworks: [],
-            itemsPerPage: -1
+            itemsPerPage: -1,
+            permissions: {},
         }
     },
     mounted() {
-        // this.linkedNewtworks = this.list;
+        this.getAllData();
     },
     methods: {
+        // get listing of all data
+        getAllData() {
+            this.showLoader = true;
+            this.axios.get(this.$api + '/settings/archivedmicrosoftads', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const Data = response.data;
+                    this.linkedNewtworks = Data.data.data;
+                    this.permissions = Data.permission;
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.showLoader = false;
+            });
+        },
+        // restore account
         restoreMicrosoftAdsAccount(id) {
             if(confirm("Do you really want to restore account?")) {
-                this.confirmationBox = false;
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('id', id);
-                this.axios.post(this.$api + '/restoreMicrosoftAdsAccount/' + id, formData, {
+                this.axios.post(this.$api + '/settings/archivedmicrosoftads/restoreMicrosftAdsAccount', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
@@ -102,12 +125,13 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
+                        this.getAllData();
                         this.showLoader = false;
                     }
                 })
                 .catch(error => {
                     this.$toast.open({
-                        message: error.response.data.message,
+                        message: error.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'error'
@@ -117,6 +141,7 @@ export default {
                 });
             }
         },
+        // format date
         format_date(value){
             if (value) {
                 return moment(String(value)).format('YYYY-MM-DD')

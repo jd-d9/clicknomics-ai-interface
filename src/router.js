@@ -33,6 +33,8 @@ import DomainList from './components/integrations/domain/DomainList.vue';
 import DomainForm from './components/integrations/domain/DomainForm.vue';
 import CloudwaysList from './components/integrations/cloudways/CloudwaysList.vue';
 import CloudwaysForm from './components/integrations/cloudways/CloudwaysForm.vue';
+import GoogleAdsComponent from './components/integrations/traffic-sources/GoogleAdsComponent.vue';
+import MicrosoftAdsComponent from './components/integrations/traffic-sources/MicrosoftAdsComponent.vue';
 import PlansList from './components/plans/PlansList.vue';
 import PlansForm from './components/plans/PlansForm.vue';
 import ManualNetworkList from './components/manual-networks/ManualNetworkList.vue';
@@ -49,6 +51,7 @@ import MultiLoginManagementSystem from './components/management-system/MultiLogi
 import ServerListComponent from './components/server/ServerListComponent.vue';
 import EranetDomainComponent from './components/domains/manual-domain/EranetDomainComponent.vue';
 import FlokinetDomainComponent from './components/domains/manual-domain/FlokinetDomainComponent.vue';
+import AdAccountComponent from './components/ad-accounts/AdAccountComponent.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -98,6 +101,9 @@ const router = createRouter({
         {path: '/accounting/fixedMonthlyCost', component: DisplayFixedMonthlyCost, meta: {auth: true}},
         {path: '/accounting/fixedMonthlyCost/create', component: FixedMonthlyCostForm, meta: {auth: true}},
         {path: '/accounting/fixedMonthlyCost/:id/edit', component: FixedMonthlyCostForm, meta: {auth: true}},
+        // settings/integration/traffic-sources
+        {path: '/settings/googleAds', component: GoogleAdsComponent, meta: {auth: true}},
+        {path: '/settings/microsoftAds', component: MicrosoftAdsComponent, meta: {auth: true}},
         // settings/integration/networks
         {path: '/settings/networks', component: NetworksList, meta: {auth: true}},
         {path: '/settings/networks/affiliates', component: IntegrateNetwork, meta: {auth: true}},
@@ -134,6 +140,8 @@ const router = createRouter({
         {path: '/domains/flokinet', component: FlokinetDomainComponent, meta: {auth: true}},
         // server module
         {path: '/servers', component: ServerListComponent, meta: {auth: true}},
+        // ad accounts module
+        {path: '/ad-accounts', component: AdAccountComponent, meta: {auth: true}},
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page

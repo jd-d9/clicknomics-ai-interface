@@ -22,7 +22,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col"> <!--  v-if="permissions.view == '1' && !showLoader"  -->
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -33,7 +33,7 @@
                                             <td>{{item.selectable.customer_id}}</td>
                                             <td>{{format_date(item.selectable.deleted_at)}}</td>
                                             <td>
-                                                <button class="disable-button" @click.prevent="restoreGoogleAdsAccount(item.selectable.id)">  <!--  :disabled="permissions.update_auth == '0'"  -->
+                                                <button class="disable-button" @click.prevent="restoreGoogleAdsAccount(item.selectable.id)" :disabled="permissions.update_auth == '0'">
                                                     <img src="/assets/img/icons/restore.svg" class="icon-width" title="Restore">
                                                 </button>
                                             </td>
@@ -44,13 +44,13 @@
                         </div>
                     </v-app>
                 </div>
-                <!-- <div class="col" v-if="permissions.view != '1' && !showLoader">
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="text-center">You have no access for this page</h4>
                         </div>
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
@@ -70,25 +70,46 @@ export default {
                 { title: 'Account Name',  key: 'name' },
                 { title: 'Account ID',  key: 'customer_id' },
                 { title: 'Date On Removed',  key: 'deleted_at' },
-                { title: 'Action',  key: '', sortable: false},
+                { title: 'Action',  key: '', sortable: false},  
             ],
             linkedNewtworks: [],
-            itemsPerPage: -1
+            itemsPerPage: -1,
+            permissions: {},
         }
     },
     mounted() {
-
+        this.getAllData();
     },
     methods: {
+        // get listing of all data
+        getAllData() {
+                this.showLoader = true;
+                this.axios.get(this.$api + '/settings/archivedgoogleads', {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        const Data = response.data;
+                        this.linkedNewtworks = Data.data.data;
+                        this.permissions = Data.permission;
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.showLoader = false;
+                });
+        },
         // restore account
         restoreGoogleAdsAccount(id) {
-            console.log(id)
             if(confirm("Do you really want to restore account?")) {
-                this.confirmationBox = false;
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('id', id);
-                this.axios.post(this.$api + '/restoreGoogleAdsAccount/' + id, formData, {
+                this.axios.post(this.$api + '/settings/archivedgoogleads/restoreGoogleAdsAccount', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
@@ -102,12 +123,13 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
+                        this.getAllData();
                         this.showLoader = false;
                     }
                 })
                 .catch(error => {
                     this.$toast.open({
-                        message: error.response.data.message,
+                        message: error.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'error'
@@ -117,6 +139,7 @@ export default {
                 });
             }
         },
+        // format date
         format_date(value){
             if (value) {
                 return moment(String(value)).format('YYYY-MM-DD')
