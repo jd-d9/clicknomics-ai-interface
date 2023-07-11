@@ -30,11 +30,11 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Personal Details
+                            Fixed Monthly Cost
                             <v-spacer></v-spacer>
                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                             <div class="col-3 pr-1">
-                                <Field type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchCosts"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchCosts"/>
                             </div>
                         </v-card-title>
 
@@ -44,7 +44,7 @@
                                 {{item.selectable.date}}
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">
-                                {{item.selectable.amount}}
+                                ${{item.selectable.amount}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn
@@ -63,8 +63,7 @@
                                     color="red-darken-4"
                                     @click.prevent="deleteData(item.selectable.id)" 
                                     :disabled="permissions.delete_auth == '0'" 
-                                ></v-btn>
-                                                            
+                                ></v-btn>                                                            
                             </template>
                             <template v-slot:top v-if="selected.length > 0">
                                 <div class="p-2 text-right">
@@ -104,7 +103,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Import Fixed Monthly Cost List</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeImportCsvModal">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <form @submit="importCsv">
@@ -120,9 +119,11 @@
                                 <!-- <ErrorMessage class="text-red-600" name="selectFile"/> -->
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
-                            <button type="submit" class="btn btn-primary">Import</button>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Import</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeImportCsvModal">Close</v-btn>
+                            </v-col>
                         </div>
                     </form>
                 </div>
@@ -134,7 +135,7 @@
                     <div class="modal-header">
                         <h5 style="color:#fff;" class="modal-title">Bulk Edit Operation Cost</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeCreateUpdateData">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -160,7 +161,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
+                                        <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Save</v-btn>  
                                     </div>
                                 </div>
                             </Form>

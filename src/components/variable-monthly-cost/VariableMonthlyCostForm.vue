@@ -1,91 +1,65 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">{{breadCrumbMessage}} Variable Monthly Cost</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right">
-                            <router-link to="/accounting/variableMonthlyCost" class="btn btn-lg btn-neutral btn_animated">View Variable Monthly Cost Listing</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="col-12">
-                                <Form @submit="manageVariableMonthlyCost" :validation-schema="schema" v-slot="{ errors }">
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Date</label>
-                                                <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
-                                                    <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :range="toggleElement"></datepicker>
-                                                </Field>
-                                                <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="Date"/> -->
-                                                <!-- <vueified-date-range-picker @selected="cb"></vueified-date-range-picker> -->
-                                            </div>
-                                            <!-- <div class="form-group date-picker-3" v-else>
-                                                <label class="form-control-label" for="input-username">Date</label>
-                                                <datepicker v-model="date" :locale="locale" :clearable="true" format="YYYY-MM-DD"/>
-                                                <div :class="{'date-is-invalid': invalidDate}">
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ invalidDate }}</strong>
-                                                    </span>
-                                                </div>
-                                            </div> -->
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Amount</label>
-                                                <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
-                                                <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="Amount"/> -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-12 py-0 mt-3">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Notes</label>
-                                                <Field name="Notes" v-model="notes">
-                                                    <textarea :class="{'form-control': true, 'border-red-600': errors.Notes}" name="Notes" cols="30" rows="10" v-model="notes"></textarea>
-                                                </Field>
-                                                <span class="text-red-600" v-if="errors.Notes">Notes can not be empty</span>
-                                                <ErrorMessage class="text-red-600" name="Notes"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">{{toggleElement ? 'Save' : 'Update'}}</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>{{breadCrumbMessage}} Variable Monthly Cost</span>
+
+                        <v-spacer />
+                        <v-btn href="/accounting/variableMonthlyCost" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                            Back
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between">
+                            {{breadCrumbMessage}} Variable Monthly Cost
+                        </v-card-title>
+
+                        <v-divider class="border-opacity-100 my-4" color="success" />   
+                        
+                        <Form @submit="manageVariableMonthlyCost" :validation-schema="schema" v-slot="{ errors }">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label>Date</label>
+                                    <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
+                                        <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :range="toggleElement" :class="{'border-red-600': errors.Date}"></datepicker>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label>Amount</label>
+                                    <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
+                                    <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="8" lg="8" class="font-medium font-weight-normal">
+                                    <label>Notes</label>
+                                    <Field name="Notes" v-model="notes">
+                                        <textarea :class="{'form-control': true, 'border-red-600': errors.Notes}" name="Notes" cols="30" rows="10" v-model="notes"></textarea>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.Notes">Notes can not be empty</span>
+                                </v-col>
+                                
+                                <v-col cols="12" sm="12" md="12" lg="12">
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">{{toggleElement ? 'Save' : 'Update'}}</v-btn>    
+                                </v-col>
+                            </v-row>
+                        </Form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -96,7 +70,7 @@ import moment from 'moment';
 import * as yup from 'yup';
 import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
 import { required } from '@vee-validate/rules';
-import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+import { Form, Field, defineRule, configure } from 'vee-validate';
 defineRule('required', required);
 loadLocaleFromURL(
   'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
@@ -116,7 +90,7 @@ configure({
 export default {
     components: {
         Datepicker,
-        Form, Field, ErrorMessage
+        Form, Field
     },
     data() {
         return {

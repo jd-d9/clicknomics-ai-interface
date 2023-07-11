@@ -1,102 +1,91 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Variable Monthly Cost List</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right">
-                            <button @click.prevent="this.$router.push('/accounting/variableMonthlyCost/create')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-spacer></v-spacer>
-                                                <v-row class="align-items-center">
-                                                    <v-col class="d-flex" cols="12" sm="5">
-                                                        <v-date-picker range="true"></v-date-picker>
-                                                    </v-col>
-                                                    <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                        <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                                    </v-col>
-                                                    <div class="col-3 ms-auto">
-                                                        <div class="ms-auto search-input position-relative">
-                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
-                                                        </div>
-                                                    </div>
-                                                </v-row>
-                                            </v-card-title>
-                                            <!-- data table component -->
-                                            <v-data-table class="table-hover-class" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
-                                                <template v-slot:item="{ item }">
-                                                    <tr class="table-body-back">
-                                                        <td>{{item.selectable.date}}</td>
-                                                        <td>${{item.selectable.amount}}</td>
-                                                        <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
-                                                        <td>
-                                                            <button @click.prevent="this.$router.push('/accounting/variableMonthlyCost/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
-                                                                <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                            </button>
-                                                            <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
-                                                                <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </template>
-                                                <template v-slot:tbody v-if="dataMetrics.length > 0">
-                                                    <tr class="total_table table-body-back">
-                                                        <td>Totals</td>
-                                                        <td>${{ sumField }}</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Variable Monthly Cost List</span>
+                        <v-spacer />
+                        <v-btn @click.prevent="this.$router.push('/accounting/variableMonthlyCost/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Variable Monthly Cost
+                            <v-spacer></v-spacer>
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                            <div class="col-3 pr-1">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
                             </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.date`]="{ item }">
+                                {{item.selectable.date}}
+                            </template>
+                            <template v-slot:[`item.amount`]="{ item }">
+                                ${{item.selectable.amount}}
+                            </template>
+                            <template v-slot:[`item.notes`]="{ item }">
+                                {{item.selectable.notes ? item.selectable.notes : '-'}}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn
+                                    class="ma-2 bg-green-lighten-4"
+                                    variant="text"
+                                    icon="mdi-pencil"
+                                    color="green-darken-2"
+                                    @click.prevent="this.$router.push('/accounting/variableMonthlyCost/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'"
+                                ></v-btn>
+
+                                <v-btn
+                                    class="ma-2 bg-red-lighten-4"
+                                    variant="text"
+                                    icon="mdi-delete-empty"
+                                    color="red-darken-4"
+                                    @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" 
+                                ></v-btn>                                                            
+                            </template>
+
+                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                    <td>Totals</td>
+                                    <td class="text-center">${{ sumField }}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Import Fixed Monthly Cost List</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                         <form>
@@ -110,9 +99,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Import</button>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Import</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" data-dismiss="modal">Close</v-btn>
+                            </v-col>
                         </div>
                     </form>
                 </div>
@@ -137,9 +128,9 @@ export default {
             search: '',
             headers: [
                 { title: 'Date', align: 'start', sortable: false, key: 'date' },
-                { title: 'Amount', key: 'amount' },
+                { title: 'Amount', key: 'amount', align: 'center' },
                 { title: 'Notes', key: 'notes' },
-                { title: 'Action', key: '' },
+                { title: 'Action', key: 'action', align: 'center' },
             ],
             // dateRange: {startDate, endDate},
             file: '',

@@ -1,136 +1,139 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Credit Cards Payments</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right">
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </router-link>
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openImportCsvModal">Import CSV</router-link>
-                            <button @click.prevent="this.$router.push('/accounting/creditCardPayments/create')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <!-- <v-spacer></v-spacer> -->
-                                                <v-row class=" align-items-center">
-                                                    <v-col class="d-flex" cols="12" sm="3">
-                                                        <div class="select-network-filter">
-                                                            <v-select
-                                                            clearable
-                                                            variant="solo"
-                                                            label="From Account Filter" 
-                                                            :items="fromAccountFilter"
-                                                            v-model="fromAccount"
-                                                            @update:modelValue="filterFromAccount"
-                                                            ></v-select>
-                                                        </div>
-                                                    </v-col>
-                                                    <v-col class="d-flex" cols="12" sm="3">
-                                                        <div class="select-network-filter">
-                                                            <v-select
-                                                            clearable
-                                                            variant="solo"
-                                                            label="To Account Filter" 
-                                                            :items="toAccountFilter"
-                                                            v-model="toAccount"
-                                                            @update:modelValue="filterToAccount"
-                                                            ></v-select>
-                                                        </div>
-                                                    </v-col>
-                                                    <v-col class="d-flex justify-content-end" cols="12" sm="3">
-                                                        <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                                    </v-col>
-                                                    <div class="col-3 ms-auto">
-                                                        <div class="ms-auto search-input position-relative">
-                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
-                                                        </div>
-                                                    </div>
-                                                </v-row>
-                                            </v-card-title>
-                                            <!-- data table component -->
-                                            <v-data-table class="table-hover-class" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="creditCardPaymentList" :itemsPerPage="itemsPerPage">
-                                                <template v-slot:item="{ item }">
-                                                    <tr class="table-body-back">
-                                                        <td>{{item.selectable.id}}</td>
-                                                        <td>{{item.selectable.payment_date}}</td>
-                                                        <td>{{item.selectable.from_account}}</td>
-                                                        <td>{{item.selectable.to_account}}</td>
-                                                        <td>${{item.selectable.amount }}</td>
-                                                        <td>{{item.selectable.status}}</td>
-                                                        <td>
-                                                            <button @click.prevent="this.$router.push('/accounting/creditCardPayments/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
-                                                                <img src="/assets/img/icons/edit.svg" class="img-width">
-                                                            </button>
-                                                            <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
-                                                                <img src="/assets/img/icons/bin.svg" class="img-width">
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </template>
-                                                <template v-slot:tbody v-if="creditCardPaymentList.length > 0">
-                                                    <tr class="total_table table-body-back">
-                                                        <td>Totals</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>${{ sumField }}</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
-                            </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Credit Cards Payments</span>
+
+                        <v-spacer />
+                        <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                            Demo.csv
+                        </v-btn>
+
+                        <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                            Import CSV
+                        </v-btn>
+
+                        <v-btn @click.prevent="this.$router.push('/accounting/creditCardPayments/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    Credit Cards Payments
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                    <select v-model="fromAccount" @change="filterFromAccount" class="form-control serch_table">
+                                        <option disabled selected>From Account Filter</option>
+                                        <option :value="val.title" v-for="(val, index) of fromAccountFilter" :key="index">
+                                            {{ val.title }}
+                                        </option>
+                                    </select>
+                                    <!-- <v-select clearable variant="solo" placeholder="From Account Filter"  :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="filterFromAccount"
+                                    ></v-select>-->
+                                </v-col>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                    <select v-model="toAccount" @change="filterToAccount" class="form-control serch_table">
+                                        <option disabled selected>To Account Filter</option>
+                                        <option :value="val.title" v-for="(val, index) of toAccountFilter" :key="index">
+                                            {{ val.title }}
+                                        </option>
+                                    </select>
+                                    <!-- <v-select clearable variant="solo" label="To Account Filter"  :items="toAccountFilter" v-model="toAccount" @update:modelValue="filterToAccount"></v-select> -->
+                                </v-col>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
+                                </v-col>
+                            </v-row>                          
+                        </v-card-title>
+
+                        <v-divider class="border-opacity-100 my-4" color="success" />
+
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="creditCardPaymentList" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.id`]="{ item }">
+                                {{item.selectable.id}}
+                            </template>
+                            <template v-slot:[`item.payment_date`]="{ item }">
+                                ${{item.selectable.payment_date}}
+                            </template>
+                            <template v-slot:[`item.from_account`]="{ item }">
+                                ${{item.selectable.from_account}}
+                            </template>
+                            <template v-slot:[`item.to_account`]="{ item }">
+                                ${{item.selectable.to_account}}
+                            </template>
+                            <template v-slot:[`item.amount`]="{ item }">
+                                ${{item.selectable.amount}}
+                            </template>
+                            <template v-slot:[`item.status`]="{ item }">
+                                ${{item.selectable.status}}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn
+                                    class="ma-2 bg-green-lighten-4"
+                                    variant="text"
+                                    icon="mdi-pencil"
+                                    color="green-darken-2"
+                                    @click.prevent="this.$router.push('/accounting/creditCardPayments/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'"
+                                ></v-btn>
+
+                                <v-btn
+                                    class="ma-2 bg-red-lighten-4"
+                                    variant="text"
+                                    icon="mdi-delete-empty"
+                                    color="red-darken-4"
+                                    @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'"
+                                ></v-btn>                                                            
+                            </template>
+                            <template v-slot:tbody v-if="creditCardPaymentList.length > 0">
+                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                    <td>Totals</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>${{ sumField }}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <div class="modal fade" id="importCsvModal" tabindex="-1" role="dialog" aria-labelledby="importCsvModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Import Credit Card Payments List</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeImportCsvModal">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <form @submit="importCsv">
@@ -144,9 +147,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
-                            <button type="submit" class="btn btn-primary">Import</button>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Import</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeImportCsvModal">Close</v-btn>
+                            </v-col>
                         </div>
                     </form>
                 </div>
@@ -179,7 +184,7 @@ export default {
                 { title: 'To Account', align: 'start', sortable: true, key: 'to_account' },
                 { title: 'Amount', align: 'start', sortable: true, key: 'amount' },
                 { title: 'Status', align: 'start', sortable: true, key: 'status' },
-                { title: 'Action', key: '' },
+                { title: 'Action', align: 'center', key: 'action' },
             ],
             dateRange: {startDate, endDate},
             file: '',
