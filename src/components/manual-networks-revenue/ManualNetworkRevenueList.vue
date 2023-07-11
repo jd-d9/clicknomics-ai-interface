@@ -169,7 +169,7 @@ export default {
             isSortable: true,
             searchInput: '',
             permissions: {},
-            selectedRange: 'Thu Jun 15 2023 - Sun Jul 23 2023'
+            selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
     },
     computed: {

@@ -99,11 +99,12 @@ export default {
         },
     },
     methods: {
+        // generate email report and send via email
         genrateEmailDailyReport() {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('date', this.date);
-            this.axios.post(this.$api + '/', formData, {    // api pending
+            this.axios.post(this.$api + '/settings/processEmailReport/genrateEmailDailyReport', formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -117,8 +118,9 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
+                    console.log(response)
+                    this.resultDate = this.date;
                     this.dialog = true;
-                    // this.resultDate = response.data.data;
                     this.showLoader = false;
                 }
             })
@@ -130,44 +132,9 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
+                this.resultDate = '';
                 this.showLoader = false;
             });
-            // axios.defaults.headers.common = {
-            //     'X-Requested-With': 'XMLHttpRequest',
-            //     'X-CSRF-TOKEN': window.csrf_token
-            // };
-            // axios.post(`/genrateEmailDailyReport`,formData,{
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     },
-            // }).then(response => {
-            //     if(response) {
-            //         console.log(response, 'sasa')
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: response.data.message,
-            //             type: 'success',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '');
-            //         this.dialog = true;
-            //         this.resultDate = response.data.data;
-            //     }else {
-            //         this.showLoader = false;
-            //         this.message = {
-            //             text: 'Something Went Wrong!',
-            //             type: 'error',
-            //         }
-            //         Bus.$emit('flash-message', this.message, '');
-            //     }
-            // }).catch(error => {
-            //     this.showLoader = false;
-            //     console.log(error);
-            //     this.message = {
-            //         text: error.response.data.message,
-            //         type: 'error',
-            //     }
-            //     Bus.$emit('flash-message', this.message, '');
-            // })
         },
     }
 }
