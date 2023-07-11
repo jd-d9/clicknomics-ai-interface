@@ -52,7 +52,7 @@
                                 </v-col>
                                 
                                 <v-col cols="12" sm="12" md="12" lg="12">
-                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">{{toggleElement ? 'Save' : 'Update'}}</v-btn>    
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">{{toggleElement ? 'Save' : 'Update'}}</v-btn>    
                                 </v-col>
                             </v-row>
                         </Form>
