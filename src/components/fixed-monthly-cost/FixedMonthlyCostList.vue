@@ -121,7 +121,7 @@
                         </div>
                         <div class="modal-footer pt-0">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Import</v-btn>    
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-import">Import</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeImportCsvModal">Close</v-btn>
                             </v-col>
                         </div>
@@ -141,29 +141,27 @@
                     <div class="modal-body">
                         <div class="col-12">
                             <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
-                                <div class="row" v-for="(item, index) in seletedForEdit" :key="index">
-                                    <div class="col-lg-6 py-0">
+                                <v-row v-for="(item, index) in seletedForEdit" :key="index">
+                                    <v-col cols="12" sm="12" md="6" lg="6" >
                                         <div class="form-group date-picker-3 date-picker-disabled">
                                             <label class="form-control-label" for="input-username">Date</label>
                                             <datepicker name="date" :disabled="true" v-model="item.date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
+                                    </v-col>
+                                    <v-col cols="12" sm="12" md="6" lg="6" >
                                         <div class="form-group">
                                             <label class="form-control-label" for="input-username">Amount</label>
                                             <Field name="amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.amount}" placeholder="Add Amount" v-model="item.amount"/>
                                             <ErrorMessage class="text-red-600" name="amount"/>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <v-divider class="mt-0 mb-0"></v-divider>
-                                    </div>
-                                </div>
-                                <div class="row">
+                                    </v-col>
+                                    <v-divider class="mt-0 mb-0"></v-divider>
+                                </v-row>
+                                <v-row>
                                     <div class="col-lg-12 py-0 text-right">
-                                        <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Save</v-btn>  
+                                        <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>  
                                     </div>
-                                </div>
+                                </v-row>
                             </Form>
                         </div>
                     </div>

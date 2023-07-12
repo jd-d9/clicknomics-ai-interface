@@ -12,11 +12,11 @@
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>Invoice</span>
                         <v-spacer />
-                        <v-btn href="accounting/invoice/template" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-layers">
+                        <v-btn @click.prevent="this.$router.push('/accounting/invoice/template')" href="" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-layers">
                             Templates
                         </v-btn>
 
-                        <v-btn href="accounting/invoice/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="this.$router.push('/accounting/invoice/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -50,35 +50,54 @@
 
                         <!-- data table component -->
                         <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="invoiceList" :search="search"  :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
-                            <template v-slot:item="{ item }">
-                                <tr class="table-body-back">
-                                    <th>{{item.selectable.id}}</th>
-                                    <td>{{item.selectable.invoice_number}}</td>
-                                    <td>
-                                        <router-link to="" @click="openCreateNetworkModal(item.selectable.id, item.selectable.network_add_type, item.selectable.network_name)">
-                                            {{item.selectable.network_name ? item.selectable.network_name : '-'}}
-                                        </router-link>
-                                    </td>
-                                    <td>{{item.selectable.invoice_issue_date}}</td>
-                                    <td>{{item.selectable.invoice_due_date}}</td>
-                                    <td>
-                                        <router-link to="" @click="openNumberEditedModal(item.selectable.id, item.selectable.is_invoice_edited)">{{item.selectable.is_invoice_edited == '1' ? 'Yes' : 'No'}}</router-link>
-                                    </td>
-                                    <td>
-                                        <button class="disable-button" @click.prevent="editInvoice(item.selectable.id)">
-                                            <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit invoice">
-                                        </button>
-                                        <button class="disable-button" @click.prevent="downloadInvoice(item.selectable.id)">
-                                            <img src="/assets/img/icons/download.svg" class="icon-width" title="Download invoice">
-                                        </button>
-                                        <button class="disable-button" @click.prevent="openShareInvoice(item.selectable.id)">
-                                            <img src="/assets/img/icons/share.svg" class="icon-width" title="Share invoice in email">
-                                        </button>
-                                        <button class="disable-button" @click.prevent="deleteInvoice(item.selectable.id)">
-                                            <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete invoice">
-                                        </button>
-                                    </td>
-                                </tr>
+                            <template v-slot:[`item.id`]="{ item }">
+                                {{item.selectable.id}}
+                            </template>
+                            <template v-slot:[`item.invoice_number`]="{ item }">
+                                {{item.selectable.invoice_number}}
+                            </template>
+                            <template v-slot:[`item.network_name`]="{ item }">
+                                <router-link to="" @click="openCreateNetworkModal(item.selectable.id, item.selectable.network_add_type, item.selectable.network_name)">
+                                    {{item.selectable.network_name ? item.selectable.network_name : '-'}}
+                                </router-link>
+                            </template>
+                            <template v-slot:[`item.invoice_issue_date`]="{ item }">
+                                {{item.selectable.invoice_issue_date}}
+                            </template>
+                            <template v-slot:[`item.invoice_due_date`]="{ item }">
+                                {{item.selectable.invoice_due_date}}
+                            </template>
+                            <template v-slot:[`item.is_invoice_edited`]="{ item }">
+                                <router-link to="" @click="openNumberEditedModal(item.selectable.id, item.selectable.is_invoice_edited)">{{item.selectable.is_invoice_edited == '1' ? 'Yes' : 'No'}}</router-link>
+                            </template>
+                            <template v-slot:[`item.actions`]="{ item }">    
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editInvoice(item.selectable.id)">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click.prevent="downloadInvoice(item.selectable.id)">
+                                    <v-icon color="deep-purple-darken-1">
+                                        mdi-download
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Download</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-blue-lighten-4" variant="text" icon @click.prevent="openShareInvoice(item.selectable.id)">
+                                    <v-icon color="blue-darken-2">
+                                        mdi-share-variant
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Share invoice in email</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteInvoice(item.selectable.id)">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>
                             </template>
                         </v-data-table>
                     </v-card>
@@ -88,127 +107,123 @@
 
         <template>
             <v-row justify="center">
-                <v-dialog v-model="dialog" class="add-dialog-max-width">
-                    <v-card>
+                <v-dialog v-model="dialog" class="add-dialog-max-width" width="600">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Add email to share</h5>
+                            <button type="button" class="close" aria-label="Close" @click="closeShareInvoice">
+                                <span aria-hidden="true" class="mdi mdi-close-circle"></span>
+                            </button>
+                        </div>
                         <form>
-                            <v-card-title class="text-h5">Add email to share</v-card-title>
-                            <v-card-text>
-                                <!-- <div class="add-products-form"> -->
-                                    <div v-for="(item, index) in emailList" :key="index" class="single-product-form my-2">
-                                        <v-card class="d-flex">
-                                            <div class="pa-5 flex-grow-1">
-                                                <v-row>
-                                                    <v-col cols="12">
-                                                        <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Email" v-model="item.email">
-                                                    </v-col>
-                                                </v-row>
-                                            </div>
-                                            <div class="d-flex flex-column item-actions rounded-0 pa-1" v-if="index > 0">
-                                                <v-btn icon small @click="emailList.splice(index, 1)">
-                                                    <v-icon size="20">{{ 'mdi-close' }}</v-icon>
-                                                </v-btn>
-                                                <v-spacer></v-spacer>
-                                            </div>
-                                        </v-card>
-                                    </div>
-                                    <v-btn color="primary" class="mt-2" variant="outlined" @click="addNewItem">Add Item</v-btn>
-                                <!-- </div> -->
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="green darken-1" text @click="closeShareInvoice">Cancel</v-btn>
-                                <v-btn color="green darken-1" text type="submit" @click.prevent="shareInvoice">Send</v-btn>
-                            </v-card-actions>
+                            <div class="modal-body">
+                                <div v-for="(item, index) in emailList" :key="index">
+                                    <v-row class="align-center">
+                                        <v-col cols="10">
+                                            <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Email" v-model="item.email">
+                                        </v-col>
+                                        <v-col cols="2" v-if="index > 0">
+                                            <v-btn
+                                                class="bg-red-lighten-4"
+                                                variant="text" width="40px" height="40px"
+                                                icon="mdi-close"
+                                                color="red-darken-4"
+                                                @click="emailList.splice(index, 1)"
+                                            ></v-btn>
+                                        </v-col>
+                                        <v-col cols="2" v-else>
+                                            <v-btn
+                                                class="bg-green-lighten-4"
+                                                variant="text" width="40px" height="40px"
+                                                icon="mdi-plus"
+                                                color="green-darken-2"
+                                                @click="addNewItem"
+                                            ></v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-footer pt-0">
+                                <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-send" @click.prevent="shareInvoice">Send</v-btn>    
+                                    <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click="closeShareInvoice">Cancel</v-btn>
+                                </v-col>
+                            </div>
                         </form>
-                    </v-card>
+                    </div>
                 </v-dialog>
             </v-row>
         </template>
          <!-- Modal Network Add -->
         <div class="modal fade" id="createNetworkModal" tabindex="-1" role="dialog" aria-labelledby="createNetworkModalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">CPA Network Company</h5>
+                        <h5 class="modal-title">CPA Network Company</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeCreateNetworkModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <form>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0">
-                                        <div class="form-group radio-button-app">
-                                            <label class="form-control-label" for="input-username">Add Network Manually</label>
-                                            <v-app>
-                                                <v-radio-group inline class="monitor_main" v-model="networkModal.networkAddType" @change="resetNetworkName">
-                                                    <v-radio class="monitor" label="YES" :value="1"></v-radio>
-                                                    <v-radio class="monitor" label="NO" :value="0"></v-radio>
-                                                </v-radio-group>
-                                            </v-app>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 py-0" v-if="networkModal.networkAddType">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">CPA Network Name</label>
-                                            <input type="text" :class="{'form-control': true}" v-model="networkModal.networkName">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 py-0" v-else>
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Select CPA Network</label>
-                                            <div class="select-network-filter select-network-filter-two">
-                                                <v-autocomplete :class="{'form-control': true}" variant="outlined" :items="networkList" v-model="networkModal.networkName"></v-autocomplete>  <!-- :items="networkList"-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="addCpaNetwork">Save</button>
-                                    </div>
-                                </div>
-                            </form>
+                    <form>
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    <label class="form-control-label" for="input-username">Add Network Manually</label>
+                                    <v-radio-group inline v-model="networkModal.networkAddType" @change="resetNetworkName">
+                                        <v-radio class="monitor" label="YES" :value="1"></v-radio>
+                                        <v-radio class="monitor" label="NO" :value="0"></v-radio>
+                                    </v-radio-group>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="12" lg="12" v-if="networkModal.networkAddType">
+                                    <label class="form-control-label" for="input-username">CPA Network Name</label>
+                                    <input type="text" :class="{'form-control': true}" v-model="networkModal.networkName">
+                                </v-col>
+                                <v-col cols="12" sm="12" md="12" lg="12" v-else>
+                                    <label class="form-control-label" for="input-username">Select CPA Network</label>
+                                    <v-autocomplete :class="{'form-control': true}" variant="outlined" :items="networkList" v-model="networkModal.networkName"></v-autocomplete>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="addCpaNetwork">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeImportCsvModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
         <!-- edited modal  -->
         <div class="modal fade" id="numberEditedModal" tabindex="-1" role="dialog" aria-labelledby="numberEditedModalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">Update Invoice Edited Data</h5>
+                        <h5 class="modal-title">Update Invoice Edited Data</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeNumberEditedModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <form>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0">
-                                        <div class="form-group radio-button-app mb-0">
-                                            <label class="form-control-label mb-4" for="input-username">Is Invoice Edited?</label>
-                                            <v-app>
-                                                <v-radio-group inline class="monitor_main" v-model="editedModal.is_invoice_edited">
-                                                    <v-radio class="monitor me-3" label="YES" value="1"></v-radio>
-                                                    <v-radio class="monitor" label="NO" value="0"></v-radio>
-                                                </v-radio-group>
-                                            </v-app>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0 mt-4 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="isInvoiceEdited">Save</button>
-                                    </div>
-                                </div>
-                            </form>
+                    <form>
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" >
+                                    <label class="form-control-label" for="input-username">Is Invoice Edited?</label>
+                                    <v-radio-group inline v-model="editedModal.is_invoice_edited">
+                                        <v-radio class="monitor me-3" label="YES" value="1"></v-radio>
+                                        <v-radio class="monitor" label="NO" value="0"></v-radio>
+                                    </v-radio-group>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="isInvoiceEdited">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeNumberEditedModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -245,10 +260,10 @@ export default {
                 { title: 'ID', key: 'id', sortable: this.isSortable},
                 { title: 'Invoice Number', key: 'invoice_number', sortable: this.isSortable },
                 { title: 'Network', key: 'network_name', sortable: this.isSortable },
-                { title: 'Invoice Issue Date', key: 'invoice_issue_date', sortable: this.isSortable },
-                { title: 'Invoice Due Date', key: 'invoice_due_date', sortable: this.isSortable },
-                { title: 'Invoice Number Edited', key: 'is_invoice_edited', sortable: this.isSortable },
-                { title: 'Action', key: 'actions', sortable: this.isSortable },
+                { title: 'Invoice Issue Date', key: 'invoice_issue_date', align: 'center', sortable: this.isSortable },
+                { title: 'Invoice Due Date', key: 'invoice_due_date', align: 'center', sortable: this.isSortable },
+                { title: 'Invoice Number Edited', key: 'is_invoice_edited', align: 'center', sortable: this.isSortable },
+                { title: 'Action', key: 'actions', align: 'center', sortable: this.isSortable },
             ],
             showLoader: false,
             search: '',
@@ -602,30 +617,7 @@ export default {
     }
 }
 </script>
-
+ 
 <style>
-.select-tag, .date-picker {
-    border-radius: 4px;
-    border: none;
-    padding: 6px 7px;
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
-    width: 100%;
-}
-.date-picker {
-    width: unset;
-}
-.date-picker:focus {
-    outline: none;
-}
-.v-selection-control-group {
-    flex-direction: row !important;
-}
-.v-application__wrap {
-    min-height: 11vh !important;
-    flex: unset !important;
-    width: 100%;
-}
-.add-dialog-max-width {
-    max-width: 800px;
-}
+.v-radio-group .v-input__details{display: none;}
 </style>
