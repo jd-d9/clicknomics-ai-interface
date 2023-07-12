@@ -52,6 +52,11 @@ import ServerListComponent from './components/server/ServerListComponent.vue';
 import EranetDomainComponent from './components/domains/manual-domain/EranetDomainComponent.vue';
 import FlokinetDomainComponent from './components/domains/manual-domain/FlokinetDomainComponent.vue';
 import AdAccountComponent from './components/ad-accounts/AdAccountComponent.vue';
+import CampaignsList from './components/campaigns/CampaignsList.vue';
+import IpmChaseList from './components/bank-accounts/ipm-chase/IpmChaseList.vue';
+import IpmChaseForm from './components/bank-accounts/ipm-chase/IpmChaseForm.vue';
+import IpmOsscList from './components/bank-accounts/ipm-ossc/IpmOsscList.vue';
+import IpmOsscForm from './components/bank-accounts/ipm-ossc/IpmOsscForm.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -142,6 +147,16 @@ const router = createRouter({
         {path: '/servers', component: ServerListComponent, meta: {auth: true}},
         // ad accounts module
         {path: '/ad-accounts', component: AdAccountComponent, meta: {auth: true}},
+        // campaigns module
+        {path: '/campaigns', component: CampaignsList, meta: {auth: true}},
+        // ipm chase(bank accounts) module
+        {path: '/bank_accounts/ipmchase/list', component: IpmChaseList, meta: {auth: true}},
+        {path: '/bank_accounts/ipmchase/create', component: IpmChaseForm, meta: {auth: true}},
+        {path: '/bank_accounts/ipmchase/:id/edit', component: IpmChaseForm, meta: {auth: true}},
+        // ipm ossc(bank accounts) module
+        {path: '/bank_accounts/onesscorp/list', component: IpmOsscList, meta: {auth: true}},
+        {path: '/bank_accounts/onesscorp/create', component: IpmOsscForm, meta: {auth: true}},
+        {path: '/bank_accounts/onesscorp/:id/edit', component: IpmOsscForm, meta: {auth: true}},
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page

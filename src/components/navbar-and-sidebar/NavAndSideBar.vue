@@ -325,7 +325,7 @@
             toggleComponents() {
                 this.hideShowSidebar = false;
                 if(screen.width > 1199) {
-                    if(window.location.pathname === '/dashboard' || this.$route.params.notFound) {   //  || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers'
+                    if(window.location.pathname === '/dashboard' || window.location.pathname === '/ad-accounts' || window.location.pathname === '/campaigns' || this.$route.params.notFound) {   //  || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers'
                         this.hideShowSidebar = true;
                     } else {
                         this.hideShowSidebar = false;

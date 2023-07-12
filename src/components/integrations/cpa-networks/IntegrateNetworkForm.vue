@@ -77,9 +77,8 @@
                                         <div class="col-lg-6 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Email</label>
-                                                <Field type="text" id="input-username" name="email" :class="{'form-control': true, 'border-red-600': errors.email}" placeholder="Email" v-model="email"/>
-                                                <span class="text-red-600" v-if="errors.email">Email can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="email"/> -->
+                                                <Field type="text" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model="email"/>
+                                                <ErrorMessage class="text-red-600" name="Email"/>
                                             </div>
                                         </div>
                                     </div>
@@ -106,10 +105,9 @@
                                             <div class="form-group date-picker-3">
                                                 <label class="form-control-label" for="input-username">Fetch Previous Records From</label>
                                                 <Field name="date" v-model="date" :class="{'border-red-600': errors.date}">
-                                                    <datepicker  name="date" v-model="date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                                    <datepicker name="date" v-model:value="date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                                 </Field>
                                                 <span class="text-red-600" v-if="errors.date">Date can not be empty</span>
-                                                <ErrorMessage class="text-red-600" name="date"/>
                                             </div>
                                         </div>
                                     </div>
@@ -125,50 +123,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="card">
-                        <div class="card-header">
-                            <div class="nav-wrapper report_tabpanel">
-                                <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
-                                    <li class="nav-item">
-                                        <router-link tos="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true">
-                                            <span class="btn-inner--icon"></span>
-                                            <span class="btn-inner--text">Campaign Summary</span>
-                                        </router-link>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-row>
-                                                    <v-col class="d-flex" cols="6" sm="6">
-                                                        <v-select :items="dateRange" label="Report Date" v-model="reportRange" @change="dateFilter()"></v-select>
-                                                    </v-col>
-                                                    <v-col class="d-flex" cols="6" sm="6">
-                                                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                    </v-col>
-                                                </v-row>
-                                                <v-spacer></v-spacer>
-                                                <button type="button" class="btn btn-primary" @click="addMoreAffliates">
-                                                    <div>
-                                                        <span class="btn-inner--icon"><i class="ni ni-app"></i> </span>
-                                                        <span class="btn-inner--text">Add More Cake Affiliates</span>
-                                                    </div>
-                                                </button>
-                                            </v-card-title>
-                                        </v-card>
-                                        <v-data-table :headers="headers" :items="dataMetrics" :search="search"></v-data-table>
-                                    </div>
-                                    <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -180,7 +134,8 @@ import * as yup from 'yup';
 import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
 import { required } from '@vee-validate/rules';
 import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
-import Datepicker from 'vue3-datepicker';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 defineRule('required', required);
 loadLocaleFromURL(
@@ -254,7 +209,7 @@ export default {
                 date: yup.string().required(),
                 affiliatedid: yup.string().required(),
                 api: yup.string().required(),
-                email: yup.string().required(),
+                Email: yup.string().required().email(),
             });
         },
     },

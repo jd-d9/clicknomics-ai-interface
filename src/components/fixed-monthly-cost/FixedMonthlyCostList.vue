@@ -106,7 +106,7 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <form @submit="importCsv">
+                    <form @submit.prevent="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
@@ -145,7 +145,7 @@
                                     <v-col cols="12" sm="12" md="6" lg="6" >
                                         <div class="form-group date-picker-3 date-picker-disabled">
                                             <label class="form-control-label" for="input-username">Date</label>
-                                            <datepicker name="date" :disabled="true" v-model="item.date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                            <datepicker name="date" v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
                                         </div>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="6" lg="6" >
@@ -174,7 +174,8 @@
 <script>
 import * as yup from 'yup';
 import { Field, Form, ErrorMessage } from 'vee-validate';
-import Datepicker from 'vue3-datepicker';
+import Datepicker from 'vue-datepicker-next';
+import 'vue-datepicker-next/index.css';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 export default {
@@ -247,7 +248,7 @@ export default {
                     if(data.id == val.id) {
                         this.seletedForEdit.push({
                             id: val.id,
-                            date: new Date(val.date),
+                            date: val.date,
                             amount: val.amount
                         })
                     }
@@ -340,7 +341,6 @@ export default {
         },
         // edit bult selected items
         editSelected() {
-            console.log('---import---')
             this.showLoader = true;
             this.axios.post(this.$api + '/accounting/fixedMonthlyCost/saveBulkEditOpsCost', {
                 rowdata: JSON.stringify(this.seletedForEdit)
@@ -445,7 +445,6 @@ export default {
         },
         // choose file and import csv
         importCsv() {
-            console.log('---import---')
             this.showLoader = true;
             this.axios.post(this.$api + '/accounting/fixedMonthlyCost/importOpsCostCSV', {
                 file: this.selectedFile
