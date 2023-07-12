@@ -22,9 +22,6 @@ import { VDataTable } from 'vuetify/labs/VDataTable';
 // bootstrap
 import 'bootstrap/dist/js/bootstrap.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// // date range picker
-// import VueDatepickerUi from 'vue-datepicker-ui';
-// import 'vue-datepicker-ui/lib/vuedatepickerui.css';
 // components
 import LoaderComponent from './components/common/LoaderComponent.vue';
 import NavAndSideBar from './components/navbar-and-sidebar/NavAndSideBar.vue';
@@ -63,6 +60,4 @@ require('@/assets/css/dark-argon.css');
 // components
 app.component('loader-component', LoaderComponent);
 app.component('nav-and-side-bar', NavAndSideBar);
-// app.component('date-picker', VueDatepickerUi);
-
 app.mount('#app');
