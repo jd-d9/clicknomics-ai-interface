@@ -36,7 +36,6 @@
                                                 <label class="form-control-label" for="input-username">Name Your Network</label>
                                                 <Field type="text" name="network" id="input-username" :class="{'form-control': true, 'border-red-600': errors.network}" placeholder="Name" v-model="network_name"/>
                                                 <span class="text-red-600" v-if="errors.network">Name your network can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="network"/> -->
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
@@ -48,7 +47,6 @@
                                                 <Field type="text" name="url" id="input-username" :class="{'form-control': true, 'border-red-600': errors.url}" @blur="checkUrl" placeholder="Add the login URL for your network or domain" v-model="login_url"/>
                                                 <span class="text-red-600" v-if="backendValidationMessage">{{backendValidationMessage}}</span>
                                                 <span class="text-red-600" v-if="errors.url && !backendValidationMessage">URL can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="url"/> -->
                                             </div>
                                         </div>
                                     </div>
@@ -71,7 +69,6 @@
                                                     </select>
                                                 </Field>
                                                 <span class="text-red-600" v-if="errors.role">Network platform can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="role"/> -->
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
@@ -88,7 +85,6 @@
                                                 <label class="form-control-label" for="input-username">API KEY</label>
                                                 <Field type="text" id="input-username" name="api" :class="{'form-control': true, 'border-red-600': errors.api}" placeholder="Name" v-model="api_key"/>
                                                 <span class="text-red-600" v-if="errors.api">Api key can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="api"/> -->
                                             </div>
                                         </div>
                                         <div class="col-lg-6 py-0">
@@ -96,7 +92,6 @@
                                                 <label class="form-control-label" for="input-username">Affiliate ID / Network ID / Domain and Script name </label>
                                                 <Field type="text" id="input-username" name="affiliatedid" :class="{'form-control': true, 'border-red-600': errors.affiliatedid}" placeholder="Name" v-model="affiliate_id"/>
                                                 <span class="text-red-600" v-if="errors.affiliatedid">Affiliate id can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="affiliatedid"/> -->
                                             </div>
                                         </div>
                                     </div>
@@ -131,32 +126,16 @@
 
 <script>
 import * as yup from 'yup';
-import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
-import { required } from '@vee-validate/rules';
-import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 import moment from 'moment';
-defineRule('required', required);
-loadLocaleFromURL(
-  'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
-);
-configure({
-    generateMessage: localize('en', {
-        messages: {
-            required: '{field} can not be empty!',
-        },
-        // fields: {
-        //     Status: {
-        //         required: 'Status can not be empty!!!'
-        //     }
-        // }
-    }),
-});
 export default {
     components: {
         Datepicker,
-        Form, Field, ErrorMessage
+        Form, 
+        Field, 
+        ErrorMessage
     },
     data() {
         return {

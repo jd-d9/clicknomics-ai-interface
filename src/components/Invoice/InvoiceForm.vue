@@ -314,9 +314,9 @@ export default {
     methods: {
         // opening modal
         openModal() {
-            this.descriptionValidation();
-            this.costValidation();
-            this.bankDetailsValidation();
+            this.addValidation();
+            this.addValidationTwo();
+            this.bankDetailsValidation(this.invoiceData.bankDetail);
             if(this.invalidDescription || this.invalidCost || this.invalidBankDetails) {
                 return false;
             }
@@ -328,8 +328,33 @@ export default {
         closeModal() {
             window.$('#saveAsTemplateModal').modal('hide');
         },
+        // add validations
+        addValidation() {
+            const value = this.invoiceData.purchasedProducts.filter((val) => {
+                return val.description == '';
+            })
+            if(value.length != 0) {
+                this.invalidDescription = 'Description can not be empty';
+            }
+            else {
+                this.invalidDescription = '';
+            }
+        },
+        // add validations
+        addValidationTwo() {
+            const value = this.invoiceData.purchasedProducts.filter((val) => {
+                return val.cost == null;
+            })
+            if(value.length != 0) {
+                this.invalidCost = 'Cost can not be empty';
+            }
+            else {
+                this.invalidCost = '';
+            }
+        },
         // description validation
         descriptionValidation(val) {
+            console.log(val, 'val')
             if(!val) {
                 this.invalidDescription = 'Description can not be empty';
             }
@@ -365,9 +390,9 @@ export default {
         },
         // save invoice
         saveInvoice() {
-            this.descriptionValidation();
-            this.costValidation();
-            this.bankDetailsValidation();
+            this.addValidation();
+            this.addValidationTwo();
+            this.bankDetailsValidation(this.invoiceData.bankDetail);
             if(this.invalidDescription || this.invalidCost || this.invalidBankDetails) {
                 return false;
             }

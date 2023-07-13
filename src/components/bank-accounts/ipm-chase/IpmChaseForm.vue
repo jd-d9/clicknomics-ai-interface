@@ -193,6 +193,14 @@ export default {
                     });
                     this.showLoader = false;
                     this.$router.push('/bank_accounts/ipmchase/list');
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {

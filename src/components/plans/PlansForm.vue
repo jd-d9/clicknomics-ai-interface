@@ -141,7 +141,7 @@
                                             <div class="col-lg-4 py-0">
                                                 <div class="form-group">
                                                     <label class="form-control-label" for="input-username">Add Account Limit</label>
-                                                    <input type="number" id="input-username" name="addAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Interval Count" v-model="addAccountLimit"/>
+                                                    <input type="number" id="input-username" name="addAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Add Account Limit" v-model="addAccountLimit"/>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 py-0">

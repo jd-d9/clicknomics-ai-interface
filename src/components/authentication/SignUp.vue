@@ -153,7 +153,7 @@
                     Password: yup.string().required(),
                     confPassword: yup.string().required(),
                     Country: yup.string().required(),
-                    Mobile: yup.string().required().min(10)
+                    Mobile: yup.string().required().min(10).max(10)
                 });
             },
         },
@@ -175,16 +175,44 @@
                     plan_id: sessionStorage.getItem('subscriptionPlanId'),
                 })
                 .then(response => {
+                    let planId = sessionStorage.getItem('subscriptionPlanId');
                     if(response.data.success) {
-                        this.showLoader = false;
-                        this.backendErrorMessage = '';
+                        // set plan id
+                        this.showLoader = true;
+                        this.axios.get(this.$api + '/subscription/' + planId)
+                        .then(response => {
+                            if(response.data.success) {
+                                this.backendErrorMessage = '';
+                                this.$toast.open({
+                                    message: 'User registration success',
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'success'
+                                });
+                                this.showLoader = false;
+                                this.$router.push('/login');
+                            }else {
+                                this.$toast.open({
+                                    message: response.data.message,
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                                this.showLoader = false;
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            this.showLoader = false;
+                        });
+                    }else {
                         this.$toast.open({
-                            message: 'User registration success',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
-                            type: 'success'
+                            type: 'error'
                         });
-                        this.$router.push('/login');
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
