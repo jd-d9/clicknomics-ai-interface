@@ -40,6 +40,7 @@ import PlansForm from './components/plans/PlansForm.vue';
 import ManualNetworkList from './components/manual-networks/ManualNetworkList.vue';
 import ManualNetworkRevenueForm from './components/manual-networks-revenue/ManualNetworkRevenueForm.vue';
 import ManualNetworkRevenueList from './components/manual-networks-revenue/ManualNetworkRevenueList.vue';
+import EliminatedAutomatedNetworks from './components/archived-eliminated-networks/EliminatedAutomatedNetworks';
 import EmailNotificationList from './components/email-notification/EmailNotificationList.vue';
 import ProcessEmailReportComponent from './components/process-email-report/ProcessEmailReportComponent.vue';
 import GoogleEliminatedAccountList from './components/archived-traffic-source/GoogleEliminatedAccountList.vue';
@@ -128,6 +129,7 @@ const router = createRouter({
         {path: '/networks/manualNetworks/create', component: ManualNetworkRevenueForm, meta: {auth: true}},
         {path: '/networks/manualNetworks/:id/edit', component: ManualNetworkRevenueForm, meta: {auth: true}},
         {path: '/networks/manualNetworks/list', component: ManualNetworkRevenueList, meta: {auth: true}},
+        {path: '/networks/eliminated-automated-networks', component: EliminatedAutomatedNetworks, meta: {auth: true}},
         // email notification module
         {path: '/settings/emailNotification', component: EmailNotificationList, meta: {auth: true}},
         // process email report module
