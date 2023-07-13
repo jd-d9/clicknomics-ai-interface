@@ -4,7 +4,18 @@
         <v-container>
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
-                    <h6 class="font-weight-bold text-h6 px-3 mb-3">Cost</h6>
+                    <h6 class="font-weight-bold text-h6 px-3 mb-3 d-flex align-center">
+                        Cost
+                        <v-col class="pa-0 five_row mb-2 ms-auto font-medium font-weight-normal" cols="12" sm="12" md="3" lg="3">
+                            <select v-model="homeReport" @change="fetchDashboardData()" class="form-control serch_table">
+                                <option disabled selected>Report Year</option>
+                                <option :value="val.title" v-for="(val, index) of dateFilterRange" :key="index">
+                                    {{ val.title }}
+                                </option>
+                            </select>
+                            <!-- <v-select solo :items="dateFilterRange" label="Report Year" v-model="homeReport"></v-select> -->
+                        </v-col>
+                    </h6>
                     <!-- <v-card-title class="font-weight-bold">Date: 12/05/2023</v-card-title> -->
                     <!-- <date-range-picker v-model="dateRange">
                         <div slot="header" slot-scope="header" class="slot">
@@ -90,20 +101,20 @@
                             </template>
                         </date-range-picker>
                     </template> -->
-                    <!-- <v-select solo :items="dateFilterRange" label="Report Year" v-model="homeReport" @change="fetchDashboardData()"></v-select> -->
+                    
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Operations Cost</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-3">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">$0.00</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-deep-purple-lighten-4">
+                            <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Ads Cost
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-deep-purple">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">$0.00</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
@@ -115,17 +126,17 @@
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design bg-orange-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Ads Cost
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">$0.00</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Total Ads Cost</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">$0.00</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -135,33 +146,33 @@
                     <h6 class="font-weight-bold text-h6 px-3 mb-3">Revenue</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-deep-purple-lighten-4">
-                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Conversions</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-deep-purple">0</v-card-text>
-                            </v-card>
-                        </v-col>
-                        <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-orange-lighten-4">
-                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Commissions</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">$0.00</v-card-text>
-                            </v-card>
-                        </v-col>
-                        <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design bg-blue-lighten-4">
-                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Net Profits</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">$0.00</v-card-text>
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Conversions</v-card-title>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design bg-green-lighten-4">
-                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">ROAS</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0.00%</v-card-text>
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Commissions</v-card-title>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">$0.00</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-lime-lighten-4">
+                            <v-card class="card_design bg-orange-lighten-4">
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Net Profits</v-card-title>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">$0.00</v-card-text>
+                            </v-card>
+                        </v-col>
+                        <v-col class="py-0 five_row mb-2">
+                            <v-card class="card_design bg-orange-lighten-4">
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">ROAS</v-card-title>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0.00%</v-card-text>
+                            </v-card>
+                        </v-col>
+                        <v-col class="py-0 five_row mb-2">
+                            <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">ROI</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-lime-darken-2">0.00%</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0.00%</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -187,27 +198,27 @@
                     <!-- Start Microsoft -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Master Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-3">0</v-card-text>
-                            </v-card>
-                        </v-col>
-                        <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-deep-purple-lighten-4">
-                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
-                                    <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Child Accounts
-                                </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-deep-purple">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
-                                    <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Active Campaigns
+                                    <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Child Accounts
                                 </v-card-title>
                                 <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                            </v-card>
+                        </v-col>
+                        <v-col class="py-0 five_row mb-4">
+                            <v-card class="card_design bg-orange-lighten-4">
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
+                                    <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Active Campaigns
+                                </v-card-title>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -219,11 +230,11 @@
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Total Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -231,43 +242,43 @@
                     <!-- Start Google -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-lime-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Master Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-lime-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Child Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-deep-purple-lighten-4">
+                            <v-card class="card_design bg-orange-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Active Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-deep-purple">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-lime-lighten-4">
+                            <v-card class="card_design bg-orange-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Inactive Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-lime-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Total Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -275,27 +286,27 @@
                     <!-- Start Facebook -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Master Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-3">0</v-card-text>
-                            </v-card>
-                        </v-col>
-                        <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-deep-purple-lighten-4">
-                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
-                                    <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Child Accounts
-                                </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-deep-purple">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
-                                    <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Active Campaigns
+                                    <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Child Accounts
                                 </v-card-title>
                                 <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                            </v-card>
+                        </v-col>
+                        <v-col class="py-0 five_row mb-4">
+                            <v-card class="card_design bg-orange-lighten-4">
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
+                                    <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Active Campaigns
+                                </v-card-title>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -307,11 +318,11 @@
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design bg-green-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Total Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -319,9 +330,9 @@
                     <!-- Start general -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Automated Networks</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -331,9 +342,9 @@
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design bg-orange-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Total Networks</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2  text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -401,7 +412,7 @@
         checkOpenPicker(e) {
             setTimeout(() => {
                 console.log(e)
-                // this.fetchDashboardData();
+                this.fetchDashboardData();
             },100)
         },
     },

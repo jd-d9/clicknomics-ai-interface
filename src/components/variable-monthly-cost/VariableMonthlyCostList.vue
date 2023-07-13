@@ -40,22 +40,20 @@
                             <template v-slot:[`item.notes`]="{ item }">
                                 {{item.selectable.notes ? item.selectable.notes : '-'}}
                             </template>
-                            <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn
-                                    class="ma-2 bg-green-lighten-4"
-                                    variant="text"
-                                    icon="mdi-pencil"
-                                    color="green-darken-2"
-                                    @click.prevent="this.$router.push('/accounting/variableMonthlyCost/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'"
-                                ></v-btn>
+                            <template v-slot:[`item.action`]="{ item }">  
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/accounting/variableMonthlyCost/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
 
-                                <v-btn
-                                    class="ma-2 bg-red-lighten-4"
-                                    variant="text"
-                                    icon="mdi-delete-empty"
-                                    color="red-darken-4"
-                                    @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" 
-                                ></v-btn>                                                            
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon color="red-darken-4" @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn> 
                             </template>
 
                             <template v-slot:tbody v-if="dataMetrics.length > 0">

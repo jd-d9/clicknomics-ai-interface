@@ -26,7 +26,6 @@
                     </v-breadcrumbs>
                 </v-col>
 
-
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
@@ -47,23 +46,19 @@
                                 ${{item.selectable.amount}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn
-                                    class="ma-2 bg-green-lighten-4"
-                                    variant="text"
-                                    icon="mdi-pencil"
-                                    color="green-darken-2"
-                                    @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/'+ item.selectable.id +'/edit')" 
-                                    :disabled="permissions.update_auth == '0'"
-                                ></v-btn>
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
 
-                                <v-btn
-                                    class="ma-2 bg-red-lighten-4"
-                                    variant="text"
-                                    icon="mdi-delete-empty"
-                                    color="red-darken-4"
-                                    @click.prevent="deleteData(item.selectable.id)" 
-                                    :disabled="permissions.delete_auth == '0'" 
-                                ></v-btn>                                                            
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon color="red-darken-4" @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>                                                            
                             </template>
                             <template v-slot:top v-if="selected.length > 0">
                                 <div class="p-2 text-right">
@@ -130,41 +125,35 @@
             </div>
         </div>
         <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">Bulk Edit Operation Cost</h5>
+                        <h5 class="modal-title">Edit Bulk Operation Cost</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeCreateUpdateData">
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
-                                <v-row v-for="(item, index) in seletedForEdit" :key="index">
-                                    <v-col cols="12" sm="12" md="6" lg="6" >
-                                        <div class="form-group date-picker-3 date-picker-disabled">
-                                            <label class="form-control-label" for="input-username">Date</label>
-                                            <datepicker name="date" v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
-                                        </div>
-                                    </v-col>
-                                    <v-col cols="12" sm="12" md="6" lg="6" >
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Amount</label>
-                                            <Field name="amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.amount}" placeholder="Add Amount" v-model="item.amount"/>
-                                            <ErrorMessage class="text-red-600" name="amount"/>
-                                        </div>
-                                    </v-col>
-                                    <v-divider class="mt-0 mb-0"></v-divider>
-                                </v-row>
-                                <v-row>
-                                    <div class="col-lg-12 py-0 text-right">
-                                        <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>  
-                                    </div>
-                                </v-row>
-                            </Form>
+                    <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row v-for="(item, index) in seletedForEdit" :key="index">
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Date</label>
+                                    <datepicker name="date" v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Amount</label>
+                                    <Field name="amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.amount}" placeholder="Add Amount" v-model="item.amount"/>
+                                    <ErrorMessage class="text-red-600" name="amount"/>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="addCpaNetwork">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

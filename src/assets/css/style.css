@@ -186,8 +186,8 @@ td.v-data-table__td {
     overflow:hidden;
     transition:all .3s ease-in-out;
     font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 1px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
 }
 .btn_animated::before{
     background:#fff;
