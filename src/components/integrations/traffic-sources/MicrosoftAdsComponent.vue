@@ -144,122 +144,6 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="metricsModel">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content" v-if="campaignsMetrics.length === 0">
-                    <div class="modal-header">
-                        <h4 class="modal-title text-center">Campaigns</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="table-responsive">
-                            <table class="table align-items-center" v-if="campaigns.length > 0">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">id</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">DailyBudget </th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(row , index) in campaigns" :key="index">
-                                        <th>
-                                            {{row.id ? row.id : '-'}}
-                                        </th>
-                                        <th>
-                                            {{row.name ? row.name : '-'}}
-                                        </th>
-                                        <th>
-                                            {{row.dailyBudget ? row.dailyBudget : '-'}}
-                                        </th>
-                                        <th>
-                                            {{row.status ? row.status : '-'}}
-                                        </th>
-                                        <th>
-                                            <button type="button" class="btn-icon-clipboard px-3 py-1" @click="viewMetrics(row.id, row.accountId, row.customerId, row.bing_o_auth_tokens_id)" data-clipboard-text="fat-add" title="" data-original-title="Copy to clipboard">
-                                                <div>
-                                                    <i class="ni ni-fat-add"></i>
-                                                    <span>View Metrics</span>
-                                                </div>
-                                            </button>
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <table class="table align-items-center" v-else>
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">id</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">DailyBudget </th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="text-center"><td colspan="5">
-                                    <strong>No data for this query.</strong></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary btn-lg btn_animated" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-                <div class="modal-content" v-else>
-                     <div class="modal-header">
-                        <h4 class="modal-title text-center">Report Metrics</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="table-responsive">
-                            <table class="table align-items-center">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">CampaignId</th>
-                                        <th scope="col">CampaignName</th>
-                                        <th scope="col">Clicks </th>
-                                        <th scope="col">Ctr</th>
-                                        <th scope="col">Impressions</th>
-                                        <th scope="col">Spend</th>
-                                        <th scope="col">AverageCpc</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(row , index) in campaignsMetrics" :key="index">
-                                        <th>
-                                            {{row.CampaignId ? row.CampaignId : '-'}}
-                                        </th>
-                                        <th>
-                                            {{row.CampaignName ? row.CampaignName : '-'}}
-                                        </th>
-                                        <th>
-                                            {{row.Clicks}}
-                                        </th>
-                                        <th>
-                                            {{row.Ctr}}
-                                        </th>
-                                        <th>
-                                            {{row.Impressions}}
-                                        </th>
-                                        <th>
-                                            {{row.Spend}}
-                                        </th>
-                                        <th>
-                                            {{row.AverageCpc}}
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary btn-lg btn_animated" @click.prevent="resetMetricsTable">Back</button>
-                    </div>
-                </div>
-            </div>
-        </div>
          <!-- edited modal  -->
         <div class="modal fade" id="updateEditedData" tabindex="-1" role="dialog" aria-labelledby="updateEditedDataTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -347,7 +231,6 @@ export default {
     },
     mounted() {
         this.getBingCustomerAccounts();
-        this.getCampaign();
     },
     methods: {
         // open and close modal
@@ -357,16 +240,10 @@ export default {
         closeUpdateModal() {
             window.$('#updateEditedData').modal('hide');
         },
-        openModal() {
-            window.$('#metricsModel').modal('show');
-        },
-        closeModal() {
-            window.$('#metricsModel').modal('hide');
-        },
         // get access token
         getAccessToken() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/microsoftAds/getAccessToken', {
+            this.axios.get(this.$api + '/settings/microsoftAd/getAccessToken', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
@@ -381,6 +258,7 @@ export default {
                         type: 'success'
                     });
                     this.showLoader = false;
+                    window.location.href = response.data.redirectUrl;
                 }
             })
             .catch(error => {
@@ -483,96 +361,6 @@ export default {
                     duration: '5000',
                     type: 'error'
                 });
-                console.log(error);
-                this.showLoader = false;
-            });
-        },
-        // get campaign data
-        getCampaign() {
-            this.showLoader = true;
-            this.axios.get(this.$api + '/settings/microsoftAd/getCampaign', {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    console.log(response.data)
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.showLoader = false;
-            });
-        },
-        // getCampaign(cId, customerId, token_id) {
-        //     this.showLoader = true;
-        //     let formData = new FormData();
-        //     formData.append('id', cId);
-        //     formData.append('customerId', customerId);
-        //     formData.append('token_id', token_id);
-        //     this.axios.post(this.$api + '/settings/googleAds/getAccessToken', formData, {
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-        //         }
-        //     })
-        //     .then(response => {
-        //         if(response.data.success) {
-        //             this.$toast.open({
-        //                 message: 'Data saved',
-        //                 position: 'top-right',
-        //                 duration: '5000',
-        //                 type: 'success'
-        //             });
-        //             window.$('#metricsModel').modal({backdrop: 'static', keyboard: false})
-        //             this.openModal();
-        //             this.showLoader = false;
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-        //         this.showLoader = false;
-        //     });
-        // },
-        // view matrics
-        viewMetrics(campaignId, accountId, customerId, token_id) {
-            this.showLoader = true;
-            let formData = new FormData();
-            formData.append('campaignId', campaignId);
-            formData.append('accountId', accountId);
-            formData.append('customerId', customerId);
-            formData.append('token_id', token_id);
-            this.axios.post(this.$api + '/settings/googleAds/getAccessToken', formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$toast.open({
-                        message: 'Data saved',
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.showLoader = false;
-                    // if(responseData != null) {
-                    //     this.campaignsMetrics = responseData;
-                    // }else {
-                    //     this.$toast.open({
-                    //         message: 'The service found no data for the account/campaigns in the specified time period',
-                    //         position: 'top-right',
-                    //         duration: '5000',
-                    //         type: 'error'
-                    //     });
-                    // }
-                }
-            })
-            .catch(error => {
                 console.log(error);
                 this.showLoader = false;
             });
