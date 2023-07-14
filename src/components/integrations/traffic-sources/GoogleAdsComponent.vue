@@ -235,7 +235,7 @@ export default {
         // get access token
         getAccessToken() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/googleAds/getAccessToken', {
+            this.axios.get(this.$api + '/settings/googleAd/getAccessToken', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
@@ -243,6 +243,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
+                    console.log('response', response)
                     this.$toast.open({
                         message: 'Account accessed',
                         position: 'top-right',
@@ -250,6 +251,7 @@ export default {
                         type: 'success'
                     });
                     this.showLoader = false;
+                    window.location.href = response.data.redirectUrl;
                 }
             })
             .catch(error => {
