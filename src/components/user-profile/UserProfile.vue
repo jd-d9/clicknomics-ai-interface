@@ -174,7 +174,7 @@
                         <div>
                             <v-card-title class="d-flex justify-space-between">
                                 Subscription Plan
-                                <v-icon v-if="!subscriptionPlanToggle" @click="subscriptionPlanToggle = !subscriptionPlanToggle" icon="mdi-pencil" size="small" color="#00cd00"></v-icon>
+                                <v-icon v-if="!subscriptionPlanToggle" @click="subscriptionPlanToggle = !subscriptionPlanToggle" icon="mdi-eye" size="small" color="#00cd00"></v-icon>
                             </v-card-title>
                             <div>
                                 <v-row v-if="!subscriptionPlanToggle">
