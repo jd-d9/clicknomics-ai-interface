@@ -30,7 +30,7 @@
                         <Form @submit="manageVariableMonthlyCost" :validation-schema="schema" v-slot="{ errors }">
                             <v-row>
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label>Date</label>
+                                    <label class="form-control-label">Date</label>
                                     <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
                                         <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :range="toggleElement" :class="{'border-red-600': errors.Date}"></datepicker>
                                     </Field>
@@ -38,13 +38,13 @@
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label>Amount</label>
+                                    <label class="form-control-label">Amount</label>
                                     <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
                                     <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="8" lg="8" class="font-medium font-weight-normal">
-                                    <label>Notes</label>
+                                    <label class="form-control-label">Notes</label>
                                     <Field name="Notes" v-model="notes">
                                         <textarea :class="{'form-control': true, 'border-red-600': errors.Notes}" name="Notes" cols="30" rows="10" v-model="notes"></textarea>
                                     </Field>

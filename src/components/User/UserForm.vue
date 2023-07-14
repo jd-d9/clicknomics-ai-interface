@@ -11,7 +11,7 @@
                                 <div class="row">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Name</label>
+                                            <label class="form-control-label">Name</label>
                                             <Field type="text" id="input-username" class="form-control" name="Name" :class="{'border-red-600': errors.Name}" placeholder="Name" v-model.trim="userName"/>
                                             <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
                                             <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
@@ -19,7 +19,7 @@
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Email</label>
+                                            <label class="form-control-label">Email</label>
                                             <Field type="email" id="input-username" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" placeholder="Email" v-model="userEmail"/>
                                             <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
                                             <ErrorMessage class="text-red-600" name="Email"/>
@@ -30,7 +30,7 @@
                                 <div class="row" v-if="toggleComponent">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Password</label>
+                                            <label class="form-control-label">Password</label>
                                             <Field type="password" id="input-username" name="Password" class="form-control" :class="{'border-red-600': errors.Password}" placeholder="Password" v-model="userPassword"/>
                                             <span class="text-red-600" v-if="errors.Password">Password can not be empty</span>
                                             <!-- <ErrorMessage class="text-red-600" name="Password"/> -->
@@ -38,7 +38,7 @@
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Confirm Password</label>
+                                            <label class="form-control-label">Confirm Password</label>
                                             <Field type="password" id="input-username" name="Confirmpass" class="form-control" :class="{'border-red-600': errors.Confirmpass || invalidConfirmPassword}" placeholder="Confirm Password" @blur="confirmPasswordValid" v-model="confirmPassword"/>
                                             <span class="text-red-600" v-if="errors.Confirmpass">Confirm password can not be empty</span>
                                             <span class="text-red-600" v-if="invalidConfirmPassword">{{invalidConfirmPassword}}</span>
@@ -49,7 +49,7 @@
                                 <div class="row">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Select Country Code</label>
+                                            <label class="form-control-label">Select Country Code</label>
                                             <Field name="Country" v-model="selectedCountry" :class="{'border-red-600': errors.Country}">
                                                 <select class="form-control" name="Country" v-model="selectedCountry" :class="{'border-red-600': errors.Country}">
                                                     <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Mobile Number</label>
+                                            <label class="form-control-label">Mobile Number</label>
                                             <Field type="number" id="input-username" name="Mobile" class="form-control" :class="{'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="userContact"/>
                                             <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty or should be enter minimum 10 character</span>
                                             <!-- <ErrorMessage class="text-red-600" name="Mobile"/> -->
@@ -73,7 +73,7 @@
                                 <div class="row">
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Role</label>
+                                            <label class="form-control-label">Role</label>
                                             <Field name="Role" v-model="roleId" :class="{'border-red-600': errors.Role}">
                                                 <select class="form-control" name="Role" placeholder="Select Role" v-model="roleId">
                                                     <option value="">Select User Role</option>
@@ -86,7 +86,7 @@
                                     </div>
                                     <div class="col-lg-6 py-0">
                                         <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Status</label>
+                                            <label class="form-control-label">Status</label>
                                             <Field name="Status" v-model="status" :class="{'border-red-600': errors.Role}">
                                                 <select class="form-control" name="Status" placeholder="User Status"  v-model="status">
                                                     <option value="1">Active</option>
