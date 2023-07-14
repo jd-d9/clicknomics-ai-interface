@@ -142,8 +142,8 @@
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Amount</label>
-                                    <Field name="amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.amount}" placeholder="Add Amount" v-model="item.amount"/>
-                                    <ErrorMessage class="text-red-600" name="amount"/>
+                                    <Field name="Amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Amount}" placeholder="Add Amount" v-model="item.amount"/>
+                                    <ErrorMessage class="text-red-600" name="Amount"/>
                                 </v-col>
                             </v-row>
                         </div>
@@ -200,7 +200,7 @@ export default {
     computed: {
         editSchema() {
             return yup.object({
-                amount: yup.string().required(),
+                Amount: yup.string().required(),
             });
         },
         // total row
