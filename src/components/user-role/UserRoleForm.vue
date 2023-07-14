@@ -1,79 +1,58 @@
 <template>
-    <div class="bg-default main-content-height">
+    <div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class=" col ">
-                    <div class="card">
-                        <div class="card-body">
-                            <Form @submit.prevent="manageUserRole">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Role Name</label>
-                                            <input type="text" name="Rolename" id="input-username" :class="{'form-control': true, 'border-red-600': roleNameInvalid}" placeholder="Role Name" v-model.trim="roleName" @blur="roleNameIsValid"/>
-                                            <span v-if="roleNameInvalid" class="text-red-600">Role name can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Rolename"/> -->
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table align-items-center">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th class="border-right">Module</th>
-                                                <th class="text-center border-right collumn-width">View</th>
-                                                <th class="text-center border-right collumn-width">Create</th>
-                                                <th class="text-center border-right collumn-width">Edit</th>
-                                                <th class="text-center border-right collumn-width">Delete</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="list">
-                                            <tr v-for="(list, index) in menuItem" :key="index">
-                                                <th>{{list.menu}}</th>
-                                                <td class="text-center">
-                                                    <label class="custom-toggle">
-                                                        <input type="checkbox"  v-model="list.view">
-                                                        <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                                    </label>
-                                                </td>
-                                                <td class="text-center">
-                                                    <label class="custom-toggle">
-                                                        <input type="checkbox"  v-model="list.create_auth">
-                                                        <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                                    </label>
-                                                </td>
-                                                <td class="text-center">
-                                                    <label class="custom-toggle">
-                                                        <input type="checkbox"  v-model="list.update_auth">
-                                                        <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                                    </label>
-                                                </td>
-                                                <td class="text-center">
-                                                    <label class="custom-toggle">
-                                                        <input type="checkbox"  v-model="list.delete_auth">
-                                                        <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                                    </label>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                            <button type="reset" v-if="!toggleButton" class="btn btn-secondary btn-lg btn_animated">Reset</button>  <!--  @click.prevent="resetForm"  -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </Form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-card class="card_design mb-4">
+            <v-card-title class="d-flex justify-space-between">
+                User Roles
+            </v-card-title>
+            <v-divider class="border-opacity-100 my-4" color="success" />
+
+            <Form @submit.prevent="manageUserRole">
+                <v-row>
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Role Name</label>
+                        <Field type="text" id="input-username" name="Rolename" :class="{'form-control': true, 'border-red-600': roleNameInvalid}" placeholder="Role Name" v-model.trim="roleName" @blur="roleNameIsValid" />
+                        <span class="text-red-600" v-if="roleNameInvalid">Role name can not be empty</span>
+                    </v-col>
+                </v-row>
+
+                <!-- data table component -->
+                <v-data-table class="table-hover-class mt-4" :headers="headers" :items="menuItem">
+                    <template v-slot:[`item.module_name`]="{ item }">
+                        {{item.selectable.menu}}
+                    </template>
+                    <template v-slot:[`item.view`]="{ item }">
+                        <label class="custom-toggle">
+                            <input type="checkbox"  v-model="item.view">
+                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                        </label>
+                    </template>
+                    <template v-slot:[`item.create`]="{ item }">
+                        <label class="custom-toggle">
+                            <input type="checkbox"  v-model="item.create_auth">
+                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                        </label>
+                    </template>
+                    <template v-slot:[`item.edit`]="{ item }">
+                        <label class="custom-toggle">
+                            <input type="checkbox"  v-model="item.update_auth">
+                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                        </label>
+                    </template>
+                    <template v-slot:[`item.delete`]="{ item }">
+                        <label class="custom-toggle">
+                            <input type="checkbox"  v-model="item.delete_auth">
+                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                        </label>
+                    </template>
+                </v-data-table>
+
+                <v-col cols="12" sm="12" md="12" lg="12">
+                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                    <v-btn type="reset" v-if="!toggleButton" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-backup-restore">Reset</v-btn>    
+                </v-col>
+            </Form>
+        </v-card>
     </div>
 </template>
 
@@ -93,6 +72,17 @@ export default {
             showLoader: false,
             menuItem: [],
             toggleButton: false,
+            headers: [
+                { title: 'Module', key: 'menu', align: 'start' },
+                { title: 'View', key: 'view', align: 'center' },
+                { title: 'Create', key: 'create', align: 'center' },
+                { title: 'Edit', key: 'edit', align: 'center' },
+                { title: 'Delete', key: 'delete', align: 'center' },
+            ],
+            view: 'No',
+            create: 'No',
+            edit: 'No',
+            delete: 'No',
         }
     },
     // computed: {
@@ -257,23 +247,3 @@ export default {
     }
 }
 </script>
-
-<style  scoped>
-    .border-red-600 {
-        --border-opacity: 1;
-        border-color: #e53e3e;
-        border-color: rgba(229,62,62,var(--border-opacity));
-    }
-    .border-right, .thead-light {
-        border: 1px solid #dedede !important;
-    }
-    .table th, .table td {
-        padding: 0.75rem !important;
-    }
-    .collumn-width {
-        width: 15%;
-    }
-    .list tr:last-child {
-        border-bottom: 1px solid transparent !important;
-    }
-</style>

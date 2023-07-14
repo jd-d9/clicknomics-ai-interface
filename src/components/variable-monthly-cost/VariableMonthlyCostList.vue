@@ -48,7 +48,7 @@
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon color="red-darken-4" @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
@@ -219,9 +219,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    .icon-width {
-        width: 30px;
-    }
-</style>

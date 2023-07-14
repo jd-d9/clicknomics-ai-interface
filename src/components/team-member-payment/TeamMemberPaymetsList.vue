@@ -118,7 +118,7 @@
                                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                                 </v-btn>
 
-                                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon color="red-darken-4" @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
                                                     <v-icon color="red-darken-4">
                                                         mdi-delete-empty
                                                     </v-icon>
@@ -662,21 +662,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    .img-width {
-        width: 30px;
-    }
-    .active .btn-inner--text {
-        color: white;
-    }
-    .add-border {
-        border: 2px solid #005eb3;
-    }
-    .add-background {
-        background: #005eb3;
-    }
-    .add-background-two {
-        background: #05b675;
-    }
-</style>

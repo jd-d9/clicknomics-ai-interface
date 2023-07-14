@@ -1,71 +1,65 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <!-- header content -->
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">User Roles</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'" @click.prevent="addNewUserRole">Add User Role</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table align-items-center">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th class="collumn-width2 border-right">Id</th>
-                                            <th class="border-right">Role Name</th>
-                                            <th class="border-right text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="list add-side-borders">
-                                        <tr v-for="(role, index) in items" :key="index">
-                                            <th>{{role.id}}</th>
-                                            <td>{{role.role_name}}</td>
-                                            <td class="text-center collumn-width">
-                                                <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="editRole(role.id)">
-                                                    <img src="/assets/img/icons/edit.svg" class="image-width" title="Edit role">
-                                                </button>
-                                                <button class="disable-button text-start" v-if="role.id != '1'" :disabled="permissions.delete_auth == '0'" @click.prevent="deleteRole(role.id)">
-                                                    <img src="/assets/img/icons/bin.svg" class="image-width" title="Delete role">
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>User Roles</span>
+                        <v-spacer />
+
+                        <v-btn @click.prevent="addNewUserRole" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            Add User Role
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            User Roles
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items">
+                            <template v-slot:[`item.id`]="{ item }">
+                                {{item.selectable.id}}
+                            </template>
+                            <template v-slot:[`item.role_name`]="{ item }">
+                                {{item.selectable.role_name}}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon :disabled="permissions.update_auth == '0'" @click.prevent="editRole(item.selectable.id)">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon v-if="item.selectable.id != '1'" :disabled="permissions.delete_auth == '0'" @click.prevent="deleteRole(item.selectable.id)">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>                                                            
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -73,13 +67,14 @@
 export default {
     data() {
         return {
-            // images: {
-            //     edit: require('/assets/img/icons/edit.svg'),
-            //     bin: require('/assets/img/icons/bin.svg'),
-            // },
             items: [],
             showLoader: false,
             permissions: {},
+            headers: [
+                { title: 'ID', key: 'id', align: 'start' },
+                { title: 'Role Name', key: 'role_name' },
+                { title: 'Action', align:'center', key: 'action', sortable: false },
+            ],
         }
     },
     methods: {
@@ -150,36 +145,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    .image-width {
-        width: 30px;
-    }
-    .border-right, .thead-light {
-        border: 1px solid #dedede !important;
-    }
-    .table th {
-        padding: 0.75rem !important;
-    }
-    .collumn-width {
-        width: 15%;
-    }
-    .collumn-width2 {
-        width: 25%;
-    }
-    .disable {
-        pointer-events: none;
-        cursor: progress;
-    }
-    .disable-button {
-        border: none;
-        background: transparent;
-    }
-    .disable-button[disabled] {
-        cursor: not-allowed;
-    }
-    .add-side-borders {
-        border-left: 1px solid #dee2e6;
-        border-right: 1px solid #dee2e6;
-    }
-</style>

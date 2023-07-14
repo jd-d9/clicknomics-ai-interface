@@ -408,6 +408,19 @@
         return val ? val.toLocaleString() : ''
         }
     },
+    mounted() {
+        const isAuthenticated = sessionStorage.getItem('Token');
+        const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
+        console.log(isAuthenticated, isVerified);
+
+        if(isAuthenticated && isVerified) {
+            this.$router.push('/dashboard');
+        }
+        else{
+            sessionStorage.clear();
+            this.$router.push('/login');
+        }
+    },
     methods: {
         checkOpenPicker(e) {
             setTimeout(() => {

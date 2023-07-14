@@ -68,22 +68,16 @@
                                                         </div>
                                                         <!-- child accordian start here -->
                                                         <div v-else>
-                                                            <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes">
-                                                                <div class="accordion accordion-flush" :id="'accordionPanelsStayOpenExample' + childs.id">
-                                                                    <div class="accordion-item">
-                                                                        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" aria-controls="flush-collapseOne">
-                                                                                {{ childs.menu }}
-                                                                            </button>
-                                                                        </h2>
-                                                                        <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne" :data-bs-parent="'#accordionPanelsStayOpenExample' + childs.id">
-                                                                            <div class="accordion-body">
-                                                                                <router-link :to="grandChilds.routes === '#' ? '' : '/' + grandChilds.routes" class="accordian-hover" v-for="grandChilds in childs.children" :key="grandChilds">{{ grandChilds.menu }}</router-link>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                                                            <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
+                                                                {{ childs.menu }}
+                                                            </v-expansion-panel-title>
+                                                            <v-expansion-panel-text v-for="grandChilds in childs.children" :key="grandChilds">
+                                                                <div>
+                                                                    <router-link :to="grandChilds.routes === '#' ? '' : '/' + grandChilds.routes">
+                                                                        {{ grandChilds.menu }}
+                                                                    </router-link>
                                                                 </div>
-                                                            </router-link>
+                                                            </v-expansion-panel-text>
                                                         </div>
                                                         <!-- child accordian end here -->
                                                     </v-expansion-panel-text>
@@ -94,45 +88,6 @@
                                                 </div>
                                             </v-expansion-panel>
                                         </v-expansion-panels>
-                                        <!-- <div class="sidebar-dropdown-menubars p-0">
-                                            <div v-for="subChild in data.child" :key="subChild">
-                                                <div v-if="subChild.children.length !== 0">
-                                                    <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" :id="'panelsStayOpen-heading' + subChild.id">
-                                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#panelsStayOpen-collapse' + subChild.id" aria-expanded="false" :aria-controls="'panelsStayOpen-collapse' + subChild.id">
-                                                                    {{ subChild.menu }}
-                                                                </button>
-                                                            </h2>
-                                                            <div :id="'panelsStayOpen-collapse' + subChild.id" class="accordion-collapse collapse" :aria-labelledby="'panelsStayOpen-heading' + subChild.id" data-bs-parent="#accordionPanelsStayOpenExample">
-                                                                <div class="accordion-body" v-for="childs in subChild.children" :key="childs">
-                                                                    <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-if="!childs.children">{{ childs.menu }}</router-link>
-                                                                    <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-else>
-                                                                        <div class="accordion accordion-flush" :id="'accordionPanelsStayOpenExample' + childs.id">
-                                                                            <div class="accordion-item">
-                                                                                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                                                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#' + subChild.id" aria-expanded="false" aria-controls="flush-collapseOne">
-                                                                                        {{ childs.menu }}
-                                                                                    </button>
-                                                                                </h2>
-                                                                                <div :id="subChild.id" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne" :data-bs-parent="'#accordionPanelsStayOpenExample' + childs.id">
-                                                                                    <div class="accordion-body">
-                                                                                        <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes" class="accordian-hover" v-for="grandChilds in childs.children" :key="grandChilds">{{ grandChilds.menu }}</router-link>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </router-link>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div v-else>
-                                                    <router-link :to="subChild.routes === '#' ? '' : '/' + subChild.routes" class="text-primary">{{ subChild.menu }}</router-link>
-                                                </div>
-                                            </div>
-                                        </div> -->
                                     </div>
                                 </div>
                                 <!-- sidebar dropdown end here -->

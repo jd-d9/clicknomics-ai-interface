@@ -1,126 +1,105 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Integrate CPA Network</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/networks" class="btn btn-lg btn-neutral btn_animated">View CPA Networks</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="col-12">
-                                <Form @submit="integrateCpaNetwork" :validation-schema="schema" v-slot="{ errors }">
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Name Your Network</label>
-                                                <Field type="text" name="network" id="input-username" :class="{'form-control': true, 'border-red-600': errors.network}" placeholder="Name" v-model="network_name"/>
-                                                <span class="text-red-600" v-if="errors.network">Name your network can not be empty</span>
-                                            </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Integrate CPA Network</span>
+
+                        <v-spacer />
+                        <v-btn href="/settings/networks" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                            Back
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between">
+                            Integrate CPA Network
+                        </v-card-title>
+                        <v-divider class="border-opacity-100 my-4" color="success" /> 
+
+                        <Form @submit="integrateCpaNetwork" :validation-schema="schema" v-slot="{ errors }">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Name Your Network</label>
+                                    <Field type="text" id="input-username" name="network" :class="{'form-control': true, 'border-red-600': errors.network}" placeholder="Name Your Network" v-model.trim="network_name"/>
+                                    <span class="text-red-600" v-if="errors.network">Your Network can not be empty</span>
+                                </v-col>  
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label" style="position:relative; width:100%">login URL for Your Network / Domain
+                                        <div class="help-tip" style="right:10px; top:45px;">
+                                            <div><p style="font-size:12px">Login URL for your network or domain when Affise is selected <br/> The Login URL needs to be https://api-networkdomain.affise.com/  </p></div>
                                         </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Add the login URL for your network or domain</label>
-                                                <div class="help-tip">
-                                                    <div><p>Login URL for your network or domain when Affise is selected <br/> The Login URL needs to be https://api-networkdomain.affise.com/  </p></div>
-                                                </div>
-                                                <Field type="text" name="url" id="input-username" :class="{'form-control': true, 'border-red-600': errors.url}" @blur="checkUrl" placeholder="Add the login URL for your network or domain" v-model="login_url"/>
-                                                <span class="text-red-600" v-if="backendValidationMessage">{{backendValidationMessage}}</span>
-                                                <span class="text-red-600" v-if="errors.url && !backendValidationMessage">URL can not be empty</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Network Platform</label>
-                                                <Field name="role" v-model="network_selected">
-                                                    <select :class="{'form-control': true, 'border-red-600': errors.role}" name="role" placeholder="Select Role" v-model="network_selected">
-                                                        <option value="">Select Network</option>
-                                                        <option value="cake">Cake</option>
-                                                        <option value="hasoffers">Tune (Hasoffers)</option>
-                                                        <option value="everflow">Everflow</option>
-                                                        <option value="hitpath">Hitpath</option>
-                                                        <option value="clickbooth">ClickBooth</option>
-                                                        <option value="clickdealer">ClickDealer</option>
-                                                        <option value="w4">W4</option>
-                                                        <option value="affise">Affise</option>
-                                                        <option value="other">Other</option>
-                                                    </select>
-                                                </Field>
-                                                <span class="text-red-600" v-if="errors.role">Network platform can not be empty</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Email</label>
-                                                <Field type="text" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model="email"/>
-                                                <ErrorMessage class="text-red-600" name="Email"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">API KEY</label>
-                                                <Field type="text" id="input-username" name="api" :class="{'form-control': true, 'border-red-600': errors.api}" placeholder="Name" v-model="api_key"/>
-                                                <span class="text-red-600" v-if="errors.api">Api key can not be empty</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Affiliate ID / Network ID / Domain and Script name </label>
-                                                <Field type="text" id="input-username" name="affiliatedid" :class="{'form-control': true, 'border-red-600': errors.affiliatedid}" placeholder="Name" v-model="affiliate_id"/>
-                                                <span class="text-red-600" v-if="errors.affiliatedid">Affiliate id can not be empty</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-12 py-0">
-                                            <div class="form-group date-picker-3">
-                                                <label class="form-control-label" for="input-username">Fetch Previous Records From</label>
-                                                <Field name="date" v-model="date" :class="{'border-red-600': errors.date}">
-                                                    <datepicker name="date" v-model:value="date" valueType="format" format="YYYY-MM-DD"></datepicker>
-                                                </Field>
-                                                <span class="text-red-600" v-if="errors.date">Date can not be empty</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Integrate</button>
-                                                <!-- <button type="button" class="btn btn-primary btn-lg btn_animated" @click="linkMore = !linkMore" v-if="report.length > 0">Back</button> -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                                    </label>
+                                    <Field type="text" id="input-username" name="url" :class="{'form-control': true, 'border-red-600': errors.url}" @blur="checkUrl" placeholder="login URL for Your Network / Domain" v-model="login_url"/>
+
+                                    <span class="text-red-600" v-if="backendValidationMessage">{{backendValidationMessage}}</span>
+                                    <span class="text-red-600" v-if="errors.url && !backendValidationMessage">URL can not be empty</span>
+                                </v-col>    
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Network Platform</label>
+                                    <Field name="role" v-model="network_selected">
+                                        <select :class="{'form-control': true, 'border-red-600': errors.role}" name="role" placeholder="Select Role" v-model="network_selected">
+                                            <option value="">Select Network</option>
+                                            <option value="cake">Cake</option>
+                                            <option value="hasoffers">Tune (Hasoffers)</option>
+                                            <option value="everflow">Everflow</option>
+                                            <option value="hitpath">Hitpath</option>
+                                            <option value="clickbooth">ClickBooth</option>
+                                            <option value="clickdealer">ClickDealer</option>
+                                            <option value="w4">W4</option>
+                                            <option value="affise">Affise</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.role">Network platform can not be empty</span>
+                                </v-col>  
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Email</label>
+                                    <Field type="text" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model="email"/>
+                                    <ErrorMessage class="text-red-600" name="Email"/>
+                                </v-col>  
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">API KEY</label>
+                                    <Field type="text" id="input-username" name="api" :class="{'form-control': true, 'border-red-600': errors.api}" placeholder="Name" v-model="api_key"/>
+                                    <span class="text-red-600" v-if="errors.api">Api key can not be empty</span>
+                                </v-col>  
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Affiliate ID / Network ID / Domain & Script name</label>
+                                    <Field type="text" id="input-username" name="affiliatedid" :class="{'form-control': true, 'border-red-600': errors.affiliatedid}" placeholder="Name" v-model="affiliate_id"/>
+                                    <span class="text-red-600" v-if="errors.affiliatedid">Affiliate id can not be empty</span>
+                                </v-col>  
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Fetch Previous Records From</label>
+                                    <Field name="date" v-model="date" :class="{'border-red-600': errors.date}">
+                                        <datepicker name="date" v-model:value="date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.date">Date can not be empty</span>
+                                </v-col> 
+
+                                <v-col cols="12" sm="12" md="12" lg="12">
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                </v-col>
+                            </v-row>
+                        </Form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -259,7 +238,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>

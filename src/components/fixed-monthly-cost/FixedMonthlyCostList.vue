@@ -20,7 +20,7 @@
                             Import CSV
                         </v-btn>
 
-                        <v-btn  @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -53,7 +53,7 @@
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon color="red-darken-4" @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
@@ -475,25 +475,3 @@ export default {
     }
 }
 </script>
-
-<!-- <style scoped>
-    button[disabled] {
-        cursor: not-allowed !important;
-    }
-    a[disabled] {
-        cursor: not-allowed !important;
-    }
-    .disable-button[disabled] {
-        cursor: not-allowed;
-    }
-    .set-cursor:hover, .set-cursor {
-        cursor: not-allowed !important;
-    }
-    .adding-font-size tbody tr td{
-        font-size: 14px !important;
-    }
-    /* date range picker */
-    .v-calendar {
-        position: unset !important;
-    }
-</style> -->
