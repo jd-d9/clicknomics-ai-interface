@@ -11,7 +11,7 @@
                                     <li class="breadcrumb-item">
                                         <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Add OneSSCorp - SX - Others Payment</li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{breadCrumbText}} OneSSCorp - SX - Others Payment</li>
                                 </ol>
                             </nav>
                         </div>
@@ -65,14 +65,14 @@
                                         <div class="col-lg-4 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Amount</label>
-                                                <Field type="number" id="input-username" name="Amount" :class="{'form-control': true , 'border-red-600':errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
+                                                <Field type="number" id="input-username" name="Amount" :class="{'form-control': true , 'border-red-600':errors.Amount}" step=".01" min="0" placeholder="Add Amount" v-model="amount"/>
                                                 <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-4 py-0">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-username">Fees</label>
-                                                <Field type="number" id="input-username" name="Fees" :class="{'form-control': true , 'border-red-600':errors.Fees}" step=".01" placeholder="Add fees" v-model="fees"/>
+                                                <Field type="number" id="input-username" name="Fees" :class="{'form-control': true , 'border-red-600':errors.Fees}" step=".01" min="0" placeholder="Add fees" v-model="fees"/>
                                                 <span class="text-red-600" v-if="errors.Fees">Fees can not be empty</span>
                                             </div>
                                         </div>
@@ -123,11 +123,13 @@ export default {
             amount: 0,
             fees: 0,
             grandtotal: 0,
+            breadCrumbText: 'Add',
             toggleElement: true,
         }
     },
     mounted() {
         if(this.$route.params.id) {
+            this.breadCrumbText = 'Update';
             this.toggleElement = false;
             this.getDataForEdit();
         }
@@ -188,6 +190,14 @@ export default {
                     });
                     this.showLoader = false;
                     this.$router.push('/bank_accounts/onesscorp/list');
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -215,11 +225,10 @@ export default {
                     const Data = response.data.data;
                     this.date = Data.date;
                     this.amount = Data.amount;
-                    this.network_selected = Data.network;
                     this.description = Data.description;
-                    this.type = Data.type;
-                    this.status = Data.transaction_type;
-                    this.balance = Data.balance;
+                    this.recepient = Data.recepient;
+                    this.fees = Data.fees;
+                    this.grandtotal = Data.grand_total;
                     this.showLoader = false;
                 }
             })

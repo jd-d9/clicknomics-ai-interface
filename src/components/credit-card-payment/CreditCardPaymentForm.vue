@@ -29,7 +29,7 @@
                         <Form @submit="manageCreditCardPayment" :validation-schema="schema" v-slot="{ errors }">
                             <v-row>
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label>Date</label>
+                                    <label class="form-control-label">Date</label>
                                     <Field name="Date" v-model="date" :class="{'border-red-600': errors.date}">
                                         <datepicker placeholder="Select Date" name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :class="{'border-red-600': errors.Date}"></datepicker>
                                     </Field>
@@ -37,7 +37,7 @@
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label>Amount</label>
+                                    <label class="form-control-label">Amount</label>
                                     <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
                                     <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
                                 </v-col>
@@ -46,7 +46,7 @@
 
                             <v-row>
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label>From Account</label>
+                                    <label class="form-control-label">From Account</label>
                                     <Field name="Fromaccount" v-model="fromAccount">
                                         <v-autocomplete name="Fromaccount" :class="{'form-control autocomplete': true, 'border-red-600': errors.Fromaccount}" :items="list" v-model="fromAccount" placeholder="Select From account"></v-autocomplete>
                                     </Field>
@@ -54,7 +54,7 @@
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label>To Account</label>
+                                    <label class="form-control-label">To Account</label>
                                     <Field name="Toaccount" v-model="toAccount">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.Toaccount}" :items="creditLines" v-model="toAccount" placeholder="Select To account"></v-select>
                                     </Field>
@@ -62,7 +62,7 @@
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label>Status</label>
+                                    <label class="form-control-label">Status</label>
                                     <Field name="Status" v-model="status">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.Status}" :items="statusList" v-model="status" placeholder="Select Status"></v-select>
                                     </Field>

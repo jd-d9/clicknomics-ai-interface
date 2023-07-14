@@ -1,272 +1,202 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-4 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Team Member Payments</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-8 text-right" v-if="showImportIcon">
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </router-link>
-                            <router-link to="" data-target="#importCsvModal" class="btn btn-lg btn-neutral btn_animated" @click="openImportCsvModal">Import CSV</router-link>
-                            <router-link to="" data-target="#fromAccountModal" class="btn btn-lg btn-neutral btn_animated" @click.prevent="openFromAccountModal">Add From Account</router-link>
-                            <router-link to="" data-target="#teamMemberModal" class="btn btn-lg btn-neutral btn_animated" @click.prevent="openTeamMemberModal">Add To Account</router-link>
-                            <button @click.prevent="this.$router.push('/accounting/teamMembersPayments/create')" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="nav-wrapper report_tabpanel">
-                                    <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
-                                        <li class="nav-item">
-                                            <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="this.showImportIcon = true">
-                                                <span class="btn-inner--text">Payments</span>
-                                            </router-link>
-                                        </li>
-                                        <li class="nav-item">
-                                            <router-link to="" class="nav-link mb-sm-4 mb-md-0" id="tabs-icons-text-4-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="genrateTeamMembersPaymentsReport">
-                                                <span class="btn-inner--text">Reports</span>
-                                            </router-link>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="finance_data tab-content myTabContent"> <!-- v-if="type == 'Listing'" -->
-                                    <div class="tab-pane fade show active" id="tabs-icons-text-3" role="tabpanel" aria-labelledby="tabs-icons-text-3-tab">
-                                        <v-app>
-                                            <v-card>
-                                                <v-card-title>
-                                                    <!-- <v-spacer></v-spacer> -->
-                                                    <v-row class=" align-items-center">
-                                                        <v-col class="d-flex" cols="12" sm="3">
-                                                            <div class="select-network-filter">
-                                                                <v-select
-                                                                clearable
-                                                                variant="solo"
-                                                                label="From Account Filter" 
-                                                                :items="fromAccountFilter"
-                                                                item-value="key"
-                                                                v-model="fromAccount"
-                                                                @update:modelValue="getTeamMemberPaymentList"
-                                                                ></v-select>
-                                                                <!-- <v-select solo :items="fromAccountFilter" label="From Account Filter" :clearable="true" v-model="fromAccount" @change="getTeamMembersPaymentsList"></v-select> -->
-                                                            </div>
-                                                        </v-col>
-                                                        <v-col class="d-flex" cols="12" sm="3">
-                                                            <div class="select-network-filter">
-                                                                <v-select
-                                                                clearable
-                                                                variant="solo"
-                                                                label="To Account Filter" 
-                                                                :items="toAccountFilter"
-                                                                item-value="key"
-                                                                v-model="toAccount"
-                                                                @update:modelValue="getTeamMemberPaymentList"
-                                                                ></v-select>
-                                                            </div>
-                                                        </v-col>
-                                                        <v-col class="d-flex justify-content-end" cols="12" sm="3">
-                                                            <date-range-picker :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                                        </v-col>
-                                                        <div class="col-3 ms-auto">
-                                                            <div class="ms-auto search-input position-relative">
-                                                                <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
-                                                            </div>
-                                                        </div>
-                                                    </v-row>
-                                                </v-card-title>
-                                                <!-- data table component -->
-                                                <v-data-table class="table-hover-class" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="teamMemberPaymentList" :itemsPerPage="itemsPerPage">
-                                                    <template v-slot:item="{ item }">
-                                                        <tr class="table-body-back">
-                                                            <td>{{item.selectable.id}}</td>
-                                                            <td>{{item.selectable.payment_date}}</td>
-                                                            <td>{{item.selectable.fromaccountlist.team_member_name}}</td>
-                                                            <td>{{item.selectable.toaccountlist.team_member_name}}</td>
-                                                            <td>${{item.selectable.amount }}</td>
-                                                            <td>{{item.selectable.status}}</td>
-                                                            <td>
-                                                                <button @click.prevent="this.$router.push('/accounting/teamMembersPayments/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'" class="disable-button">
-                                                                    <img src="/assets/img/icons/edit.svg" class="img-width">
-                                                                </button>
-                                                                <button @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
-                                                                    <img src="/assets/img/icons/bin.svg" class="img-width">
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    </template>
-                                                    <template v-slot:tbody v-if="teamMemberPaymentList.length > 0">
-                                                        <tr class="total_table table-body-back">
-                                                            <td>Totals</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>${{ sumField }}</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                        </tr>
-                                                    </template>
-                                                </v-data-table>
-                                            </v-card>
-                                        </v-app>
-                                    </div>
-                                    <div class="tab-pane fade show" id="tabs-icons-text-4" role="tabpanel" aria-labelledby="tabs-icons-text-4-tab">
-                                        <v-app>
-                                            <v-card>
-                                                <v-card-title>
-                                                    <v-row>
-                                                        <v-col class="d-flex justify-content-center" cols="12" sm="12">
-                                                            <date-range-picker :value="selectedRangeTwo" @update:value="updateRangeTwo"></date-range-picker>
-                                                        </v-col>
-                                                    </v-row>
-                                                </v-card-title>
-                                                <div class="row m-auto pt-3" v-if="cardMemberList.length > 0">
-                                                    <div class="col-md-3 py-0 dashboard_card" v-for="(item, index) in cardMemberList" :key="index">
-                                                        <div class="card card-stats add-border">
-                                                            <h5 class="card-title m-0 p-0">
-                                                                <div class="row m-0">
-                                                                    <div class="col-md-12 add-background py-3">
-                                                                        FROM: {{item.from_account}}
-                                                                    </div>
-                                                                    <div class="col-md-12 add-background-two py-3">
-                                                                        TO: {{item.to_account}}
-                                                                    </div>
-                                                                </div>
-                                                            </h5>
-                                                            <div class="card-body">
-                                                                <h2 class="font-weight-bold mb-0">{{item.total_amount}}</h2>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row m-auto" v-else>
-                                                    <div class="col-md-12 text-center">
-                                                        <div>
-                                                            No data available
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </v-card>
-                                        </v-app>
-                                    </div>
-                                </div>
-                                <div class="d-none">    <!-- v-else -->
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-row>
-                                                    <v-col class="d-flex justify-content-center" cols="12" sm="12">
-                                                        <!-- <template>
-                                                            <date-range-picker class="report" v-model="dateRangeTabReport" format="mm/dd/yyyy" @update="checkOpenPickerTabReport">
-                                                                <div slot="header" slot-scope="header" class="slot">
-                                                                    <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                                                </div>
-                                                                <template #input="picker" style="min-width: 350px;">
-                                                                    {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                                                                </template>
-                                                                <template #date="data">
-                                                                    <span class="small">{{ data.date | dateCell }}</span>
-                                                                </template>
-                                                                <template #ranges="ranges">
-                                                                    <div class="ranges">
-                                                                        <ul>
-                                                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                                                            {{ range[1].toDateString() }}</small>
-                                                                        </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </template>
-                                                                <div slot="footer" slot-scope="data" class="slot">
-                                                                    <div>
-                                                                        <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                                                    </div>
-                                                                    <div style="margin-left: auto">
-                                                                        <router-link tock="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</router-link>
-                                                                    </div>
-                                                                </div>
-                                                            </date-range-picker>
-                                                        </template> -->
-                                                    </v-col>
-                                                </v-row>
-                                            </v-card-title>
-                                            <template>
-                                                <div class="row m-auto pt-3" v-if="cardMemberList.length > 0">
-                                                    <div class="col-md-3 py-0 dashboard_card" v-for="(item, index) in cardMemberList" :key="index">
-                                                        <div class="card card-stats add-border">
-                                                            <h5 class="card-title m-0 p-0">
-                                                                <div class="row m-0">
-                                                                    <div class="col-md-12 add-background py-3">
-                                                                        FROM: {{item.from_account}}
-                                                                    </div>
-                                                                    <div class="col-md-12 add-background-two py-3">
-                                                                        TO: {{item.to_account}}
-                                                                    </div>
-                                                                </div>
-                                                            </h5>
-                                                            <div class="card-body">
-                                                                <h2 class="font-weight-bold mb-0">{{item.total_amount}}</h2>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row m-auto" v-else>
-                                                    <div class="col-md-12 text-center">
-                                                        <div>
-                                                            No data available
-                                                        </div>
-                                                    </div>
-                                                </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Team Member Payments</span>
+                        <v-spacer />
+
+                        <div v-if="showImportIcon">
+                            <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                                Demo.csv
+                            </v-btn>
+
+                            <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                                Import CSV
+                            </v-btn>
+
+                            <v-btn @click="openFromAccountModal" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                                Add From Account
+                            </v-btn>
+
+                            <v-btn @click="openTeamMemberModal" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                                Add To Account
+                            </v-btn>
+
+                            <v-btn @click.prevent="this.$router.push('/accounting/teamMembersPayments/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                                Add New
+                            </v-btn>
+                        </div>                        
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    Team Member Payments
+                                </v-col>
+                            </v-row>
+
+                            <!-- tab panel title div -->
+                            <div class="mt-4">
+                                <v-tabs v-model="tabteampayment" fixed-tabs bg-color="green-lighten-4" class="mb-3">
+                                    <v-tab value="payments" class="font-weight-bold" color="green-darken-4 ">Payments</v-tab>
+                                    <v-tab value="reports" class="font-weight-bold">Reports</v-tab>
+                                    <!-- <li class="nav-item">
+                                        <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="this.showImportIcon = true">
+                                            <span class="btn-inner--text">Payments</span>
+                                        </router-link>
+                                    </li>
+                                    <li class="nav-item">
+                                        <router-link to="" class="nav-link mb-sm-4 mb-md-0" id="tabs-icons-text-4-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="genrateTeamMembersPaymentsReport">
+                                            <span class="btn-inner--text">Reports</span>
+                                        </router-link>
+                                    </li> -->
+                                </v-tabs>
+
+                                <v-window v-model="tabteampayment">
+                                    <v-window-item value="payments">
+                                        <v-row>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                                <select v-model="fromAccount" @change="getTeamMemberPaymentList" class="form-control serch_table">
+                                                    <option disabled selected>From Account Filter</option>
+                                                    <option :value="val.title" v-for="(val, index) of fromAccountFilter" :key="index">
+                                                        {{ val.title }}
+                                                    </option>
+                                                </select>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                                <select v-model="toAccount" @change="getTeamMemberPaymentList" class="form-control serch_table">
+                                                    <option disabled selected>To Account Filter</option>
+                                                    <option :value="val.title" v-for="(val, index) of toAccountFilter" :key="index">
+                                                        {{ val.title }}
+                                                    </option>
+                                                </select>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
+                                            </v-col>
+                                        </v-row> 
+
+                                        <!-- data table component -->
+                                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="teamMemberPaymentList" :itemsPerPage="itemsPerPage">
+                                            <template v-slot:[`item.id`]="{ item }">
+                                                {{item.selectable.id}}
                                             </template>
-                                        </v-card>
-                                    </v-app>
-                                </div>
-                            </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                                            <template v-slot:[`item.payment_date`]="{ item }">
+                                                {{item.selectable.payment_date}}
+                                            </template>
+                                            <template v-slot:[`item.fromaccountlist.team_member_name`]="{ item }">
+                                                {{item.selectable.fromaccountlist.team_member_name}}
+                                            </template>
+                                            <template v-slot:[`item.toaccountlist.team_member_name`]="{ item }">
+                                                {{item.selectable.toaccountlist.team_member_name}}
+                                            </template>
+                                            <template v-slot:[`item.amount`]="{ item }">
+                                                ${{item.selectable.amount}}
+                                            </template>
+                                            <template v-slot:[`item.status`]="{ item }">
+                                                {{item.selectable.status}}
+                                            </template>
+                                            <template v-slot:[`item.action`]="{ item }">    
+                                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/accounting/teamMembersPayments/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'">
+                                                    <v-icon color="green-darken-2">
+                                                        mdi-pencil
+                                                    </v-icon>
+                                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                                </v-btn>
+
+                                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon color="red-darken-4" @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                                    <v-icon color="red-darken-4">
+                                                        mdi-delete-empty
+                                                    </v-icon>
+                                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                                </v-btn>                                                            
+                                            </template>
+                                            
+                                            <template v-slot:tbody v-if="teamMemberPaymentList.length > 0">
+                                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                                    <td>Totals</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>${{ sumField }}</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            </template>
+                                        </v-data-table>
+                                    </v-window-item>
+
+                                    <v-window-item value="reports">
+                                        <v-row>
+                                            <v-spacer />
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                            </v-col>
+                                        </v-row>
+
+                                        <v-row v-if="cardMemberList.length > 0" class="mt-4">
+                                            <v-col cols="6" sm="6" md="4" lg="3" v-for="(item, index) in cardMemberList" :key="index">
+                                                <v-card class="card_design bg-blue-lighten-4">
+                                                    <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
+                                                        <div class="d-flex align-cenyer justify-space-between">
+                                                            <span>From: {{item.from_account}}</span>
+                                                            <span>TO: {{item.to_account}}</span>
+                                                        </div>
+                                                    </v-card-title>
+                                                    <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">
+                                                        {{item.total_amount}}
+                                                    </v-card-text>
+                                                </v-card>
+                                            </v-col>
+                                        </v-row>
+
+                                        <v-col cols="12" sm="12" md="12" lg="12" v-else>
+                                            <v-card class="border-0">
+                                                <v-card-title class="d-flex justify-content-center align-center">
+                                                     No data available
+                                                </v-card-title>
+                                            </v-card>
+                                        </v-col>
+                                    </v-window-item>
+                                </v-window>
+                            </div>                          
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <!-- import csv -->
         <div class="modal fade" id="importCsvModal" tabindex="-1" role="dialog" aria-labelledby="importCsvModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Import Team Member Payments List</h5>
+                        <h5 class="modal-title">Import Team Member Payments List</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeImportCsvModal">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
-                    </div>
+                    </div>                    
                     <form @submit="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
@@ -278,9 +208,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
-                            <button type="submit" class="btn btn-primary">Import</button>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-import">Import</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeImportCsvModal">Close</v-btn>
+                            </v-col>
                         </div>
                     </form>
                 </div>
@@ -291,20 +223,26 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Add To Account</h5>
+                        <h5 class="modal-title">Add To Account</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeTeamMemberModal">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
-                    </div>
+                    </div>                    
                     <Form @submit="addToAccount" :validation-schema="toAccSchema" v-slot="{ errors }">
                         <div class="modal-body">
-                            <Field name="toAccName" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.toAccName}" placeholder="Name" v-model="teamMemberName"/>
-                            <span class="text-red-600" v-if="errors.toAccName">Name can not be empty</span>
-                            <!-- <ErrorMessage class="text-red-600" name="toAccName"/> -->
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">To Account Name</label>
+                                    <Field name="toAccName" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.toAccName}" placeholder="Account Name" v-model="teamMemberName"/>
+                                    <span class="text-red-600" v-if="errors.toAccName">Account Name can not be empty</span>
+                                </v-col>
+                            </v-row>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click.prevent="closeTeamMemberModal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeTeamMemberModal">Close</v-btn>
+                            </v-col>
                         </div>
                     </Form>
                 </div>
@@ -315,20 +253,26 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Add From Account</h5>
+                        <h5 class="modal-title">Add From Account</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeFromAccountModal">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
-                    </div>
+                    </div>                    
                     <Form @submit="addFromAccount" :validation-schema="fromAccSchema" v-slot="{ errors }">
                         <div class="modal-body">
-                            <Field type="text" name="fromAccName" id="input-username"  :class="{'form-control': true, 'border-red-600': errors.fromAccName}" placeholder="Name" v-model="teamMemberName"/>
-                            <span class="text-red-600" v-if="errors.fromAccName">Name can not be empty</span>
-                            <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">From Account Name</label>
+                                    <Field name="fromAccName" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.fromAccName}" placeholder="Account Name" v-model="teamMemberName"/>
+                                    <span class="text-red-600" v-if="errors.fromAccName">Account Name can not be empty</span>
+                                </v-col>
+                            </v-row>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click.prevent="closeFromAccountModal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeFromAccountModal">Close</v-btn>
+                            </v-col>
                         </div>
                     </Form>
                 </div>
@@ -357,12 +301,12 @@ export default {
             search: '',
             headers: [
                 { title: 'Payment ID', key: 'id' },
-                { title: 'Payment Date', align: 'start', sortable: true, key: 'payment_date' },
-                { title: 'From Account', align: 'start', sortable: true, key: 'from_account' },
-                { title: 'To Account', align: 'start', sortable: true, key: 'to_account' },
-                { title: 'Amount', align: 'start', sortable: true, key: 'amount' },
-                { title: 'Status', align: 'start', sortable: true, key: 'status' },
-                { title: 'Action', key: '' },
+                { title: 'Payment Date', align: 'center', sortable: true, key: 'payment_date' },
+                { title: 'From Account', align: 'center', sortable: true, key: 'from_account' },
+                { title: 'To Account', align: 'center', sortable: true, key: 'to_account' },
+                { title: 'Amount', align: 'center', sortable: true, key: 'amount' },
+                { title: 'Status', align: 'center', sortable: true, key: 'status' },
+                { title: 'Action', key: 'action', align: 'center' },
             ],
             file: '',
             currentItemsTable: [],
@@ -378,6 +322,7 @@ export default {
             searchInput: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
             selectedRangeTwo: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            tabteampayment: null,
         }
     },
     computed: {

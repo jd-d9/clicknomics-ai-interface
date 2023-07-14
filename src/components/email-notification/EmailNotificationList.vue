@@ -183,20 +183,12 @@
 <script>
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-
-// Vue.filter('toCurrency', function (value) {
-//     value = parseFloat(value).toFixed(2);
-//     var formatter = new Intl.NumberFormat('en-US', {
-//         style: 'currency',
-//         currency: 'USD',
-//         minimumFractionDigits: 2
-//     });
-//     return formatter.format(value);
-// });
 export default {
     // props: [ 'list'],
     components: {
-        Form, Field, ErrorMessage
+        Form, 
+        Field, 
+        ErrorMessage
     },
     data() {
         return {

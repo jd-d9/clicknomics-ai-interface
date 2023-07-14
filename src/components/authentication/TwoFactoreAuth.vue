@@ -213,11 +213,20 @@
                             this.showLoader = false;
                             this.$router.push('/dashboard');
                             this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                            this.showLoader = false;
+
                         }
                     })
                     .catch(error => {
                         console.log(error);
-                        this.backendErrorMessage = error.response.data.errors[0];
+                        this.backendErrorMessage = error.message;
                         this.showLoader = false;
                     });
                 }

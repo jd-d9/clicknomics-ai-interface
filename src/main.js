@@ -48,6 +48,11 @@ const vuetify = createVuetify({
 const app = createApp(App);
 app.config.globalProperties.$api = process.env.VUE_APP_API;
 app.config.globalProperties.$api_main = process.env.VUE_APP_API_MAIN;
+app.config.globalProperties.$filters = {
+  currencyUSD(value) {
+    return '$' + value
+  }
+}
 app.use(router);
 app.use(VueAxios, axios);
 app.use(ToastPlugin);

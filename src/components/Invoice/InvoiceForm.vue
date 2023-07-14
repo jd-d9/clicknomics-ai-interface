@@ -1,250 +1,213 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Invoice {{ dynamicBredCrumb }}</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right" v-if="toggleElement">
-                            <router-link to="" @click.prevent="openModal" type="button" class="btn btn-lg btn-neutral btn_animated">Save As Template</router-link>
-                            <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="saveInvoice">Save Invoice</button>
-                        </div>
-                        <div class="col-lg-6 text-right" v-else>
-                            <router-link to="" @click.prevent="openModal" type="button" class="btn btn-lg btn-neutral btn_animated">Save As Template</router-link>
-                            <button type="submit" class="btn btn-lg btn-neutral btn_animated" @click.prevent="updateInvoice">Update Invoice</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <v-app data-app="true" id="app">
-                                    <v-card variant="outlined" class="app-invoice-editable">
-                                        <div class="py-5 px-4">
-                                            <div class="invoice-header d-flex flex-wrap justify-space-between">
-                                                <!-- Left Content -->
-                                                <div class="col-5">
-                                                    <div class="d-flex align-center mb-4">
-                                                        <span class="field-wrapper-span company-name-field text--primary font-weight-bold text-xl">
-                                                            <v-text-field v-model="invoiceData.companyName" outlined dense class="flex-grow-0 text-xl" label="Company Name" placeholder="Company Name" hide-details="auto"></v-text-field>
-                                                        </span>
-                                                    </div>
-                                                    <span class="field-wrapper-span d-block">
-                                                        <v-textarea auto-grow v-model="invoiceData.companyDetail" outlined rows="3" hide-details="auto" label="Company Detail" placeholder="Company Detail"></v-textarea>
-                                                    </span>
-                                                </div>
-                                                <!-- Right Content -->
-                                                <div class="text-right">
-                                                    <div class="d-flex align-center justify-end">
-                                                        <span class="me-2">Invoice Number:</span>
-                                                        <span class="field-wrapper-span width-adding">
-                                                            <v-text-field v-model="invoiceData.invoiceData.invoiceNumber" outlined dense class="header-inputs flex-grow-0" hide-details="auto"></v-text-field>
-                                                        </span>
-                                                    </div>
-                                                    <div class="mt-3 d-flex align-center justify-end">
-                                                        <span class="me-2">Date Issued: </span>
-                                                        <datepicker v-model:value="invoiceData.invoiceData.issuedDate" :lowerLimit="new Date()" valueType="format" format="YYYY-MM-DD"></datepicker>
-                                                    </div>
-                                                    <div class="mt-3 d-flex align-center justify-end">
-                                                        <span class="me-2">Due Date: </span>
-                                                        <datepicker v-model:value="invoiceData.invoiceData.dueDate" :lowerLimit="invoiceData.invoiceData.issuedDate" valueType="format" format="YYYY-MM-DD"></datepicker>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <v-divider class="border-opacity-100"></v-divider>
-                                        <!-- Payment Details -->
-                                        <div class="py-5 px-4">
-                                            <div class="d-flex justify-space-between flex-wrap flex-column flex-sm-row">
-                                                <div class="field-wrapper-span col-md-12">
-                                                    <v-textarea label="Bill To" auto-grow v-model="invoiceData.billTo" outlined rows="3" hide-details="auto" placeholder="Bill To"></v-textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <v-divider class="border-opacity-100"></v-divider>
-                                        <!-- Add purchased products -->
-                                        <div class="add-products-form py-5 px-4">
-                                            <div class="single-product-form" v-for="(product, index) in invoiceData.purchasedProducts" :key="index">
-                                                <div class="add-products-header mb-2 d-none d-md-flex">
-                                                    <div class="px-4 flex-grow-1 font-weight-semibold">
-                                                        <v-row>
-                                                            <v-col cols="12" md="6">
-                                                                <span>Item</span>
-                                                            </v-col>
-                                                            <v-col cols="12" md="2">
-                                                                <span>Cost</span>
-                                                            </v-col>
-                                                            <v-col cols="12" md="2">
-                                                                <span>Quantity</span>
-                                                            </v-col>
-                                                            <v-col cols="12" md="2">
-                                                                <span>Price</span>
-                                                            </v-col>
-                                                        </v-row>
-                                                    </div>
-                                                    <div class="header-spacer"></div>
-                                                </div>
-                                                <!-- Left Form -->
-                                                <v-card outlined class="d-flex">
-                                                    <div class="pa-5 pb-4 flex-grow-1 padding-top">
-                                                        <v-row>
-                                                            <v-col cols="12" md="6">
-                                                                <span class="field-wrapper-span" :class="{'invalid-add': invalidDescription}">
-                                                                    <v-textarea 
-                                                                    v-model="product.description"
-                                                                    outlined label="Description" 
-                                                                    rows="3" hide-details="auto" 
-                                                                    placeholder="Description"
-                                                                    @blur="descriptionValidation(product.description)"
-                                                                    ></v-textarea>
-                                                                    <span v-if="invalidDescription" class="add-text-danger">{{ invalidDescription }}</span>
-                                                                </span>
-                                                            </v-col>
-                                                            <v-col cols="12" md="2" sm="4">
-                                                                <span class="field-wrapper-span" :class="{'invalid-add': invalidCost}">
-                                                                    <v-text-field
-                                                                    v-model="product.cost"
-                                                                    dense min="0"
-                                                                    type="number" hide-details="auto"
-                                                                    label="Cost" step="any"
-                                                                    placeholder="$"
-                                                                    @blur="costValidation(product.cost)"
-                                                                    ></v-text-field>
-                                                                    <span v-if="invalidCost" class="add-text-danger">{{ invalidCost }}</span>
-                                                                </span>
-                                                            </v-col>
-                                                            <v-col cols="12" md="2" sm="4">
-                                                                <span class="field-wrapper-span">
-                                                                    <v-text-field
-                                                                    v-model="product.quantity"
-                                                                    dense min="0"
-                                                                    type="number" hide-details="auto"
-                                                                    label="Quantity" placeholder="Quantity"
-                                                                    ></v-text-field>
-                                                                </span>
-                                                            </v-col>
-                                                            <v-col cols="12" md="2" sm="4">
-                                                                <p class="my-2">
-                                                                    <span class="d-inline d-md-none">Price: </span>
-                                                                    <span>${{ product.cost * product.quantity }}</span>
-                                                                </p>
-                                                            </v-col>
-                                                        </v-row>
-                                                    </div>
-                                                    <!-- Item Actions -->
-                                                    <div class="d-flex flex-column item-actions rounded-0 pa-1">
-                                                        <v-btn v-if="index != 0" icon small @click="invoiceData.purchasedProducts.splice(index, 1)">
-                                                            <v-icon size="20">{{ 'mdi-close' }}</v-icon>
-                                                        </v-btn>
-                                                        <v-spacer></v-spacer>
-                                                    </div>
-                                                </v-card>
-                                            </div>
-                                            <v-btn color="primary" class="mt-4" variant="outlined" @click="addNewItem">Add Item</v-btn>
-                                        </div>
-                                        <v-divider class="border-opacity-100"></v-divider>
-                                        <!-- Total -->
-                                        <div class="py-5 px-4">
-                                            <div class="d-flex justify-space-between flex-wrap flex-column flex-sm-row">
-                                                <div class="mb-sm-0 col-md-6 pt-0">
-                                                    <span class="field-wrapper-span" :class="{'invalid-add': invalidBankDetails}">
-                                                        <v-textarea auto-grow v-model="invoiceData.bankDetail" @blur="bankDetailsValidation(invoiceData.bankDetail)" outlined label="Bank Detail" rows="3" hide-details="auto" placeholder="Bank Detail"></v-textarea>
-                                                        <span v-if="invalidBankDetails" class="add-text-danger">{{ invalidBankDetails }}</span>
-                                                    </span>    
-                                                </div>
-                                                <div>
-                                                    <table class="w-full">
-                                                        <tr>
-                                                            <td class="pe-16">Subtotal:</td>
-                                                            <th class="text-right">${{totalRequest}}</th>
-                                                        </tr>
-                                                        <tr>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="pe-16">Tax:</td>
-                                                            <th class="text-right">{{invoiceData.invoiceData.tax}}</th>
-                                                        </tr>
-                                                    </table>
-                                                    <v-divider class="border-opacity-100 mt-3 mb-2"></v-divider>
-                                                    <table class="w-full">
-                                                        <tr>
-                                                            <td class="pe-16">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                                            <th class="text-right">${{totalRequest}}</th>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <v-divider class="border-opacity-100"></v-divider>
-                                        <div class="px-4 py-5">
-                                            <div class="mb-0">
-                                                <p class="font-weight-semibold mb-4">TERMS:</p>
-                                                <span class="field-wrapper-span">
-                                                    <v-textarea
-                                                    v-model="invoiceData.note"
-                                                    auto-grow
-                                                    outlined
-                                                    rows="3"
-                                                    hide-details="auto"
-                                                    ></v-textarea>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </v-card>
-                                </v-app>                                
-                            </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>{{ dynamicBredCrumb }} Invoice</span>
+
+                        <v-spacer />
+                        <div v-if="toggleElement">
+                            <v-btn @click.prevent="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-content-save" >
+                                Save As Template
+                            </v-btn>
+                            <v-btn @click.prevent="saveInvoice" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-content-save" >
+                                Save Invoice
+                            </v-btn>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+                        <div v-else>
+                            <v-btn @click.prevent="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-content-save" >
+                                Save As Template
+                            </v-btn>
+                            <v-btn @click.prevent="updateInvoice" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-content-save" >
+                                Update Invoice
+                            </v-btn>
+                        </div>
+
+                        <v-btn href="/accounting/invoice" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                            Back
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between">
+                            {{ dynamicBredCrumb }} Invoice
+                        </v-card-title>
+                        <v-divider class="border-opacity-100 my-4" color="success" />     
+
+                        <v-row class="mb-4">
+                            <!-- Left Company detail -->
+                            <v-col cols="12" sm="12" md="5" lg="5" class="font-medium font-weight-normal">
+                                <div class="mb-4">
+                                    <label class="form-control-label">Company Name</label>
+                                    <input v-model="invoiceData.companyName" class="form-control" label="Company Name" placeholder="Company Name" hide-details="auto" />
+                                </div>
+                                <div>
+                                    <label class="form-control-label">Company Detail</label>
+                                    <textarea class="form-control" name="Notes" rows="6" v-model="invoiceData.companyDetail" placeholder="Company Detail"></textarea>
+                                </div>
+                            </v-col>
+                            <v-spacer />
+
+                            <!-- Right Invoice number and date -->
+                            <v-col cols="12" sm="12" md="5" lg="4" class="font-medium font-weight-normal">
+                                <div class="mb-4 d-flex align-center justify-end">
+                                    <label class="mb-0 mr-2">Invoice Number</label>
+                                    <input v-model="invoiceData.invoiceData.invoiceNumber" class="form-control" label="Company Name" placeholder="Company Name" hide-details="auto" style="width:100px" />
+                                </div>
+                                <div class="mb-4 d-flex align-center justify-end">
+                                    <label class="mb-0 mr-2" style="width:130px">Date Issued</label>
+                                    <datepicker v-model:value="invoiceData.invoiceData.issuedDate" :lowerLimit="new Date()" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                </div>
+                                <div class="mb-4 d-flex align-center justify-end">
+                                    <label class="mb-0 mr-2" style="width:130px">Due Date</label>
+                                    <datepicker v-model:value="invoiceData.invoiceData.dueDate" :lowerLimit="invoiceData.invoiceData.issuedDate" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                </div>
+                            </v-col>
+                        </v-row>
+                        <v-divider class="border-opacity-100 my-4" color="success" />    
+                        <v-row>
+                            <!-- Payment Details -->
+                            <v-col cols="12" sm="12" md="5" lg="5" class="font-medium font-weight-normal">
+                                <div>
+                                    <label class="form-control-label">Bill To</label>
+                                    <textarea class="form-control" name="billto" rows="5" v-model="invoiceData.billTo" placeholder="Bill To"></textarea>
+                                </div>
+                            </v-col>
+                        </v-row>
+
+                        <!-- Add items and cost -->
+                        <v-row v-for="(product, index) in invoiceData.purchasedProducts" :key="index">
+                            <v-col cols="12" sm="12" md="5" lg="5" class="font-medium font-weight-normal">
+                                <label class="form-control-label">Item</label>
+                                <textarea v-model="product.description" rows="1" placeholder="Description" @blur="descriptionValidation(product.description)" :class="{'form-control': true, 'border-red-600': invalidDescription}"
+                                ></textarea>
+                                <span v-if="invalidDescription" class="text-red-600">{{ invalidDescription }}</span>
+                            </v-col>
+
+                            <v-col cols="12" sm="12" md="2" lg="2" class="font-medium font-weight-normal">
+                                <label class="form-control-label">Cost</label>
+                                <input v-model="product.cost" dense min="0" type="number" placeholder="Cost" @blur="costValidation(product.cost)" :class="{'form-control': true, 'border-red-600': invalidDescription}" />
+                                <span v-if="invalidCost" class="text-red-600">{{ invalidCost }}</span>
+                            </v-col>
+
+                            <v-col cols="12" sm="12" md="2" lg="2" class="font-medium font-weight-normal">
+                                <label class="form-control-label">Quantity</label>
+                                <input v-model="product.quantity" dense min="0" type="number" placeholder="Quantity" class="form-control"/>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="2" lg="2" class="font-medium font-weight-normal">
+                                <label class="form-control-label">Price</label>
+                                <p class="my-2">
+                                    <span class="d-inline d-md-none">Price: </span>
+                                    <strong>${{ product.cost * product.quantity }}</strong>
+                                </p>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="1" lg="1" class="font-medium font-weight-normal" v-if="index == 0">
+                                <label class="form-control-label"></label>
+                                <v-btn class="ma-2 bg-blue-lighten-4" variant="text" icon @click="addNewItem">
+                                    <v-icon color="blue-darken-2">
+                                        mdi-plus
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Add Item</v-tooltip>
+                                </v-btn>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="1" lg="1" class="font-medium font-weight-normal" v-if="index != 0">
+                                <label class="form-control-label"></label>
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click="invoiceData.purchasedProducts.splice(index, 1)">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Remove Item</v-tooltip>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+
+                        <v-row>
+                            <!-- Bank Detail -->
+                            <v-col cols="12" sm="12" md="5" lg="5" class="font-medium font-weight-normal">
+                                <div>
+                                    <label class="form-control-label">Bank Detail</label>
+                                    <textarea v-model="invoiceData.bankDetail" rows="5" placeholder="Bank Detail" @blur="bankDetailsValidation(invoiceData.bankDetail)" :class="{'form-control': true, 'border-red-600': invalidBankDetails}"
+                                    ></textarea>
+                                    <span v-if="invalidBankDetails" class="text-red-600">{{ invalidBankDetails }}</span>
+                                </div>
+                            </v-col>
+                            <v-spacer />
+                            <v-col cols="12" sm="12" md="4" lg="3" class="font-medium font-weight-normal mt-5">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td><strong>Subtotal</strong></td>
+                                        <th class="text-right">${{totalRequest}}</th>
+                                    </tr>
+                                    <tr>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tax</strong></td>
+                                        <th class="text-right">{{invoiceData.invoiceData.tax}}</th>
+                                    </tr>
+                                </table>
+                                <v-divider class="border-opacity-100 mt-3 mb-2"></v-divider>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td><strong>Total</strong></td>
+                                        <th class="text-right">${{totalRequest}}</th>
+                                    </tr>
+                                </table>
+                            </v-col>
+                        </v-row>
+
+                        <v-row>
+                            <!-- Payment Details -->
+                            <v-col cols="12" sm="12" md="5" lg="5" class="font-medium font-weight-normal">
+                                <div>
+                                    <label class="form-control-label">Terms</label>
+                                    <textarea class="form-control" name="terms" rows="5" v-model="invoiceData.note" placeholder="Terms"></textarea>
+                                </div>
+                            </v-col>
+                        </v-row>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <!-- Update Ads Account List-->
         <div class="modal fade" id="saveAsTemplateModal" tabindex="-1" role="dialog" aria-labelledby="saveAsTemplateModalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">Invoice Template</h5>
+                        <h5 class="modal-title">Invoice Template</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <form>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Template Name</label>
-                                            <input type="text" :class="{'form-control': true, 'is-invalid': errorMessage}" v-model="templateName">
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ errorMessage }}</strong>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="saveTemplate">Save</button>
-                                    </div>
-                                </div>
-                            </form>
+                    <form>
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    <label class="form-control-label" for="input-username">Template Name</label>
+                                    <input type="text" :class="{'form-control': true, 'is-invalid': errorMessage}" v-model="templateName">
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ errorMessage }}</strong>
+                                    </span>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="saveTemplate">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -314,9 +277,9 @@ export default {
     methods: {
         // opening modal
         openModal() {
-            this.descriptionValidation();
-            this.costValidation();
-            this.bankDetailsValidation();
+            this.addValidation();
+            this.addValidationTwo();
+            this.bankDetailsValidation(this.invoiceData.bankDetail);
             if(this.invalidDescription || this.invalidCost || this.invalidBankDetails) {
                 return false;
             }
@@ -328,8 +291,33 @@ export default {
         closeModal() {
             window.$('#saveAsTemplateModal').modal('hide');
         },
+        // add validations
+        addValidation() {
+            const value = this.invoiceData.purchasedProducts.filter((val) => {
+                return val.description == '';
+            })
+            if(value.length != 0) {
+                this.invalidDescription = 'Description can not be empty';
+            }
+            else {
+                this.invalidDescription = '';
+            }
+        },
+        // add validations
+        addValidationTwo() {
+            const value = this.invoiceData.purchasedProducts.filter((val) => {
+                return val.cost == null;
+            })
+            if(value.length != 0) {
+                this.invalidCost = 'Cost can not be empty';
+            }
+            else {
+                this.invalidCost = '';
+            }
+        },
         // description validation
         descriptionValidation(val) {
+            console.log(val, 'val')
             if(!val) {
                 this.invalidDescription = 'Description can not be empty';
             }
@@ -365,9 +353,9 @@ export default {
         },
         // save invoice
         saveInvoice() {
-            this.descriptionValidation();
-            this.costValidation();
-            this.bankDetailsValidation();
+            this.addValidation();
+            this.addValidationTwo();
+            this.bankDetailsValidation(this.invoiceData.bankDetail);
             if(this.invalidDescription || this.invalidCost || this.invalidBankDetails) {
                 return false;
             }
@@ -523,62 +511,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    .v-field {
-        width: 400px;
-    }
-    .v-application__wrap {
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-    }
-    .add-width {
-        width: 120px;
-    }
-    .app-invoice-editable {
-        border-color: rgba(0, 0, 0, 0.1);
-    }
-    .app-invoice-editable .input-salesperson {
-        width: 100px;
-    }
-    .app-invoice-editable .select-invoice-to {
-        width: 190px !important;
-    }
-    .app-invoice-editable .header-inputs {
-        width: 122px;
-    }
-    .app-invoice-editable .add-products-form .single-product-form:not(:first-child){
-        margin-top: 2rem;
-    }
-    .app-invoice-editable .add-products-form .header-spacer {
-        width: 39px;
-    }
-    .outlined-add-button {
-        margin-top: 15px;
-        color: #3f51b5;
-        text-transform: uppercase;
-        border: 1px solid #3f51b5;
-        border-radius: 4px;
-        height: 36px;
-        min-width: 64px;
-        padding: 0 16px;
-    }
-    .outlined-add-button:hover {
-        background-color: rgb(240, 241, 249);
-    }
-    .field-wrapper-span {
-        width: 100% !important;
-    }
-    .field-wrapper-span:first-child {
-        width: 50% !important;
-    }
-    .padding-top {
-        padding-top: 32px !important;
-    }
-    .width-adding, .app-invoice-editable .header-inputs {
-        width: 130px !important;
-    }
-    .add-text-danger {
-        color: red;
-    }
-</style>

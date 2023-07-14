@@ -15,14 +15,15 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 text-right">
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </router-link>
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Import CSV</router-link>
-                            <router-link to="/bank_accounts/onesscorp/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
+                            <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                                Demo.csv
+                            </v-btn>
+                            <v-btn @click.prevent="openModal" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                                Import CSV
+                            </v-btn>
+                            <v-btn @click.prevent="this.$router.push('/bank_accounts/onesscorp/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                                Add New Record
+                            </v-btn>
                         </div>
                     </div>
                 </div>
@@ -32,7 +33,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
                             <div class="card-body">
@@ -57,16 +58,13 @@
                                             </v-card-title>
                                             <v-data-table class="table-hover-class table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                                                 <template v-slot:[`item.amount`]="{ item }">
-                                                    <td>{{item.selectable.amount}}</td>
-                                                    <!-- <td>{{item.selectable.amount | toCurrency}}</td> -->
+                                                    <td>{{$filters.currencyUSD(item.selectable.amount)}}</td>
                                                 </template>
                                                 <template v-slot:[`item.fees`]="{ item }">
-                                                    <td>{{item.selectable.fees}}</td>
-                                                    <!-- <td>{{item.selectable.fees | toCurrency}}</td> -->
+                                                    <td>{{$filters.currencyUSD(item.selectable.fees)}}</td>
                                                 </template>
                                                 <template v-slot:[`item.grandtotal`]="{ item }">
-                                                    <td>{{item.selectable.grand_total}}</td>
-                                                    <!-- <td>{{item.selectable.grand_total | toCurrency}}</td> -->
+                                                    <td>{{$filters.currencyUSD(item.selectable.grand_total)}}</td>
                                                 </template>
                                                 <template  v-slot:[`item.description`]="{ item }">
                                                     <td v-if="item.selectable.description.length > 50">{{item.selectable.description.substring(0,50)+'...'}}</td>
@@ -85,18 +83,15 @@
                                                         </router-link>
                                                     </td>
                                                 </template>
-                                                <template v-slot:body v-if="dataMetrics.length > 0">
+                                                <template v-slot:tbody v-if="dataMetrics.length > 0">
                                                     <tr class="total_table">
                                                         <td>Totals</td>
                                                         <td>-</td>
                                                         <td>-</td>
                                                         <td>-</td>
-                                                        <td>{{ sumField }}</td>
-                                                        <td>{{ sumFee }}</td>
-                                                        <td>{{ sumGrandtotal }}</td>
-                                                        <!-- <td>{{ sumField | toCurrency }}</td>
-                                                        <td>{{ sumFee | toCurrency }}</td>
-                                                        <td>{{ sumGrandtotal | toCurrency }}</td> -->
+                                                        <td>{{ $filters.currencyUSD(sumField) }}</td>
+                                                        <td>{{ $filters.currencyUSD(sumFee) }}</td>
+                                                        <td>{{ $filters.currencyUSD(sumGrandtotal) }}</td>
                                                         <td>-</td>
                                                     </tr>
                                                 </template>
@@ -114,6 +109,13 @@
                             </div>
                         </div>
                     </v-app>
+                </div>
+                <div class="col" v-if="permissions.view != '1' && !showLoader">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -165,16 +167,13 @@
                             <span class="font-weight-bold"> Recepient :</span> {{viewModalDetail.recepient}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Amount :</span> {{viewModalDetail.amount}}
-                            <!-- <span class="font-weight-bold"> Amount :</span> {{viewModalDetail.amount | toCurrency}} -->
+                            <span class="font-weight-bold"> Amount :</span> {{$filters.currencyUSD(viewModalDetail.amount)}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Fees :</span> {{viewModalDetail.fees}}
-                            <!-- <span class="font-weight-bold"> Fees :</span> {{viewModalDetail.fees | toCurrency}} -->
+                            <span class="font-weight-bold"> Fees :</span> {{$filters.currencyUSD(viewModalDetail.fees)}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Grand Total :</span> {{viewModalDetail.grandtotal}}
-                            <!-- <span class="font-weight-bold"> Grand Total :</span> {{viewModalDetail.grandtotal | toCurrency}} -->
+                            <span class="font-weight-bold"> Grand Total :</span> {{$filters.currencyUSD(viewModalDetail.grand_total)}}
                         </p>
                     </div>
                 </div>
@@ -186,19 +185,6 @@
 <script>
 import DateRangePicker from '../../common/DateRangePicker.vue';
 import moment from 'moment';
-// Vue.filter('toCurrency', function (value) {
-//     // value =  parseInt(value);
-//     // if (typeof value !== "number") {
-//     //     return value;
-//     // }
-//     value = parseFloat(value).toFixed(2);
-//     var formatter = new Intl.NumberFormat('en-US', {
-//         style: 'currency',
-//         currency: 'USD',
-//         minimumFractionDigits: 2
-//     });
-//     return formatter.format(value);
-// });
 export default {
     components: {
         DateRangePicker
@@ -230,6 +216,7 @@ export default {
             recepientFilter: [],
             descriptionValue: null,
             recepientValue: null,
+            permissions: {},
             selectedFile: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
@@ -254,7 +241,7 @@ export default {
             return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         sumGrandtotal() {
-            const key = 'grandtotal';
+            const key = 'grand_total';
             return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
     },
@@ -277,9 +264,20 @@ export default {
         //         this.transactionTypeValue = params.transactionType;
         //     }
         // }
+
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        if(params.startDate && params.endDate) {
+            this.selectedRange = `${moment(new Date(parseInt(params.startDate))).format('ddd MMM DD YYYY')} - ${moment(new Date(parseInt(params.endDate))).format('ddd MMM DD YYYY')}`
+            // console.log(this.selectedRange, '---- this.selectedRange -----');
+            console.log(params.transactionType, 'params.transactionType ---');
+        }
         this.getOnessCorpReport();
     },
     methods: {
+        // currency(val) {
+        //     return this.$filters.currency(val);
+        // },
         // open and close modal
         openModal() {
             window.$('#exampleModalCenter').modal('show');
@@ -324,6 +322,7 @@ export default {
                 if(response.data.success) {
                     const Data = response.data;
                     this.dataMetrics = Data.data.data;
+                    this.permissions = Data.permission;
                     Data.allDescription.forEach((val) => {
                         this.descriptionFilter.push({
                             title: val.description

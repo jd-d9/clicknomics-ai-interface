@@ -1,109 +1,110 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Invoice Template List</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <!-- <div class="col-lg-6 text-right">
-                            <router-link to="/accounting/invoice" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
-                        </div> -->
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <v-app>
-                                    <v-card>
-                                        <v-card-title>
-                                            <!-- <v-row></v-row> -->
-                                                <div class="row">
-                                                    <div class="col-3 ms-auto">
-                                                        <div class="ms-auto search-input position-relative">
-                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchInvoice">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        </v-card-title>
-                                        <!-- data table component -->
-                                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="templateList" :search="search"  :single-expand="singleExpand" class="elevation-1 table-hover-class" :itemsPerPage="itemsPerPage">
-                                            <template v-slot:item="{ item }">
-                                                <tr class="table-body-back">
-                                                    <th>{{item.selectable.id}}</th>
-                                                    <td>
-                                                        <router-link to="" @click.prevent="editTemplateName(item.selectable.id)">
-                                                            {{item.selectable.template_name}} 
-                                                            <i class="fa-solid fa-pen-to-square edit-icon-pen"></i>
-                                                        </router-link>
-                                                    </td>
-                                                    <td>{{item.selectable.invoice_number}}</td>
-                                                    <td>{{item.selectable.invoice_issue_date}}</td>
-                                                    <td>{{item.selectable.invoice_due_date}}</td>
-                                                    <td>
-                                                        <button class="btn btn-lg btn-neutral" @click.prevent="createInvoiceFromTemp(item.selectable.id)">Create Invoice From Template</button>
-                                                        <router-link :to="'/accounting/invoice/template/' + item.selectable.id + '/edit'" class="disable-button">
-                                                            <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit template">
-                                                        </router-link>
-                                                        <button class="disable-button" @click.prevent="deleteTemplate(item.selectable.id)">
-                                                            <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete template">
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                        </v-data-table>
-                                    </v-card>
-                                </v-app>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Invoice Template List</span>
+                        <v-spacer />
+
+                        <v-btn href="/accounting/invoice" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                            Back
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Invoice Template
+                            <v-spacer></v-spacer>
+                            <div class="col-3 pr-1">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchInvoice"/>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-          <!-- Modal Update Template -->
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="templateList" :search="search" :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.id`]="{ item }">
+                                {{item.selectable.id}}
+                            </template>
+                            <template v-slot:[`item.template_name`]="{ item }">
+                                <router-link to="" @click.prevent="editTemplateName(item.selectable.id)">
+                                    {{item.selectable.template_name}} 
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                </router-link>
+                            </template>
+                            <template v-slot:[`item.invoice_number`]="{ item }">
+                                {{item.selectable.invoice_number}}
+                            </template>
+                            <template v-slot:[`item.invoice_issue_date`]="{ item }">
+                                {{item.selectable.invoice_issue_date}}
+                            </template>
+                            <template v-slot:[`item.invoice_due_date`]="{ item }">
+                                {{item.selectable.invoice_due_date}}
+                            </template>
+                            <template v-slot:[`item.actions`]="{ item }">    
+                                <v-btn class="ma-2 bg-blue-lighten-4" variant="text" icon @click.prevent="createInvoiceFromTemp(item.selectable.id)">
+                                    <v-icon color="blue-darken-2">
+                                        mdi-plus
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Create Invoice From Template</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon :href="'/accounting/invoice/template/' + item.selectable.id + '/edit'">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+                                
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon  @click.prevent="deleteTemplate(item.selectable.id)">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
+       <!-- Modal Update Template -->
         <div class="modal fade" id="editTemplateNameModal" tabindex="-1" role="dialog" aria-labelledby="editTemplateNameModalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">Update Template Name</h5>
+                        <h5 class="modal-title">Update Template Name</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <form>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Template Name</label>
-                                            <input type="text" :class="{'form-control': true }" v-model="selectedTemplateName">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated" @click.prevent="updateTemplateName">Save</button>
-                                    </div>
-                                </div>
-                            </form>
+                    <form>
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    <label class="form-control-label" for="input-username">Template Name</label>
+                                    <input type="text" placeholder="Template Name" :class="{'form-control': true }" v-model="selectedTemplateName">
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="updateTemplateName">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

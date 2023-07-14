@@ -51,8 +51,8 @@
                                                 <td>{{item.selectable.name}}</td>
                                                 <!-- currently working on this portion -->
                                                 <td>
-                                                    ${{displayAmount(item.selectable.plan_data)}}
-                                                    <!-- <span v-if="item.selectable.plan_data.length > 1 && data.interval == 'month'">${{data.amount}}</span> -->
+                                                    ${{displayAmount(item.selectable.plan_detail)}}
+                                                    <!-- <span v-if="item.selectable.plan_detail.length > 1 && data.interval == 'month'">${{data.amount}}</span> -->
                                                 </td>
                                                 <td>{{item.selectable.status == 0 ? 'Inactive' : 'Active'}}</td>
                                                 <td class="text-center">

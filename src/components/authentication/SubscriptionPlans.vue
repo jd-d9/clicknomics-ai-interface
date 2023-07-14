@@ -27,12 +27,7 @@
                         <div class="nav-wrapper report_tabpanel">
                             <ul class="nav nav-pills nav-fill flex-column flex-md-row justify-content-center" id="tabs-icons-text" role="tablist">
                                 <li class="nav-item">
-                                    <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-2-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false">
-                                        <span class="btn-inner--text">All</span>
-                                    </router-link>
-                                </li>
-                                <li class="nav-item">
-                                    <router-link to="" class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false">
+                                    <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false">
                                         <span class="btn-inner--text">Monthly</span>
                                     </router-link>
                                 </li>
@@ -46,40 +41,19 @@
                     </div>
                     <div class="card-body">
                         <div class="finance_data tab-content myTabContent">
-                            <div class="tab-pane fade show active" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
-                                <div class="row justify-content-center">
-                                    <div class="col-lg-4 col-md-6 mb-4" v-for="plan in allPlans" :key="plan">
-                                        <div class="card bg-secondary border-0 mb-0">
-                                            <div class="card-body px-lg-5 py-lg-5">
-                                                <div class="plan">
-                                                    <h2 class="plan-heading text-center fw-bold">{{plan.name}}</h2>
-                                                    <p class="plan-price text-center mb-0">${{plan.amount}}</p>
-                                                    <p class="mb-0 text-center text-size">Per {{plan.interval}}</p>
-                                                    <hr class="my-4 dropdown-divider">
-                                                    <div class="plan-content">
-                                                        <p>{{plan.trial_period_days}} Trial period day</p>
-                                                        <p>{{plan.user_limit}} User access limit</p>
-                                                        <router-link to='' class="btn btn-primary mt-4 btn-block btn_animated" @click="selectPlan(plan.id)">Select Plan</router-link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade show" id="tabs-icons-text-3" role="tabpanel" aria-labelledby="tabs-icons-text-3-tab">
+                            <div class="tab-pane fade show active" id="tabs-icons-text-3" role="tabpanel" aria-labelledby="tabs-icons-text-3-tab">
                                 <div class="row justify-content-center">
                                     <div class="col-lg-4 col-md-6 mb-4" v-for="plan in monthlyPlans" :key="plan">
                                         <div class="card bg-secondary border-0 mb-0">
                                             <div class="card-body px-lg-5 py-lg-5">
                                                 <div class="plan">
                                                     <h2 class="plan-heading text-center fw-bold">{{plan.name}}</h2>
-                                                    <p class="plan-price text-center mb-0">${{plan.amount}}</p>
-                                                    <p class="mb-0 text-center text-size">Per {{plan.interval}}</p>
+                                                    <p class="plan-price text-center mb-0">${{displayAmount(plan.plan_detail)}}</p>
+                                                    <p class="mb-0 text-center text-size">Per {{displayInterval(plan.plan_detail)}}</p>
                                                     <hr class="my-4 dropdown-divider">
                                                     <div class="plan-content">
-                                                        <p>{{plan.trial_period_days}} Trial period day</p>
-                                                        <p>{{plan.user_limit}} User access limit</p>
+                                                        <p>{{plan.description}}</p>
+                                                        <p>{{plan.user_limit}}</p>
                                                         <router-link to='' class="btn btn-primary mt-4 btn-block btn_animated" @click="selectPlan(plan.id)">Select Plan</router-link>
                                                     </div>
                                                 </div>
@@ -95,12 +69,12 @@
                                             <div class="card-body px-lg-5 py-lg-5">
                                                 <div class="plan">
                                                     <h2 class="plan-heading text-center fw-bold">{{plan.name}}</h2>
-                                                    <p class="plan-price text-center mb-0">${{plan.amount}}</p>
-                                                    <p class="mb-0 text-center text-size">Per {{plan.interval}}</p>
+                                                    <p class="plan-price text-center mb-0">${{displayAmount(plan.plan_detail)}}</p>
+                                                    <p class="mb-0 text-center text-size">Per {{displayInterval(plan.plan_detail)}}</p>
                                                     <hr class="my-4 dropdown-divider">
                                                     <div class="plan-content">
-                                                        <p>{{plan.trial_period_days}} Trial period day</p>
-                                                        <p>{{plan.user_limit}} User access limit</p>
+                                                        <p>{{plan.description}}</p>
+                                                        <p>{{plan.user_limit}}</p>
                                                         <router-link to='' class="btn btn-primary mt-4 btn-block btn_animated" @click="selectPlan(plan.id)">Select Plan</router-link>
                                                     </div>
                                                 </div>
@@ -138,6 +112,30 @@
             this.getPlans();
         },
         methods: {
+            // display amount
+            displayAmount(data) {
+                if(data.length > 1) {
+                    const Data = data.find((val) => {
+                        return val.interval == 'month'
+                    })
+                    return Data ? Data.amount : data[0].amount;
+                }
+                else if(data.length == 1){
+                    return data[0].amount;
+                }
+            },
+            // display interval time
+            displayInterval(data) {
+                if(data.length > 1) {
+                    const Data = data.find((val) => {
+                        return val.interval == 'month'
+                    })
+                    return Data ? Data.interval : data[0].interval;
+                }
+                else {
+                    return data[0].interval;
+                }
+            },
             // get plans listing
             getPlans() {
                 this.showLoader = true;
@@ -145,11 +143,19 @@
                 .then(response => {
                     if(response.data.success) {
                         this.allPlans = response.data.data;
-                        this.monthlyPlans = this.allPlans.filter((val) => {
-                            return val.interval.toLowerCase() == 'month';
+                        this.allPlans.forEach((val) => {
+                            val.plan_detail.forEach((data) => {
+                                if(data.interval.toLowerCase() == 'month') {
+                                    this.monthlyPlans.push(val)
+                                }
+                            })
                         });
-                        this.yearlyPlans = this.allPlans.filter((val) => {
-                            return val.interval.toLowerCase() == 'year';
+                        this.allPlans.forEach((val) => {
+                            val.plan_detail.forEach((data) => {
+                                if(data.interval.toLowerCase() == 'year') {
+                                    this.yearlyPlans.push(val)
+                                }
+                            })
                         });
                         this.showLoader = false;
                     }

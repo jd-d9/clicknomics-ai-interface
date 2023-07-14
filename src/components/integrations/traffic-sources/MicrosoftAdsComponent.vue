@@ -33,17 +33,6 @@
                 <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
-                            <!-- <div class="card-header">
-                                <h3 class="mb-0 float-left pt-3">Microsoft Ads</h3>
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-primary" @click="getAccessToken">
-                                        <div>
-                                            <span class="btn-inner--icon"><i class="ni ni-app"></i> </span>
-                                            <span class="btn-inner--text">Sync Microsoft Ads</span>
-                                        </div>
-                                    </button>
-                                </div>
-                            </div> -->
                             <div class="card-body">
                                 <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="microsoftHeaders" :items="customers" :single-expand="singleExpand" item-key="manager_account" class="table-hover-class elevation-1" :itemsPerPage="itemsPerPage">    <!--  :expanded.sync="microsoftExpanded"  -->
                                     <template v-slot:item="{ item }">
@@ -63,74 +52,7 @@
                                             </td>
                                         </tr>
                                     </template>
-                                    <!-- <template v-slot:expanded-item="{ headers, item }">
-                                        <td :colspan="headers.length" style="padding:10px">
-                                            <table class="table align-items-center" v-if="customers.length > 0">
-                                                <thead class="thead-light">
-                                                    <tr>
-                                                        <th scope="col">Account ID</th>
-                                                        <th scope="col">Name</th>
-                                                        <th scope="col">Account Number </th>
-                                                        <th scope="col">Action </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="(row , index) in item.children" :key="index">
-                                                        <td>
-                                                            {{row.account_id ? row.account_id : '-'}}
-                                                        </td>
-                                                        <td>
-                                                            {{row.name ? row.name : 0}}
-                                                        </td>
-                                                        <td>
-                                                            {{row.number ? row.number : 0}}
-                                                        </td>
-                                                        <td>
-                                                            <button class="disable-button" @click.prevent="deleteCustomerAccount(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
-                                                                <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </template> -->
                                 </v-data-table>
-                                <!-- <div class="table-responsive" v-if="customers.length > 0">
-                                    <table class="table align-items-center">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th scope="col">Account ID</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Account Number</th>
-                                                <th scope="col">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(row , index) in customers" :key="index">
-                                                <th scope="row">{{ row.account_id}}</th>
-                                                <th scope="row">{{ row.name ? row.name : '-'  }}</th>
-                                                <th scope="row">{{ row.number }}</th>
-                                                <th scope="row">
-                                                    <button type="button" class="btn-icon-clipboard" @click="getCampaign(row.account_id, row.parentCustomerId)" data-clipboard-text="fat-add" title="" data-original-title="Copy to clipboard">
-                                                        <div>
-                                                            <i class="ni ni-fat-add"></i>
-                                                            <span>View Campaigns</span>
-                                                        </div>
-                                                    </button>
-                                                </th>
-                                                <th scope="row">
-                                                    <router-link to="" @click="deleteCustomerAccount(row.id)">
-                                                        <img src="/admin/img/icons/bin.svg" style="width:30px">
-                                                    </router-link>
-                                                    <router-link to="" @click="getCampaign(row.account_id, row.parentCustomerId, row.bing_o_auth_tokens_id)">
-                                                        <img src="/admin/img/icons/eye.svg" style="width:30px">
-                                                    </router-link>
-                                                </th>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div> -->
                             </div>
                         </div>
                     </v-app>
@@ -259,6 +181,14 @@ export default {
                     });
                     this.showLoader = false;
                     window.location.href = response.data.redirectUrl;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -281,6 +211,14 @@ export default {
                     console.log(Data, '-- Data --')
                     this.customers = Data.result;
                     this.permissions = Data.permission;
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.showLoader = false;
                 }
             })
@@ -308,6 +246,14 @@ export default {
                             type: 'success'
                         });
                         this.getBingCustomerAccounts();
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                         this.showLoader = false;
                     }
                 })
@@ -351,6 +297,14 @@ export default {
                     });
                     this.closeUpdateModal();
                     this.getBingCustomerAccounts();
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.showLoader = false;
                 }
             })

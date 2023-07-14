@@ -33,17 +33,6 @@
                 <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <v-app>
                         <div class="card">
-                            <!-- <div class="card-header">
-                                <h3 class="mb-0 float-left pt-3">Google Ads</h3>
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-primary" @click="getAccessToken">
-                                        <div>
-                                            <span class="btn-inner--icon"><i class="ni ni-app"></i> </span>
-                                            <span class="btn-inner--text">Sync Google Ads</span>
-                                        </div>
-                                    </button>
-                                </div>
-                            </div> -->
                             <div class="card-body">
                                 <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="googleHeaders" :items="customers" :single-expand="singleExpand" item-key="customer_id" class="table-hover-class elevation-1" :itemsPerPage="itemsPerPage">
                                     <template v-slot:item="{ item }">
@@ -62,46 +51,6 @@
                                         </tr>
                                     </template>
                                 </v-data-table>
-                                <!-- <div class="table-responsive" v-if="customers.length > 0">
-                                    <table class="table align-items-center">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Customer ID</th>
-                                                <th scope="col">Campaign Name</th>
-                                                <th scope="col">Currency</th>
-                                                <th scope="col">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(row , index) in customers" :key="index">
-                                                <th scope="row">{{ index + 1 }}</th>
-                                                <th scope="row">{{ row.customer_id}}</th>
-                                                <th scope="row">{{ row.name ? row.name : '-'  }}</th>
-                                                <th scope="row">{{ row.currency }}</th>
-                                                <th scope="row" @click="getCustomerMetrics(row.id, row.manager_id)" v-if="row.is_Manager == '0'">
-                                                    <button type="button" class="btn-icon-clipboard" data-clipboard-text="fat-add" title="" data-original-title="Copy to clipboard">
-                                                        <div>
-                                                            <i class="ni ni-fat-add"></i>
-                                                            <span>View Metrics</span>
-                                                        </div>
-                                                    </button>
-                                                </th>
-                                                <th scope="row" v-else>
-                                                    Its A Manager Account
-                                                </th>
-                                                <th scope="row">
-                                                    <router-link to="" @click="deleteCustomer(row.id)">
-                                                        <img src="/admin/img/icons/bin.svg" style="width:30px">
-                                                    </router-link>
-                                                    <router-link to=""  @click="getCustomerMetrics(row.customer_id, row.manager_id , row.google_o_auth_tokens_id, row.is_Manager)">
-                                                        <img src="/admin/img/icons/eye.svg" style="width:30px">
-                                                    </router-link>
-                                                </th>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div> -->
                             </div>
                         </div>
                     </v-app>
@@ -324,6 +273,14 @@ export default {
                     const Data = response.data;
                     this.customers = Data.data;
                     this.permissions = Data.permission;
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.showLoader = false;
                 }
             })
