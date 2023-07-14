@@ -50,7 +50,6 @@
                                             <Field id="name" type="text" name="Name" class="form-control" :class="{'border-red-600': errors.Name}" placeholder="Name" v-model="userName"/>
                                             <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
                                             <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
-                                            <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -61,6 +60,7 @@
                                             <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
                                             <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
                                             <ErrorMessage class="text-red-600" name="Email"/>
+                                            <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -177,14 +177,19 @@
                 .then(response => {
                     let planId = sessionStorage.getItem('subscriptionPlanId');
                     if(response.data.success) {
+                        this.backendErrorMessage = '';
                         // set plan id
                         this.showLoader = true;
-                        this.axios.get(this.$api + '/subscription/' + planId)
+                        this.axios.get(this.$api + '/subscription/' + planId, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${response.data.data}`
+                            }
+                        })
                         .then(response => {
                             if(response.data.success) {
-                                this.backendErrorMessage = '';
                                 this.$toast.open({
-                                    message: 'User registration success',
+                                    message: 'User registration successfully',
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'
@@ -217,7 +222,8 @@
                 })
                 .catch(error => {
                     console.log(error, 'error')
-                    this.backendErrorMessage = error.response.data.message;
+                    this.backendErrorMessage = error.message;
+                    // this.backendErrorMessage = error.response.data.errors[0];
                     this.showLoader = false;
                 }); 
             },
