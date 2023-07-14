@@ -247,8 +247,8 @@
                                     <div class="font-medium font-weight-normal">
                                         <label class="font-medium mb-2">New User Email</label>
                                         <div class="mb-4">
-                                            <Field type="text" id="input-username" name="UserEmail" :class="{'form-control': true, 'border-red-600': errors.UserEmail}" placeholder="Email" v-model="email"/>
-                                            <span class="text-red-600" v-if="errors.UserEmail">Email can not be empty</span>
+                                            <Field type="text" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model="email"/>
+                                            <ErrorMessage class="text-red-600" name="Email"/>
                                         </div>
                                     </div>
                                     <div>
@@ -268,40 +268,16 @@
 
 <script>
     import * as yup from 'yup';
-    import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
-    import { required } from '@vee-validate/rules';
-    // import { Form, defineRule, configure } from 'vee-validate';
-    import { Form, Field, defineRule, configure } from 'vee-validate';
-    defineRule('required', required);
-    loadLocaleFromURL(
-    'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
-    );
-    configure({
-        generateMessage: localize('en', {
-            messages: {
-                required: '{field} can not be empty!',
-            },
-            // fields: {
-            //     Status: {
-            //         required: 'Status can not be empty!!!'
-            //     }
-            // }
-        }),
-    });
+    import { Form, Field, ErrorMessage } from 'vee-validate';
     export default {
         emits: ['updating-profile-details'],
         components: {
             Form,
             Field, 
-            // ErrorMessage
+            ErrorMessage
         },
         data() {
             return {
-                // images: {
-                //     logo: require('/assets/img/brand/logo.png'),
-                //     edit: require('/assets/img/icons/edit.svg'),
-                //     user: require('/assets/img/icons/dummy-user.png')
-                // },
                 userEmailToggle: false,
                 profileDetailsToggle: false,
                 passwordToggle: false,
@@ -328,7 +304,7 @@
         computed: {
             mailSchema() {
                 return yup.object({
-                    UserEmail: yup.string().required().email(),
+                    Email: yup.string().required().email(),
                 });
             },
             userSchema() {

@@ -34,7 +34,6 @@
                                         <img src="/assets/img/icons/envelope.svg">
                                     </span>
                                     <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
-                                    <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
                                     <ErrorMessage class="text-red-600" name="Email"/>
                                     <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </div>
@@ -43,7 +42,6 @@
                                         <img src="/assets/img/icons/lock.svg">
                                     </span>
                                     <Field id="password" type="password" name="Password" class="form-control" :class="{'border-red-600': errors.Password}" autocomplete="current-password" placeholder="Password" v-model="userPassword"/>
-                                    <!-- <span class="text-red-600" v-if="errors.Password">Password can not be empty</span> -->
                                     <ErrorMessage class="text-red-600" name="Password"/>
                                 </div>
                                 <div class="row">
@@ -76,36 +74,13 @@
 
 <script>
     import * as yup from 'yup';
-    import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
-    import { required } from '@vee-validate/rules';
-    import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
-    defineRule('required', required);
-    loadLocaleFromURL(
-    'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
-    );
-    configure({
-        generateMessage: localize('en', {
-            messages: {
-                required: '{field} can not be empty!',
-            },
-            // fields: {
-            //     Status: {
-            //         required: 'Status can not be empty!!!'
-            //     }
-            // }
-        }),
-    });
+    import { Form, Field, ErrorMessage } from 'vee-validate';
     export default {
         components: {
             Form, Field, ErrorMessage
         },
         data() {
             return {
-                // images: {
-                //     logo: require('/assets/img/brand/logo.png'),
-                //     envelope: require('/assets/img/icons/envelope.svg'),
-                //     lock: require('/assets/img/icons/lock.svg'),
-                // },
                 showLoader: false,
                 userEmail: '',
                 userPassword: '',
@@ -146,9 +121,6 @@
                     })
                     .then(response => {
                         if(response.data.success) {
-                            // this.$session.set('Token', response.data.token);
-                            // this.$session.set('Email', this.userEmail);
-                            // console.log(this.$session, 'vue-session');
                             const responseData = response.data;
                             sessionStorage.setItem('Token', responseData.token);
                             sessionStorage.setItem('Email', this.userEmail);
@@ -165,7 +137,6 @@
                                 }
 
                             }
-                            
                             this.backendErrorMessage = '';
                             this.showLoader = false;
                             this.$toast.open({

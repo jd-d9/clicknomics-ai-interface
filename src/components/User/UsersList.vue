@@ -16,7 +16,7 @@
                             </nav>
                         </div>
                         <div class="col-lg-6 col-5 text-right">
-                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="userPermissions.create_auth == '0'" @click.prevent="addNewUser">Add User</button>
+                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'" @click.prevent="addNewUser">Add User</button>
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
         <!-- Page content -->
         <div class="container-fluid mt--3">
             <div class="row justify-content-center">
-                <div class="col" v-if="userPermissions.view == '1' && !showLoader">
+                <div class="col" v-if="permissions.view == '1' && !showLoader">
                     <div class="card">
                         <div class="card-body">
                             <v-app>
@@ -60,10 +60,10 @@
                                                 <td>{{item.selectable.email}}</td>
                                                 <td>+{{item.selectable.country_code}} - {{item.selectable.phone_number}}</td>
                                                 <td class="text-center">
-                                                    <button class="disable-button" :disabled="userPermissions.update_auth == '0'" @click.prevent="editUser(item.selectable.id)">
+                                                    <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="editUser(item.selectable.id)">
                                                         <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
                                                     </button>
-                                                    <button class="disable-button" :disabled="userPermissions.delete_auth == '0'" @click.prevent="deleteUser(item.selectable.id)" v-if="item.selectable.role_id != roleId">
+                                                    <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deleteUser(item.selectable.id)" v-if="item.selectable.role_id != roleId">
                                                         <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
                                                     </button>
                                                 </td>
@@ -108,7 +108,7 @@
                 showLoader: false,
                 items: [],
                 userFilter: [],
-                userPermissions: {},
+                permissions: {},
                 searchInput: '',
             }
         },
@@ -127,7 +127,7 @@
                         console.log(response.data.data.user.data, 'users');
                         this.items = response.data.data.user.data;
                         this.userFilter = response.data.data.user.data;
-                        this.userPermissions = response.data.data.permission;
+                        this.permissions = response.data.data.permission;
                         this.showLoader = false;
                     }
                 })

@@ -57,8 +57,7 @@
                                             </v-card-title>
                                             <v-data-table class="table-hover-class table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                                                 <template v-slot:[`item.amount`]="{ item }">
-                                                    <td>{{item.selectable.amount}}</td>
-                                                    <!-- <td>{{item.amount | toCurrency}}</td> -->
+                                                    <td>{{$filters.currencyUSD(item.selectable.amount)}}</td>
                                                 </template>
                                                 <template v-slot:[`item.network`]="{ item }">
                                                     <td>{{item.selectable.network ? item.selectable.network : '-' }}</td>
@@ -162,8 +161,7 @@
                             <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Amount :</span> {{viewModalDetail.amount }}
-                            <!-- <span class="font-weight-bold"> Amount :</span> {{viewModalDetail.amount | toCurrency}} -->
+                            <span class="font-weight-bold"> Amount :</span> {{$filters.currencyUSD(viewModalDetail.amount)}}
                         </p>
                         <p>
                             <span class="font-weight-bold"> Network :</span> {{viewModalDetail.network ? viewModalDetail.network : '-'}}
@@ -181,19 +179,6 @@
 <script>
 import DateRangePicker from '../../common/DateRangePicker.vue';
 import moment from 'moment';
-// Vue.filter('toCurrency', function (value) {
-//     // value =  parseInt(value);
-//     // if (typeof value !== "number") {
-//     //     return value;
-//     // }
-//     value = parseFloat(value).toFixed(2);
-//     var formatter = new Intl.NumberFormat('en-US', {
-//         style: 'currency',
-//         currency: 'USD',
-//         minimumFractionDigits: 2
-//     });
-//     return formatter.format(value);
-// });
 export default {
     components: {
         DateRangePicker
@@ -265,6 +250,14 @@ export default {
         //         this.transactionTypeValue = params.transactionType;
         //     }
         // }
+
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        if(params.startDate && params.endDate) {
+            this.selectedRange = `${moment(new Date(parseInt(params.startDate))).format('ddd MMM DD YYYY')} - ${moment(new Date(parseInt(params.endDate))).format('ddd MMM DD YYYY')}`
+            // console.log(this.selectedRange, '---- this.selectedRange -----');
+            console.log(params.transactionType, 'params.transactionType ---');
+        }
         this.getIpmChaseReport();
     },
     methods: {
@@ -355,6 +348,14 @@ export default {
                             type: 'success'
                         });
                         this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -393,6 +394,14 @@ export default {
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
+                        });
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
                         });
                         this.showLoader = false;
                     }
@@ -469,6 +478,14 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {

@@ -68,29 +68,12 @@ import Datepicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 import * as yup from 'yup';
-import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
-import { required } from '@vee-validate/rules';
-import { Form, Field, defineRule, configure } from 'vee-validate';
-defineRule('required', required);
-loadLocaleFromURL(
-  'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/ar.json'
-);
-configure({
-    generateMessage: localize('en', {
-        messages: {
-            required: '{field} can not be empty!',
-        },
-        // fields: {
-        //     Status: {
-        //         required: 'Status can not be empty!!!'
-        //     }
-        // }
-    }),
-});
+import { Form, Field } from 'vee-validate';
 export default {
     components: {
         Datepicker,
-        Form, Field
+        Form, 
+        Field
     },
     data() {
         return {
