@@ -10,7 +10,7 @@
                                     <li class="breadcrumb-item">
                                         <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">CPA Eliminated Networks List</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Eliminated Manual Networks List</li>
                                 </ol>
                             </nav>
                         </div>
@@ -33,15 +33,14 @@
                                                 <template v-slot:item="{ item }">
                                                     <tr class="table-body-back">
                                                         <td>{{item.selectable.id}}</td>
-                                                        <td>{{item.selectable.name}}</td>
-                                                        <td>{{item.selectable.email ? item.selectable.email : '-' }}</td>
-                                                        <td>{{item.selectable.affiliate_id}}</td>
-                                                        <td class="text-capitalize">{{item.selectable.network}}</td>
-                                                        <td>{{item.selectable.company ? item.selectable.company : '-' }}</td>
-                                                        <td>{{item.selectable.notes ? item.selectable.notes : '-' }}</td>
+                                                        <td>{{item.selectable.network}}</td>
+                                                        <td>{{item.selectable.email ? item.selectable.email : '-'}}</td>
+                                                        <td>{{item.selectable.platform_type ? item.selectable.platform_type : '-'}}</td>
+                                                        <td>{{item.selectable.company ? item.selectable.company : '-'}}</td>
+                                                        <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
                                                         <td>{{format_date(item.selectable.deleted_at)}}</td>
                                                         <td>
-                                                            <a href="javascript:void(0);" @click="restoreAutomatedNetwork(item.selectable.id)">
+                                                            <a href="javascript:void(0);" @click="restoreManualNetwork(item.selectable.id)">
                                                                 <img src="/assets/img/icons/restore.svg" style="width:30px">
                                                             </a>
                                                         </td>
@@ -75,25 +74,16 @@ export default {
             showLoader: false,
             linkedNewtworks: [],
             headers: [
-                { title: 'Network ID', align: 'start', sortable: true, key: 'id' },
-                { title: 'Network Name', align: 'start', sortable: true, key: 'name' },
-                { title: 'Email', align: 'start', sortable: true, key: 'email' },
-                { title: 'Login ID',  key: 'affiliate_id' },
-                { title: 'Platform Type',  key: 'network' },
+                { title: 'Network ID', align: 'start', sortable: false, key: 'id' },
+                { title: 'Network Name', key: 'network' },
+                { title: 'Email', key: 'email' },
+                { title: 'Platform Type', key: 'platform_type' },
                 { title: 'Company', key: 'company' },
                 { title: 'Notes', key: 'notes' },
-                { title: 'Date On Removed',  key: 'deleted_at' },
+                { title: 'Date On Removed', key: 'deleted_at' },
                 { title: 'Action',  key: '', sortable: false},
             ],
             itemsPerPage: -1,
-            list: {
-                id: null,
-                name: null,
-                email: null,
-                platform_type: null,
-                notes: null,
-                company: null,
-            },
             permissions: {},
         }
     },
@@ -110,7 +100,7 @@ export default {
         // get manual network listing
         getEliminatedAutomatedNetwork() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/network/eliminated-automated-networks', {
+            this.axios.get(this.$api + '/network/eliminated-manual-networks', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -130,12 +120,12 @@ export default {
             });
         },
         // restore data
-        restoreAutomatedNetwork(id) {
+        restoreManualNetwork(id) {
             if(confirm("Do you really want to restore network?")) {
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('id', id);
-                this.axios.post(this.$api + '/network/eliminated-automated-network/restoreAutomatedNetwork', formData,{
+                this.axios.post(this.$api + '/network/eliminated-manual-network/restoreManualNetwork', formData,{
                         headers: {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${sessionStorage.getItem('Token')}`
