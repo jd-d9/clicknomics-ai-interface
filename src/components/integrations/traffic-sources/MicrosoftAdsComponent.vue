@@ -1,71 +1,73 @@
 <template>
     <div class="bg-default main-content-height">
-       <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Microsoft Ads Integration List</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <button type="button" class="btn  btn-lg btn-neutral btn_animated" @click.prevent="getAccessToken">
-                                <div>
-                                    <!-- <span class="btn-inner--icon"><i class="ni ni-app"></i> </span> -->
-                                    <img src="/assets/img/icons/microsoft.svg" class="add-width">
-                                    <span class="btn-inner--text">Sync Microsoft Accounts</span>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="microsoftHeaders" :items="customers" :single-expand="singleExpand" item-key="manager_account" class="table-hover-class elevation-1" :itemsPerPage="itemsPerPage">    <!--  :expanded.sync="microsoftExpanded"  -->
-                                    <template v-slot:item="{ item }">
-                                        <tr class="table-body-back">
-                                            <td>{{item.selectable.account_name}}</td>
-                                            <td>{{item.selectable.account_id}}</td>
-                                            <td>{{item.selectable.account_number}}</td>
-                                            <td>{{item.selectable.manager_account}}</td>
-                                            <td :style="{color: item.selectable.status === 'Acccount Synced Successfully' ? 'green' : 'red'}">{{item.selectable.status}}</td>
-                                            <td>
-                                                <router-link to="" @click="showEditedModal(item.selectable.id, item.selectable.currency_conversion_check)">{{item.selectable.currency_conversion_check == '1' ? 'Enabled' : 'Disabled'}}</router-link>
-                                            </td>
-                                            <td>
-                                                <button class="disable-button" @click.prevent="deleteCustomerAccount(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
-                                                    <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </template>
-                                </v-data-table>
-                            </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Microsoft Ads Integration</span>
+
+                        <v-spacer />
+                        <v-btn @click.prevent="getAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated">
+                            <img src="/assets/img/icons/microsoft.svg" class="add-width mr-2">
+                            <span class="btn-inner--text">Sync Microsoft Accounts</span>
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Microsoft Ads Integration List
+                        </v-card-title>
+
+                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="microsoftHeaders" :items="customers" :single-expand="singleExpand" item-key="manager_account" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">    <!--  :expanded.sync="microsoftExpanded"  -->
+                            <template v-slot:[`item.account_name`]="{ item }">
+                                {{item.selectable.account_name}}
+                            </template>
+                            <template v-slot:[`item.account_id`]="{ item }">
+                                {{item.selectable.account_id}}
+                            </template>
+                            <template v-slot:[`item.account_number`]="{ item }">
+                                {{item.selectable.account_number}}
+                            </template>
+                            <template v-slot:[`item.manager_account`]="{ item }">
+                                {{item.selectable.manager_account}}
+                            </template>
+                            <template v-slot:[`item.status`]="{ item }">
+                                <div :style="{color: item.selectable.status === 'Acccount Synced Successfully' ? 'green' : 'red'}">
+                                    {{item.selectable.status}}
+                                </div>
+                            </template>
+                            <template v-slot:[`item.currency_conversion_check`]="{ item }">
+                                <router-link to="" @click="showEditedModal(item.selectable.id, item.selectable.currency_conversion_check)">{{item.selectable.currency_conversion_check == '1' ? 'Enabled' : 'Disabled'}}</router-link>
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteCustomerAccount(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>                                                            
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
          <!-- edited modal  -->
         <div class="modal fade" id="updateEditedData" tabindex="-1" role="dialog" aria-labelledby="updateEditedDataTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -132,7 +134,7 @@ export default {
                 { title: 'Manager Name', align: 'start', sortable: false, key: 'manager_account' },
                 { title: 'Account 2FA Sync', key: 'status' },
                 { title: 'Currency Conversion (USD)', key: 'currency_conversion_check' },
-                { title: 'Action',  key: '', sortable: false },
+                { title: 'Action',  key: 'action', sortable: false },
             ],
             expanded: [],
             microsoftExpanded: [],

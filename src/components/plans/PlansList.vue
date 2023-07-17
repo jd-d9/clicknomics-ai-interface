@@ -1,85 +1,75 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <!-- header content -->
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Plans</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'" @click.prevent="addNewPlan">Add New Plan</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <v-app>
-                                <v-card>
-                                    <v-card-title>
-                                        <v-spacer></v-spacer>
-                                        <div class="text-end">
-                                            <div class="row">
-                                                <div class="col-3 ms-auto">
-                                                    <div class="ms-auto search-input position-relative">
-                                                        <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPlan">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </v-card-title>
-                                    <!-- data table component -->
-                                    <v-data-table class="table-hover-class" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items" :itemsPerPage="itemsPerPage">
-                                        <template v-slot:item="{ item }">
-                                            <tr class="table-body-back">
-                                                <th>{{item.selectable.id}}</th>
-                                                <td>{{item.selectable.name}}</td>
-                                                <!-- currently working on this portion -->
-                                                <td>
-                                                    ${{displayAmount(item.selectable.plan_detail)}}
-                                                    <!-- <span v-if="item.selectable.plan_detail.length > 1 && data.interval == 'month'">${{data.amount}}</span> -->
-                                                </td>
-                                                <td>{{item.selectable.status == 0 ? 'Inactive' : 'Active'}}</td>
-                                                <td class="text-center">
-                                                    <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="editPlan(item.selectable.id)">
-                                                        <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit user">
-                                                    </button>
-                                                    <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deletePlan(item.selectable.id)">
-                                                        <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete user">
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </v-data-table>
-                                </v-card>
-                            </v-app>
-                        </div>
-                    </div>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Plan Management </span>
+
+                        <v-spacer />
+                        <v-btn @click.prevent="addNewPlan" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Plan Management List
+                            <v-spacer></v-spacer>
+                            <div class="col-3 pr-1">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPlan"/>
+                            </div>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.id`]="{ item }">
+                                {{item.selectable.id}}
+                            </template>
+                            <template v-slot:[`item.name`]="{ item }">
+                                {{item.selectable.name}}
+                            </template>
+                            <template v-slot:[`item.plan_detail`]="{ item }">
+                                ${{displayAmount(item.selectable.plan_detail)}}
+                            </template>
+                            <template v-slot:[`item.status`]="{ item }">
+                                {{item.selectable.status == 0 ? 'Inactive' : 'Active'}}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">  
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editPlan(item.selectable.id)" :disabled="permissions.update_auth == '0'">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deletePlan(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn> 
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
