@@ -40,9 +40,9 @@
                                                         <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
                                                         <td>{{format_date(item.selectable.deleted_at)}}</td>
                                                         <td>
-                                                            <a href="javascript:void(0);" @click="restoreManualNetwork(item.selectable.id)">
+                                                            <router-link to="" @click="restoreManualNetwork(item.selectable.id)">
                                                                 <img src="/assets/img/icons/restore.svg" style="width:30px">
-                                                            </a>
+                                                            </router-link>
                                                         </td>
                                                     </tr>
                                                 </template>

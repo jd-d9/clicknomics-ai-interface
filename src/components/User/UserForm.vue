@@ -231,8 +231,7 @@ export default {
                     })
                     .catch(error => {
                         console.log(error.response);
-                        this.backendErrorMessage = error.response.data.message;
-                        this.backendErrorMessage = error.response.data.errors[0];
+                        this.backendErrorMessage = error.message;
                         this.showLoader = false;
                     }); 
                 }

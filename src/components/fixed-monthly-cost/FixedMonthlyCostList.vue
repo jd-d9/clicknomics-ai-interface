@@ -149,7 +149,7 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="addCpaNetwork">Save</v-btn>    
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
                             </v-col>
                         </div>
@@ -297,7 +297,7 @@ export default {
             if(confirmDelete) {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/fixedMonthlyCost/deleteMutipleRows', {
-                    id: JSON.stringify(this.selectedId)
+                    selectedRow: JSON.stringify(this.selectedId)
                 }, {
                     headers: {
                         "Content-Type": "application/json",

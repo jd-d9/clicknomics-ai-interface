@@ -104,7 +104,7 @@
                 <v-app-bar color="primary" style="position:relative; width: 100%;left: 0 !important;">
                     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
                     <v-spacer></v-spacer>
-                    <v-switch color="black" hide-details inset true-value="Dark" false-value="Light" class="ms-auto d-inline-flex justify-content-end mr-2"></v-switch>
+                    <v-switch color="black" hide-details inset true-value="Dark" false-value="Light" class="ms-auto d-inline-flex justify-content-end mr-2" @change="changeTheme"></v-switch>
                     <v-menu>
                         <template v-slot:activator="{ props }">
                             <v-btn class="text-none" stacked v-bind="props">

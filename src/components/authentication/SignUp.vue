@@ -25,8 +25,18 @@
                 <div class="col-lg-10 col-md-7">
                     <div class="card bg-secondary border-0 mb-0">
                         <div class="card-body px-lg-5 py-lg-5">
-                            <div class="text-center logo_responsive">
-                                <img src="/assets/img/brand/logo.png" alt="logo">
+                            <div class="row">
+                                <div class="col-4"></div>
+                                <div class="col-4 text-center">
+                                    <div class="text-center logo_responsive d-flex justify-content-between">
+                                        <img src="/assets/img/brand/logo.png" alt="logo" class="mx-auto" style="width: 80%">
+                                    </div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <v-btn to="/subscribe-plan" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                                        Back
+                                    </v-btn> 
+                                </div>
                             </div>
                             <Form class="mt-5 login_form" @submit="signUpUser" :validation-schema="schema" v-slot="{ errors }">
                                 <div class="row">
@@ -223,7 +233,6 @@
                 .catch(error => {
                     console.log(error, 'error')
                     this.backendErrorMessage = error.message;
-                    // this.backendErrorMessage = error.response.data.errors[0];
                     this.showLoader = false;
                 }); 
             },

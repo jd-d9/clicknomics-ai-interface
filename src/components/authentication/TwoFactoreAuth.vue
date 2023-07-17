@@ -259,7 +259,7 @@
                     })
                     .catch(error => {
                         console.log(error)
-                        this.backendErrorMessage = error.response.data.errors[0];
+                        this.backendErrorMessage = error.message;
                         this.showLoader = false;
                     });
                 }
