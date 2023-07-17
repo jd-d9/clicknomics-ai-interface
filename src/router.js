@@ -62,6 +62,9 @@ import IpmOsscForm from './components/bank-accounts/ipm-ossc/IpmOsscForm.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
+// report section
+import RealTimeReportIndex from './components/real-time-reports/RealTimeReportIndex';
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -161,8 +164,13 @@ const router = createRouter({
         {path: '/bank_accounts/onesscorp/list', component: IpmOsscList, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/create', component: IpmOsscForm, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/:id/edit', component: IpmOsscForm, meta: {auth: true}},
+        // report section
+        {path: '/reporting/realTimeReports/:reportType', component: RealTimeReportIndex, meta: {auth: true}},
+
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
+
+
         // not found page
         {path: '/:notFound(.*)', component: NotFoundPage},
     ]

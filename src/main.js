@@ -51,7 +51,20 @@ app.config.globalProperties.$api_main = process.env.VUE_APP_API_MAIN;
 app.config.globalProperties.$filters = {
   currencyUSD(value) {
     return '$' + value
-  }
+  },
+  toNumberWithoutDecimal(value) {
+      var formatter = new Intl.NumberFormat('en-US', {
+          minimumFractionDigits: 0
+      });
+      return formatter.format(value);
+  },
+  toNumber(value) {
+      value = parseFloat(value).toFixed(2);
+      var formatter = new Intl.NumberFormat('en-US', {
+          minimumFractionDigits: 2
+      });
+      return formatter.format(value);
+  },
 }
 app.use(router);
 app.use(VueAxios, axios);

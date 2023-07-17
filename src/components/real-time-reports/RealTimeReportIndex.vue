@@ -1,0 +1,378 @@
+<template>
+    <div class="bg-default main-content-height">
+        <div class="header bg-primary pb-6">
+            <div class="container-fluid">
+                <div class="header-body">
+                    <div class="row align-items-center mt--4">
+                        <div class="col-lg-6 col-7 pt-0">
+                            <nav aria-label="breadcrumb" class="d-none d-block ">
+                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                    <li class="breadcrumb-item">
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">Real Time Reports {{reportType}}</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <loader-component v-if="showLoader"></loader-component>
+        <!-- Page content -->
+        <div class="container-fluid mt--3">
+            <div class="row justify-content-center">
+                <div class="col">
+                    <v-app>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="finance_data">
+                                    <v-app>
+                                        <v-card>
+                                            <v-data-table class="table-hover-class" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="items.data" :itemsPerPage="items.per_page" :options="options" :server-items-length="items.total"  v-model:expanded="singleExpand" show-expand>
+                                                <template v-slot:expanded-item="{ headers, item }">
+                                                    <td :colspan="headers.length" style="padding:10px">
+                                                        <table class="table align-items-center" v-if="googleCampaignMetrics.length > 0">
+                                                            <thead class="thead-light">
+                                                                <tr>
+                                                                    <th scope="col">Campaign Name</th>
+                                                                    <th scope="col">Clicks</th>
+                                                                    <th scope="col">Cost </th>
+                                                                    <th scope="col">Click Through Rate</th>
+                                                                    <th scope="col">Impressions</th>
+                                                                    <th scope="col">Cost Per Click</th>
+                                                                    <th scope="col">Conversions</th>
+                                                                    <th scope="col">Campaign Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr v-for="(row , index) in item.children" :key="index">
+                                                                    <td>
+                                                                        {{row.campaign.name ? row.campaign.name : '-'}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.clicks ? $filters.toNumberWithoutDecimal(row.metrics.clicks) : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.costMicros ? $filters.toNumber(parseFloat(row.metrics.costMicros / 1000000).toFixed(2))  : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.ctr ? $filters.toNumber((row.metrics.ctr * 100).toFixed(2)) : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.impressions ? $filters.toNumberWithoutDecimal(row.metrics.impressions) : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.averageCpc ? $filters.toNumber(parseFloat(row.metrics.averageCpc / 1000000).toFixed(2))  : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.conversions ? $filters.toNumber(row.metrics.conversions) : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ row.campaign.status ? row.campaign.status : '-'}}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </template>
+                                                <template v-slot:expanded-row="{ columns, item }">
+                                                    <tr>
+                                                        <td :colspan="columns.length">
+                                                        <table class="table align-items-center" v-if="googleCampaignMetrics.length > 0">
+                                                            <thead class="thead-light">
+                                                                <tr>
+                                                                    <th scope="col">Campaign Name</th>
+                                                                    <th scope="col">Clicks</th>
+                                                                    <th scope="col">Cost </th>
+                                                                    <th scope="col">Click Through Rate</th>
+                                                                    <th scope="col">Impressions</th>
+                                                                    <th scope="col">Cost Per Click</th>
+                                                                    <th scope="col">Conversions</th>
+                                                                    <th scope="col">Campaign Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr v-for="(row , index) in item.children" :key="index">
+                                                                    <td>
+                                                                        {{row.campaign.name ? row.campaign.name : '-'}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.clicks ? $filters.toNumberWithoutDecimal(row.metrics.clicks) : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.costMicros ? $filters.toNumber(parseFloat(row.metrics.costMicros / 1000000).toFixed(2))  : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.ctr ? $filters.toNumber((row.metrics.ctr * 100).toFixed(2)) : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.impressions ? $filters.toNumberWithoutDecimal(row.metrics.impressions) : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.averageCpc ? $filters.toNumber(parseFloat(row.metrics.averageCpc / 1000000).toFixed(2))  : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{(row.metrics.conversions ? $filters.toNumber(row.metrics.conversions) : '0.00')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ row.campaign.status ? row.campaign.status : '-'}}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                            </v-data-table>
+                                        </v-card>
+                                    </v-app>
+                                </div>
+                            </div>
+                        </div>
+                    </v-app>
+                </div>
+                <!-- <div class="col" v-if="permissions.view != '1' && !showLoader">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="text-center">You have no access for this page</h4>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import moment from 'moment';
+import _ from 'lodash';
+
+export default {
+    data() {
+        return {
+            reportType:'',
+            options:[],
+            itemsData: [
+                {
+                    text: 'All Time',
+                    code: 'all_time'
+                },
+                {
+                    text: 'Today',
+                    code: 'TODAY'
+                },
+                {
+                    text: 'Yesterday',
+                    code: 'YESTERDAY'
+                },
+                {
+                    text: 'This Week',
+                    code: 'THIS_WEEK_MON_SUN'
+                },
+                {
+                    text: 'Last Week',
+                    code: 'LAST_WEEK_MON_SUN'
+                },
+                {
+                    text: 'This Month',
+                    code: 'THIS_MONTH'
+                },
+                {
+                    text: 'Last Month',
+                    code: 'LAST_MONTH'
+                },
+
+            ],
+            reportRange: 'Today',
+            microsoftReportRange: 'Today',
+            items:[],
+            singleExpand: true,
+
+
+            showLoader: false,
+            linkedNewtworks: [],
+            headers: [
+                { title: 'Account Name', align: 'start', sortable: true, key: 'name' },
+                { title: 'Impressions', key: 'impressions',sortable: true, },
+                { title: 'Clicks', key: 'clicks',sortable: true, },
+                { title: 'Cost', key: 'costMicros',sortable: true, },
+                { title: 'Cost Per Click', key: 'averageCpc',sortable: true, },
+                { title: 'Click Through Rate', key: 'ctr',sortable: true, },
+                { title: 'Absolute Top Impression %', key: 'absoluteTopImpressionPercentage',sortable: true, },
+                { title: 'Conversions', key: 'conversions',sortable: true, },
+                { title: 'Conversion Rate', key: 'conversions_from_interactions_rate',sortable: true, },
+                { title: 'Cost Per Conversion', key: 'cost_per_conversion',sortable: true, },
+            ],
+            itemsPerPage: -1,
+            permissions: {},
+        }
+    },
+    mounted() {
+        this.reportType = this.$route.params.reportType ? this.$route.params.reportType : '';
+        if(this.reportType == 'google') {
+            this.getGoogleAdsMetrics();
+        }else if(this.reportType == 'microsoft') {
+            this.getMicrosoftAdsMetrics();
+        }
+    },
+    methods: {
+
+        // get google analytics data
+        getGoogleAdsMetrics() {
+            // this.googleCampaignMetrics = [];
+            this.showLoader = true;
+            const { sortBy, sortDesc } = this.options;
+            // let pageNumber = page;
+            // let pageNumber = 1;
+            // pageNumber = page;
+            // if (sortBy.length === 1 && sortDesc.length === 1) {
+            //     console.log(this.page, 'page');
+            //     pageNumber = this.page;
+            // }
+            let formData = new FormData();
+            // // const filter = _.find(this.items, (o) =>  { return o.text == this.reportRange; });
+            // formData.append('reportRange', filter.code);
+            // // const csrf = document.querySelector('meta[name="csrf-token"]').content;
+            // this.axios.defaults.headers.common = {
+            //     'X-Requested-With': 'XMLHttpRequest',
+            //     'X-CSRF-TOKEN': csrf
+            // };
+            this.axios.post(this.$api + `/realTimeReports/googleAdsReport` , formData,{
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                const responseData = response.data.customers;
+                this.items = responseData;
+                if(responseData) {
+                    // Add All Campaign data into Account
+                    let dataTemp = [];
+                    responseData.map((data) => {
+                        dataTemp.push({
+                            name: data.accountName,
+                            clicks: _.sumBy(data.results, function(o) { return o.metrics.clicks ? Number(o.metrics.clicks) : 0}),
+                            costMicros: _.sumBy(data.results, function(o) { return o.metrics.costMicros ? Number(o.metrics.costMicros) : 0}),
+                            ctr: _.sumBy(data.results, function(o) { return o.metrics.ctr ? Number(o.metrics.ctr) : 0}),
+                            impressions: _.sumBy(data.results, function(o) { return o.metrics.impressions ? Number((o.metrics.impressions)) : 0}),
+                            averageCpc: _.sumBy(data.results, function(o) { return o.metrics.averageCpc ? Number(o.metrics.averageCpc) : 0}),
+                            conversions: _.sumBy(data.results, function(o) { return o.metrics.conversions ? Number(o.metrics.conversions) : 0}),
+                            absoluteTopImpressionPercentage: _.sumBy(data.results, function(o) { return o.metrics.absoluteTopImpressionPercentage ? Number(o.metrics.absoluteTopImpressionPercentage) : 0}),
+                            cost_per_conversion: _.sumBy(data.results, function(o) { return o.metrics.costPerConversion ? Number(o.metrics.costPerConversion) : 0}),
+                            conversions_from_interactions_rate: _.sumBy(data.results, function(o) { return o.metrics.conversionsFromInteractionsRate ? Number(o.metrics.conversionsFromInteractionsRate) : 0}),
+                            children: data.results
+                        })
+                    });
+
+                    dataTemp.map((row) => {
+                        this.googleCampaignMetrics.push({
+                            name: row.name,
+                            clicks: this.$options.filters.toNumberWithoutDecimal(row.clicks),
+                            costMicros: row.costMicros !== 0 ? ('$'+parseFloat(row.costMicros / 1000000).toFixed(2))  : '$0.00',
+                            ctr: this.$options.filters.toNumberWithPercentage(row.ctr ? (row.ctr * 100) : 0.00),
+                            impressions: this.$options.filters.toNumberWithoutDecimal(row.impressions !== 0 ? row.impressions : 0.00),
+                            averageCpc: row.averageCpc !== 0 ? ('$'+parseFloat(row.averageCpc / 1000000).toFixed(2))  : '$0.00',
+                            conversions: this.$options.filters.toNumber(row.conversions !== 0 ? row.conversions : 0.00),
+                            absoluteTopImpressionPercentage: row.absoluteTopImpressionPercentage !== 0 ? (parseFloat(row.absoluteTopImpressionPercentage).toFixed(2)+'%') : '0.00%',
+                            cost_per_conversion: this.$options.filters.toNumber(row.cost_per_conversion !== 0 ? parseFloat(row.cost_per_conversion / 1000000).toFixed(2) : 0.00),
+                            conversions_from_interactions_rate: this.$options.filters.toNumber(row.conversions_from_interactions_rate !== 0 ? row.conversions_from_interactions_rate : 0.00),
+                            children: row.children
+                        });
+                        return row;
+                    });
+
+                    if (sortBy.length === 1 && sortDesc.length === 1) {
+                        this.googleCampaignMetrics = this.googleCampaignMetrics.sort((a, b) => {
+                            const sortA = a[sortBy[0]];
+                            const sortB = b[sortBy[0]];
+
+                            if (sortDesc[0]) {
+                            if (sortA < sortB) return 1;
+                            if (sortA > sortB) return -1;
+                                return 0;
+                            } else {
+                                if (sortA < sortB) return -1;
+                                if (sortA > sortB) return 1;
+                                return 0;
+                            }
+                        });
+                    }
+                }
+
+                // For Pagination
+                // this.totalPageCount = response.data.customers.total;
+                // this.numberOfPages = response.data.customers.last_page;
+                // this.page = page;
+                this.showLoader = false;
+            }).catch(error => {
+                this.showLoader = false;
+                console.log(error);
+            })
+        },
+
+
+        // formate date
+        format_date(value){
+            if (value) {
+                return moment(String(value)).format('YYYY-MM-DD')
+            }
+        },
+        // get manual network listing
+        getEliminatedAutomatedNetwork() {
+            this.showLoader = true;
+            this.axios.get(this.$api + '/network/eliminated-manual-networks', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const data = response.data;
+                    this.linkedNewtworks = data.data;
+                    this.permissions = data.permission;
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                this.showLoader = false;
+            });
+        },
+        // restore data
+        restoreManualNetwork(id) {
+            if(confirm("Do you really want to restore network?")) {
+                this.showLoader = true;
+                let formData = new FormData();
+                formData.append('id', id);
+                this.axios.post(this.$api + '/network/eliminated-manual-network/restoreManualNetwork', formData,{
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        }
+                    })
+                .then(response => {
+                    this.showLoader = false;
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.linkedNewtworks = response.data.data;
+                }).catch(error => {
+                    this.showLoader = false;
+                    this.$toast.open({
+                        message: error.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                });
+            }
+        },
+    }
+}
+</script>
