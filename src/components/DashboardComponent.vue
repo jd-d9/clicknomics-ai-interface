@@ -6,7 +6,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
                     <v-row class="mb-1 align-items-center">
                         <v-col class="d-flex" cols="12" sm="4">
-                            <h6 class="font-weight-bold text-h6 px-3">
+                            <h6 class="font-weight-bold text-h6 px-2 mb-0">
                                 Date: {{daily_date}}
                             </h6>
                         </v-col>
@@ -16,12 +16,14 @@
                         <v-col class="text-orange text-center" cols="12" sm="4" v-if="trialDays > 0">
                             Your trial period is expiring in {{ trialDays }} days
                         </v-col>
-                        <v-col class="d-flex justify-content-end" cols="12" :sm="trialDays > 0 ? 4 : 8">
-                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                        <v-col class="d-flex justify-content-end font-medium font-weight-normal" cols="12" :sm="trialDays > 0 ? 4 : 8">
+                            <date-range-picker class="date_picker" style="padding: 9px 0px;" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                         </v-col>
                     </v-row>
 
-                    <h6 class="font-weight-bold text-h6 px-3 mb-3">Cost</h6>
+                    <v-divider class="border-opacity-100 mb-3 mt-0 mx-2" color="success" />    
+
+                    <h6 class="font-weight-bold text-h6 px-2 mb-3">Cost</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_ops_cost == 0, 'bg-green-lighten-4': daily_ops_cost > 0, 'bg-orange-lighten-4': daily_ops_cost < 0}">
@@ -63,7 +65,7 @@
 
                     <!-- <v-divider class="border-opacity-100 my-4 mx-2" color="success" />  -->
 
-                    <h6 class="font-weight-bold text-h6 px-3 mb-3">Revenue</h6>
+                    <h6 class="font-weight-bold text-h6 px-2 mb-3">Revenue</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_conversion == 0, 'bg-green-lighten-4': daily_conversion > 0, 'bg-orange-lighten-4': daily_conversion < 0}">
@@ -99,7 +101,7 @@
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
-                    <h6 class="font-weight-bold text-h6 px-3 mb-3">General Stats</h6>                    
+                    <h6 class="font-weight-bold text-h6 px-2 mb-3">General Stats</h6>                    
                     <!-- Start Microsoft -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">

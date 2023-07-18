@@ -392,7 +392,7 @@
                     }
                 })
                 .catch(error => {
-                    this.backendErrorMessage = error.response.data.message;
+                    this.backendErrorMessage = error.message;
                     this.showLoader = false;
                 }); 
             },

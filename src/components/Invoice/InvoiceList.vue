@@ -28,16 +28,15 @@
                             Invoice
                             <v-row>
                                 <v-spacer></v-spacer>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <select v-model="networkSelected" class="form-control serch_table">
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                    <!-- <select v-model="networkSelected" class="form-control serch_table">
                                         <option disabled selected>Network Filter</option>
                                         <option :value="val.title" v-for="(val, index) of networkFilter" :key="index">
                                             {{ val.title }}
                                         </option>
-                                    </select>
-                                    <!-- <div class="select-network-filter">
-                                        <v-select clearable variant="solo" label="Network Filter" :items="networkFilter" v-model="networkSelected"></v-select>
-                                    </div> -->
+                                    </select> -->
+
+                                    <v-select clearable variant="outlined" placeholder="Network Filter" :items="networkFilter" v-model="networkSelected"></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
                                     <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>

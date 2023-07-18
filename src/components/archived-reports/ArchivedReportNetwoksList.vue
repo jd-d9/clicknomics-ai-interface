@@ -1,65 +1,48 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <!-- <h6 class="h2 text-white d-block mb-0">User Roles</h6> -->
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Archived Reports CPA Networks</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class=" col ">
-                    <div class="card">
-                        <div class="card-body">
-                            <v-app>
-                                <v-card>
-                                    <v-card-title>
-                                        <v-spacer></v-spacer>
-                                        <v-row>
-                                            <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                            <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                            </v-col>
-                                            <v-col class="d-flex search_width" cols="12" sm="4">
-                                                <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                            </v-col>
-                                        </v-row>
-                                    </v-card-title>
-                                    <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networksheaders" :items="networkMetrics" :search="search" :single-expand="singleExpand" class="elevation-1 table-expand" :itemsPerPage="itemsPerPage">
-                                        <template v-slot:tbody v-if="networkMetrics.length > 0">
-                                            <tr class="total_table">
-                                                <td>Totals</td>
-                                                <td>-</td>
-                                                <td>{{ sumClicks }}</td>
-                                                <td>{{ sumConversions }}</td>
-                                                <td>-</td>
-                                                <td>-</td>
-                                                <td>{{$filters.toCurrency(sumRevenue)}}</td>
-                                            </tr>
-                                        </template>
-                                    </v-data-table>
-                                </v-card>
-                            </v-app>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Archived Reports CPA Networks</span>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Archived Reports CPA Networks List
+                            <v-spacer></v-spacer>
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                            <div class="col-3 pr-1">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                            </div>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networksheaders" :items="networkMetrics" :search="search" :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                            <template v-slot:tbody v-if="networkMetrics.length > 0">
+                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                    <td>Totals</td>
+                                    <td></td>
+                                    <td>{{ sumClicks }}</td>
+                                    <td>{{ sumConversions }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{$filters.toCurrency(sumRevenue)}}</td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
