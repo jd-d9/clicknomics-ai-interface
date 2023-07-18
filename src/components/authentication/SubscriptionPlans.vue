@@ -36,6 +36,11 @@
                                         <span class="btn-inner--text">Yearly</span>
                                     </router-link>
                                 </li>
+                                <li class="nav-item">
+                                    <router-link to="/login" class="nav-link mb-sm-4 mb-md-0 btn_animated">
+                                        Back
+                                    </router-link>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -139,7 +144,7 @@
             // get plans listing
             getPlans() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/subscription')
+                this.axios.get(this.$api + '/subscription/list')
                 .then(response => {
                     if(response.data.success) {
                         this.allPlans = response.data.data;

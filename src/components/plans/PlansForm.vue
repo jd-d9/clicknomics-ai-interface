@@ -1,226 +1,215 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--3">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/settings/plan-management">Plans</router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">{{breadCrumbText}} Plan</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/plan-management" class="btn btn-lg btn-neutral btn_animated">View Plans</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <v-app>
-                                <div class="col-12">
-                                    <!-- <Form @submit="managePlan" :validation-schema="schema" v-slot="{ errors }">
-                                        <div class="row">
-                                            <div class="col-lg-4 py-0">
-                                                <div class="form-group date-picker-3">
-                                                    <label class="form-control-label" for="input-username">Name</label>
-                                                    <Field type="text" name="Name" id="input-username" :class="{'form-control': true , 'border-red-600':errors.Name}" step=".01" placeholder="Name" v-model="name"/>
-                                                    <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
-                                                    <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4 py-0">
-                                                <div class="form-group">
-                                                    <label class="form-control-label" for="input-username">Add Account Limit</label>
-                                                    <Field type="number" id="input-username" name="addAccountLimit" :class="{'form-control': true , 'border-red-600':errors.addAccountLimit}" step=".01" placeholder="Interval Count" v-model="addAccountLimit"/>
-                                                    <span class="text-red-600" v-if="errors.addAccountLimit">Add account limit can not be empty</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4 py-0">
-                                                <div class="form-group">
-                                                    <label class="form-control-label" for="input-username">Network Account Limit</label>
-                                                    <Field type="number" id="input-username" name="networkAccountLimit" :class="{'form-control': true , 'border-red-600':errors.networkAccountLimit}" step=".01" placeholder="Network Account Limit" v-model="networkAccountLimit"/>
-                                                    <span class="text-red-600" v-if="errors.networkAccountLimit">Network account limit can not be empty</span>
-                                                </div>
-                                            </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>{{breadCrumbText}} Plan</span>
+
+                        <v-spacer />
+                        <v-btn href="/settings/plan-management" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                            Back
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between">
+                            {{breadCrumbText}} Plan
+                        </v-card-title>
+                        <v-divider class="border-opacity-100 my-4" color="success" />  
+                        <form @submit.prevent="managePlan">
+                            <v-row class="mb-4">
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Name</label>
+                                    <input type="text" name="Name" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Name" v-model="name"/>
+                                    <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Add Account Limit</label>
+                                    <input type="number" id="input-username" name="addAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Add Account Limit" v-model="addAccountLimit"/>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Network Account Limit</label>
+                                    <input type="number" id="input-username" name="networkAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Network Account Limit" v-model="networkAccountLimit"/>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Description</label>
+                                    <textarea rows="3" name="Description" placeholder="Description" :class="{'form-control': true}" v-model="description"></textarea>
+                                </v-col>
+                            </v-row>
+
+                            <div v-for="(data, index) in addMultipleField" :key="index" class="border bg-green-lighten-5 pa-5 mb-4">
+                                <v-row>
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label class="form-control-label">Interval</label>
+                                        <v-select :class="{'form-control': true}" :items="intervalData" item-value="key" v-model="data.interval"></v-select>
+                                    </v-col>
+    
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label class="form-control-label">Original Price</label>
+                                        <input type="number" name="original_price" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.original_price"/>
+                                    </v-col>
+    
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label class="form-control-label mr-3">Discount Type</label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" :name="'inlineRadioOptions' + index" :id="'inlineRadioFlat' + index" value="flat" v-model="data.discount_type" @change="calculateAmount(index)">
+                                            <label class="form-check-label" :for="'inlineRadioFlat' + index">Flat</label>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-lg-12 py-0">
-                                                <div class="form-group">
-                                                    <label class="form-control-label" for="input-username">Description</label>
-                                                    <Field name="Description" v-model="description">
-                                                        <textarea cols="30" rows="6" name="Description" placeholder="Description" :class="{'form-control': true , 'border-red-600':errors.Description}" v-model="description"></textarea>
-                                                    </Field>
-                                                    <span class="text-red-600" v-if="errors.Description">Description can not be empty</span>
-                                                </div>
-                                            </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" :name="'inlineRadioOptions'  + index" :id="'inlineRadioPercentage' + index" value="percentage" v-model="data.discount_type" @change="calculateAmount(index)">
+                                            <label class="form-check-label" :for="'inlineRadioPercentage' + index">Percentage</label>
                                         </div>
-                                        <div class="multiple-fields mb-4" v-for="(data, index) in addMultipleField" :key="index">
-                                            <div class="row">
-                                                <div class="col-lg-6 py-0">
-                                                    <div class="form-group select-network-filter select-network-filter-height">
-                                                        <label class="form-control-label" for="input-username">Interval</label>
-                                                        <Field name="Interval" v-model="data.intervalSelected">
-                                                            <v-select :class="{'form-control': true , 'border-red-600':errors.Interval}" :items="intervalData" item-value="key" v-model="data.interval"></v-select>
-                                                        </Field>
-                                                        <span class="text-red-600" v-if="errors.Interval">Interval can not be empty</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 py-0">
-                                                    <div class="form-group">
-                                                        <label class="form-control-label" for="input-username">Original Price</label>
-                                                        <Field type="number" name="original_price" id="input-username" :class="{'form-control': true , 'border-red-600':errors.original_price}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.original_price"/>
-                                                        <span class="text-red-600" v-if="errors.original_price">Original price can not be empty</span>
-                                                    </div>
-                                                    <v-btn class="add-style-to-close-button" v-if="index != 0" icon small @click="addMultipleField.splice(index, 1)">
-                                                        <v-icon size="20">{{ 'mdi-close' }}</v-icon>
-                                                    </v-btn>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-6 py-0">
-                                                    <label class="form-control-label add-translate" for="input-username">Discount Type :</label>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioFlat' + index" value="flat" v-model="data.discount_type">
-                                                        <label class="form-check-label form-control-label" :for="'inlineRadioFlat' + index">Flat</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioPercentage' + index" value="percentage" v-model="data.discount_type">
-                                                        <label class="form-check-label form-control-label" :for="'inlineRadioPercentage' + index">Percentage</label>
-                                                    </div>
-                                                    <Field type="number" id="input-username" name="discount_value" :class="{'form-control': true, 'border-red-600':errors.discount_value}" :placeholder="data.discount_type == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discount_value"/>
-                                                    <span class="text-red-600" v-if="errors.discount_value">Discount can not be empty</span>
-                                                </div>
-                                                <div class="col-lg-6 py-0">
-                                                    <div class="form-group">
-                                                        <label class="form-control-label" for="input-username">Amount</label>
-                                                        <input type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Amount" v-model="data.amount" disabled/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-6 py-0">
-                                                    <label class="form-control-label" for="input-username">Trial Period</label>
-                                                    <input class="mt-2" type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Trial Period" v-model="data.trial_period_days"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <v-btn color="primary" class="mb-4" variant="outlined" @click="addMoreField">Add More</v-btn>
-                                        <div class="row mt-4">
-                                            <div class="col-lg-6 py-0">
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn btn-primary btn-lg btn_animated" v-if="toggleButton">Save</button>
-                                                    <button type="submit" class="btn btn-primary btn-lg btn_animated" v-else>Update</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Form> -->
-                                    <form @submit.prevent="managePlan">
-                                        <div class="row">
-                                            <div class="col-lg-4 py-0">
-                                                <div class="form-group date-picker-3">
-                                                    <label class="form-control-label" for="input-username">Name</label>
-                                                    <input type="text" name="Name" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Name" v-model="name"/>
-                                                    <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4 py-0">
-                                                <div class="form-group">
-                                                    <label class="form-control-label" for="input-username">Add Account Limit</label>
-                                                    <input type="number" id="input-username" name="addAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Add Account Limit" v-model="addAccountLimit"/>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4 py-0">
-                                                <div class="form-group">
-                                                    <label class="form-control-label" for="input-username">Network Account Limit</label>
-                                                    <input type="number" id="input-username" name="networkAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Network Account Limit" v-model="networkAccountLimit"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12 py-0">
-                                                <div class="form-group">
-                                                    <label class="form-control-label" for="input-username">Description</label>
-                                                    <textarea cols="30" rows="6" name="Description" placeholder="Description" :class="{'form-control': true}" v-model="description"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="multiple-fields mb-4" v-for="(data, index) in addMultipleField" :key="index">
-                                            <div class="row">
-                                                <div class="col-lg-6 py-0">
-                                                    <div class="form-group select-network-filter select-network-filter-height">
-                                                        <label class="form-control-label" for="input-username">Interval</label>
-                                                        <v-select :class="{'form-control': true}" :items="intervalData" item-value="key" v-model="data.interval"></v-select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 py-0">
-                                                    <div class="form-group">
-                                                        <label class="form-control-label" for="input-username">Original Price</label>
-                                                        <input type="number" name="original_price" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.original_price"/>
-                                                    </div>
-                                                    <v-btn class="add-style-to-close-button" v-if="index != 0" icon small @click="addMultipleField.splice(index, 1)">
-                                                        <v-icon size="20">{{ 'mdi-close' }}</v-icon>
-                                                    </v-btn>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-6 py-0">
-                                                    <label class="form-control-label add-translate" for="input-username">Discount Type :</label>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" :name="'inlineRadioOptions' + index" :id="'inlineRadioFlat' + index" value="flat" v-model="data.discount_type" @change="calculateAmount(index)">
-                                                        <label class="form-check-label" :for="'inlineRadioFlat' + index">Flat</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" :name="'inlineRadioOptions'  + index" :id="'inlineRadioPercentage' + index" value="percentage" v-model="data.discount_type" @change="calculateAmount(index)">
-                                                        <label class="form-check-label" :for="'inlineRadioPercentage' + index">Percentage</label>
-                                                    </div>
-                                                    <input type="number" id="input-username" name="discount_value" :class="{'form-control': true}" :placeholder="data.discount_type == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discount_value" :max="data.discount_type != 'flat' && 100"/>
-                                                </div>
-                                                <div class="col-lg-6 py-0">
-                                                    <div class="form-group">
-                                                        <label class="form-control-label" for="input-username">Amount</label>
-                                                        <input type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Amount" v-model="data.amount" disabled/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-6 py-0">
-                                                    <label class="form-control-label" for="input-username">Trial Period</label>
-                                                    <input class="mt-2" type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Trial Period" v-model="data.trial_period_days"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <v-btn color="primary" class="mb-4" variant="outlined" @click="addMoreField">Add More</v-btn>
-                                        <div class="row mt-4">
-                                            <div class="col-lg-6 py-0">
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn btn-primary btn-lg btn_animated" v-if="toggleButton">Save</button>
-                                                    <button type="submit" class="btn btn-primary btn-lg btn_animated" v-else>Update</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </v-app>
-                        </div>
+                                        <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
+                                            <input type="number" id="input-username" name="discount_value" :class="{'form-control': true}" :placeholder="data.discount_type == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discount_value" :max="data.discount_type != 'flat' && 100"/>
+                                        </v-col>
+                                    </v-col>
+    
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label class="form-control-label">Amount</label>
+                                        <input type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Amount" v-model="data.amount" disabled/>
+                                    </v-col>
+    
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label class="form-control-label">Trial Period</label>
+                                        <input type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Trial Period" v-model="data.trial_period_days"/>
+                                    </v-col>
+    
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label class="form-control-label d-block">&nbsp;</label>
+                                        <v-btn class="mx-2 bg-blue-lighten-4" variant="text" icon @click="addMoreField">
+                                            <v-icon color="blue-darken-2">
+                                                mdi-plus
+                                            </v-icon>
+                                            <v-tooltip activator="parent" location="top">Add More</v-tooltip>
+                                        </v-btn>
+    
+                                        <v-btn class="mx-2 bg-red-lighten-4" variant="text" icon v-if="index != 0" @click="addMultipleField.splice(index, 1)">
+                                            <v-icon color="red-darken-4">
+                                                mdi-delete-empty
+                                            </v-icon>
+                                            <v-tooltip activator="parent" location="top">Remove Item</v-tooltip>
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                            </div>
+                            <v-col cols="12" sm="12" md="12" lg="12">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" v-if="toggleButton">Save</v-btn>    
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-arrow-up-bold" v-else>Update</v-btn>    
+                            </v-col>
+                        </form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
+        <!-- <Form @submit="managePlan" :validation-schema="schema" v-slot="{ errors }">
+            <div class="row">
+                <div class="col-lg-4 py-0">
+                    <div class="form-group date-picker-3">
+                        <label class="form-control-label">Name</label>
+                        <Field type="text" name="Name" id="input-username" :class="{'form-control': true , 'border-red-600':errors.Name}" step=".01" placeholder="Name" v-model="name"/>
+                        <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
+                        <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 py-0">
+                    <div class="form-group">
+                        <label class="form-control-label">Add Account Limit</label>
+                        <Field type="number" id="input-username" name="addAccountLimit" :class="{'form-control': true , 'border-red-600':errors.addAccountLimit}" step=".01" placeholder="Interval Count" v-model="addAccountLimit"/>
+                        <span class="text-red-600" v-if="errors.addAccountLimit">Add account limit can not be empty</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 py-0">
+                    <div class="form-group">
+                        <label class="form-control-label">Network Account Limit</label>
+                        <Field type="number" id="input-username" name="networkAccountLimit" :class="{'form-control': true , 'border-red-600':errors.networkAccountLimit}" step=".01" placeholder="Network Account Limit" v-model="networkAccountLimit"/>
+                        <span class="text-red-600" v-if="errors.networkAccountLimit">Network account limit can not be empty</span>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-lg-12 py-0">
+                    <div class="form-group">
+                        <label class="form-control-label">Description</label>
+                        <Field name="Description" v-model="description">
+                            <textarea cols="30" rows="6" name="Description" placeholder="Description" :class="{'form-control': true , 'border-red-600':errors.Description}" v-model="description"></textarea>
+                        </Field>
+                        <span class="text-red-600" v-if="errors.Description">Description can not be empty</span>
+                    </div>
+                </div>
+            </div>
+            <div class="multiple-fields mb-4" v-for="(data, index) in addMultipleField" :key="index">
+                <div class="row">
+                    <div class="col-lg-6 py-0">
+                        <div class="form-group select-network-filter select-network-filter-height">
+                            <label class="form-control-label">Interval</label>
+                            <Field name="Interval" v-model="data.intervalSelected">
+                                <v-select :class="{'form-control': true , 'border-red-600':errors.Interval}" :items="intervalData" item-value="key" v-model="data.interval"></v-select>
+                            </Field>
+                            <span class="text-red-600" v-if="errors.Interval">Interval can not be empty</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 py-0">
+                        <div class="form-group">
+                            <label class="form-control-label">Original Price</label>
+                            <Field type="number" name="original_price" id="input-username" :class="{'form-control': true , 'border-red-600':errors.original_price}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.original_price"/>
+                            <span class="text-red-600" v-if="errors.original_price">Original price can not be empty</span>
+                        </div>
+                        <v-btn class="add-style-to-close-button" v-if="index != 0" icon small @click="addMultipleField.splice(index, 1)">
+                            <v-icon size="20">{{ 'mdi-close' }}</v-icon>
+                        </v-btn>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 py-0">
+                        <label class="form-control-label add-translate">Discount Type :</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioFlat' + index" value="flat" v-model="data.discount_type">
+                            <label class="form-check-label form-control-label" :for="'inlineRadioFlat' + index">Flat</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" :id="'inlineRadioPercentage' + index" value="percentage" v-model="data.discount_type">
+                            <label class="form-check-label form-control-label" :for="'inlineRadioPercentage' + index">Percentage</label>
+                        </div>
+                        <Field type="number" id="input-username" name="discount_value" :class="{'form-control': true, 'border-red-600':errors.discount_value}" :placeholder="data.discount_type == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discount_value"/>
+                        <span class="text-red-600" v-if="errors.discount_value">Discount can not be empty</span>
+                    </div>
+                    <div class="col-lg-6 py-0">
+                        <div class="form-group">
+                            <label class="form-control-label">Amount</label>
+                            <input type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Amount" v-model="data.amount" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 py-0">
+                        <label class="form-control-label">Trial Period</label>
+                        <input class="mt-2" type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Trial Period" v-model="data.trial_period_days"/>
+                    </div>
+                </div>
+            </div>
+            <v-btn color="primary" class="mb-4" variant="outlined" @click="addMoreField">Add More</v-btn>
+            <div class="row mt-4">
+                <div class="col-lg-6 py-0">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-lg btn_animated" v-if="toggleButton">Save</button>
+                        <button type="submit" class="btn btn-primary btn-lg btn_animated" v-else>Update</button>
+                    </div>
+                </div>
+            </div>
+        </Form> -->    
     </div>
 </template>
 
@@ -412,35 +401,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    .custom-control {
-        width: 100%;
-        padding: unset;
-        justify-content: start;
-    }
-    .add-padding {
-        padding-left: 1.75rem;
-    }
-    .form-check-input:checked {
-        background-color: #005eb3;
-        border-color: #005eb3 !important;
-        box-shadow: none;
-    }
-    .add-translate {
-        transform: translateY(-4px);
-        margin-right: 10px;
-    }
-    .form-check-inline .form-check-input {
-        border-color: #b9bbbc;
-    }
-    .form-check-label, .form-check-inline .form-check-input {
-        cursor: pointer;
-        user-select: none;
-    }
-    .multiple-fields {
-        border-radius: 12px;
-        border: 1px solid #b9bbbc;
-        padding: 20px;
-    }
-</style>

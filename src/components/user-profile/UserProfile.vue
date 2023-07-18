@@ -174,7 +174,7 @@
                         <div>
                             <v-card-title class="d-flex justify-space-between">
                                 Subscription Plan
-                                <v-icon v-if="!subscriptionPlanToggle" @click="subscriptionPlanToggle = !subscriptionPlanToggle" icon="mdi-pencil" size="small" color="#00cd00"></v-icon>
+                                <v-icon v-if="!subscriptionPlanToggle" @click="subscriptionPlanToggle = !subscriptionPlanToggle" icon="mdi-eye" size="small" color="#00cd00"></v-icon>
                             </v-card-title>
                             <div>
                                 <v-row v-if="!subscriptionPlanToggle">
@@ -348,15 +348,15 @@
                         this.phoneNumber = this.currentUserDetails.phone_number;
                         this.verificationStatus = this.currentUserDetails.verification_status;
                         this.remember2Fa = this.currentUserDetails.remember_2fa;
-                        this.subscriptionPlan = this.currentUserDetails.subscriptions;
-                        this.trialEndsAt = this.currentUserDetails.trial_ends_at;
+                        this.subscriptionPlan = response.data.subscriptions.name;
+                        this.trialEndsAt = response.data.items;
                         this.backendErrorMessage = '';
                         this.showLoader = false;
                         console.log(this.currentUserDetails, 'currentUserData');
                     }
                 })
                 .catch(error => {
-                    this.backendErrorMessage = error.response.data.errors[0];
+                    this.backendErrorMessage = error.message;
                     this.showLoader = false;
                 }); 
             },

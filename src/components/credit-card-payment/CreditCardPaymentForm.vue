@@ -274,9 +274,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    .date-is-invalid .invalid-feedback {
-        display: block;
-    }
-</style>

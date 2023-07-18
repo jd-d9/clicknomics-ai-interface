@@ -20,7 +20,7 @@
                             Import CSV
                         </v-btn>
 
-                        <v-btn  @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -53,7 +53,7 @@
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon color="red-darken-4" @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
@@ -142,14 +142,14 @@
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Amount</label>
-                                    <Field name="amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.amount}" placeholder="Add Amount" v-model="item.amount"/>
-                                    <ErrorMessage class="text-red-600" name="amount"/>
+                                    <Field name="Amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Amount}" placeholder="Add Amount" v-model="item.amount"/>
+                                    <ErrorMessage class="text-red-600" name="Amount"/>
                                 </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="addCpaNetwork">Save</v-btn>    
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
                             </v-col>
                         </div>
@@ -200,7 +200,7 @@ export default {
     computed: {
         editSchema() {
             return yup.object({
-                amount: yup.string().required(),
+                Amount: yup.string().required(),
             });
         },
         // total row
@@ -297,7 +297,7 @@ export default {
             if(confirmDelete) {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/accounting/fixedMonthlyCost/deleteMutipleRows', {
-                    id: JSON.stringify(this.selectedId)
+                    selectedRow: JSON.stringify(this.selectedId)
                 }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -475,25 +475,3 @@ export default {
     }
 }
 </script>
-
-<!-- <style scoped>
-    button[disabled] {
-        cursor: not-allowed !important;
-    }
-    a[disabled] {
-        cursor: not-allowed !important;
-    }
-    .disable-button[disabled] {
-        cursor: not-allowed;
-    }
-    .set-cursor:hover, .set-cursor {
-        cursor: not-allowed !important;
-    }
-    .adding-font-size tbody tr td{
-        font-size: 14px !important;
-    }
-    /* date range picker */
-    .v-calendar {
-        position: unset !important;
-    }
-</style> -->

@@ -128,6 +128,12 @@
                             sessionStorage.setItem('isTwoFactorVerified', responseData.isTwoFactorVerified);
                             
                             if(responseData.isTwoFactorVerified) {
+                                this.$toast.open({
+                                    message: 'You are successfully logged in',
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'success'
+                                });
                                 this.$router.push('/dashboard');
                             } else {
                                 if(responseData.verified_by === 'email') {
@@ -135,16 +141,15 @@
                                 } else {
                                     this.$router.push('/authenticator/validate');
                                 }
-
+                                this.backendErrorMessage = '';
+                                this.showLoader = false;
+                                this.$toast.open({
+                                    message: 'Please scan qr code or can use try another for authentication',
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'success'
+                                });
                             }
-                            this.backendErrorMessage = '';
-                            this.showLoader = false;
-                            this.$toast.open({
-                                message: 'Please scan qr code or can use try another for authentication',
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
                         }
                     })
                     .catch(error => {

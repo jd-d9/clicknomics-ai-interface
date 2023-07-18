@@ -59,6 +59,10 @@ import IpmChaseList from './components/bank-accounts/ipm-chase/IpmChaseList.vue'
 import IpmChaseForm from './components/bank-accounts/ipm-chase/IpmChaseForm.vue';
 import IpmOsscList from './components/bank-accounts/ipm-ossc/IpmOsscList.vue';
 import IpmOsscForm from './components/bank-accounts/ipm-ossc/IpmOsscForm.vue';
+import ArchivedReportMicrosoftAdsList from './components/archived-reports/ArchivedReportMicrosoftAdsList.vue';
+import ArchivedReportGoogleAdsList from './components/archived-reports/ArchivedReportGoogleAdsList.vue';
+import ArchivedReportNetwoksList from './components/archived-reports/ArchivedReportNetwoksList.vue';
+import ArchivedReportManualNetworksList from './components/archived-reports/ArchivedReportManualNetworksList.vue';
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
@@ -129,10 +133,11 @@ const router = createRouter({
         {path: '/settings/plan-management/:id/edit', component: PlansForm, meta: {auth: true}},
         // network module
         {path: '/networks/manualNetworks', component: ManualNetworkList, meta: {auth: true}},
-        // add manual network revenue moule
+        // add manual network revenue module
         {path: '/networks/manualNetworks/create', component: ManualNetworkRevenueForm, meta: {auth: true}},
         {path: '/networks/manualNetworks/:id/edit', component: ManualNetworkRevenueForm, meta: {auth: true}},
         {path: '/networks/manualNetworks/list', component: ManualNetworkRevenueList, meta: {auth: true}},
+        // archived eliminated network module
         {path: '/networks/eliminated-automated-networks', component: EliminatedAutomatedNetworks, meta: {auth: true}},
         {path: '/networks/eliminated-manual-networks', component: EliminatedManualNetworks, meta: {auth: true}},
         // email notification module
@@ -167,6 +172,12 @@ const router = createRouter({
         // report section
         {path: '/reporting/realTimeReports/:reportType', component: RealTimeReportIndex, meta: {auth: true}},
 
+        // archived reports module
+        {path: '/reporting/archivedReports/microsoft', component: ArchivedReportMicrosoftAdsList, meta: {auth: true}},
+        {path: '/reporting/archivedReports/google', component: ArchivedReportGoogleAdsList, meta: {auth: true}},
+        {path: '/reporting/archivedReports/networks', component: ArchivedReportNetwoksList, meta: {auth: true}},
+        {path: '/reporting/archivedReports/manualNetworks', component: ArchivedReportManualNetworksList, meta: {auth: true}},
+        {path: '/reporting/archivedReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
 

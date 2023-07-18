@@ -1,142 +1,62 @@
 <template>
     <div>
-        <LoaderComponent v-if="showLoader"></LoaderComponent>
+        <loader-component v-if="showLoader"></loader-component>
         <v-container>
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
-                    <h6 class="font-weight-bold text-h6 px-3 mb-3 d-flex align-center">
-                        Cost
-                        <v-col class="pa-0 five_row mb-2 ms-auto font-medium font-weight-normal" cols="12" sm="12" md="3" lg="3">
-                            <select v-model="homeReport" @change="fetchDashboardData()" class="form-control serch_table">
-                                <option disabled selected>Report Year</option>
-                                <option :value="val.title" v-for="(val, index) of dateFilterRange" :key="index">
-                                    {{ val.title }}
-                                </option>
-                            </select>
-                            <!-- <v-select solo :items="dateFilterRange" label="Report Year" v-model="homeReport"></v-select> -->
+                    <v-row class="mb-1 align-items-center">
+                        <v-col class="d-flex" cols="12" sm="4">
+                            <h6 class="font-weight-bold text-h6 px-3">
+                                Date: {{daily_date}}
+                            </h6>
                         </v-col>
-                    </h6>
-                    <!-- <v-card-title class="font-weight-bold">Date: 12/05/2023</v-card-title> -->
-                    <!-- <date-range-picker v-model="dateRange">
-                        <div slot="header" slot-scope="header" class="slot">
-                            <h3>Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                        </div>
-                        <template #input="picker">
-                            {{ picker.startDate }} - {{ picker.endDate }}
-                        </template>
-                        <template #date="data">
-                            <span class="small">{{ data.date }}</span>
-                        </template>
-                        <template #ranges="ranges">
-                            <div class="ranges">
-                                <ul>
-                                    <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                        <b>{{ name }}</b> 
-                                        <small class="text-muted">{{ range[0].toDateString() }} - {{ range[1].toDateString() }}</small>
-                                    </li>
-                                </ul>
-                            </div>
-                        </template>
-                        <div slot="footer" slot-scope="data" class="slot">
-                            <div>
-                                <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                            </div>
-                            <div style="margin-left: auto">
-                                <a href="javascript:void(0)" @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
-                            </div>
-                        </div>
-                    </date-range-picker> -->
-                    <!-- <date-range-picker
-                        ref="picker"
-                        :opens="opens"
-                        :locale-data="{ firstDay: 1, format: 'dd-mm-yyyy HH:mm:ss' }"
-                        :minDate="minDate" :maxDate="maxDate"
-                        :singleDatePicker="singleDatePicker"
-                        :timePicker="timePicker"
-                        :timePicker24Hour="timePicker24Hour"
-                        :showWeekNumbers="showWeekNumbers"
-                        :showDropdowns="showDropdowns"
-                        :autoApply="autoApply"
-                        v-model="dateRange"
-                        @update="updateValues"
-                        @toggle="logEvent('event: open', $event)"
-                        @start-selection="logEvent('event: startSelection', $event)"
-                        @finish-selection="logEvent('event: finishSelection', $event)"
-                        :linkedCalendars="linkedCalendars"
-                        :dateFormat="dateFormat"
-                    >
-                        <template v-slot:input="picker">
-                            {{ picker.startDate }} - {{ picker.endDate }}
-                        </template>
-                    </date-range-picker> -->
-                    <!-- <date-range-picker :ranges="false" singleDatePicker="single" :opens="'left'" v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker"> -->
-                    <!-- <template>
-                        <date-range-picker :opens="'left'" v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
-                            <template v-slot:header="header" #slot-scope="header" class="slot">
-                                <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                            </template>
-                            <template #input="picker" style="min-width: 480px;">
-                                {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                            </template>
-                            <template #date="data">
-                                <span class="small">{{ data.date | dateCell }}</span>
-                            </template>
-                            <template #ranges="ranges">
-                                <div class="ranges">
-                                    <ul>
-                                    <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                        <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                        {{ range[1].toDateString() }}</small>
-                                    </li>
-                                    </ul>
-                                </div>
-                            </template>
-                            <template v-slot:footer="footer" #slot-scope="data" class="slot">
-                                <div>
-                                    <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                </div>
-                                <div style="margin-left: auto">
-                                    <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
-                                </div>
-                            </template>
-                        </date-range-picker>
-                    </template> -->
-                    
+                        <!-- <v-col class="text-orange text-center" cols="12" sm="4" v-if="trialDays > 0">
+                            You have only {{ trialDays }} days left of your trial period
+                        </v-col> -->
+                        <v-col class="text-orange text-center" cols="12" sm="4" v-if="trialDays > 0">
+                            Your trial period is expiring in {{ trialDays }} days
+                        </v-col>
+                        <v-col class="d-flex justify-content-end" cols="12" :sm="trialDays > 0 ? 4 : 8">
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                        </v-col>
+                    </v-row>
+
+                    <h6 class="font-weight-bold text-h6 px-3 mb-3">Cost</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_ops_cost == 0, 'bg-green-lighten-4': daily_ops_cost > 0, 'bg-orange-lighten-4': daily_ops_cost < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Operations Cost</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_ops_cost == 0, 'text-green-darken-1': daily_ops_cost > 0, 'text-orange': daily_ops_cost < 0}">{{$filters.toCurrency(daily_ops_cost)}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_microsoft_ads_cost == 0, 'bg-green-lighten-4': daily_microsoft_ads_cost > 0, 'bg-orange-lighten-4': daily_microsoft_ads_cost < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Ads Cost
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_microsoft_ads_cost == 0, 'text-green-darken-1': daily_microsoft_ads_cost > 0, 'text-orange': daily_microsoft_ads_cost < 0}">{{$filters.toCurrency(daily_microsoft_ads_cost)}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_google_ads_cost == 0, 'bg-green-lighten-4': daily_google_ads_cost > 0, 'bg-orange-lighten-4': daily_google_ads_cost < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Ads Cost
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_google_ads_cost == 0, 'text-green-darken-1': daily_google_ads_cost > 0, 'text-orange': daily_google_ads_cost < 0}">{{$filters.toCurrency(daily_google_ads_cost)}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': (facebookAccount) == 0, 'bg-green-lighten-4': (facebookAccount) > 0, 'bg-orange-lighten-4': (facebookAccount) < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Ads Cost
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': (facebookAccount) == 0, 'text-green-darken-1': (facebookAccount) > 0, 'text-orange': (facebookAccount) < 0}">{{$filters.toCurrency(facebookAccount)}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': (daily_total_ads_cost - daily_ops_cost) == 0, 'bg-green-lighten-4': (daily_total_ads_cost - daily_ops_cost) > 0, 'bg-orange-lighten-4': (daily_total_ads_cost - daily_ops_cost) < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Total Ads Cost</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': (daily_total_ads_cost - daily_ops_cost) == 0, 'text-green-darken-1': (daily_total_ads_cost - daily_ops_cost) > 0, 'text-orange': (daily_total_ads_cost - daily_ops_cost) < 0}">{{$filters.toCurrency(daily_total_ads_cost - daily_ops_cost)}}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -146,95 +66,80 @@
                     <h6 class="font-weight-bold text-h6 px-3 mb-3">Revenue</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_conversion == 0, 'bg-green-lighten-4': daily_conversion > 0, 'bg-orange-lighten-4': daily_conversion < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Conversions</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_conversion == 0, 'text-green-darken-1': daily_conversion > 0, 'text-orange': daily_conversion < 0}">{{daily_conversion}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_total_revenue == 0, 'bg-green-lighten-4': daily_total_revenue > 0, 'bg-orange-lighten-4': daily_total_revenue < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Commissions</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_total_revenue == 0, 'text-green-darken-1': daily_total_revenue > 0, 'text-orange': daily_total_revenue < 0}">{{$filters.toCurrency(daily_total_revenue)}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_net_profit == 0, 'bg-green-lighten-4': daily_net_profit > 0, 'bg-orange-lighten-4': daily_net_profit < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Net Profits</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">$0.00</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_net_profit == 0, 'text-green-darken-1': daily_net_profit > 0, 'text-orange': daily_net_profit < 0}">{{$filters.toCurrency(daily_net_profit)}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_roas == 0, 'bg-green-lighten-4': daily_roas > 0, 'bg-orange-lighten-4': daily_roas < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">ROAS</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0.00%</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_roas == 0, 'text-green-darken-1': daily_roas > 0, 'text-orange': daily_roas < 0}">{{$filters.toCurrency(daily_roas)}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_roi == 0, 'bg-green-lighten-4': daily_roi > 0, 'bg-orange-lighten-4': daily_roi < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">ROI</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0.00%</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_roi == 0, 'text-green-darken-1': daily_roi > 0, 'text-orange': daily_roi < 0}">{{$filters.toCurrency(daily_roi)}}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
-                    <h6 class="font-weight-bold text-h6 px-3 mb-3">General Stats</h6>
-                    <!-- <div class="nav-wrapper report_tabpanel">
-                        <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true">
-                                    <span class="btn-inner--text">General Stats</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false">
-                                    <span class="btn-inner--text">Profit & Loss</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div> -->
-                    
+                    <h6 class="font-weight-bold text-h6 px-3 mb-3">General Stats</h6>                    
                     <!-- Start Microsoft -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': microsoftMasterAccount == 0, 'bg-green-lighten-4': microsoftMasterAccount > 0, 'bg-orange-lighten-4': microsoftMasterAccount < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Master Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftMasterAccount == 0, 'text-green-darken-1': microsoftMasterAccount > 0, 'text-orange': microsoftMasterAccount < 0}">{{microsoftMasterAccount}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': microsoftAccount == 0, 'bg-green-lighten-4': microsoftAccount > 0, 'bg-orange-lighten-4': microsoftAccount < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Child Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftAccount == 0, 'text-green-darken-1': microsoftAccount > 0, 'text-orange': microsoftAccount < 0}">{{microsoftAccount}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': microsoftActiveCampaigns == 0, 'bg-green-lighten-4': microsoftActiveCampaigns > 0, 'bg-orange-lighten-4': microsoftActiveCampaigns < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Active Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftActiveCampaigns == 0, 'text-green-darken-1': microsoftActiveCampaigns > 0, 'text-orange': microsoftActiveCampaigns < 0}">{{microsoftActiveCampaigns}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': microsoftInactiveCampaigns == 0, 'bg-green-lighten-4': microsoftInactiveCampaigns > 0, 'bg-orange-lighten-4': microsoftInactiveCampaigns < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Inactive Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftInactiveCampaigns == 0, 'text-green-darken-1': microsoftInactiveCampaigns > 0, 'text-orange': microsoftInactiveCampaigns < 0}">{{microsoftInactiveCampaigns}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': microsoftTotalCampaigns == 0, 'bg-green-lighten-4': microsoftTotalCampaigns > 0, 'bg-orange-lighten-4': microsoftTotalCampaigns < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Total Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftTotalCampaigns == 0, 'text-green-darken-1': microsoftTotalCampaigns > 0, 'text-orange': microsoftTotalCampaigns < 0}">{{microsoftTotalCampaigns}}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -242,43 +147,43 @@
                     <!-- Start Google -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': googleMasterAccount == 0, 'bg-green-lighten-4': googleMasterAccount > 0, 'bg-orange-lighten-4': googleMasterAccount < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Master Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleMasterAccount == 0, 'text-green-darken-1': googleMasterAccount > 0, 'text-orange': googleMasterAccount < 0}">{{googleMasterAccount}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': googleAccount == 0, 'bg-green-lighten-4': googleAccount > 0, 'bg-orange-lighten-4': googleAccount < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Child Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleAccount == 0, 'text-green-darken-1': googleAccount > 0, 'text-orange': googleAccount < 0}">{{googleAccount}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': googleActiveCampaigns == 0, 'bg-green-lighten-4': googleActiveCampaigns > 0, 'bg-orange-lighten-4': googleActiveCampaigns < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Active Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleActiveCampaigns == 0, 'text-green-darken-1': googleActiveCampaigns > 0, 'text-orange': googleActiveCampaigns < 0}">{{googleActiveCampaigns}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': googleInactiveCampaigns == 0, 'bg-green-lighten-4': googleInactiveCampaigns > 0, 'bg-orange-lighten-4': googleInactiveCampaigns < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Inactive Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleInactiveCampaigns == 0, 'text-green-darken-1': googleInactiveCampaigns > 0, 'text-orange': googleInactiveCampaigns < 0}">{{googleInactiveCampaigns}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': googleTotalCampaigns == 0, 'bg-green-lighten-4': googleTotalCampaigns > 0, 'bg-orange-lighten-4': googleTotalCampaigns < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Total Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleTotalCampaigns == 0, 'text-green-darken-1': googleTotalCampaigns > 0, 'text-orange': googleTotalCampaigns < 0}">{{googleTotalCampaigns}}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -290,39 +195,39 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Master Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Child Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Active Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Inactive Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/facebook.svg" class="mr-2 mt--1" style="width:15px;">Facebook Total Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -330,90 +235,168 @@
                     <!-- Start general -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-blue-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': networks == 0, 'bg-green-lighten-4': networks > 0, 'bg-orange-lighten-4': networks < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Automated Networks</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': networks == 0, 'text-green-darken-1': networks > 0, 'text-orange': networks < 0}">{{networks}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-green-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': manualNetworks == 0, 'bg-green-lighten-4': manualNetworks > 0, 'bg-orange-lighten-4': manualNetworks < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Manual Networks</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-green-darken-1">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': manualNetworks == 0, 'text-green-darken-1': manualNetworks > 0, 'text-orange': manualNetworks < 0}">{{manualNetworks}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
-                            <v-card class="card_design bg-orange-lighten-4">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': (networks + manualNetworks) == 0, 'bg-green-lighten-4': (networks + manualNetworks) > 0, 'bg-orange-lighten-4': (networks + manualNetworks) < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Total Networks</v-card-title>
-                                <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-orange">0</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': (networks + manualNetworks) == 0, 'text-green-darken-1': (networks + manualNetworks) > 0, 'text-orange': (networks + manualNetworks) < 0}">{{networks + manualNetworks}}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
                 </v-col>
             </v-row>
-            <!-- <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
-                </div>
-                <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h3 class="mb-0">Dashboard Data</h3>
-                        </div>
-                        <div class="col-md-6">
-                            <v-select :items="dateFilter" label="Report Date" v-model="yearRange"></v-select>
-                        </div>
-                    </div>
-                    <div class="finance_data">
-                        <div class="row">
-                            <div class="col-md-6 mb-3 ml-auto">
-                                <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
         </v-container>
     </div>
 </template>
 
 <script>
+import DateRangePicker from './common/DateRangePicker.vue';
+import moment from 'moment';
  export default {
-    // filters: {
-    //     dateCell (value) {
-    //         let dt = new Date(value)
-
-    //         return dt.getDate()
-    //     },
-    //     date (val) {
-    //         return val ? val.toDateString() : ''
-    //     }
-    // },
+    components: {
+        DateRangePicker,
+    },
     data() {
-        let today = new Date();
-        let startDate = today;
-        let endDate = today;
-        endDate.setDate(endDate.getDate() + 6)
         return {
-            dateRange: {startDate, endDate},
             showLoader: false,
-            itemsPerPage: 5,
+            dataMetrics: [],
+            facebookAccount: 0,
+            googleAccount: 0,
+            microsoftAccount: 0,
+            googleMasterAccount: 0,
+            microsoftMasterAccount: 0,
+            networks: 0,
+            manualNetworks: 0,
+            offers: 0,
+            campaigns: 0,
+            opsCosts: 0,
+            netProfit: 0,
+            adsCost: 0,
+            totalCosts: 0,
+            totalRevenue: 0,
+            grossProfit: 0,
+            googleActiveCampaigns: 0,
+            googleInactiveCampaigns: 0,
+            googleTotalCampaigns: 0,
+            microsoftActiveCampaigns: 0,
+            microsoftInactiveCampaigns: 0,
+            microsoftTotalCampaigns: 0,
+            daily_ops_cost: 0,
+            daily_microsoft_ads_cost: 0,
+            daily_google_ads_cost: 0,
+            daily_total_ads_cost: 0,
+            daily_total_revenue: 0,
+            daily_net_profit: 0,
+            daily_conversion: 0,
+            daily_roas: 0,
+            daily_roi: 0,
+            daily_date: 0,
+            selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            trialDays: null,
         }
     },
-    filters: {
-        dateCell (value) {
-        let dt = new Date(value)
+    mounted() {
+        const isAuthenticated = sessionStorage.getItem('Token');
+        const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
 
-        return dt.getDate()
-        },
-        date (val) {
-        return val ? val.toLocaleString() : ''
+        if(isAuthenticated && isVerified) {
+            this.$router.push('/dashboard');
         }
+        else{
+            sessionStorage.clear();
+            this.$router.push('/login');
+        }
+        this.fetchDashboardRecord();
     },
     methods: {
-        checkOpenPicker(e) {
-            setTimeout(() => {
-                console.log(e)
-                this.fetchDashboardData();
-            },100)
+        // update date range
+        updateRange(range) {
+            this.selectedRange = range;
+            this.fetchDashboardRecord();
+        },
+        // fetch dashboard data
+        fetchDashboardRecord() {
+            this.showLoader = true;
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/dashboard';
+            if(this.selectedRange) {
+                queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+            }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            this.axios.get(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    console.log(response.data.data);
+                    const dashboardData = response.data.data;
+                    this.facebookAccount = dashboardData.facebook_account
+                    this.googleAccount = dashboardData.google_account;
+                    this.microsoftAccount = dashboardData.microsoft_account;
+                    this.googleMasterAccount = dashboardData.google_manager_account;
+                    this.microsoftMasterAccount = dashboardData.microsoft_manager_account;
+                    this.networks = dashboardData.networks;
+                    this.manualNetworks = dashboardData.manual_network;
+                    this.offers = dashboardData.offers;
+                    this.campaigns = dashboardData.campaigns;
+                    this.opsCosts = dashboardData.ops_costs;
+                    this.netProfit = this.kFormatter(dashboardData.net_profit);
+                    this.adsCost = this.kFormatter(dashboardData.ads_cost);
+                    this.totalCosts = this.kFormatter(dashboardData.total_costs);
+                    this.totalRevenue = this.kFormatter(dashboardData.total_revenue);
+                    this.grossProfit = this.kFormatter(dashboardData.gross_profit);
+                    this.googleActiveCampaigns = dashboardData.googleActiveCampaigns;
+                    this.googleInactiveCampaigns = dashboardData.googleInactiveCampaigns;
+                    this.googleTotalCampaigns = dashboardData.googleTotalCampaigns;
+                    this.microsoftActiveCampaigns = dashboardData.microsoftActiveCampaigns;
+                    this.microsoftInactiveCampaigns = dashboardData.microsoftInactiveCampaigns;
+                    this.microsoftTotalCampaigns = dashboardData.microsoftTotalCampaigns;
+                    // Daily Report
+                    this.daily_ops_cost = dashboardData.daily_ops_cost;
+                    this.daily_microsoft_ads_cost = dashboardData.daily_microsoft_ads_cost;
+                    this.daily_google_ads_cost = dashboardData.daily_google_ads_cost;
+                    this.daily_total_ads_cost = dashboardData.daily_total_ads_cost;
+                    this.daily_total_revenue = dashboardData.daily_total_revenue;
+                    this.daily_net_profit = dashboardData.daily_net_profit;
+                    this.daily_conversion = dashboardData.daily_conversion;
+                    this.daily_roas = dashboardData.daily_roas;
+                    this.daily_roi = dashboardData.daily_roi;
+                    this.daily_date = dashboardData.daily_date;
+                    // trial days count
+                    this.trialDays = response.data.trialEnd;
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.showLoader = false;
+            });
+        },
+        // formater
+        kFormatter(num) {
+            return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
         },
     },
  }

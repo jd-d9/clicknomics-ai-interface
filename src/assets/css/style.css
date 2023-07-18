@@ -111,7 +111,7 @@ td.v-data-table__td {
 .hide-show-sidebar {width: 60px !important;height: 100%;transition: all 0.2s ease;}
 
 
-.navbar-vertical .v-navigation-drawer__content .v-list .router-link-active:hover{background: #e8f0fe;}   
+/* .navbar-vertical .v-navigation-drawer__content .v-list .router-link-active:hover{background: #e8f0fe;}    */
 .hide-show-sidebar .v-navigation-drawer__content, 
 .hide-show-sidebar .v-navigation-drawer__content .v-list {overflow: visible;}
 .side_submenuitem .v-expansion-panel {background: transparent;}
@@ -128,14 +128,29 @@ td.v-data-table__td {
 .side_submenuitem .v-expansion-panel-title:hover{background: #81df8d;}
 .side_submenuitem .v-expansion-panel-title__overlay{display: none;}
 .side_submenuitem .v-expansion-panel--active {background: #fff;}
-.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper {padding: 10px 10px 10px 20px;margin: 0;border-left: 7px solid #fff;}
-.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper a{color: #000; font-size: 14px;}
+.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper {
+    padding:0px;margin: 0;border-left: 7px solid #fff; transition: all 0.2s ease-in-out;
+}
+.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper a{
+    color: #000;
+    font-size: 14px;
+    padding: 10px 10px 10px 30px;
+    display: block;
+}
 .side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper:hover{
     background: #81df8d !important;
     border-left: 7px solid #00cd00;
-    padding-left: 30px;
+    transition: all 0.2s ease-in-out;
 }
-
+.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper .v-expansion-panel-text__wrapper{
+    background: #fff !important;
+    border-color: #fff;
+}
+.side_submenuitem .v-expansion-panel--active .v-expansion-panel-text__wrapper .v-expansion-panel-text__wrapper:hover{
+    background: #81df8d !important;
+    border-left: 7px solid #005eb3;
+    transition: all 0.2s ease-in-out;
+}
 .v-breadcrumbs{
     color: #000;
     font-weight: 500;

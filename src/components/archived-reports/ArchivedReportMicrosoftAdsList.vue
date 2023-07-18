@@ -1,0 +1,599 @@
+<template>
+    <div class="bg-default main-content-height">
+        <div class="header bg-primary pb-6">
+            <div class="container-fluid">
+                <div class="header-body">
+                    <div class="row align-items-center mt--4">
+                        <div class="col-lg-6 col-7 pt-0">
+                            <nav aria-label="breadcrumb" class="d-none d-block">
+                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                    <li class="breadcrumb-item">
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
+                                    </li>
+                                    <li class="breadcrumb-item active text-capitalize" aria-current="page">Archived Reports Microsoft</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <loader-component v-if="showLoader"></loader-component>
+        <!-- Page content -->
+        <div class="container-fluid mt--3">
+            <div class="row justify-content-center">
+                <div class="col">
+                    <div class="">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <v-app>
+                                    <v-card>
+                                        <v-card-title>
+                                            <v-spacer></v-spacer>
+                                            <v-row>
+                                                <v-col class="d-flex" cols="12" sm="4"></v-col>
+                                                <v-col class="d-flex justify-content-end" cols="12" sm="4">
+                                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                                </v-col>
+                                                <v-col class="d-flex search_width" cols="12" sm="4">
+                                                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+                                                </v-col>
+                                            </v-row>
+                                        </v-card-title>
+                                        <v-data-table :headers="microsoftHeaders" :items="microsoftCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="microsoftExpanded" item-value="managerAccountName" class="elevation-1 table-hover-class table-expand add-side-borders" show-expand :itemsPerPage="itemsPerPage">
+                                            <template v-slot:[`item.management_system`]="{item}">
+                                                <div class="text-ellipsis" style="width:180px">
+                                                    <router-link to="" @click="showManagementTypeModal(item.selectable.id, item.selectable.management_type, item.selectable.management_system)">{{item.selectable.management_system ? item.selectable.management_system : '-' }}</router-link>
+                                                </div>
+                                            </template>
+                                            <template v-slot:expanded-row="{ columns, item }">
+                                                <td class="exapanded" :colspan="columns.length" style="padding:10px">
+                                                    <table class="table align-items-center" v-if="microsoftCampaignMetrics.length > 0">
+                                                        <thead class="thead-light">
+                                                            <tr>
+                                                                <th scope="col">Campaign Name</th>
+                                                                <th scope="col">Clicks </th>
+                                                                <th scope="col">Ctr </th>
+                                                                <th scope="col">Spend (USD Currency) </th>
+                                                                <th scope="col">Spend (Account Currency) </th>
+                                                                <th scope="col">Average Cpc </th>
+                                                                <th scope="col">Impressions </th>
+                                                                <th scope="col">Absolute Top Impression Rate Percent </th>
+                                                                <th scope="col">Campaign Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="list">
+                                                            <tr v-for="(row , index) in item.selectable.children" :key="index">
+                                                                <td>
+                                                                    {{row.CampaignName ? row.CampaignName : '-'}}
+                                                                </td>
+                                                                <td>
+                                                                    {{$filters.toNumberWithoutDecimal(row.clicks ? row.clicks : 0)}}
+                                                                </td>
+                                                                <td>
+                                                                    {{parseFloat(row.ctr ? row.ctr : 0).toFixed(2)}}
+                                                                </td>
+                                                                <td>
+                                                                    {{$filters.toCurrency(row.spend ? row.spend : 0)}}
+                                                                </td>
+                                                                <td v-if="row.currency && row.currency !='USD'">
+                                                                    {{`${row.currency} - `+parseFloat(row.spendConverted ? row.spendConverted :row.spend).toFixed(2) }}
+                                                                </td>
+                                                                <td v-else>
+                                                                    {{$filters.toCurrency(row.spend ? row.spend : 0)}}
+                                                                </td>
+                                                                <td>
+                                                                    {{parseFloat(row.averageCpc ? row.averageCpc : 0).toFixed(2)}}
+                                                                </td>
+                                                                <td>
+                                                                    {{$filters.toNumberWithoutDecimal(row.impressions ? row.impressions : 0)}}
+                                                                </td>
+                                                                <td>
+                                                                    {{$filters.toNumber(row.absoluteTopImpressionRatePercent ? row.absoluteTopImpressionRatePercent : 0)}}%
+                                                                </td>
+                                                                <td>
+                                                                    {{row.Status ? row.Status : '-'}}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </template>
+                                            <template v-slot:tbody v-if="microsoftCampaignMetrics.length > 0">
+                                                <tr class="total_table">
+                                                    <td>Totals</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>{{$filters.toNumberWithoutDecimal(sumMicrosoftClick)}}</td>
+                                                    <td>{{$filters.toNumber(sumMicrosoftCtr)}}</td>
+                                                    <td>{{$filters.toCurrency(sumMicrosoftSpend)}}</td>
+                                                    <td>-</td>
+                                                    <td>{{$filters.toNumber(sumMicrosoftAverageCpc)}}</td>
+                                                    <td>{{$filters.toNumberWithoutDecimal(sumMicrosoftImpressions)}}</td>
+                                                    <td>{{$filters.toNumber(sumMicrosoftAbsoluteTopImpressionPercentage)}}%</td>
+                                                </tr>
+                                            </template>
+                                        </v-data-table>
+                                    </v-card>
+                                </v-app>
+                                <!-- Modal Management System Add -->
+                                <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 style="color:#fff;" class="modal-title">Management System Type</h5>
+                                                <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
+                                                    <span style="color:#fff;" aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="col-12">
+                                                    <Form @submit="addManagementType" :validation-schema="schema" v-slot="{ errors }">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 py-0">
+                                                                <div class="form-group">
+                                                                    <label class="form-control-label" for="input-username">Select Management Type</label>
+                                                                    <Field name="Type" v-model="managementModal.type">
+                                                                        <v-select @change="updateData(managementModal.type)" name="Type" :class="{'form-control': true , 'border-red-600':errors.Type }" :items="managementSystemType" v-model="managementModal.type"></v-select>
+                                                                    </Field>
+                                                                    <span class="text-red-600" v-if="errors.Type">Management type can not be empty</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-12 py-0">
+                                                                <div class="form-group">
+                                                                    <label class="form-control-label" for="input-username">Management System</label>
+                                                                    <Field name="System" v-model="managementModal.management_system">
+                                                                        <v-select :class="{'form-control': true , 'border-red-600':errors.System }" name="System" :items="managementSystemList" v-model="managementModal.management_system"></v-select>
+                                                                    </Field>
+                                                                    <span class="text-red-600" v-if="errors.System">Management system can not be empty</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12 py-0 text-right">
+                                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
+                                                            </div>
+                                                        </div>
+                                                    </Form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import _ from 'lodash';
+import DateRangePicker from '../common/DateRangePicker.vue';
+import moment from 'moment';
+import * as yup from 'yup';
+import { Field, Form } from 'vee-validate';
+// Charts
+import * as chartConfigs from '../common/Charts/config';
+// import LineChart from '../common/Charts/LineChart';
+export default {
+    // props: ['reportType', 'datacenter', 'residential', 'multilogin', 'localsystem'],
+    components: {
+        // LineChart,
+        DateRangePicker,
+        Field, 
+        Form, 
+    },
+    data() {
+        return {
+            showLoader: false,
+            microsoftCampaignMetrics: [],
+            search: '',
+            microsoftReportRange: 'Last One Year',
+            singleExpand: true,
+            microsoftExpanded: [],
+            bigLineChart: {
+                allData: [],
+                dataLabel: '',
+                dataSetsLabel: '',
+                activeIndex: 0,
+                chartData: {
+                    datasets: [],
+                    labels: [],
+                },
+                extraOptions: chartConfigs.blueChartOptions,
+            },
+            itemsPerPage: -1,
+            managementSystemType: [
+                {
+                    title: 'Local'
+                },
+                {
+                    title: 'Data Center VPS'
+                },
+                {
+                    title: 'Residential VPS'
+                },
+                {
+                    title: 'Multilogin'
+                },
+            ],
+            managementModal: {
+                id: '',
+                type: '',
+                management_system: ''
+            },
+            managementSystemList: [],
+            isSortable: true,
+            selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+        }
+    },
+    computed: {
+        schema() {
+            return yup.object({
+                Type: yup.string().required(),
+                System: yup.string().required(),
+            });
+        },
+        sumMicrosoftClick() {
+            const key = 'clicks';
+            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            data.map((item) => {
+                item.clicks = parseFloat(Number(item.clicks.replace(/_/g,'')));
+                return item;
+            });
+            return data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+        },
+        sumMicrosoftCtr() {
+            const key = 'ctr';
+            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            data.map((item) => {
+                item.ctr = parseFloat(Number(item.ctr.replace(/_/g,'')));
+                return item;
+            });
+            return (data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)) / this.microsoftCampaignMetrics.length;
+        },
+        sumMicrosoftSpend() {
+            const key = 'spend';
+            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            data.map((item) => {
+                let num = item.spend.substring(1);
+                num = num.replace(/_/g,'');
+                item.spend = parseFloat(num);
+                return item;
+            });
+            return data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+        },
+        sumMicrosoftAverageCpc() {
+            const key = 'averageCpc';
+            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            data.map((item) => {
+                item.averageCpc = parseFloat(Number(item.averageCpc.replace(/_/g,'')));
+                return item;
+            });
+            return (data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)) / this.microsoftCampaignMetrics.length;
+        },
+        sumMicrosoftImpressions() {
+            const key = 'impressions';
+            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            data.map((item) => {
+                item.impressions = parseFloat(Number(item.impressions.replace(/_/g,'')));
+                return item;
+            });
+            return data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+        },
+        sumMicrosoftAbsoluteTopImpressionPercentage() {
+            const key = 'absoluteTopImpressionRatePercent';
+            return this.microsoftCampaignMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+        },
+        microsoftHeaders() {
+            return [
+                { title: '', key: 'data-table-expand' },
+                { title: 'Manager Account Name', align: 'start', sortable: this.isSortable, key: 'managerAccountName' },
+                { title: 'Account Name',  key: 'name', sortable: this.isSortable },
+                { title: 'Management System',  key: 'management_system', sortable: this.isSortable },
+                { title: 'Clicks', key: 'clicks', sortable: this.isSortable },
+                { title: 'Click Through Rate', key: 'ctr', sortable: this.isSortable },
+                { title: 'Spend (USD Currency)', key: 'spend', sortable: this.isSortable },
+                { title: 'Spend (Account Currency)', key: 'spendConverted', sortable: this.isSortable },
+                { title: 'Cost Per Click', key: 'averageCpc', sortable: this.isSortable },
+                { title: 'Impressions', key: 'impressions', sortable: this.isSortable },
+                { title: 'Impressions (Top)%', key: 'absoluteTopImpressionRatePercent', sortable: this.isSortable },
+            ]
+        }
+    },
+    mounted() {
+        this.fetchMicrosoftAdsMetrics();
+    },
+    methods: {
+        // open and close modal
+        openModal() {
+            window.$('#createUpdateData').modal('show');
+        },
+        closeModal() {
+            window.$('#createUpdateData').modal('hide');
+        },
+        // update date range
+        updateRange(range) {
+            this.selectedRange = range;
+            this.fetchMicrosoftAdsMetrics();
+        },
+        // fetch microsoft data
+        fetchMicrosoftAdsMetrics() {
+            this.microsoftCampaignMetrics = [];
+            this.showLoader = true;
+            setTimeout(() => {
+                const queryString = new URLSearchParams();
+                const ajaxUrl = this.$api + '/archivedReports/fetchMicrosoftReportMetrics';
+                if(this.selectedRange) {
+                    queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                    queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+                }
+                const url = `${ajaxUrl}?${queryString.toString()}`;
+                this.axios.get(url, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        let responseData = response.data.data;
+                        console.log(responseData, 'response data - -')
+                        responseData = _.map(responseData, (res) => {
+                            _.map(res.campaign, (t) => {
+                                console.log(t, 't');
+                                t.clicks = _.sumBy(t.report, function(o) { return o.Clicks ? Number(o.Clicks) : 0})
+                                t.ctr = _.sumBy(t.report, function(o) { return o.Ctr ? parseFloat(o.Ctr) : 0})
+                                t.impressions = _.sumBy(t.report, function(o) { return o.Impressions ? Number(o.Impressions) : 0})
+                                t.spend = _.sumBy(t.report, function(o) { return o.Spend ? Number(o.Spend) : 0})
+                                t.averageCpc =  _.sumBy(t.report, function(o) { return o.AverageCpc ? Number(o.AverageCpc) : 0})
+                                t.absoluteTopImpressionRatePercent = t.report.length > 0 ? _.meanBy( t.report, function(o) { return parseFloat(o.AbsoluteTopImpressionRatePercent) }) : 0
+                                t.averageCpcCount = _.filter(t.report, function(o) { if (o.AverageCpc > 0) return o }).length;
+                                if(t.spend != 0 && res.currency_exchange_rate && res.currency_exchange_rate != null){
+                                    t.spendConverted =  t.spend / res.currency_exchange_rate;
+                                }
+                            });
+                            return res;
+                        });
+                        let dataTemp = [];
+                        responseData.map((data) => {
+                            data.campaign.map((campaign) => {
+                                campaign.averageCpc =  campaign.averageCpcCount > 0 ? parseFloat((campaign.averageCpc / campaign.averageCpcCount)).toFixed(2) : 0;
+                                campaign;
+                                campaign.currency = data.currency;
+                            });
+                            dataTemp.push(data);
+                        });
+                        const deep = _.cloneDeep(dataTemp);
+                        deep.map((data) => {
+                            this.microsoftCampaignMetrics.push({
+                                name: data.name,
+                                managerAccountName: data.parentCustomerName,
+                                management_type: data.management_type,
+                                management_system: data.management_system,
+                                id: data.id,
+                                clicks: this.$filters.toNumberWithoutDecimal(_.sumBy(data.campaign, function(o) { return o.clicks ? Number(o.clicks) : 0})),
+                                ctr: this.$filters.toNumber(_.sumBy(data.campaign, function(o) { return o.ctr ? Number(o.ctr) : 0})),
+                                impressions: this.$filters.toNumberWithoutDecimal(_.sumBy(data.campaign, function(o) { return o.impressions ? Number((o.impressions)) : 0})),
+                                spend: this.$filters.toCurrency(_.sumBy(data.campaign, function(o) { return o.spend ? Number(o.spend) : 0})),
+                                spendConverted: _.sumBy(data.campaign, function(o) { return o.spendConverted ? Number(o.spendConverted) : 0}) != 0 ? `${data.currency} -`+parseFloat(_.sumBy(data.campaign, function(o) { return o.spendConverted ? Number(o.spendConverted) : 0})).toFixed(2) : (data.currency =="USD" || !data.currency ? this.$filters.toCurrency(_.sumBy(data.campaign, function(o) { return o.spend ? Number(o.spend) : 0})) : `${data.currency} - `+parseFloat(_.sumBy(data.campaign, function(o) { return o.spend ? Number(o.spend) : 0})).toFixed(2)),
+                                averageCpc: this.$filters.toNumber(_.sumBy(data.campaign, function(o) { return o.averageCpc ? Number(o.averageCpc) : 0})) ,
+                                absoluteTopImpressionRatePercent: this.$filters.toNumberWithPercentage(_.sumBy(data.campaign, function(o) { return o.absoluteTopImpressionRatePercent ? Number(o.absoluteTopImpressionRatePercent) : 0}) ),
+                                children: data.campaign,
+                                currency: data.currency,
+                                currency_conversion_check: data.currency_conversion_check,
+                            });
+                        });
+                        console.log(this.microsoftCampaignMetrics , 'this.microsoftCampaignMetrics');
+                        if(this.microsoftCampaignMetrics.length > 0){
+                            setTimeout(() => {
+                                this.resizableGrid(document.getElementsByTagName('table')[0]);
+                            }, 1000)
+                        }
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.showLoader = false;
+                });
+            },100)
+        },
+        // add management type
+        addManagementType() {
+            this.showLoader = true;
+            let formData = new FormData();
+            formData.append('type', this.managementModal.type);
+            formData.append('management_system', this.managementModal.management_system);
+            formData.append('id', this.managementModal.id);
+            this.axios.defaults.headers.common = {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': window.csrf_token
+            };
+            this.axios.post(`/addManagementTypeToMicrosoftAccount`,formData,{
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            }).then(response => {
+                if(response) {
+                    console.log(response, 'sasa')
+                    this.showLoader = false;
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    };
+                    // Bus.$emit('flash-message', this.message, '');
+                    const index = this.microsoftCampaignMetrics.findIndex(item => item.id === this.managementModal.id)
+                    this.microsoftCampaignMetrics[index].management_type = this.managementModal.type;
+                    this.microsoftCampaignMetrics[index].management_system = this.managementModal.management_system;
+                    this.closeModal();
+                }else {
+                    this.showLoader = false;
+                    this.message = {
+                        text: 'Something Went Wrong!',
+                        type: 'error',
+                    }
+                    // Bus.$emit('flash-message', this.message, '');
+                }
+            }).catch((error) => {
+                this.showLoader = false;
+                console.log(error);
+                this.message = {
+                    text: error.response.data.message,
+                    type: 'error',
+                }
+                window.Bus.$emit('flash-message', this.message, '');
+            });
+        },
+        // show management type modal
+        showManagementTypeModal(id, type, management_system) {
+            this.managementModal.id = id;
+            this.managementModal.type = type;
+            this.managementModal.management_system = management_system;
+
+            if(type == 'Residential VPS'){
+                this.managementSystemList = this.residential;
+            }else if(type == 'Data Center VPS'){
+                this.managementSystemList = this.datacenter;
+            }else if(type == 'Multilogin'){
+                this.managementSystemList = this.multilogin;
+            }else if(type == 'Local'){
+                this.managementSystemList = this.localsystem;
+            }
+            this.openModal();
+        },
+        // update data
+        updateData(newVal) {
+            this.managementModal.management_system  = '';
+            if(newVal == 'Residential VPS'){
+                this.managementSystemList = this.residential;
+            }else if(newVal == 'Data Center VPS'){
+                this.managementSystemList = this.datacenter;
+            }else if(newVal == 'Multilogin'){
+                this.managementSystemList = this.multilogin;
+            }else if(newVal == 'Local'){
+                this.managementSystemList = this.localsystem;
+            }
+        },
+        // made resizable table
+        resizableGrid(table) {
+            const self = this;
+            var row = table.getElementsByTagName('tr')[0],
+            cols = row ? row.children : undefined;
+            if (!cols) return;
+
+            table.style.overflow = 'hidden';
+
+            var tableHeight = table.offsetHeight;
+
+            for (var i=0;i<cols.length;i++){
+                var div = createDiv(tableHeight, i);
+                cols[i].appendChild(div);
+                cols[i].style.position = 'relative';
+                setListeners(div, table);
+            }
+
+            function setListeners(div, table){
+                var pageX,curCol,nxtCol,curColWidth,nxtColWidth,columnId,currentEl;
+                let activeBar = false;
+
+                div.addEventListener('mousedown', function (e) {
+                    activeBar = true;
+                    currentEl = e.target;
+                    curCol = e.target.parentElement;
+                    nxtCol = curCol.nextElementSibling;
+                    pageX = e.pageX;
+                    columnId = e.target.id.split('-')[1];
+
+                    var padding = paddingDiff(curCol);
+
+                    curColWidth = curCol.offsetWidth - padding;
+                    if (nxtCol)
+                    nxtColWidth = nxtCol.offsetWidth - padding;
+                });
+
+                div.addEventListener('mouseover', function (e) {
+                    e.target.style.borderRight = '2px solid #0000ff';
+                })
+
+                div.addEventListener('mouseout', function (e) {
+                    if(activeBar) return;
+                    e.target.style.borderRight = '';
+                     setTimeout(() => {
+                        self.isSortable = true;
+                    }, 100);
+                })
+
+                document.addEventListener('mousemove', function (e) {
+                    if (curCol) {
+                        self.isSortable = false;
+                        var diffX = e.pageX - pageX;
+
+                        if (nxtCol)
+                        window.$(`tbody tr td:nth-child(${columnId})`).each(function () {
+                            window.$(this).css('width', (curColWidth + diffX)+'px');
+                            window.$(this).find('div').css('width', (curColWidth + diffX)+'px');
+
+                            window.$(this).next().css('width', (nxtColWidth - (diffX))+'px');
+                            window.$(this).next().find('div').css('width', (nxtColWidth - (diffX))+'px');
+                        });
+                        window.$('div[id^="col-"]').css('height', table.offsetHeight+'px')
+                    }
+                });
+
+                document.addEventListener('mouseup', function () {
+                    curCol = undefined;
+                    nxtCol = undefined;
+                    pageX = undefined;
+                    nxtColWidth = undefined;
+                    curColWidth = undefined;
+                    activeBar = false;
+                    if(currentEl) {
+                        currentEl.style.borderRight = '';
+                        setTimeout(() => {
+                            self.isSortable = true;
+                        }, 100);
+                    }
+                });
+            }
+
+            function createDiv(height, i){
+                var div = document.createElement('div');
+                div.setAttribute('id', `col-${i+1}`);
+                div.style.top = 0;
+                div.style.right = 0;
+                div.style.width = '5px';
+                div.style.position = 'absolute';
+                div.style.cursor = 'col-resize';
+                div.style.userSelect = 'none';
+                div.style.height = height + 'px';
+                return div;
+            }
+
+            function paddingDiff(col){
+                if (getStyleVal(col,'box-sizing') == 'border-box'){
+                    return 0;
+                }
+
+                var padLeft = getStyleVal(col,'padding-left');
+                var padRight = getStyleVal(col,'padding-right');
+                return (parseInt(padLeft) + parseInt(padRight));
+            }
+
+            function getStyleVal(elm,css){
+                return (window.getComputedStyle(elm, null).getPropertyValue(css))
+            }
+        },
+    }
+}
+</script>
+<style scoped>
+.add-side-borders tbody td, .add-side-borders thead th{
+    border-left: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+</style>

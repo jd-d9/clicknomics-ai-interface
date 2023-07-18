@@ -1,32 +1,30 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <!-- header contents -->
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/settings/user">Users</router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Create User</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/user" class="btn btn-lg btn-neutral btn_animated">Back</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- user form component -->
-        <user-form></user-form>
+        <loader-component v-if="showLoader"></loader-component>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Create User</span>
+
+                        <v-spacer />
+                        <v-btn href="/settings/user" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                            Back
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <!-- user form component -->
+                    <user-form></user-form>
+                </v-col>
+            </v-row>
+        </v-container>        
     </div>
 </template>
 
@@ -49,7 +47,3 @@ export default {
     }
 }
 </script>
-
-<style  scoped>
-
-</style>

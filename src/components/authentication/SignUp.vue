@@ -25,8 +25,18 @@
                 <div class="col-lg-10 col-md-7">
                     <div class="card bg-secondary border-0 mb-0">
                         <div class="card-body px-lg-5 py-lg-5">
-                            <div class="text-center logo_responsive">
-                                <img src="/assets/img/brand/logo.png" alt="logo">
+                            <div class="row">
+                                <div class="col-4"></div>
+                                <div class="col-4 text-center">
+                                    <div class="text-center logo_responsive d-flex justify-content-between">
+                                        <img src="/assets/img/brand/logo.png" alt="logo" class="mx-auto" style="width: 80%">
+                                    </div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <v-btn to="/subscribe-plan" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                                        Back
+                                    </v-btn> 
+                                </div>
                             </div>
                             <Form class="mt-5 login_form" @submit="signUpUser" :validation-schema="schema" v-slot="{ errors }">
                                 <div class="row">
@@ -50,7 +60,6 @@
                                             <Field id="name" type="text" name="Name" class="form-control" :class="{'border-red-600': errors.Name}" placeholder="Name" v-model="userName"/>
                                             <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
                                             <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
-                                            <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -61,6 +70,7 @@
                                             <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
                                             <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
                                             <ErrorMessage class="text-red-600" name="Email"/>
+                                            <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -177,14 +187,19 @@
                 .then(response => {
                     let planId = sessionStorage.getItem('subscriptionPlanId');
                     if(response.data.success) {
+                        this.backendErrorMessage = '';
                         // set plan id
                         this.showLoader = true;
-                        this.axios.get(this.$api + '/subscription/' + planId)
+                        this.axios.get(this.$api + '/subscription/' + planId, {
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${response.data.data}`
+                            }
+                        })
                         .then(response => {
                             if(response.data.success) {
-                                this.backendErrorMessage = '';
                                 this.$toast.open({
-                                    message: 'User registration success',
+                                    message: 'User registration successfully',
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'
@@ -217,7 +232,7 @@
                 })
                 .catch(error => {
                     console.log(error, 'error')
-                    this.backendErrorMessage = error.response.data.message;
+                    this.backendErrorMessage = error.message;
                     this.showLoader = false;
                 }); 
             },

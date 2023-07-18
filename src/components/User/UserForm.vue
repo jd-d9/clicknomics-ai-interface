@@ -1,126 +1,105 @@
 <template>
-    <div class="bg-default main-content-height">
+    <div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <Form @submit="manageUser" :validation-schema="schema" v-slot="{ errors }">
-                                <div class="row">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Name</label>
-                                            <Field type="text" id="input-username" class="form-control" name="Name" :class="{'border-red-600': errors.Name}" placeholder="Name" v-model.trim="userName"/>
-                                            <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Email</label>
-                                            <Field type="email" id="input-username" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" placeholder="Email" v-model="userEmail"/>
-                                            <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
-                                            <ErrorMessage class="text-red-600" name="Email"/>
-                                            <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row" v-if="toggleComponent">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Password</label>
-                                            <Field type="password" id="input-username" name="Password" class="form-control" :class="{'border-red-600': errors.Password}" placeholder="Password" v-model="userPassword"/>
-                                            <span class="text-red-600" v-if="errors.Password">Password can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Password"/> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Confirm Password</label>
-                                            <Field type="password" id="input-username" name="Confirmpass" class="form-control" :class="{'border-red-600': errors.Confirmpass || invalidConfirmPassword}" placeholder="Confirm Password" @blur="confirmPasswordValid" v-model="confirmPassword"/>
-                                            <span class="text-red-600" v-if="errors.Confirmpass">Confirm password can not be empty</span>
-                                            <span class="text-red-600" v-if="invalidConfirmPassword">{{invalidConfirmPassword}}</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Confirmpass"/> -->
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Select Country Code</label>
-                                            <Field name="Country" v-model="selectedCountry" :class="{'border-red-600': errors.Country}">
-                                                <select class="form-control" name="Country" v-model="selectedCountry" :class="{'border-red-600': errors.Country}">
-                                                    <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
-                                                        {{item.dial_code}} - {{item.name}}
-                                                    </option>
-                                                </select>
-                                            </Field>
-                                            <span class="text-red-600" v-if="errors.Country">Country code can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Country"/> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Mobile Number</label>
-                                            <Field type="number" id="input-username" name="Mobile" class="form-control" :class="{'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="userContact"/>
-                                            <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty or should be enter minimum 10 character</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Mobile"/> -->
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Role</label>
-                                            <Field name="Role" v-model="roleId" :class="{'border-red-600': errors.Role}">
-                                                <select class="form-control" name="Role" placeholder="Select Role" v-model="roleId">
-                                                    <option value="">Select User Role</option>
-                                                    <option :value="role.id" v-for="(role, index) in roles" :key="index">{{role.role_name}}</option>
-                                                </select>
-                                            </Field>
-                                            <span class="text-red-600" v-if="errors.Role">Role can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Role"/> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label">Status</label>
-                                            <Field name="Status" v-model="status" :class="{'border-red-600': errors.Role}">
-                                                <select class="form-control" name="Status" placeholder="User Status"  v-model="status">
-                                                    <option value="1">Active</option>
-                                                    <option value="0">In-Active</option>
-                                                </select>
-                                            </Field>
-                                            <span class="text-red-600" v-if="errors.Status">Status can not be empty</span>
-                                            <ErrorMessage class="text-red-600" name="Status"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-lg btn_animated">{{toggleComponent ? 'Save' : 'Update'}}</button>
-                                            <button type="reset" v-if="toggleComponent" class="btn btn-secondary btn-lg btn_animated">Reset</button>  <!--  @click.prevent="resetForm"  -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </Form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-card class="card_design mb-4">
+            <v-card-title class="d-flex justify-space-between">
+                Users
+            </v-card-title>
+
+            <v-divider class="border-opacity-100 my-4" color="success" />
+
+            <Form @submit="manageUser" :validation-schema="schema" v-slot="{ errors }">
+                <v-row>
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Name</label>
+                        <Field type="text" id="input-username" name="Name" :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model.trim="userName"/>
+                        <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
+                    </v-col>
+
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Email</label>
+                        <Field type="email" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model.trim="userEmail"/>
+                        <span class="text-red-600" v-if="errors.Email">Email can not be empty</span>
+                        <!-- <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small> -->
+                    </v-col>    
+                    
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Mobile Number</label>
+                        <Field type="number" id="input-username" name="Mobile" :class="{'form-control': true, 'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model.trim="userContact"/>
+                        <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty</span>
+                    </v-col>
+                </v-row>           
+
+                <v-row>
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Select Country Code</label>
+                        <Field name="Country" v-model="selectedCountry" :class="{'border-red-600': errors.Country}">
+                            <select name="Country" v-model="selectedCountry" :class="{'form-control': true, 'border-red-600': errors.Role}">
+                                <option value="">Select Country Code</option>
+                                <option :value="item.dial_code" v-for="(item, index) in countryDetails" :key="index">
+                                    {{item.dial_code}} - {{item.name}}
+                                </option>
+                            </select>
+                        </Field>
+                        <span class="text-red-600" v-if="errors.Country">Country code can not be empty</span>
+                    </v-col>
+
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Role</label>
+                        <Field name="Role" v-model="roleId" :class="{'border-red-600': errors.Role}">
+                            <select :class="{'form-control': true, 'border-red-600': errors.Role}" name="Role" placeholder="Select Role" v-model="roleId">
+                                <option value="">Select User Role</option>
+                                <option :value="role.id" v-for="(role, index) in roles" :key="index">{{role.role_name}}</option>
+                            </select>
+                        </Field>
+                        <span class="text-red-600" v-if="errors.Role">Role can not be empty</span>
+                    </v-col>
+
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Status</label>
+                        <Field name="Status" v-model="status" :class="{'border-red-600': errors.Status}">
+                            <select :class="{'form-control': true, 'border-red-600': errors.Status}" name="Role" placeholder="Select User Status" v-model="status">
+                                <option value="">Select Status</option>
+                                <option value="1">Active</option>
+                                <option value="0">In-Active</option>
+                            </select>
+                        </Field>
+                        <span class="text-red-600" v-if="errors.Status">Status can not be empty</span>
+                    </v-col>
+                </v-row>
+
+                <v-row v-if="toggleComponent">
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Password</label>
+                        <Field type="password" id="input-username" name="Password" :class="{'form-control': true, 'border-red-600': errors.Password}" placeholder="Password" v-model.trim="userPassword"/>
+                        <span class="text-red-600" v-if="errors.Password">Password can not be empty</span>
+                    </v-col>
+
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Confirm Password</label>
+                        <Field type="password" id="input-username" name="Confirmpass" :class="{'form-control': true, 'border-red-600': errors.Confirmpass || invalidConfirmPassword}" placeholder="Confirm Password" @blur="confirmPasswordValid" v-model="confirmPassword"/>
+                        <span class="text-red-600" v-if="errors.Confirmpass">Confirm Password can not be empty</span>
+                        <span class="text-red-600" v-if="invalidConfirmPassword">Invalid Confirm Password can not be empty</span>
+                    </v-col>
+                </v-row>
+                
+                <v-row>
+                    <v-col cols="12" sm="12" md="12" lg="12">
+                        <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">{{toggleComponent ? 'Save' : 'Update'}}</v-btn>    
+                        <v-btn type="reset" v-if="toggleComponent" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-backup-restore">Reset</v-btn>    
+                    </v-col>
+                </v-row>
+            </Form>                    
+        </v-card>
     </div>
 </template>
 
 <script>
 import * as yup from 'yup';
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Form, Field } from 'vee-validate';
 export default {
     components: {
-        Form, Field, ErrorMessage
+        Form, Field
     },
     data() {
         return {
@@ -133,7 +112,7 @@ export default {
             selectedCountry: '91',
             phone_number: '',
             roleId: '',
-            status: '1',
+            status: '',
             showLoader: false,
             roles: [],
             countryDetails: [],
@@ -252,8 +231,7 @@ export default {
                     })
                     .catch(error => {
                         console.log(error.response);
-                        this.backendErrorMessage = error.response.data.message;
-                        this.backendErrorMessage = error.response.data.errors[0];
+                        this.backendErrorMessage = error.message;
                         this.showLoader = false;
                     }); 
                 }
@@ -335,15 +313,3 @@ export default {
 }
 </script>
 
-<style  scoped>
-.border-red-600 {
-    --border-opacity: 1;
-    border-color: #e53e3e;
-    border-color: rgba(229,62,62,var(--border-opacity));
-}
-.text-red-600 {
-    --text-opacity: 1;
-    color: #e53e3e;
-    color: rgba(229,62,62,var(--text-opacity));
-}
-</style>

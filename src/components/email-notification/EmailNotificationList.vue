@@ -1,179 +1,178 @@
 <template>
-    <div>
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Email Notification</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right">
-                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'" @click.prevent="createActivity">Add New Record</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="bg-default main-content-height">
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-row>
-                                                    <v-col class="d-flex search_width" cols="12" sm="4">
-                                                        <div class="ms-auto search-input position-relative">
-                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchData">
-                                                        </div>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-card-title>
-                                            <v-data-table class="table-hover-class elevation-1 adding-font-size table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!--  @current-items="currentItems"  -->
-                                                <template v-slot:[`item.action`]="{ item }">
-                                                    <td>
-                                                        <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="edit(item.selectable.id)">
-                                                            <img src="/assets/img/icons/edit.svg" class="img-width" title="Edit">
-                                                        </button>
-                                                        <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deleteData(item.selectable.id)">
-                                                            <img src="/assets/img/icons/bin.svg" class="img-width" title="Delete">
-                                                        </button>
-                                                    </td>
-                                                </template>
-                                                <template v-slot:top v-if="selected.length > 0">
-                                                    <div class="p-2 text-right">
-                                                        <v-btn
-                                                            elevation="2"
-                                                            variant="outlined"
-                                                            raised
-                                                            rounded="xl"
-                                                            class="me-1 disable-button"
-                                                            :disabled="permissions.delete_auth == '0'"
-                                                            @click="deleteSelected"
-                                                        >Remove Selected</v-btn>
-                                                    </div>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Email Notification</span>
+
+                        <v-spacer />
+                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Email Notification List
+                            <v-spacer></v-spacer>
+                            <div class="col-3 pr-1">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchData"/>
                             </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </v-card-title>
+
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!--  @current-items="currentItems"  -->
+                            <template v-slot:[`item.action`]="{ item }">  
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn> 
+                            </template>
+                            <template v-slot:top v-if="selected.length > 0">
+                                <div class="p-2 text-right">
+                                    <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                        Remove
+                                    </v-btn>
+                                </div>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <!-- Create & Update RM AMEX Plum Activity-->
         <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Email Notification User</h5>
+                        <h5 class="modal-title">{{activityType}} Email Notification User</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card-body">
-                            <div class="col-12">
-                                <Form @submit="saveEmailNotificationUser" :validation-schema="schema" v-slot="{ errors }">
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <label class="form-control-label" for="input-username">Email</label>
-                                            <Field type="text" id="input-username" name="Email" :class="{'form-control': true , 'border-red-600':errors.Email }" v-model="activity.email"/>
-                                            <ErrorMessage class="text-red-600" name="Email"/>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Daily Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.daily_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Monthly Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.monthly_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Weekly Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.weekly_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">URL Uptime Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.url_uptime_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Account Monitoring Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.account_monitoring_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Network Monitoring Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.networks_monitoring_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Ads Issue Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.ads_issue_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Domain Expires Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.domain_expires_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Payment Declined Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.payment_declined_report"></v-select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Website Speed Test Report</label>
-                                                <v-select :class="{'form-control': true }" :items="accountTypeList" v-model="activity.speed_test_report"></v-select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Form>
-                            </div>
+                    </div>  
+
+                    <Form @submit="saveEmailNotificationUser" :validation-schema="schema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Email</label>
+                                    <Field name="Email" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model="activity.email"/>
+                                    <span class="text-red-600" v-if="errors.Email">Email can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Daily Report</label>
+                                    <Field name="DailyReport" v-model="activity.daily_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.DailyReport}" :items="accountTypeList" v-model="activity.daily_report" placeholder="Select Daily Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.DailyReport">Daily Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Monthly Report</label>
+                                    <Field name="MonthlyReport" v-model="activity.monthly_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.MonthlyReport}" :items="accountTypeList" v-model="activity.monthly_report" placeholder="Select Monthly Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.MonthlyReport">Monthly Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Weekly Report</label>
+                                    <Field name="WeeklyReport" v-model="activity.weekly_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.WeeklyReport}" :items="accountTypeList" v-model="activity.weekly_report" placeholder="Select Weekly Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.WeeklyReport">Weekly Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">URL Uptime Report</label>
+                                    <Field name="url_uptime_report" v-model="activity.url_uptime_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.url_uptime_report}" :items="accountTypeList" v-model="activity.url_uptime_report" placeholder="Select URL Uptime Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.url_uptime_report">URL Uptime Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Account Monitoring Report</label>
+                                    <Field name="account_monitoring_report" v-model="activity.account_monitoring_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.account_monitoring_report}" :items="accountTypeList" v-model="activity.account_monitoring_report" placeholder="Select Account Monitoring Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.account_monitoring_report">Account Monitoring Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Network Monitoring Report</label>
+                                    <Field name="networks_monitoring_report" v-model="activity.networks_monitoring_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.networks_monitoring_report}" :items="accountTypeList" v-model="activity.networks_monitoring_report" placeholder="Select Network Monitoring Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.networks_monitoring_report">Network Monitoring Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Ads Issue Report</label>
+                                    <Field name="ads_issue_report" v-model="activity.ads_issue_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.ads_issue_report}" :items="accountTypeList" v-model="activity.ads_issue_report" placeholder="Select Ads Issue Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.ads_issue_report">Ads Issue Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Domain Expires Report</label>
+                                    <Field name="domain_expires_report" v-model="activity.domain_expires_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.domain_expires_report}" :items="accountTypeList" v-model="activity.domain_expires_report" placeholder="Select Domain Expires Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.domain_expires_report">Domain Expires Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Payment Declined Report</label>
+                                    <Field name="payment_declined_report" v-model="activity.payment_declined_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.payment_declined_report}" :items="accountTypeList" v-model="activity.payment_declined_report" placeholder="Select Payment Declined Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.payment_declined_report">Payment Declined Report can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Website Speed Test Report</label>
+                                    <Field name="speed_test_report" v-model="activity.speed_test_report">
+                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.speed_test_report}" :items="accountTypeList" v-model="activity.speed_test_report" placeholder="Select Website Speed Test Report"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.speed_test_report">Website Speed Test Report can not be empty</span>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -182,13 +181,12 @@
 
 <script>
 import * as yup from 'yup';
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Form, Field } from 'vee-validate';
 export default {
     // props: [ 'list'],
     components: {
         Form, 
-        Field, 
-        ErrorMessage
+        Field
     },
     data() {
         return {
@@ -260,6 +258,16 @@ export default {
         schema() {
             return yup.object({
                 Email: yup.string().required().email(),
+                DailyReport: yup.string().required(),
+                MonthlyReport: yup.string().required(),
+                WeeklyReport: yup.string().required(),
+                url_uptime_report: yup.string().required(),
+                account_monitoring_report: yup.string().required(),
+                networks_monitoring_report: yup.string().required(),
+                ads_issue_report: yup.string().required(),
+                domain_expires_report: yup.string().required(),
+                payment_declined_report: yup.string().required(),
+                speed_test_report: yup.string().required(),
             });
         },
     },
@@ -482,12 +490,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    .adding-font-size tbody tr td{
-        font-size: 14px !important;
-    }
-    .img-width {
-        width: 25px;
-    }
-</style>

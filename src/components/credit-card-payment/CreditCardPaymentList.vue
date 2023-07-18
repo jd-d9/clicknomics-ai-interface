@@ -71,19 +71,19 @@
                                 {{item.selectable.id}}
                             </template>
                             <template v-slot:[`item.payment_date`]="{ item }">
-                                ${{item.selectable.payment_date}}
+                                {{item.selectable.payment_date}}
                             </template>
                             <template v-slot:[`item.from_account`]="{ item }">
-                                ${{item.selectable.from_account}}
+                                {{item.selectable.from_account}}
                             </template>
                             <template v-slot:[`item.to_account`]="{ item }">
-                                ${{item.selectable.to_account}}
+                                {{item.selectable.to_account}}
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">
                                 ${{item.selectable.amount}}
                             </template>
                             <template v-slot:[`item.status`]="{ item }">
-                                ${{item.selectable.status}}
+                                {{item.selectable.status}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon  @click.prevent="this.$router.push('/accounting/creditCardPayments/' + item.selectable.id + '/edit')" :disabled="permissions.update_auth == '0'">
@@ -93,7 +93,7 @@
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon color="red-darken-4" @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
@@ -415,9 +415,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-    .img-width {
-        width: 30px;
-    }
-</style>
