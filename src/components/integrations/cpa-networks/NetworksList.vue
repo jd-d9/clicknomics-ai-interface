@@ -125,39 +125,35 @@
                                 <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                             </button>
                         </div>
-                        <Form :validation-schema="editSchema" v-slot="{ errors }">
+                        <Form  @submit="updateCpaNetworkist" :validation-schema="schema" v-slot="{ errors }">
                             <div class="modal-body">
                                 <v-row class="align-center">
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                         <label class="form-control-label" for="input-username">Network Name</label>
                                         <Field type="text" id="input-username" name="NetworkName" :class="{'form-control': true, 'border-red-600': errors.NetworkName}" placeholder="Name" v-model.trim="network_name"/>
-                                        <span class="text-red-600" v-if="errors.NetworkName">Network Name can not be empty</span>
+                                        <span class="text-red-600" v-if="errors.NetworkName">Network is required field</span>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                         <label class="form-control-label" for="input-username">Email</label>
-                                        <Field type="text" id="input-username" name="NetworkName" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model.trim="email"/>
-                                        <span class="text-red-600" v-if="errors.NetworkName">Email can not be empty</span>
+                                        <Field type="text" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model.trim="email"/>
+                                        <ErrorMessage class="text-red-600" name="Email"/>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                         <label class="form-control-label" for="input-username">Company</label>
-                                        <Field type="text" id="input-username" name="NetworkName" :class="{'form-control': true, 'border-red-600': errors.Company}" placeholder="Company" v-model.trim="company"/>
-                                        <span class="text-red-600" v-if="errors.NetworkName">Company can not be empty</span>
+                                        <input type="text" id="input-username" name="Company" :class="{'form-control': true}" placeholder="Company" v-model.trim="company"/>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                         <label class="form-control-label" for="input-username">Notes</label>
-                                        <Field name="Notes" v-model="notes">
-                                            <textarea :class="{'form-control': true, 'border-red-600': errors.Notes}" name="Notes" rows="5" v-model="notes"></textarea>
-                                        </Field>
-                                        <span class="text-red-600" v-if="errors.Notes">Notes can not be empty</span>
+                                        <textarea :class="{'form-control': true}" name="Notes" rows="5" v-model="notes"></textarea>
                                     </v-col>
                                 </v-row>
                             </div>
                             <div class="modal-footer">
                                 <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="updateCpaNetworkist">Save</v-btn>    
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                     <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="close">Close</v-btn>
                                 </v-col>
                             </div>
@@ -171,11 +167,13 @@
 
 <script>
 import * as yup from 'yup';
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import moment from 'moment';
 export default {
     components: {
-        Form, Field
+        Form, 
+        Field,
+        ErrorMessage
     },
     data() {
         return {
@@ -213,9 +211,6 @@ export default {
             return yup.object({
                 NetworkName: yup.string().required(),
                 Email: yup.string().required().email(),
-                Company: yup.string().required(),
-                Role: yup.string().required(),
-                Status: yup.string().required(),
             });
         },
     },
@@ -229,20 +224,6 @@ export default {
         cancel() {
             this.accountIdToDelete = '';
             this.confirmationBox = false;
-        },
-        // edit network
-        edit(id) {
-            console.log(id)
-            this.accountIdEdit = id;
-            this.showEditForm = true;
-            const data = this.linkedNewtworks.find((val) => {
-                return val.id == id
-            });
-            console.log(data)
-            this.network_name = data.name;
-            this.notes = data.notes ? data.notes : '';
-            this.company = data.company ? data.company : '';
-            this.email = data.email;
         },
         // close edit modal
         close() {
@@ -307,6 +288,20 @@ export default {
                 });
                 this.showLoader = false;
             });
+        },
+        // edit network
+        edit(id) {
+            console.log(id)
+            this.accountIdEdit = id;
+            this.showEditForm = true;
+            const data = this.linkedNewtworks.find((val) => {
+                return val.id == id
+            });
+            console.log(data)
+            this.network_name = data.name;
+            this.notes = data.notes ? data.notes : '';
+            this.company = data.company ? data.company : '';
+            this.email = data.email;
         },
         // update network list
         updateCpaNetworkist() {

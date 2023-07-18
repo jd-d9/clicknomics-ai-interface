@@ -8,9 +8,10 @@
                             <nav aria-label="breadcrumb" class="d-none d-block ">
                                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                                     <li class="breadcrumb-item">
-                                        <a href="/dashboard"><i class="fas fa-home"></i></a>
+                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
                                     </li>
-                                    <li class="breadcrumb-item active" aria-current="page">{{ this.$route.params.routeName }}</li>
+                                    <li class="breadcrumb-item active" aria-current="page" v-if="toggleElement">{{ this.$route.params.routeName }}</li>
+                                    <li class="breadcrumb-item active" aria-current="page" v-else>Archived Reports Facebook</li>
                                 </ol>
                             </nav>
                         </div>
@@ -37,13 +38,18 @@
 export default {
     data() {
         return {
-
+            toggleElement: true,
         }
     },
     methods: {
 
     },
     mounted() {
+        if(window.location.pathname == '/reporting/archivedReports/facebook') {
+            this.toggleElement = false;
+        }else {
+            this.toggleElement = true;
+        }
         console.log(this.$route.params.routeName, 'Route Name');
     }
 }

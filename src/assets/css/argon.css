@@ -7083,3 +7083,7 @@ select{
     justify-content: center;
 }
 
+.date_picker input {
+    background-color: transparent !important;
+}
+

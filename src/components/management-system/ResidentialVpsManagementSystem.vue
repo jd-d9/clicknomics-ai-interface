@@ -520,7 +520,6 @@ export default {
             })
             .catch(error => {
                 console.log(error)
-                // this.backendErrorMessage = error.response.data.errors[0]
                 this.$toast.open({
                     message: error.message,
                     position: 'top-right',

@@ -187,10 +187,18 @@ export default {
                 if(response.data.success) {
                     this.backendValidationMessage = '';
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                this.backendValidationMessage = error.response.data.errors[0];
+                this.backendValidationMessage = error.message;
                 console.log(error);
                 this.showLoader = false;
             });
@@ -220,6 +228,14 @@ export default {
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
+                    });
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
                     });
                     this.showLoader = false;
                 }

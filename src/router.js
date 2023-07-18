@@ -59,6 +59,7 @@ import IpmChaseList from './components/bank-accounts/ipm-chase/IpmChaseList.vue'
 import IpmChaseForm from './components/bank-accounts/ipm-chase/IpmChaseForm.vue';
 import IpmOsscList from './components/bank-accounts/ipm-ossc/IpmOsscList.vue';
 import IpmOsscForm from './components/bank-accounts/ipm-ossc/IpmOsscForm.vue';
+import ArchivedReportMicrosoftAdsList from './components/archived-reports/ArchivedReportMicrosoftAdsList.vue';
 import ArchivedReportGoogleAdsList from './components/archived-reports/ArchivedReportGoogleAdsList.vue';
 import ArchivedReportNetwoksList from './components/archived-reports/ArchivedReportNetwoksList.vue';
 import ArchivedReportManualNetworksList from './components/archived-reports/ArchivedReportManualNetworksList.vue';
@@ -166,9 +167,11 @@ const router = createRouter({
         {path: '/bank_accounts/onesscorp/create', component: IpmOsscForm, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/:id/edit', component: IpmOsscForm, meta: {auth: true}},
         // archived reports module
+        {path: '/reporting/archivedReports/microsoft', component: ArchivedReportMicrosoftAdsList, meta: {auth: true}},
         {path: '/reporting/archivedReports/google', component: ArchivedReportGoogleAdsList, meta: {auth: true}},
         {path: '/reporting/archivedReports/networks', component: ArchivedReportNetwoksList, meta: {auth: true}},
         {path: '/reporting/archivedReports/manualNetworks', component: ArchivedReportManualNetworksList, meta: {auth: true}},
+        {path: '/reporting/archivedReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         // not found page
