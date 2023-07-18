@@ -1,67 +1,54 @@
 <template>
-    <div>
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Integrate Cloudways</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 col-5 text-right">
-                            <router-link to="/settings/cloudways" class="btn btn-lg btn-neutral btn_animated">View Cloudways Data</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="bg-default main-content-height">
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="col-12">
-                                <Form @submit="integrateCloudwaysServer" :validation-schema="schema" v-slot="{ errors }">
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Email</label>
-                                                <Field type="text" id="input-username" name="Email" :class="{'form-control': true , 'border-red-600':errors.Email}" placeholder="Email" v-model="email"/>
-                                                <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
-                                                <ErrorMessage class="text-red-600" name="Email"/>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">API KEY</label>
-                                                <Field type="text" id="input-username" name="apiKey" :class="{'form-control': true , 'border-red-600':errors.apiKey}" placeholder="Name" v-model="api_key"/>
-                                                <span class="text-red-600" v-if="errors.apiKey">Api key can not be empty</span>
-                                                <!-- <ErrorMessage class="text-red-600" name="apiKey"/> -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Integrate</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Integrate Cloudways</span>
+
+                        <v-spacer />
+                        <v-btn href="/settings/cloudways" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                            Back
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between">
+                            Integrate Cloudways
+                        </v-card-title>
+                        <v-divider class="border-opacity-100 my-4" color="success" /> 
+
+                        <Form @submit="integrateCloudwaysServer" :validation-schema="schema" v-slot="{ errors }">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Email</label>
+                                    <Field type="text" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model="email"/>
+                                    <ErrorMessage class="text-red-600" name="Email"/>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">API KEY</label>
+                                    <Field type="text" id="input-username" name="apiKey" :class="{'form-control': true, 'border-red-600': errors.apiKey}" placeholder="API KEY" v-model="api_key"/>
+                                    <span class="text-red-600" v-if="errors.apiKey">Api key can not be empty</span>
+                                </v-col> 
+
+                                <v-col cols="12" sm="12" md="12" lg="12">
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                </v-col> 
+                            </v-row>
+                        </Form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -127,7 +114,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>
