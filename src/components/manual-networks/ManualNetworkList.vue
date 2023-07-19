@@ -1,95 +1,92 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Manual Network List</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <!-- <div class="col-lg-6 col-5 text-right">
-                            <a href="/admin/img/doc/manual-networks-metrics.csv" class="btn btn-lg btn-neutral btn_animated" download>
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </a>
-                            <a href="#exampleModalCenter"  data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-lg btn-neutral btn_animated">Import CSV</a>
-                            <a href="/networks/manualNetworks/create" class="btn btn-lg btn-neutral btn_animated">Add Revenue</a>
-                        </div> -->
-                        <div class="col-lg-6 col-5 text-right">
-                            <button @click.prevent="createActivity" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add Manual Network</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-spacer></v-spacer>
-                                                <v-row>
-                                                    <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                                    <div class="col-3 ms-auto mt-2 add-height">
-                                                        <div class="ms-auto search-input position-relative">
-                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
-                                                        </div>
-                                                    </div>
-                                                </v-row>
-                                            </v-card-title>
-                                            <v-data-table class="table-hover-class" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search"  @current-items="currentItems" :itemsPerPage="itemsPerPage">
-                                                <template v-slot:item="{ item }">
-                                                    <tr class="table-body-back">
-                                                        <td>{{item.selectable.id}}</td>
-                                                        <td>{{item.selectable.network}}</td>
-                                                        <td>{{item.selectable.email ? item.selectable.email : '-'}}</td>
-                                                        <td>{{item.selectable.platform_type ? item.selectable.platform_type : '-'}}</td>
-                                                        <td>{{item.selectable.company ? item.selectable.company : '-'}}</td>
-                                                        <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
-                                                        <td>{{format_date(item.selectable.created_at)}}</td>
-                                                        <td>
-                                                            <button @click.prevent="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'" class="disable-button">
-                                                                <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                            </button>
-                                                            <button @click.prevent="showConfirmation(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
-                                                                <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Manual Network</span>
+                        <v-spacer />
+                        <!-- <v-btn to="/admin/img/doc/manual-networks-metrics.csv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                            Demo.csv
+                        </v-btn>
+
+                        <v-btn to="#exampleModalCenter" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                            Import CSV
+                        </v-btn> -->
+
+                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Manual Network List
+                            <v-spacer></v-spacer>
+                            <div class="col-3 pr-1">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
                             </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search"  @current-items="currentItems" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.id`]="{ item }">
+                                {{item.selectable.id}}
+                            </template>
+                            <template v-slot:[`item.network`]="{ item }">
+                                {{item.selectable.network}}
+                            </template>
+                            <template v-slot:[`item.email`]="{ item }">
+                                {{item.selectable.email ? item.selectable.email : '-'}}
+                            </template>
+                            <template v-slot:[`item.platform_type`]="{ item }">
+                                {{item.selectable.platform_type ? item.selectable.platform_type : '-'}}
+                            </template>
+                            <template v-slot:[`item.company`]="{ item }">
+                                {{item.selectable.company ? item.selectable.company : '-'}}
+                            </template>
+                            <template v-slot:[`item.notes`]="{ item }">
+                                {{item.selectable.notes ? item.selectable.notes : '-'}}
+                            </template>
+                            <template v-slot:[`item.created_at`]="{ item }">
+                                {{format_date(item.selectable.created_at)}}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="showConfirmation(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>                                                            
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <!-- Start confirmation alert box -->
         <template>
             <v-row justify="center">
@@ -196,7 +193,7 @@ export default {
                 { title: 'Company', key: 'company' },
                 { title: 'Notes', key: 'notes' },
                 { title: 'Date Added', key: 'created_at' },
-                { title: 'Action',  key: '', sortable: false},
+                { title: 'Action',  key: 'action', sortable: false},
             ],
             currentItemsTable: [],
             itemsPerPage: -1,

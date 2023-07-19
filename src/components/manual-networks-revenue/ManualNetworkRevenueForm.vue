@@ -13,7 +13,7 @@
                         <span>Manual Network</span>
 
                         <v-spacer />
-                        <v-btn href="/networks/manualNetworks/list" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/networks/manualNetworks/list" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
