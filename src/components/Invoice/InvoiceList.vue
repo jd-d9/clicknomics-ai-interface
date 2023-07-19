@@ -25,21 +25,18 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Invoice
-                            <v-row>
+                            Invoice List
+                            <v-row class="d-flex justify-space-between align-center">
                                 <v-spacer></v-spacer>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
                                     <!-- <select v-model="networkSelected" class="form-control serch_table">
                                         <option disabled selected>Network Filter</option>
                                         <option :value="val.title" v-for="(val, index) of networkFilter" :key="index">
                                             {{ val.title }}
                                         </option>
                                     </select> -->
-
                                     <v-select clearable variant="outlined" placeholder="Network Filter" :items="networkFilter" v-model="networkSelected"></v-select>
-                                </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
                                     <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchInvoice"/>

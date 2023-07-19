@@ -1,120 +1,118 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">IPM Chase (Revenue) Payments List</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right">
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </router-link>
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Import CSV</router-link>
-                            <router-link to="/bank_accounts/ipmchase/create" class="btn btn-lg btn-neutral btn_animated">Add New Record</router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title class="d-block">
-                                                <v-row>
-                                                    <v-col class="d-flex" cols="12" sm="3">
-                                                        <v-select solo :items="descriptionFilter" label="Description Filter" :clearable="true" v-model="descriptionValue" @update:modelValue="getIpmChaseReport"></v-select>
-                                                    </v-col>
-                                                    <v-col class="d-flex" cols="12" sm="3">
-                                                        <v-select solo :items="transactionTypeFilter" label="Transaction Type Filter" :clearable="true" v-model="transactionTypeValue" @update:modelValue="getIpmChaseReport"></v-select>
-                                                    </v-col>
-                                                    <v-col class="d-flex justify-content-end" cols="12" sm="3">
-                                                        <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                                    </v-col>
-                                                    <v-col class="d-flex search_width" cols="12" sm="3">
-                                                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-card-title>
-                                            <v-data-table class="table-hover-class table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
-                                                <template v-slot:[`item.amount`]="{ item }">
-                                                    <td>{{$filters.currencyUSD(item.selectable.amount)}}</td>
-                                                </template>
-                                                <template v-slot:[`item.network`]="{ item }">
-                                                    <td>{{item.selectable.network ? item.selectable.network : '-' }}</td>
-                                                </template>
-                                                <template v-slot:[`item.balance`]="{ item }">
-                                                    <td>{{item.selectable.balance ? item.selectable.balance : '-' }}</td>
-                                                </template>
-                                                <template  v-slot:[`item.description`]="{ item }">
-                                                    <td class="text-ellipsis w-200">{{item.selectable.description}}</td>
-                                                </template>
-                                                <template v-slot:[`item.type`]="{ item }">
-                                                    <td>{{item.selectable.type ? item.selectable.type : '-' }}</td>
-                                                </template>
-                                                <template v-slot:[`item.action`]="{ item }">
-                                                    <td>
-                                                        <router-link to="" @click="edit(item.selectable.id)">
-                                                            <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                        </router-link>
-                                                        <router-link to="" @click="deleteData(item.selectable.id)">
-                                                            <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                        </router-link>
-                                                        <router-link to="" @click="view(item.selectable.id)">
-                                                            <img src="/assets/img/icons/eye.svg" class="icon-width">
-                                                        </router-link>
-                                                    </td>
-                                                </template>
-                                                <template v-slot:tbody v-if="dataMetrics.length > 0">
-                                                    <tr class="total_table">
-                                                        <td>Totals</td>
-                                                        <td>-</td>
-                                                        <td>{{ sumField }}</td>
-                                                        <!-- <td>{{ sumField | toCurrency }}</td> -->
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                    </tr>
-                                                </template>
-                                                <template v-slot:top v-if="selected.length > 0">
-                                                    <div class="p-2 text-right">
-                                                        <v-btn class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty" @click="deleteSelected">
-                                                            Remove Selected
-                                                        </v-btn>
-                                                    </div>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>IPM Chase (Revenue) Payments</span>
+                        <v-spacer />
+                        <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                            Demo.csv
+                        </v-btn>
+
+                        <v-btn @click="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                            Import CSV
+                        </v-btn>
+
+                        <v-btn to="/bank_accounts/ipmchase/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    IPM Chase (Revenue) Payments List
+                                </v-col>
+                            </v-row>                            
+                            <v-row class="d-flex align-center justify-end">
+                                <v-spacer></v-spacer>
+                                <div v-if="selected.length > 0" class="mr-2">
+                                    <v-btn @click="deleteSelected" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                        Remove
+                                    </v-btn>
                                 </div>
-                            </div>
-                        </div>
-                    </v-app>
-                </div>
-            </div>
-        </div>
+                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select :items="descriptionFilter" clearable variant="outlined" placeholder="Description Filter" v-model="descriptionValue" @update:modelValue="getIpmChaseReport"></v-select>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select :items="transactionTypeFilter" clearable variant="outlined" placeholder="Transaction Type Filter" v-model="transactionTypeValue" @update:modelValue="getIpmChaseReport"></v-select>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal pr-0">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
+                                </v-col>
+                            </v-row>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.amount`]="{ item }">
+                                {{$filters.currencyUSD(item.selectable.amount)}}
+                            </template>
+                            <template v-slot:[`item.network`]="{ item }">
+                                {{item.selectable.network ? item.selectable.network : '-' }}
+                            </template>
+                            <template v-slot:[`item.balance`]="{ item }">
+                                {{item.selectable.balance ? item.selectable.balance : '-' }}
+                            </template>
+                            <template  v-slot:[`item.description`]="{ item }">
+                                <div class="text-ellipsis w-200">{{item.selectable.description}}</div>
+                            </template>
+                            <template v-slot:[`item.type`]="{ item }">
+                                {{item.selectable.type ? item.selectable.type : '-' }}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click="edit(item.selectable.id)">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click="deleteData(item.selectable.id)">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>  
+                                
+                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click="view(item.selectable.id)">
+                                    <v-icon color="deep-purple-darken-4">
+                                        mdi-eye
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">View</v-tooltip>
+                                </v-btn>  
+                            </template>
+                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                    <td>Totals</td>
+                                    <td></td>
+                                    <td>${{ sumField }}</td>
+                                    <!-- <td>{{ sumField | toCurrency }}</td> -->
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <!-- Start Import CSV Modal -->
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -122,7 +120,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Import IPM Chase (Revenue) Payments List</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <form @submit.prevent="uploadCsv">
@@ -152,8 +150,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Report</h5>
-                        <button type="button" class="close" aria-label="Close" @click.prevent="closeViewModal">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close" aria-label="Close" data-dismiss="modal">
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -199,7 +197,7 @@ export default {
                 { title: 'Transaction Type', key: 'transaction_type' },
                 { title: 'Balance', key: 'balance' },
                 { title: 'Type', key: 'type' },
-                { title: 'Action', key: 'action' },
+                { title: 'Action', key: 'action', align: 'center' },
             ],
             dateRange: {startDate, endDate},
             file: '',

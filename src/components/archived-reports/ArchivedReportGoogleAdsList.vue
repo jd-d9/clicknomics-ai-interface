@@ -20,9 +20,9 @@
                             Archived Reports Google List
                             <v-spacer></v-spacer>
                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                            <div class="col-3 pr-1">
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
-                            </div>
+                            </v-col>
                         </v-card-title>
 
                         <!-- data table component -->

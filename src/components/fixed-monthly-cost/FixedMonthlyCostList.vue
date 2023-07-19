@@ -31,14 +31,22 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Fixed Monthly Cost List
                             <v-spacer></v-spacer>
-                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                            <div class="col-3 pr-1">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchCosts"/>
+                            <div v-if="selected.length > 0" class="mr-2">
+                                <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                    Remove
+                                </v-btn>
+                                <v-btn @click="openCreateUpdateData" :disabled="permissions.update_auth == '0'" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-pencil">
+                                    Edit
+                                </v-btn>
                             </div>
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchCosts"/>
+                            </v-col>                            
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="dataMetrics" :itemsPerPage="itemsPerPage" show-select v-model="selected">
+                        <v-data-table class="table-hover-class mt-3" :headers="headers" :items="dataMetrics" :itemsPerPage="itemsPerPage" show-select v-model="selected">
                             <template v-slot:[`item.date`]="{ item }">
                                 {{item.selectable.date}}
                             </template>
@@ -60,7 +68,7 @@
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn>                                                            
                             </template>
-                            <template v-slot:top v-if="selected.length > 0">
+                            <!-- <template v-slot:top v-if="selected.length > 0">
                                 <div class="p-2 text-right">
                                     <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
                                         Remove
@@ -69,7 +77,7 @@
                                         Edit
                                     </v-btn>
                                 </div>
-                            </template>
+                            </template> -->
                             <template v-slot:tbody v-if="dataMetrics.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td></td>
@@ -125,7 +133,7 @@
             </div>
         </div>
         <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:600px">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Bulk Operation Cost</h5>
@@ -133,35 +141,14 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <!-- <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
-                        <div class="modal-body">
-                            <v-row v-for="(item, index) in seletedForEdit" :key="index">
-                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
-                                    <label class="form-control-label" for="input-username">Date</label>
-                                    <datepicker name="date" v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
-                                </v-col>
-                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
-                                    <label class="form-control-label" for="input-username">Amount</label>
-                                    <Field name="Amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Amount}" placeholder="Add Amount" v-model="item.amount"/>
-                                    <ErrorMessage class="text-red-600" name="Amount"/>
-                                </v-col>
-                            </v-row>
-                        </div>
-                        <div class="modal-footer">
-                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
-                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
-                            </v-col>
-                        </div>
-                    </Form> -->
                     <form @submit.prevent="editSelected">
                         <div class="modal-body">
                             <v-row v-for="(item, index) in seletedForEdit" :key="index">
-                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Date</label>
                                     <datepicker name="date" v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Amount</label>
                                     <input name="Amount" type="number" id="input-username" :class="{'form-control': true}" placeholder="Add Amount" v-model="item.amount"/>
                                 </v-col>

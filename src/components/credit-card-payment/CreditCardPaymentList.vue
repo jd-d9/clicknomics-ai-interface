@@ -32,11 +32,12 @@
                         <v-card-title>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
-                                    Credit Cards Payments
+                                    Credit Cards Payments List
                                 </v-col>
                             </v-row>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                            <v-row class="d-flex align-center justify-end">
+                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
                                     <!-- <select v-model="fromAccount" @change="filterFromAccount" class="form-control serch_table">
                                         <option disabled selected>From Account Filter</option>
                                         <option :value="val.title" v-for="(val, index) of fromAccountFilter" :key="index">
@@ -46,7 +47,7 @@
                                     <v-select clearable variant="outlined" placeholder="From Account Filter" :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="filterFromAccount"
                                     ></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
                                     <!-- <select v-model="toAccount" @change="filterToAccount" class="form-control serch_table">
                                         <option disabled selected>To Account Filter</option>
                                         <option :value="val.title" v-for="(val, index) of toAccountFilter" :key="index">
@@ -55,10 +56,7 @@
                                     </select> -->
                                     <v-select clearable variant="outlined" placeholder="To Account Filter"  :items="toAccountFilter" v-model="toAccount" @update:modelValue="filterToAccount"></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal ">
                                     <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
                                 </v-col>
                             </v-row>                          
@@ -114,7 +112,6 @@
                         </v-data-table>
                     </v-card>
                 </v-col>
-
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-content-center align-center">
