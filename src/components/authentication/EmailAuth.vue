@@ -31,7 +31,7 @@
                                     <div class="text-center logo_responsive">
                                         <img src="/assets/img/brand/logo.png" class="image-width">
                                     </div>
-                                    <form class="mt-5 login_form" @submit.prevent="sendCodeInEmail">
+                                    <form class="mt-5 login_form" @submit.prevent="sendCodeInEmail" v-if="toggleComponent">
                                         <div id="qrcode" class="text-center">
                                             <span class="d-block">
                                                 Verify via email address?
@@ -40,6 +40,23 @@
                                             <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Send Auth Code In Email.</button>
                                         </div>
                                     </form>
+                                    <Form class="mt-5 login_form" @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }" v-else>
+                                        <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
+                                        <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
+                                        <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                        <div class="form-group">
+                                            <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
+                                            <select class="select-option" placeholder="User Status" v-model="rememberVerification">
+                                                <option value="1">Yes</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </div>
+                                        <div class="for-responsive d-flex justify-content-between">
+                                            <router-link to="/authenticator/validate" class="float-right mb-2">Try Another Way</router-link>
+                                            <a href="javascript:void(0)" class="float-right mb-2" @click.prevent="sendCodeInEmail">Resend Code</a>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
+                                    </Form>
                                 </div>
                             </div>
                         </div>
@@ -51,12 +68,22 @@
 </template>
 
 <script>
+    import * as yup from 'yup';
+    import { Form, Field } from 'vee-validate';
     export default {
+        components: {
+            Form, Field
+        },
         data() {
             return {
                 // images: {
                 //     logo: require('/assets/img/brand/logo.png'),
                 // },
+                authCode: '',
+                key: '',
+                verifiedBy: '',
+                rememberVerification: 1,
+                toggleComponent: true,
                 showLoader: false,
             }
         },
@@ -70,6 +97,13 @@
                 this.$router.push('/login');
             }
         }, 
+        computed: {
+            schema() {
+                return yup.object({
+                    Authentication: yup.string().required(),
+                });
+            },
+        },
         methods: {
             // send validation code in email(try another way method)
             sendCodeInEmail() {
@@ -88,7 +122,7 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        this.$router.push('/authenticator/validate');
+                        this.toggleComponent = false;
                         this.showLoader = false;
                     }
                 })
@@ -100,6 +134,39 @@
                         type: 'error'
                     });
                     console.log(error)
+                    this.showLoader = false;
+                });
+            },
+            // check authentication code and allow user to logged in
+            checkCodeAndAuthUser() {
+                this.showLoader = true;
+                this.axios.post(this.$api + '/authenticator/validateTwoFactorCode', {
+                    two_factor_code: this.authCode,
+                    remember_2fa: this.rememberVerification,
+                    email: sessionStorage.getItem('Email'),
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'You are successfully logged in',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        sessionStorage.setItem('isTwoFactorVerified', true);
+                        this.showLoader = false;
+                        this.$router.push('/dashboard');
+                        this.backendErrorMessage = '';
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.backendErrorMessage = error.message;
                     this.showLoader = false;
                 });
             }

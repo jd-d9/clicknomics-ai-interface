@@ -148,7 +148,7 @@
                                         <v-row>
                                             <v-spacer />
                                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                                <date-range-picker class="date_picker" :value="selectedRangeTwo" @update:value="updateRangeTwo"></date-range-picker>
                                             </v-col>
                                         </v-row>
 

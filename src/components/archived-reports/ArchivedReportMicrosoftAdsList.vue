@@ -135,7 +135,7 @@
                                                                 <div class="form-group">
                                                                     <label class="form-control-label" for="input-username">Select Management Type</label>
                                                                     <Field name="Type" v-model="managementModal.type">
-                                                                        <v-select @change="updateData(managementModal.type)" name="Type" :class="{'form-control': true , 'border-red-600':errors.Type }" :items="managementSystemType" v-model="managementModal.type"></v-select>
+                                                                        <v-select @update:modelValue="updateData(managementModal.type)" name="Type" :class="{'form-control': true , 'border-red-600':errors.Type }" :items="managementSystemType" v-model="managementModal.type" item-value="key"></v-select>
                                                                     </Field>
                                                                     <span class="text-red-600" v-if="errors.Type">Management type can not be empty</span>
                                                                 </div>
@@ -209,16 +209,20 @@ export default {
             itemsPerPage: -1,
             managementSystemType: [
                 {
-                    title: 'Local'
+                    title: 'Local',
+                    key: 'local'
                 },
                 {
-                    title: 'Data Center VPS'
+                    title: 'Data Center VPS',
+                    key: 'dataCenterVps'
                 },
                 {
-                    title: 'Residential VPS'
+                    title: 'Residential VPS',
+                    key: 'residentialVps'
                 },
                 {
-                    title: 'Multilogin'
+                    title: 'Multilogin',
+                    key: 'multilogin'
                 },
             ],
             managementModal: {
@@ -407,46 +411,42 @@ export default {
         addManagementType() {
             this.showLoader = true;
             let formData = new FormData();
+            formData.append('id', this.managementModal.id);
             formData.append('type', this.managementModal.type);
             formData.append('management_system', this.managementModal.management_system);
-            formData.append('id', this.managementModal.id);
-            this.axios.defaults.headers.common = {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': window.csrf_token
-            };
-            this.axios.post(`/addManagementTypeToMicrosoftAccount`,formData,{
+            this.axios.post(this.$api + '/archivedReports/addManagementTypeToMicrosoftAccount', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-            }).then(response => {
-                if(response) {
-                    console.log(response, 'sasa')
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.fetchMicrosoftAdsMetrics();
                     this.showLoader = false;
-                    this.message = {
-                        text: response.data.message,
-                        type: 'success',
-                    };
-                    // Bus.$emit('flash-message', this.message, '');
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                     const index = this.microsoftCampaignMetrics.findIndex(item => item.id === this.managementModal.id)
                     this.microsoftCampaignMetrics[index].management_type = this.managementModal.type;
                     this.microsoftCampaignMetrics[index].management_system = this.managementModal.management_system;
                     this.closeModal();
-                }else {
-                    this.showLoader = false;
-                    this.message = {
-                        text: 'Something Went Wrong!',
-                        type: 'error',
-                    }
-                    // Bus.$emit('flash-message', this.message, '');
                 }
-            }).catch((error) => {
-                this.showLoader = false;
+            })
+            .catch(error => {
                 console.log(error);
-                this.message = {
-                    text: error.response.data.message,
-                    type: 'error',
-                }
-                window.Bus.$emit('flash-message', this.message, '');
+                this.showLoader = false;
             });
         },
         // show management type modal
@@ -455,29 +455,79 @@ export default {
             this.managementModal.type = type;
             this.managementModal.management_system = management_system;
 
-            if(type == 'Residential VPS'){
-                this.managementSystemList = this.residential;
-            }else if(type == 'Data Center VPS'){
-                this.managementSystemList = this.datacenter;
-            }else if(type == 'Multilogin'){
-                this.managementSystemList = this.multilogin;
-            }else if(type == 'Local'){
-                this.managementSystemList = this.localsystem;
-            }
+            // if(type == 'Residential VPS'){
+            //     this.managementSystemList = this.residential;
+            // }else if(type == 'Data Center VPS'){
+            //     this.managementSystemList = this.datacenter;
+            // }else if(type == 'Multilogin'){
+            //     this.managementSystemList = this.multilogin;
+            // }else if(type == 'Local'){
+            //     this.managementSystemList = this.localsystem;
+            // }
             this.openModal();
         },
         // update data
         updateData(newVal) {
-            this.managementModal.management_system  = '';
-            if(newVal == 'Residential VPS'){
-                this.managementSystemList = this.residential;
-            }else if(newVal == 'Data Center VPS'){
-                this.managementSystemList = this.datacenter;
-            }else if(newVal == 'Multilogin'){
-                this.managementSystemList = this.multilogin;
-            }else if(newVal == 'Local'){
-                this.managementSystemList = this.localsystem;
+            setTimeout(() => {
+                console.log(newVal, 'newVal');
+                console.log(this.managementModal.type, 'managementModal.type')
+            }, 500)
+            this.showLoader = true;
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/archivedReports/getManagementSystem';
+            if(newVal) {
+                if(newVal == 'Local') {
+                    queryString.set('type', 'local');
+                }else {
+                    queryString.set('type', newVal);
+                }
             }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            this.axios.get(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const getData = response.data.data;
+                    this.managementSystemList = [];
+                    this.managementSystemList = getData.map((val) => {
+                        if(newVal.toLowerCase() == 'local') {
+                            return {title: val.type.concat('-', val.country.name).concat('-', val.city)};
+                        }
+                        if(newVal.toLowerCase() == 'multilogin') {
+                            return {title: val.profile_name};
+                        }else {
+                            return {title: val.company};
+                        }
+                    })
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                this.showLoader = false;
+            });
+            // this.managementModal.management_system  = '';
+            // if(newVal == 'Residential VPS'){
+            //     this.managementSystemList = this.residential;
+            // }else if(newVal == 'Data Center VPS'){
+            //     this.managementSystemList = this.datacenter;
+            // }else if(newVal == 'Multilogin'){
+            //     this.managementSystemList = this.multilogin;
+            // }else if(newVal == 'Local'){
+            //     this.managementSystemList = this.localsystem;
+            // }
         },
         // made resizable table
         resizableGrid(table) {
