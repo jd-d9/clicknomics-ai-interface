@@ -236,7 +236,7 @@ td.v-data-table__td {
 .btn_animated:hover::before{left:120%;opacity:0.5s;}
 .btn_animated:hover::after{left:200%;opacity:0.6;}
 .date_picker{
-    padding: 2px 15px;
+    padding: 2px 0px;
     width: auto;
     align-items: center;
     color: #000000;
@@ -268,3 +268,25 @@ td.v-data-table__td {
 }
 .form-control.autocomplete .v-field{padding: 0px;}
 .form-control.autocomplete .v-field .v-field__outline{display: none;}
+.v_select_design .v-input__details{display: none;}
+.v_select_design .v-field__input{
+    font-size: 13px;
+    font-weight: 500;
+    color: #000000;
+    padding: 10px 15px;
+    min-height: 40px !important;
+    font-weight: 500 !important;
+}
+.v_select_design .v-field__input .v-select__selection-text{
+    font-size: 13px;
+    font-weight: 500;
+    color: #000000;
+}
+.v_select_design .v-field__outline{box-shadow: 1px 2px 2px #00000029;}
+.v_select_design .v-field__outline__start, .v_select_design .v-field__outline__end{
+    border-radius: 0px !important;
+    border-color: #D6D6D6;
+    opacity: 1;
+}
+.v_select_design .v-chip.v-chip--density-default{height: 20px;}
+.v_select_design .v-chip.v-chip--density-default .v-chip__content{font-size: 11px;font-weight: 700;}

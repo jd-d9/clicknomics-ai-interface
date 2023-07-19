@@ -36,24 +36,24 @@
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <select v-model="fromAccount" @change="filterFromAccount" class="form-control serch_table">
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                    <!-- <select v-model="fromAccount" @change="filterFromAccount" class="form-control serch_table">
                                         <option disabled selected>From Account Filter</option>
                                         <option :value="val.title" v-for="(val, index) of fromAccountFilter" :key="index">
                                             {{ val.title }}
                                         </option>
-                                    </select>
-                                    <!-- <v-select clearable variant="solo" placeholder="From Account Filter"  :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="filterFromAccount"
-                                    ></v-select>-->
+                                    </select> -->
+                                    <v-select clearable variant="outlined" placeholder="From Account Filter" :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="filterFromAccount"
+                                    ></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <select v-model="toAccount" @change="filterToAccount" class="form-control serch_table">
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                    <!-- <select v-model="toAccount" @change="filterToAccount" class="form-control serch_table">
                                         <option disabled selected>To Account Filter</option>
                                         <option :value="val.title" v-for="(val, index) of toAccountFilter" :key="index">
                                             {{ val.title }}
                                         </option>
-                                    </select>
-                                    <!-- <v-select clearable variant="solo" label="To Account Filter"  :items="toAccountFilter" v-model="toAccount" @update:modelValue="filterToAccount"></v-select> -->
+                                    </select> -->
+                                    <v-select clearable variant="outlined" placeholder="To Account Filter"  :items="toAccountFilter" v-model="toAccount" @update:modelValue="filterToAccount"></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
                                     <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
@@ -281,6 +281,8 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
+                    this.fromAccountFilter = [];
+                    this.toAccountFilter = [];
                     const getData = response.data;
                     this.creditCardPaymentList = getData.data;
                     this.creditCardPaymentFilter = getData.data;
