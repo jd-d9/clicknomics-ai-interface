@@ -13,7 +13,7 @@
                         <span>{{ breadCrumbMessage }} Team Member Payments</span>
 
                         <v-spacer />
-                        <v-btn href="/accounting/teamMembersPayments" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/accounting/teamMembersPayments" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>

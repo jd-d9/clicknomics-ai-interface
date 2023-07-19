@@ -13,7 +13,7 @@
                         <span>Integrate Domain</span>
 
                         <v-spacer />
-                        <v-btn href="/settings/domain" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/settings/domain" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>

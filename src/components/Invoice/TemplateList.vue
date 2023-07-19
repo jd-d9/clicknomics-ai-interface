@@ -10,10 +10,10 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Invoice Template List</span>
+                        <span>Invoice Template</span>
                         <v-spacer />
 
-                        <v-btn href="/accounting/invoice" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/accounting/invoice" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -22,7 +22,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Invoice Template
+                            Invoice Template List
                             <v-spacer></v-spacer>
                             <div class="col-3 pr-1">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchInvoice"/>

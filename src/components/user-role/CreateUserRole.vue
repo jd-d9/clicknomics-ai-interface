@@ -13,7 +13,7 @@
                         <span>Create User Roles</span>
 
                         <v-spacer />
-                        <v-btn href="/settings/user_management/user_roles" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/settings/user_management/user_roles" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>

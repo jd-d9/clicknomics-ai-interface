@@ -13,7 +13,7 @@
                         <span>Integrate Cloudways</span>
 
                         <v-spacer />
-                        <v-btn href="/settings/cloudways" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/settings/cloudways" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>

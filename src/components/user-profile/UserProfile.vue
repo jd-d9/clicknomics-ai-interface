@@ -11,7 +11,7 @@
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>My Profile</span>
-                        <v-btn href="/dashboard" class="ms-auto text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/dashboard" class="ms-auto text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>

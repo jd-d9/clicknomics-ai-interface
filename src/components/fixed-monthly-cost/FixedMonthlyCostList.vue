@@ -10,7 +10,7 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Fixed Monthly Cost List</span>
+                        <span>Fixed Monthly Cost</span>
                         <v-spacer />
                         <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
                             Demo.csv
@@ -29,7 +29,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Fixed Monthly Cost
+                            Fixed Monthly Cost List
                             <v-spacer></v-spacer>
                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                             <div class="col-3 pr-1">
