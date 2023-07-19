@@ -159,10 +159,18 @@
                             this.backendErrorMessage = '';
                             this.showLoader = false;
                             this.$toast.open({
-                                message: 'New password successfully set',
+                                message: response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
                                 type: 'success'
+                            });
+                        }else {
+                            this.showLoader = false;
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
                             });
                         }
                     })

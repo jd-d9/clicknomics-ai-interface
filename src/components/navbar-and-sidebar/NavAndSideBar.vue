@@ -4,7 +4,7 @@
             <!-- sidebar default start here -->
             <v-navigation-drawer class="sidebar navbar-vertical navbar-light" v-if="hideShowSidebar">
                 <v-list-item class="pa-0">
-                    <div class="text-center bg-white py-3 px-2 sticky-top">
+                    <div class="text-center bg-white py-3 px-2 sticky-top" data-step="4" data-title="Step Four" data-intro='Hello step four!' data-position="bottom-middle-aligned">
                         <router-link to="/dashboard" class="sidebar-logo">
                             <img src="/assets/img/brand/logo.png" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
                             <img src="/assets/img/brand/favicon.png" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
@@ -100,6 +100,7 @@
 
             <loader-component v-if="showLoader"></loader-component>
 
+            <!-- navbar component start here -->
             <v-main :class="{'toggle-margin': hideShowSidebar}" class="navbar-content pa-0">
                 <v-app-bar color="primary" style="position:relative; width: 100%;left: 0 !important;">
                     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
@@ -159,7 +160,7 @@
 
                     <v-menu>
                         <template v-slot:activator="{ props }">
-                            <v-btn class="text-none" stacked v-bind="props">
+                            <v-btn class="text-none" stacked v-bind="props" data-step="5" data-title="Step Five" data-intro='Hello step five!' data-position="bottom-middle-aligned">
                                 <div class="d-flex align-center">
                                     <v-avatar size="36px">
                                         <v-img alt="Avatar" :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" ></v-img>
@@ -194,6 +195,7 @@
                     </v-menu>
                 </v-app-bar>
             </v-main>
+            <!-- navbar component end here -->
                         
         </v-layout>
     </div>
@@ -205,7 +207,7 @@
         props: ['updatingUserDetails'],
         data() {
             return {
-                hideShowSidebar: true,
+                hideShowSidebar: false,
                 showLoader: false,
                 showOnClick: false,
                 sideBarData: [],
@@ -280,7 +282,7 @@
             toggleComponents() {
                 this.hideShowSidebar = false;
                 if(screen.width > 1199) {
-                    if(window.location.pathname === '/dashboard' || window.location.pathname === '/ad-accounts' || window.location.pathname === '/campaigns' || this.$route.params.notFound) {   //  || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers'
+                    if(window.location.pathname === '/dashboard' || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers' || this.$route.params.notFound) {   //  || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers'
                         this.hideShowSidebar = true;
                     } else {
                         this.hideShowSidebar = false;
@@ -293,7 +295,12 @@
                 if(window.location.pathname === '/dashboard' && screen.width > 1199) {  
                     this.hideShowSidebar = !this.hideShowSidebar;
                     this.$emit('move-contents', this.hideShowSidebar);
-                } else {
+                }
+                // if(window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers' && screen.width > 1199) {  
+                //     this.hideShowSidebar = !this.hideShowSidebar;
+                //     this.$emit('move-contents', this.hideShowSidebar);
+                // }
+                else {
                     // get active menu dropdown data
                     this.allMenues.filter((elem) => {
                         if(elem.routes == '#') {
@@ -310,6 +317,7 @@
                         }
                     })
                     this.showOnClick = !this.showOnClick;
+                    this.hideShowSidebar = !this.hideShowSidebar;
                     this.$emit('move-contents', this.showOnClick);
                 }
             },
@@ -354,12 +362,20 @@
                         this.showLoader = false;
                         sessionStorage.clear();
                         this.$toast.open({
-                            message: 'Logged out',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.$router.push('/login');
+                    }else {
+                        this.showLoader = false;
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                     }
                 })
                 .catch(error => {

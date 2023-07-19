@@ -83,7 +83,7 @@ td.v-data-table__td {
 .profile-image + p {font-size: 14px;}
 .profile-image + p i {font-size: 12px;}
 .side-menu {display: flex;justify-content: start;align-items: center;border-radius: 6px;padding: 7px 12px;}
-.side-menu:hover, .active-tab-big {background-color: #e8f0fe;}
+.side-menu:hover, .active-tab-big {background-color: #e8f0fe !important;}
 .side-menu img {width: 25px;margin-right: 8px;}
 .side-menu-hover img {width: 25px;margin-right: 5px !important;}
 .side-menu span {font-size: .875rem;}

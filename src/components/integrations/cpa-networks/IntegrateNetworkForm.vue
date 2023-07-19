@@ -224,7 +224,7 @@ export default {
                 if(response.data.success) {
                     this.$router.push('/settings/networks');
                     this.$toast.open({
-                        message: 'CPA netwok integrated',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'

@@ -48,39 +48,6 @@
                                                     <v-col class="d-flex" cols="12" sm="3" v-if="false">
                                                         <v-select solo :items="transactionTypeFilter" label="Transaction Type Filter" :clearable="true" v-model="transactionTypeValue" @change="getLocalManagementSystemReport"></v-select>
                                                     </v-col>
-                                                    <v-col class="d-flex" cols="12" sm="3" v-if="false">
-                                                        <!-- <template>
-                                                            <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
-                                                                <div slot="header" slot-scope="header" class="slot">
-                                                                    <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                                                </div>
-                                                                <template #input="picker" style="min-width: 350px;">
-                                                                    {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                                                                </template>
-                                                                <template #date="data">
-                                                                    <span class="small">{{ data.date | dateCell }}</span>
-                                                                </template>
-                                                                <template #ranges="ranges">
-                                                                    <div class="ranges">
-                                                                        <ul>
-                                                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                                                            {{ range[1].toDateString() }}</small>
-                                                                        </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </template>
-                                                                <div slot="footer" slot-scope="data" class="slot">
-                                                                    <div>
-                                                                        <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                                                    </div>
-                                                                    <div style="margin-left: auto">
-                                                                        <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
-                                                                    </div>
-                                                                </div>
-                                                            </date-range-picker>
-                                                        </template> -->
-                                                    </v-col>
                                                     <v-col class="d-flex search_width" cols="12" sm="3">
                                                         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
                                                     </v-col>
@@ -181,13 +148,13 @@
                     </div>
                     <div class="modal-body">
                         <p>
-                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
+                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date ? viewModalDetail.date : '-'}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Amount :</span> {{viewModalDetail.amount}}
-                        </p> <!--  {{viewModalDetail.amount | toCurrency}}   -->
+                            <span class="font-weight-bold"> Amount :</span> {{$filters.toCurrency(viewModalDetail.amount)}}
+                        </p>
                         <p>
-                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description}}
+                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description ? viewModalDetail.description : '-'}}
                         </p>
                     </div>
                 </div>

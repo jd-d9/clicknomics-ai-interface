@@ -61,7 +61,8 @@
                                 </div>
                                 <div>
                                     <button type="submit" class="btn btn-primary mt-4 mb-3 btn-block btn_animated">Sign In</button>
-                                    Don't have any account? <router-link to="/subscribe-plan"> Register</router-link>
+                                    Don't have any account? <router-link to="/signup"> Register</router-link>
+                                    <!-- Don't have any account? <router-link to="/subscribe-plan"> Register</router-link> -->
                                 </div>
                             </Form>
                         </div>
@@ -144,7 +145,8 @@
                                 this.backendErrorMessage = '';
                                 this.showLoader = false;
                                 this.$toast.open({
-                                    message: 'Please scan qr code or can use try another for authentication',
+                                    // message: 'Please scan qr code or can use try another for authentication',
+                                    message: response.data.message,
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'
