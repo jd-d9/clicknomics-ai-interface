@@ -7,11 +7,11 @@
             </v-card-title>
             <v-divider class="border-opacity-100 my-4" color="success" />
 
-            <Form @submit.prevent="manageUserRole">
+            <form @submit.prevent="manageUserRole">
                 <v-row>
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                         <label class="form-control-label">Role Name</label>
-                        <Field type="text" id="input-username" name="Rolename" :class="{'form-control': true, 'border-red-600': roleNameInvalid}" placeholder="Role Name" v-model.trim="roleName" @blur="roleNameIsValid" />
+                        <input type="text" id="input-username" name="Rolename" :class="{'form-control': true, 'border-red-600': roleNameInvalid}" placeholder="Role Name" v-model.trim="roleName" @blur="roleNameIsValid" />
                         <span class="text-red-600" v-if="roleNameInvalid">Role name can not be empty</span>
                     </v-col>
                 </v-row>
@@ -51,7 +51,7 @@
                     <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                     <v-btn type="reset" v-if="!toggleButton" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-backup-restore">Reset</v-btn>    
                 </v-col>
-            </Form>
+            </form>
         </v-card>
     </div>
 </template>
@@ -168,7 +168,7 @@ export default {
                     .then(response => {
                         if(response.data.success) {
                             this.$toast.open({
-                                message: 'Role details updated',
+                                message: response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
                                 type: 'success'

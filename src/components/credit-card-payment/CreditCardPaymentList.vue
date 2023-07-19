@@ -281,6 +281,8 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
+                    this.fromAccountFilter = [];
+                    this.toAccountFilter = [];
                     const getData = response.data;
                     this.creditCardPaymentList = getData.data;
                     this.creditCardPaymentFilter = getData.data;

@@ -29,15 +29,15 @@
                                     <div class="text-center logo_responsive  mb-5">
                                         <img src="/assets/img/brand/logo.png" class="image-height">
                                     </div>
+                                    <div class="text-center">
+                                        <div v-html="displayQrCode"></div>
+                                    </div>
+                                    <div class="text-center"></div>
+                                    <span class="d-block mb-4 font-size">
+                                        Unfortunately, you cannot recover your secret keys in your Authenticator app. If you haven't saved the QR codes or secret keys, you should contact the support team of service which you protect with Authenticator and they will help you to restore the access to your account.
+                                    </span>
+                                    <span class="mb-2">Enter an authenticator app code:</span>
                                     <Form @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }">
-                                        <div class="text-center">
-                                            <div v-html="displayQrCode"></div>
-                                        </div>
-                                        <div class="text-center"></div>
-                                        <span class="d-block mb-4 font-size">
-                                            Unfortunately, you cannot recover your secret keys in your Authenticator app. If you haven't saved the QR codes or secret keys, you should contact the support team of service which you protect with Authenticator and they will help you to restore the access to your account.
-                                        </span>
-                                        <span class="mb-2">Enter an authenticator app code:</span>
                                         <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
                                         <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
                                         <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
@@ -187,82 +187,46 @@
             },
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
-                // if scan and enter auth code
-                if(this.displayQrCode && !this.tryAnother || this.verifiedBy == '2fa APP') {
-                    this.showLoader = true;
-                    this.axios.post(this.$api + '/authenticator/validateCode', {
-                        google2fa_secret: this.authCode,
-                        key: this.key,
-                        remember_2fa: this.rememberVerification,
-                        email: sessionStorage.getItem('Email'),
-                    }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                        }
-                    })
-                    .then(response => {
-                        if(response.data.success) {
-                            this.$toast.open({
-                                message: 'You are successfully logged in',
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
-                            sessionStorage.setItem('isTwoFactorVerified', true);
-                            this.showLoader = false;
-                            this.$router.push('/dashboard');
-                            this.backendErrorMessage = '';
-                        }else {
-                            this.$toast.open({
-                                message: response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                            this.showLoader = false;
+                this.showLoader = true;
+                this.axios.post(this.$api + '/authenticator/validateCode', {
+                    google2fa_secret: this.authCode,
+                    key: this.key,
+                    remember_2fa: this.rememberVerification,
+                    email: sessionStorage.getItem('Email'),
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: 'You are successfully logged in',
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        sessionStorage.setItem('isTwoFactorVerified', true);
+                        this.showLoader = false;
+                        this.$router.push('/dashboard');
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
 
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        this.backendErrorMessage = error.message;
-                        this.showLoader = false;
-                    });
-                }
-                // if use try another way method
-                else {
-                    this.showLoader = true;
-                    this.axios.post(this.$api + '/authenticator/validateTwoFactorCode', {
-                        two_factor_code: this.authCode,
-                        remember_2fa: this.rememberVerification,
-                        email: sessionStorage.getItem('Email'),
-                    }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                        }
-                    })
-                    .then(response => {
-                        if(response.data.success) {
-                            this.$toast.open({
-                                message: 'You are successfully logged in',
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
-                            sessionStorage.setItem('isTwoFactorVerified', true);
-                            this.showLoader = false;
-                            this.$router.push('/dashboard');
-                            this.backendErrorMessage = '';
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        this.backendErrorMessage = error.message;
-                        this.showLoader = false;
-                    });
-                }
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.backendErrorMessage = error.message;
+                    this.showLoader = false;
+                });
             }
         },
         mounted() {

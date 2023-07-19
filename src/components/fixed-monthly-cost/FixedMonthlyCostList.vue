@@ -133,7 +133,7 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
+                    <!-- <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
                         <div class="modal-body">
                             <v-row v-for="(item, index) in seletedForEdit" :key="index">
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
@@ -153,6 +153,26 @@
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
                             </v-col>
                         </div>
+                    </Form> -->
+                    <form @submit.prevent="editSelected">
+                        <div class="modal-body">
+                            <v-row v-for="(item, index) in seletedForEdit" :key="index">
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Date</label>
+                                    <datepicker name="date" v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Amount</label>
+                                    <input name="Amount" type="number" id="input-username" :class="{'form-control': true}" placeholder="Add Amount" v-model="item.amount"/>
+                                </v-col>
+                            </v-row>
+                        </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
+                            </v-col>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -161,8 +181,8 @@
 </template>
 
 <script>
-import * as yup from 'yup';
-import { Field, Form, ErrorMessage } from 'vee-validate';
+// import * as yup from 'yup';
+// import { Field, Form, ErrorMessage } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 import DateRangePicker from '../common/DateRangePicker.vue';
@@ -171,9 +191,9 @@ export default {
     components: {
         Datepicker,
         DateRangePicker,
-        Field, 
-        Form, 
-        ErrorMessage,
+        // Field, 
+        // Form, 
+        // ErrorMessage,
     },
     data() {
         return {
@@ -198,11 +218,11 @@ export default {
         }
     },
     computed: {
-        editSchema() {
-            return yup.object({
-                Amount: yup.string().required(),
-            });
-        },
+        // editSchema() {
+        //     return yup.object({
+        //         Amount: yup.string().required(),
+        //     });
+        // },
         // total row
         sumField() {
             const key = 'amount';
@@ -221,6 +241,9 @@ export default {
         this.getFixedMonthlyCostList();
     },
     methods: {
+        onSubmit(values) {
+            console.log(values, 2);
+        },
         // open/close import csv modal
         openImportCsvModal() {
             window.$('#importCsvModal').modal('show');
