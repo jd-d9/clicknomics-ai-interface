@@ -1,33 +1,38 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Campaigns</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="nav-wrapper report_tabpanel">
-                                <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
-                                    <li class="nav-item">
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Campaigns</span>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    Team Member Payments
+                                </v-col>
+                            </v-row>
+
+                            <!-- tab panel title div -->
+                            <div class="mt-4">
+                                <v-tabs v-model="tabcampaigns" fixed-tabs bg-color="green-lighten-4" class="mb-3">
+                                    <v-tab value="google_campaigns" class="font-weight-bold" color="green-darken-4 ">
+                                        <img src="assets/img/icons/google-ads.svg" class="w-20 mr-2"> Google Campaigns
+                                    </v-tab>
+                                    <v-tab value="microsoft_campaigns" class="font-weight-bold">
+                                        <img src="assets/img/icons/microsoft.svg" class="w-20 mr-2">Microsoft Campaigns
+                                    </v-tab>
+                                    <!-- <li class="nav-item">
                                         <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true">
                                             <span class="btn-inner--icon"><img src="assets/img/icons/google-ads.svg" class="icon-width"></span>
                                             <span class="btn-inner--text">Google Campaigns</span>
@@ -38,65 +43,53 @@
                                             <span class="btn-inner--icon"><img src="assets/img/icons/microsoft.svg" class="icon-width"></span>
                                             <span class="btn-inner--text">Microsoft Campaigns</span>
                                         </router-link>
-                                    </li>
-                                </ul>
+                                    </li> -->
+                                </v-tabs>
+
+                                <v-window v-model="tabcampaigns">
+                                    <v-window-item value="google_campaigns">
+                                        <v-row>
+                                            <v-spacer></v-spacer>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                                <v-select v-model="valueGoogle" :items="itemsGoogle" chips variant="outlined" placeholder="Custom Filter" multiple @update:modelValue="fetchGoogleCampaign"></v-select>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" hide-details/>
+                                            </v-col>
+                                        </v-row>
+
+                                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="googleHeaders" :items="googleCampaigns" :search="search"  :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                                        </v-data-table>
+                                    </v-window-item>
+
+                                    <v-window-item value="microsoft_campaigns">
+                                        <v-row>
+                                            <v-spacer></v-spacer>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                                <v-select v-model="valueMicrosoft" :items="itemsMicrosoft" chips variant="outlined" placeholder="Custom Filter" multiple @update:modelValue="fetchMicrosoftCampaign"></v-select>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="microsoftSearch" hide-details/>
+                                            </v-col>
+                                        </v-row>
+
+                                        <v-data-table :headers="micosoftHeaders" :items="micosoftCampaigns" :search="microsoftSearch" :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                                        </v-data-table>
+                                    </v-window-item>
+                                </v-window>
                             </div>
-                        </div>
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
-                                        <v-app>
-                                            <v-card>
-                                                <v-card-title>
-                                                    <v-row>
-                                                        <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                                        <v-col class="d-flex" cols="12" sm="4">
-                                                            <v-select v-model="valueGoogle" :items="itemsGoogle" chips label="Custom Filter" multiple solo @update:modelValue="fetchGoogleCampaign"></v-select>
-                                                        </v-col>
-                                                        <v-col class="d-flex search_width" cols="12" sm="4">
-                                                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                </v-card-title>
-                                                <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="googleHeaders" :items="googleCampaigns" :search="search"  :single-expand="singleExpand" class="elevation-1" :itemsPerPage="itemsPerPage">
-                                                </v-data-table>
-                                            </v-card>
-                                        </v-app>
-                                    </div>
-                                    <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
-                                        <v-app>
-                                            <v-card>
-                                                <v-card-title>
-                                                    <v-row>
-                                                        <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                                        <v-col class="d-flex" cols="12" sm="4">
-                                                            <v-select v-model="valueMicrosoft" :items="itemsMicrosoft" chips label="Custom Filter" multiple solo @update:modelValue="fetchMicrosoftCampaign"></v-select>
-                                                        </v-col>
-                                                        <v-col class="d-flex search_width" cols="12" sm="4">
-                                                            <v-text-field v-model="microsoftSearch" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                </v-card-title>
-                                                <v-data-table :headers="micosoftHeaders" :items="micosoftCampaigns" :search="microsoftSearch" :single-expand="singleExpand" class="elevation-1" :itemsPerPage="itemsPerPage">
-                                                </v-data-table>
-                                            </v-card>
-                                        </v-app>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -114,13 +107,13 @@ export default {
                 { title: 'Campaign ID', key: 'campaign_id' },
                 { title: 'Campaign Name', key: 'campaign_name' },
                 { title: 'Account Name', align: 'start', sortable: false, key: 'google_ads_account.name' },
-                { title: 'Campaign Status', key: 'campaign_status' },
+                { title: 'Campaign Status', key: 'campaign_status', align: 'center' },
             ],
             micosoftHeaders: [
                 { title: 'Campaign ID', key: 'CampaignId' },
                 { title: 'Campaign Name', key: 'CampaignName' },
                 { title: 'Account Name', align: 'start', sortable: false, key: 'microsoft_ads_account.name' },
-                { title: 'Campaign Status', key: 'Status' },
+                { title: 'Campaign Status', key: 'Status', align: 'center' },
             ],
             googleCampaigns: [],
             googleCampaignList: [],
@@ -129,11 +122,12 @@ export default {
             singleExpand: true,
             page: 1,
             itemsPerPage: -1,
-            itemsGoogle: ['REMOVED', 'PAUSED', 'ENABLED'],
-            valueGoogle: ['REMOVED', 'PAUSED', 'ENABLED'],
+            itemsGoogle: ['Removed', 'Paused', 'Enabled'],
+            valueGoogle: ['Removed', 'Paused', 'Enabled'],
             itemsMicrosoft: ['Paused', 'BudgetPaused', 'Active'],
             valueMicrosoft: ['Paused', 'BudgetPaused', 'Active'],
             permissions: {},
+            tabcampaigns: null,
         }
     },
     mounted() {
