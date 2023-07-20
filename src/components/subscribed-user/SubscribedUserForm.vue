@@ -14,9 +14,15 @@
             <Form @submit="manageUser" :validation-schema="schema" v-slot="{ errors }">
                 <v-row>
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                        <label class="form-control-label">Name</label>
-                        <Field type="text" id="input-username" name="Name" :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model.trim="userName"/>
-                        <span class="text-red-600" v-if="errors.Name">Name is a required field</span>
+                        <label class="form-control-label">First Name</label>
+                        <Field type="text" id="input-username" name="firstName" :class="{'form-control': true, 'border-red-600': errors.firstName}" placeholder="First Name" v-model.trim="firstName"/>
+                        <span class="text-red-600" v-if="errors.firstName">First name is a required field</span>
+                    </v-col>
+
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Last Name</label>
+                        <Field type="text" id="input-username" name="lastName" :class="{'form-control': true, 'border-red-600': errors.lastName}" placeholder="Last Name" v-model.trim="lastName"/>
+                        <span class="text-red-600" v-if="errors.lastName">Last name is a required field</span>
                     </v-col>
 
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -39,8 +45,8 @@
                     </v-col> -->
                 </v-row>           
 
-                <v-row>
-                    <!-- <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                <!-- <v-row>
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                         <label class="form-control-label">Select Country Code</label>
                         <Field name="Country" v-model="selectedCountry" :class="{'border-red-600': errors.Country}">
                             <select name="Country" v-model="selectedCountry" :class="{'form-control': true, 'border-red-600': errors.Role}">
@@ -51,17 +57,6 @@
                             </select>
                         </Field>
                         <span class="text-red-600" v-if="errors.Country">Country code is a required field</span>
-                    </v-col> -->
-
-                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                        <label class="form-control-label">Role</label>
-                        <Field name="Role" v-model="roleId" :class="{'border-red-600': errors.Role}">
-                            <select :class="{'form-control': true, 'border-red-600': errors.Role}" name="Role" placeholder="Select Role" v-model="roleId">
-                                <option value="">Select User Role</option>
-                                <option :value="role.id" v-for="(role, index) in roles" :key="index">{{role.role_name}}</option>
-                            </select>
-                        </Field>
-                        <span class="text-red-600" v-if="errors.Role">Role is a required field</span>
                     </v-col>
 
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -75,21 +70,7 @@
                         </Field>
                         <span class="text-red-600" v-if="errors.Status">Status is a required field</span>
                     </v-col>
-                </v-row>
-
-                <v-row v-if="toggleComponent">
-                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                        <label class="form-control-label">Password</label>
-                        <Field type="password" id="input-username" name="Password" :class="{'form-control': true, 'border-red-600': errors.Password}" placeholder="Password" v-model.trim="userPassword"/>
-                        <span class="text-red-600" v-if="errors.Password">Password is a required field</span>
-                    </v-col>
-
-                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                        <label class="form-control-label">Confirm Password</label>
-                        <Field type="password" id="input-username" name="Confirmpass" :class="{'form-control': true, 'border-red-600': errors.Confirmpass}" placeholder="Confirm Password" v-model="confirmPassword"/>
-                        <span class="text-red-600" v-if="errors.Confirmpass">Password did not match</span>
-                    </v-col>
-                </v-row>
+                </v-row> -->
                 
                 <v-row>
                     <v-col cols="12" sm="12" md="12" lg="12">
@@ -114,27 +95,18 @@ export default {
     data() {
         return {
             userEmail: '',
-            userPassword: '',
-            confirmPassword: '',
-            userName: '',
+            firstName: '',
+            lastName: '',
+            companyName: '',
             // userContact: '',
             // selectedCountry: '91',
-            companyName: '',
-            phone_number: '',
-            roleId: '',
-            status: '',
+            // status: '',
+            // countryDetails: [],
             showLoader: false,
-            roles: [],
-            countryDetails: [],
             toggleComponent: true,
         }
     },
     mounted() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
-        this.getUserRole();
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
@@ -148,14 +120,13 @@ export default {
     computed: {
         schema() {
             return yup.object({
-                Name: yup.string().required(),
+                firstName: yup.string().required(),
+                lastName: yup.string().required(),
                 Email: yup.string().required().email(),
-                Password: !this.toggleComponent ? '' : yup.string().required(),
-                Confirmpass: !this.toggleComponent ? '' : yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
                 companyName: yup.string().required(),
                 // Mobile: yup.string().required().min(10),
                 // Country: yup.string().required(),
-                Status: yup.string().required(),
+                // Status: yup.string().required(),
             });
         },
     },
@@ -166,11 +137,11 @@ export default {
             if(this.$route.params.id) {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/settings/subscribeUser/' + this.$route.params.id, {
-                    name: this.userName,
+                    first_name: this.firstName,
+                    last_name: this.lastName,
                     email: this.userEmail,
-                    password: this.userPassword,
-                    status: this.status,
                     company_name: this.companyName,
+                    // status: this.status,
                     // phone_number: this.userContact,
                     // country_code: this.selectedCountry,
                     _method: 'PUT'
@@ -215,11 +186,11 @@ export default {
             else {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/settings/subscribeUser', {
-                    name: this.userName,
+                    first_name: this.firstName,
+                    last_name: this.lastName,
                     email: this.userEmail,
-                    password: this.userPassword,
-                    status: this.status,
                     company_name: this.companyName,
+                    // status: this.status,
                     // phone_number: this.userContact,
                     // country_code: this.selectedCountry,
                 }, {
@@ -267,12 +238,14 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.userName = response.data.data.name
-                    this.userEmail = response.data.data.email
-                    this.userPassword = response.data.data.password
-                    // this.userContact = response.data.data.phone_number
-                    this.status = response.data.data.status
-                    this.selectedCountry = response.data.data.country_code
+                    const getData = response.data.data;
+                    this.firstName = getData.first_name;
+                    this.lastName = getData.last_name;
+                    this.userEmail = getData.email;
+                    this.companyName = getData.company_name;
+                    // this.userContact = getData.phone_number
+                    // this.status = getData.status
+                    // this.selectedCountry = getData.country_code
                     this.showLoader = false;
                 }
             })

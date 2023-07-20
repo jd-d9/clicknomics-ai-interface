@@ -141,7 +141,7 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <form @submit.prevent="editSelected">
+                    <!-- <form @submit.prevent="editSelected">
                         <div class="modal-body">
                             <v-row v-for="(item, index) in seletedForEdit" :key="index">
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -160,10 +160,9 @@
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
                             </v-col>
                         </div>
-                    </form>
+                    </form> -->
 
-
-                    <!-- <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
+                    <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
                         <div class="modal-body">
                             <v-row v-for="(item, index) in seletedForEdit" :key="index">
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
@@ -172,7 +171,7 @@
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Amount</label>
-                                    <Field :name="`Amount[${index}]`" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Amount}" placeholder="Add Amount" v-model="item.amount"/>
+                                    <Field name="Amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Amount}" placeholder="Add Amount" v-model="item.amount"/>
                                     <ErrorMessage class="text-red-600" name="Amount"/>
                                 </v-col>
                             </v-row>
@@ -183,7 +182,8 @@
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
                             </v-col>
                         </div>
-                    </Form> -->
+                    </Form>
+
                     <!-- <Form @submit="editSelected" :initial-values="initialData" :validation-schema="schema">
                         <div class="modal-body">
                             <FieldArray name="seletedForEdit" v-slot="{ fields }">
@@ -253,6 +253,8 @@
 </template>
 
 <script>
+import * as yup from 'yup';
+import { Field, Form, ErrorMessage } from 'vee-validate';
 // import * as yup from 'yup';
 // import { Field, Form, ErrorMessage, FieldArray } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -263,9 +265,9 @@ export default {
     components: {
         Datepicker,
         DateRangePicker,
-        // Field, 
-        // Form, 
-        // ErrorMessage,
+        Field, 
+        Form, 
+        ErrorMessage,
         // FieldArray,
     },
     data() {
@@ -305,11 +307,11 @@ export default {
         }
     },
     computed: {
-        // editSchema() {
-        //     return yup.object({
-        //         Amount: yup.string().required(),
-        //     });
-        // },
+        editSchema() {
+            return yup.object({
+                Amount: yup.string().required(),
+            });
+        },
         // total row
         sumField() {
             const key = 'amount';

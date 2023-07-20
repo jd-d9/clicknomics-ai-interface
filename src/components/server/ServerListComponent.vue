@@ -29,7 +29,7 @@
                         <!-- data table component -->
                         <v-data-table :headers="headers" :items="serverListRecord" :search="search" :single-expand="singleExpand" show-expand v-model:expanded="expanded" item-value="server_id" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
                             <template v-slot:expanded-row="{ columns, item }">
-                                <td class="exapanded bg-light-green-lighten-5" :colspan="columns.length">
+                                <td class="exapanded bg-light-green-lighten-5" :colspan="columns.length" v-if="item.selectable.children.length > 0">
                                     <!-- exapnded table data -->
                                     <table class="table align-items-center" v-if="serverListRecord.length > 0">
                                         <thead class="thead-light">
