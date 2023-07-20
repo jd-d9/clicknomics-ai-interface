@@ -309,6 +309,10 @@ export default {
         },
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getLocalManagementSystemReport();
         this.getAndSetCountry();
         // this.countryList = this.countries.map((data) => {

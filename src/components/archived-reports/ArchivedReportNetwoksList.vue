@@ -119,6 +119,10 @@ export default {
     },
     mounted() {
         this.fetchArchivedNetworksReportMetrics();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // update date range

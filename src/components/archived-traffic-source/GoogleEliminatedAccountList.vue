@@ -76,6 +76,10 @@ export default {
     },
     mounted() {
         this.getAllData();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // get listing of all data

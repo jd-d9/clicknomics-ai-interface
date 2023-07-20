@@ -325,6 +325,10 @@ export default {
         //     return item;
         // })
         this.getDomainList();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // manage modal open close

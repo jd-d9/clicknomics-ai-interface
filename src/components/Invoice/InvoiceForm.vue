@@ -268,6 +268,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         if(this.$route.params.id) {
             this.dynamicBredCrumb = 'Edit';
             this.toggleElement = false;

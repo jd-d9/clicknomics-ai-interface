@@ -83,6 +83,10 @@ export default {
     },
     mounted() {
         this.getManualNetworksReport();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // update date range
