@@ -105,7 +105,15 @@
                 <v-app-bar color="primary" style="position:relative; width: 100%;left: 0 !important;">
                     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
                     <v-spacer></v-spacer>
-                    <v-switch color="black" hide-details inset true-value="Dark" false-value="Light" class="ms-auto d-inline-flex justify-content-end mr-2" @change="changeTheme"></v-switch>
+                    <v-btn icon id="mode-switcher" @click="changeTheme">
+                        <v-icon v-if="toggleIcon" color="primary">
+                            mdi-weather-night
+                        </v-icon>
+                        <v-icon v-else color="primary">
+                            mdi-weather-sunny
+                        </v-icon>
+                    </v-btn>
+                    <!-- <v-switch color="black" hide-details inset true-value="Dark" false-value="Light" class="ms-auto d-inline-flex justify-content-end mr-2" @change="changeTheme"></v-switch> -->
                     <v-menu>
                         <template v-slot:activator="{ props }">
                             <v-btn class="text-none" stacked v-bind="props">
@@ -217,9 +225,14 @@
                 profileImage: '',
                 name: '',
                 darkTheme: localStorage.getItem('dark-theme') ? localStorage.getItem('dark-theme') : false,
+                toggleIcon: false,
             }
         },
-        mounted() {
+        mounted() { 
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });       
             this.toggleComponents();
             this.getSidebarMenues();
             this.getCurrentUserData();
@@ -413,12 +426,15 @@
                 }); 
             },
             // change theme light and dark
-            changeTheme(e) {
-                localStorage.setItem('dark-theme', e.target.checked);
-                if(e.target.checked) {
+            changeTheme() {
+                this.toggleIcon = !this.toggleIcon;
+                localStorage.setItem('dark-theme', this.toggleIcon);
+                if(this.toggleIcon) {
+                    this.toggleIcon = true;
                     document.body.classList.add('dark-mode');
                 }
                 else {
+                    this.toggleIcon = false;
                     document.body.classList.remove('dark-mode');
                 }
             },

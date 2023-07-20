@@ -262,6 +262,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         if(this.$route.params.id) {
             this.getDataForEdit();
             this.breadCrumbText = 'Edit';

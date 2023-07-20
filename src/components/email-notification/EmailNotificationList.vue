@@ -277,6 +277,10 @@ export default {
         },
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getListings();
         // this.getDomainList();
         // this.dataMetrics = this.list

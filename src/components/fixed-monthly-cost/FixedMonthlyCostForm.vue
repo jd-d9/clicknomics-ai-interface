@@ -81,6 +81,10 @@ export default {
             this.breadCrumbText = 'Edit';
             this.getDataForEdit();
         }
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {

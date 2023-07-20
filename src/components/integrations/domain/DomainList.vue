@@ -180,6 +180,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getDomainListing();
         // this.linkedNewtworks = this.affiliates;
     },

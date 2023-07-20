@@ -89,6 +89,10 @@ export default {
     },
     mounted() {
         this.getEliminatedAutomatedNetwork();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // formate date

@@ -45,6 +45,11 @@ export default {
 
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+        
         if(window.location.pathname == '/reporting/archivedReports/facebook') {
             this.toggleElement = false;
         }else {

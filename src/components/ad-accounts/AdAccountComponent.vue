@@ -292,6 +292,10 @@ export default {
     },
     mounted() {
         this.getAdAccountListing();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {
