@@ -124,6 +124,14 @@
                         });
                         this.toggleComponent = false;
                         this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -153,7 +161,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'You are successfully logged in',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -162,6 +170,14 @@
                         this.showLoader = false;
                         this.$router.push('/dashboard');
                         this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {

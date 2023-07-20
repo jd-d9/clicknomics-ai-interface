@@ -390,7 +390,6 @@ export default {
                                 currency_conversion_check: data.currency_conversion_check,
                             });
                         });
-                        console.log(this.microsoftCampaignMetrics , 'this.microsoftCampaignMetrics');
                         if(this.microsoftCampaignMetrics.length > 0){
                             setTimeout(() => {
                                 this.resizableGrid(document.getElementsByTagName('table')[0]);
@@ -427,6 +426,12 @@ export default {
                         type: 'success'
                     });
                     this.fetchMicrosoftAdsMetrics();
+                    this.closeModal();
+                    const index = this.microsoftCampaignMetrics.findIndex(item => item.id === this.managementModal.id)
+                    console.log(index, 'index')
+                    this.microsoftCampaignMetrics[index].management_type = this.managementModal.type;
+                    this.microsoftCampaignMetrics[index].management_system = this.managementModal.management_system;
+                    console.log(this.microsoftCampaignMetrics[index].management_system, 'this.microsoftCampaignMetrics[index].management_system')
                     this.showLoader = false;
                 }else {
                     this.$toast.open({
@@ -436,10 +441,6 @@ export default {
                         type: 'error'
                     });
                     this.showLoader = false;
-                    const index = this.microsoftCampaignMetrics.findIndex(item => item.id === this.managementModal.id)
-                    this.microsoftCampaignMetrics[index].management_type = this.managementModal.type;
-                    this.microsoftCampaignMetrics[index].management_system = this.managementModal.management_system;
-                    this.closeModal();
                 }
             })
             .catch(error => {
@@ -452,80 +453,59 @@ export default {
             this.managementModal.id = id;
             this.managementModal.type = type;
             this.managementModal.management_system = management_system;
-
-            // if(type == 'Residential VPS'){
-            //     this.managementSystemList = this.residential;
-            // }else if(type == 'Data Center VPS'){
-            //     this.managementSystemList = this.datacenter;
-            // }else if(type == 'Multilogin'){
-            //     this.managementSystemList = this.multilogin;
-            // }else if(type == 'Local'){
-            //     this.managementSystemList = this.localsystem;
-            // }
+            this.updateData();
             this.openModal();
         },
         // update data
-        updateData(newVal) {
+        updateData() {
             setTimeout(() => {
-                console.log(newVal, 'newVal');
-                console.log(this.managementModal.type, 'managementModal.type')
-            }, 500)
-            this.showLoader = true;
-            const queryString = new URLSearchParams();
-            const ajaxUrl = this.$api + '/archivedReports/getManagementSystem';
-            if(newVal) {
-                if(newVal == 'Local') {
-                    queryString.set('type', 'local');
-                }else {
-                    queryString.set('type', newVal);
+                this.showLoader = true;
+                const queryString = new URLSearchParams();
+                const ajaxUrl = this.$api + '/archivedReports/getManagementSystem';
+                if(this.managementModal.type) {
+                    if(this.managementModal.type == 'Local') {
+                        queryString.set('type', 'local');
+                    }else {
+                        queryString.set('type', this.managementModal.type);
+                    }
                 }
-            }
-            const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    const getData = response.data.data;
-                    this.managementSystemList = [];
-                    this.managementSystemList = getData.map((val) => {
-                        if(newVal.toLowerCase() == 'local') {
-                            return {title: val.type.concat('-', val.country.name).concat('-', val.city)};
-                        }
-                        if(newVal.toLowerCase() == 'multilogin') {
-                            return {title: val.profile_name};
-                        }else {
-                            return {title: val.company};
-                        }
-                    })
+                const url = `${ajaxUrl}?${queryString.toString()}`;
+                this.axios.get(url, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        const getData = response.data.data;
+                        this.managementSystemList = [];
+                        this.managementSystemList = getData.map((val) => {
+                            if(this.managementModal.type.toLowerCase() == 'local') {
+                                return {title: val.type.concat('-', val.country.name).concat('-', val.city)};
+                            }
+                            if(this.managementModal.type.toLowerCase() == 'multilogin') {
+                                return {title: val.profile_name};
+                            }else {
+                                return {title: val.company};
+                            }
+                        })
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
                     this.showLoader = false;
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.showLoader = false;
-            });
-            // this.managementModal.management_system  = '';
-            // if(newVal == 'Residential VPS'){
-            //     this.managementSystemList = this.residential;
-            // }else if(newVal == 'Data Center VPS'){
-            //     this.managementSystemList = this.datacenter;
-            // }else if(newVal == 'Multilogin'){
-            //     this.managementSystemList = this.multilogin;
-            // }else if(newVal == 'Local'){
-            //     this.managementSystemList = this.localsystem;
-            // }
+                });
+            }, 200)
         },
         // made resizable table
         resizableGrid(table) {

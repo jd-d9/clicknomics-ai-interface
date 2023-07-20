@@ -48,7 +48,7 @@ body.dark-mode {background-color: #051139 !important;}
     background: #111c44 !important;
     color: #fff !important;
 }
-.dark-mode .side-menu:hover, .active-tab-big, .dark-mode .active-tab {
+.dark-mode .side-menu:hover, .dark-mode .active-tab-big, .dark-mode .active-tab {
     background: #111c44 !important;
     background-color: hsla(0,0%,100%,.13) !important;
     color: #fff !important;

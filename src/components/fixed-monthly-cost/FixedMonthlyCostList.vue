@@ -48,10 +48,10 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-3" :headers="headers" :items="dataMetrics" :itemsPerPage="itemsPerPage" show-select v-model="selected">
                             <template v-slot:[`item.date`]="{ item }">
-                                {{item.selectable.date}}
+                                {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">
-                                ${{item.selectable.amount}}
+                                ${{item.selectable.amount ? item.selectable.amount : '-'}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/accounting/fixedMonthlyCost/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'">
@@ -161,6 +161,91 @@
                             </v-col>
                         </div>
                     </form>
+
+
+                    <!-- <Form @submit="editSelected" :validation-schema="editSchema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row v-for="(item, index) in seletedForEdit" :key="index">
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Date</label>
+                                    <datepicker v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Amount</label>
+                                    <Field :name="`Amount[${index}]`" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Amount}" placeholder="Add Amount" v-model="item.amount"/>
+                                    <ErrorMessage class="text-red-600" name="Amount"/>
+                                </v-col>
+                            </v-row>
+                        </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form> -->
+                    <!-- <Form @submit="editSelected" :initial-values="initialData" :validation-schema="schema">
+                        <div class="modal-body">
+                            <FieldArray name="seletedForEdit" v-slot="{ fields }">
+                                <fieldset class="InputGroup" v-for="(field, idx) in fields" :key="field.key">
+                                    <v-row v-for="(item, index) in seletedForEdit" :key="index">
+                                        <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                            <label class="form-control-label" for="input-username">Date</label>
+                                            <datepicker v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                        </v-col>
+                                        <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                            <label class="form-control-label" for="input-username">Amount</label>
+                                            <Field :name="`Amount[${index}]`" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Amount}" placeholder="Add Amount" v-model="item.amount"/>
+                                            <ErrorMessage class="text-red-600" name="Amount"/>
+                                        </v-col>
+                                    </v-row>
+                                </fieldset>
+                            </FieldArray>
+                        </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form> -->
+                    <!-- <Form @submit="editSelected" :initial-values="initialData" :validation-schema="schema">
+                        <FieldArray name="seletedForEdit" v-slot="{ fields }">
+                            <fieldset class="InputGroup" v-for="(field, idx) in fields" :key="field.key">
+                                <legend>User #{{ idx }}</legend>
+                                <label :for="`date_${idx}`">Name</label>
+                                <Field :id="`date_${idx}`" :name="`seletedForEdit[${idx}].date`">
+                                    <datepicker v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                </Field>
+                                <ErrorMessage :name="`seletedForEdit[${idx}].date`" />
+                    
+                                <label :for="`amount_${idx}`">Email</label>
+                                <Field :id="`amount_${idx}`" :name="`seletedForEdit[${idx}].amount`" type="email"/>
+                                <ErrorMessage :name="`seletedForEdit[${idx}].amount`" />
+                            </fieldset>
+                        </FieldArray>
+                        <button type="submit">Submit</button>
+                    </Form> -->
+                    <!-- <form @submit.prevent="editSelected">
+                        <div class="modal-body">
+                            <v-row v-for="(item, index) in seletedForEdit" :key="index">
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Date</label>
+                                    <datepicker name="date" v-model:value="item.date" :disabled="true" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Amount</label>
+                                    <input name="Amount" type="number" id="input-username" :class="{'form-control': true}" placeholder="Add Amount" v-model="item.amount"/>
+                                </v-col>
+                            </v-row>
+                        </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeCreateUpdateData">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </form> -->
                 </div>
             </div>
         </div>
@@ -169,7 +254,7 @@
 
 <script>
 // import * as yup from 'yup';
-// import { Field, Form, ErrorMessage } from 'vee-validate';
+// import { Field, Form, ErrorMessage, FieldArray } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 import DateRangePicker from '../common/DateRangePicker.vue';
@@ -181,6 +266,7 @@ export default {
         // Field, 
         // Form, 
         // ErrorMessage,
+        // FieldArray,
     },
     data() {
         return {
@@ -202,6 +288,20 @@ export default {
             selectedFile: '',
             permissions: {},
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            initialData: {
+                seletedForEdit: [],
+            },
+            // schema: yup.object().shape({
+            //     users: yup
+            //     .array()
+            //     .of(
+            //         yup.object().shape({
+            //             name: yup.string().required().label('Name'),
+            //             email: yup.string().email().required().label('Email'),
+            //         })
+            //     )
+            //     .strict(),
+            // }),
         }
     },
     computed: {
@@ -229,7 +329,7 @@ export default {
     },
     methods: {
         onSubmit(values) {
-            console.log(values, 2);
+            console.log(values, null, 2);
         },
         // open/close import csv modal
         openImportCsvModal() {

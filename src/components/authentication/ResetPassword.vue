@@ -106,12 +106,20 @@
                         if(response.data.success) {
                             this.userEmail = '';
                             this.$toast.open({
-                                message: 'We have emailed your password reset link',
+                                message: response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
                                 type: 'success'
                             });
                             this.backendErrorMessage = '';
+                            this.showLoader = false;
+                        }else {
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
                             this.showLoader = false;
                         }
                     })

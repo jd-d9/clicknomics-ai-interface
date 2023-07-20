@@ -81,14 +81,22 @@ app.config.globalProperties.$filters = {
     var formatter = new Intl.NumberFormat('en-US', {
         minimumFractionDigits: 2
     });
-    return formatter.format(value);
+    if(value) {
+      return formatter.format(value);
+    } else {
+      return formatter.format(0);
+    }
   },
   toNumberWithPercentage(value) {
       value = parseFloat(value).toFixed(2);
       var formatter = new Intl.NumberFormat('en-US', {
           minimumFractionDigits: 2
       });
-      return formatter.format(value)+ '%';
+      if(value) {
+        return formatter.format(value)+ '%';
+      } else {
+        return formatter.format(0);
+      }
   },
 }
 app.use(router);

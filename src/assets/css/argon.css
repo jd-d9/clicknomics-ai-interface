@@ -7088,3 +7088,10 @@ select{
     background-color: transparent !important;
 }
 
+/* user profile page */
+.v-responsive {
+    max-width: unset !important;
+}
+.v-avatar .v-img {
+    width: unset !important;
+}

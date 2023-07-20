@@ -23,7 +23,7 @@
 
                     <v-divider class="border-opacity-100 mb-3 mt-0 mx-2" color="success" />    
 
-                    <h6 class="font-weight-bold text-h6 px-2 mb-3">Cost</h6>
+                    <h6 class="font-weight-bold text-h6 px-2 mb-3" data-step="1" data-title="Step One" data-intro='Hello step one!' data-position="bottom-middle-aligned">Cost</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_ops_cost == 0, 'bg-green-lighten-4': daily_ops_cost > 0, 'bg-orange-lighten-4': daily_ops_cost < 0}">
@@ -65,12 +65,12 @@
 
                     <!-- <v-divider class="border-opacity-100 my-4 mx-2" color="success" />  -->
 
-                    <h6 class="font-weight-bold text-h6 px-2 mb-3">Revenue</h6>
+                    <h6 class="font-weight-bold text-h6 px-2 mb-3" data-step="2" data-title="Step Two" data-intro='Hello step two!' data-position="bottom-middle-aligned">Revenue</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_conversion == 0, 'bg-green-lighten-4': daily_conversion > 0, 'bg-orange-lighten-4': daily_conversion < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Conversions</v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_conversion == 0, 'text-green-darken-1': daily_conversion > 0, 'text-orange': daily_conversion < 0}">{{daily_conversion}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_conversion == 0, 'text-green-darken-1': daily_conversion > 0, 'text-orange': daily_conversion < 0}">{{daily_conversion ? daily_conversion : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
@@ -93,7 +93,7 @@
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_roi == 0, 'bg-green-lighten-4': daily_roi > 0, 'bg-orange-lighten-4': daily_roi < 0}">
-                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">ROI</v-card-title>
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal" data-step="3" data-title="Step Three" data-intro='Hello step three!' data-position="bottom-middle-aligned">ROI</v-card-title>
                                 <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_roi == 0, 'text-green-darken-1': daily_roi > 0, 'text-orange': daily_roi < 0}">{{$filters.toCurrency(daily_roi)}}</v-card-text>
                             </v-card>
                         </v-col>
@@ -109,7 +109,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Master Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftMasterAccount == 0, 'text-green-darken-1': microsoftMasterAccount > 0, 'text-orange': microsoftMasterAccount < 0}">{{microsoftMasterAccount}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftMasterAccount == 0, 'text-green-darken-1': microsoftMasterAccount > 0, 'text-orange': microsoftMasterAccount < 0}">{{microsoftMasterAccount ? microsoftMasterAccount : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -117,7 +117,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Child Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftAccount == 0, 'text-green-darken-1': microsoftAccount > 0, 'text-orange': microsoftAccount < 0}">{{microsoftAccount}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftAccount == 0, 'text-green-darken-1': microsoftAccount > 0, 'text-orange': microsoftAccount < 0}">{{microsoftAccount ? microsoftAccount : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -125,7 +125,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Active Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftActiveCampaigns == 0, 'text-green-darken-1': microsoftActiveCampaigns > 0, 'text-orange': microsoftActiveCampaigns < 0}">{{microsoftActiveCampaigns}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftActiveCampaigns == 0, 'text-green-darken-1': microsoftActiveCampaigns > 0, 'text-orange': microsoftActiveCampaigns < 0}">{{microsoftActiveCampaigns ? microsoftActiveCampaigns : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -133,7 +133,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Inactive Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftInactiveCampaigns == 0, 'text-green-darken-1': microsoftInactiveCampaigns > 0, 'text-orange': microsoftInactiveCampaigns < 0}">{{microsoftInactiveCampaigns}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftInactiveCampaigns == 0, 'text-green-darken-1': microsoftInactiveCampaigns > 0, 'text-orange': microsoftInactiveCampaigns < 0}">{{microsoftInactiveCampaigns ? microsoftInactiveCampaigns : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -141,7 +141,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/microsoft.svg" class="mr-2 mt--1" style="width:15px;">Microsoft Total Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftTotalCampaigns == 0, 'text-green-darken-1': microsoftTotalCampaigns > 0, 'text-orange': microsoftTotalCampaigns < 0}">{{microsoftTotalCampaigns}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': microsoftTotalCampaigns == 0, 'text-green-darken-1': microsoftTotalCampaigns > 0, 'text-orange': microsoftTotalCampaigns < 0}">{{microsoftTotalCampaigns ? microsoftTotalCampaigns : 0 }}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -153,7 +153,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Master Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleMasterAccount == 0, 'text-green-darken-1': googleMasterAccount > 0, 'text-orange': googleMasterAccount < 0}">{{googleMasterAccount}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleMasterAccount == 0, 'text-green-darken-1': googleMasterAccount > 0, 'text-orange': googleMasterAccount < 0}">{{googleMasterAccount ? googleMasterAccount : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -161,7 +161,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Child Accounts
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleAccount == 0, 'text-green-darken-1': googleAccount > 0, 'text-orange': googleAccount < 0}">{{googleAccount}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleAccount == 0, 'text-green-darken-1': googleAccount > 0, 'text-orange': googleAccount < 0}">{{googleAccount ? googleAccount : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -169,7 +169,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Active Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleActiveCampaigns == 0, 'text-green-darken-1': googleActiveCampaigns > 0, 'text-orange': googleActiveCampaigns < 0}">{{googleActiveCampaigns}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleActiveCampaigns == 0, 'text-green-darken-1': googleActiveCampaigns > 0, 'text-orange': googleActiveCampaigns < 0}">{{googleActiveCampaigns ? googleActiveCampaigns : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -177,7 +177,7 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Inactive Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleInactiveCampaigns == 0, 'text-green-darken-1': googleInactiveCampaigns > 0, 'text-orange': googleInactiveCampaigns < 0}">{{googleInactiveCampaigns}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleInactiveCampaigns == 0, 'text-green-darken-1': googleInactiveCampaigns > 0, 'text-orange': googleInactiveCampaigns < 0}">{{googleInactiveCampaigns ? googleInactiveCampaigns : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
@@ -185,13 +185,13 @@
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                     <img src="../assets/img/icons/google-ads.svg" class="mr-2 mt--1" style="width:15px;">Google Total Campaigns
                                 </v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleTotalCampaigns == 0, 'text-green-darken-1': googleTotalCampaigns > 0, 'text-orange': googleTotalCampaigns < 0}">{{googleTotalCampaigns}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': googleTotalCampaigns == 0, 'text-green-darken-1': googleTotalCampaigns > 0, 'text-orange': googleTotalCampaigns < 0}">{{googleTotalCampaigns ? googleTotalCampaigns : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
 
                     <!-- Start Facebook -->
-                    <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
+                    <!-- <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design bg-blue-lighten-4">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
@@ -232,26 +232,26 @@
                                 <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">0</v-card-text>
                             </v-card>
                         </v-col>
-                    </v-row>
+                    </v-row> -->
 
                     <!-- Start general -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': networks == 0, 'bg-green-lighten-4': networks > 0, 'bg-orange-lighten-4': networks < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Automated Networks</v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': networks == 0, 'text-green-darken-1': networks > 0, 'text-orange': networks < 0}">{{networks}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': networks == 0, 'text-green-darken-1': networks > 0, 'text-orange': networks < 0}">{{networks ? networks : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': manualNetworks == 0, 'bg-green-lighten-4': manualNetworks > 0, 'bg-orange-lighten-4': manualNetworks < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Manual Networks</v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': manualNetworks == 0, 'text-green-darken-1': manualNetworks > 0, 'text-orange': manualNetworks < 0}">{{manualNetworks}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': manualNetworks == 0, 'text-green-darken-1': manualNetworks > 0, 'text-orange': manualNetworks < 0}">{{manualNetworks ? manualNetworks : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': (networks + manualNetworks) == 0, 'bg-green-lighten-4': (networks + manualNetworks) > 0, 'bg-orange-lighten-4': (networks + manualNetworks) < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Total Networks</v-card-title>
-                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': (networks + manualNetworks) == 0, 'text-green-darken-1': (networks + manualNetworks) > 0, 'text-orange': (networks + manualNetworks) < 0}">{{networks + manualNetworks}}</v-card-text>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': (networks + manualNetworks) == 0, 'text-green-darken-1': (networks + manualNetworks) > 0, 'text-orange': (networks + manualNetworks) < 0}">{{(networks ? networks : 0) + (manualNetworks ? manualNetworks : 0)}}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -262,6 +262,8 @@
 </template>
 
 <script>
+import introJs from 'intro.js';
+import 'intro.js/minified/introjs.min.css';
 import DateRangePicker from './common/DateRangePicker.vue';
 import moment from 'moment';
  export default {
@@ -303,7 +305,7 @@ import moment from 'moment';
             daily_roas: 0,
             daily_roi: 0,
             daily_date: 0,
-            selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            selectedRange: `${moment().format('ddd MMM DD YYYY')} - ${moment().format('ddd MMM DD YYYY')}`,
             trialDays: null,
         }
     },
@@ -381,6 +383,7 @@ import moment from 'moment';
                     // trial days count
                     this.trialDays = response.data.trialEnd;
                     this.showLoader = false;
+                    introJs().start();
                 }else {
                     this.$toast.open({
                         message: response.data.message,

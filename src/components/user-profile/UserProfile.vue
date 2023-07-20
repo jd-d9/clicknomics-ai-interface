@@ -196,7 +196,7 @@
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
-                                        <label>Trial Days : 
+                                        <label>Expiring Trial On : 
                                             <span class="font-weight-medium text-blue-darken-4">
                                                 {{trialEndsAt ? trialEndsAt : 'Example trial duration'}}
                                             </span>
@@ -269,6 +269,7 @@
 <script>
     import * as yup from 'yup';
     import { Form, Field, ErrorMessage } from 'vee-validate';
+    import moment from 'moment';
     export default {
         emits: ['updating-profile-details'],
         components: {
@@ -348,11 +349,19 @@
                         this.phoneNumber = this.currentUserDetails.phone_number;
                         this.verificationStatus = this.currentUserDetails.verification_status;
                         this.remember2Fa = this.currentUserDetails.remember_2fa;
+                        this.trialEndsAt = moment(this.currentUserDetails.trial_ends_at).format('YYYY-MM-DD');
                         this.subscriptionPlan = response.data.subscriptions.name;
-                        this.trialEndsAt = response.data.items;
                         this.backendErrorMessage = '';
                         this.showLoader = false;
                         console.log(this.currentUserDetails, 'currentUserData');
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -373,6 +382,14 @@
                     if(response.data.success) {
                         this.countryDetails = response.data.data;
                         this.countryDetails.sort((a, b) => a.name - b.name);
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                         this.showLoader = false;
                     }
                 })
@@ -400,7 +417,7 @@
                     .then(response => {
                         if(response.data.success) {
                             this.$toast.open({
-                                message: 'Profile image updated',
+                                message: response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
                                 type: 'success'
@@ -408,7 +425,15 @@
                             this.showLoader = false;
                             this.getCurrentUserData();
                             this.$emit('updating-profile-details', 'update');
-                        }
+                        }else {
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                            this.showLoader = false;
+                    }
                     })
                     .catch(error => {
                         this.$toast.open({
@@ -437,7 +462,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'User email updated',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -446,6 +471,14 @@
                         this.getCurrentUserData();
                         this.userEmailToggle = false;
                         sessionStorage.setItem('Email', this.email);
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -475,7 +508,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'Profile details updated',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -484,6 +517,14 @@
                         this.getCurrentUserData();
                         this.profileDetailsToggle = false;
                         this.$emit('updating-profile-details', 'update');
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -513,7 +554,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'Password updated',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -524,6 +565,14 @@
                         this.currentPassword = '';
                         this.password = '';
                         this.passwordConfirmation = '';
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -552,7 +601,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: '2Fa verification updated',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -560,6 +609,14 @@
                         this.showLoader = false;
                         this.getCurrentUserData();
                         this.TwoFaVerifyToggle = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
