@@ -10,7 +10,7 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>{{breadCrumbText}} Plan</span>
+                        <span>{{breadCrumbText}} Plan Management</span>
 
                         <v-spacer />
                         <v-btn to="/settings/plan-management" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
@@ -22,7 +22,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between">
-                            {{breadCrumbText}} Plan
+                            {{breadCrumbText}} Plan Management
                         </v-card-title>
                         <v-divider class="border-opacity-100 my-4" color="success" />  
                         <form @submit.prevent="managePlan">

@@ -6489,17 +6489,18 @@ select{
     margin: 0;
 } */
 .mx-datepicker .mx-input {
-    padding: 13px 15px;
+    padding: 13px 15px !important;
     width: 100%;
     overflow: hidden;
     align-items: center;
     color: #000000;
     font-size: 14px;
+    line-height: normal;
     font-weight: 500;
-    min-height: 50px;
-    border-radius: 0px;
-    box-shadow: 1px 2px 2px #00000029;
-    border: 1px solid #D6D6D6;
+    height: 50px !important;
+    border-radius: 0px !important;
+    box-shadow: 1px 2px 2px #00000029 !important;
+    border: 1px solid #D6D6D6 !important;
 }
 .mx-icon-calendar, .mx-icon-clear {
     right: 15px;

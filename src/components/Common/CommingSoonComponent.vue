@@ -1,36 +1,36 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page" v-if="toggleElement">{{ this.$route.params.routeName }}</li>
-                                    <li class="breadcrumb-item active" aria-current="page" v-else>Archived Reports Facebook</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">Coming Soon</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <loader-component v-if="showLoader"></loader-component>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span v-if="toggleElement">{{ this.$route.params.routeName }}</span>
+                        <span v-else>Archived Reports Facebook</span>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title v-if="toggleElement">
+                            {{ this.$route.params.routeName }}
+                        </v-card-title>
+                        <v-card-title v-else>
+                            Archived Reports Facebook
+                        </v-card-title>
+                        <v-divider class="border-opacity-100 my-4" color="success" /> 
+                        <v-col class="text-center m-auto" cols="12" sm="8" md="6" lg="4">
+                            <img src="/assets/img/brand/coming_soon.png" style="width:100%" alt="" title="">
+                        </v-col>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 

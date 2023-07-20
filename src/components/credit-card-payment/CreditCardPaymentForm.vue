@@ -41,7 +41,6 @@
                                     <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
                                     <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
                                 </v-col>
-
                             </v-row>
 
                             <v-row>

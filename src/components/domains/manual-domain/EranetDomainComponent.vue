@@ -1,118 +1,109 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Eranet Domains</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right" v-if="showImportIcon">
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </router-link>
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openImportCsvModal">Import CSV</router-link>
-                            <button @click="createActivity" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add New Record</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-row>
-                                                    <v-col class="d-flex search_width" cols="12" sm="3">
-                                                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-card-title>
-                                            <!-- data table component -->
-                                            <v-data-table class="table-hover-class adding-font-size table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
-                                                <template v-slot:[`item.account`]="{ item }">
-                                                    <td class="text-ellipsis w-50">{{item.selectable.account ? item.selectable.account : '-'}}</td>
-                                                </template>
-                                                <template v-slot:[`item.status`]="{ item }">
-                                                    <td class="text-ellipsis w-50">{{item.selectable.status ? item.selectable.status : '-'}}</td>
-                                                </template>
-                                                <template v-slot:[`item.domain`]="{ item }">
-                                                    <td class="text-ellipsis w-50">{{item.selectable.domain ? item.selectable.domain : '-'}}</td>
-                                                </template>
-                                                <template v-slot:[`item.auto_renewals`]="{ item }">
-                                                    <td>
-                                                        <v-switch disabled :model-value="item.selectable.auto_renewals == 'Active' ? true : false"></v-switch>
-                                                    </td>
-                                                </template>
-                                                <template v-slot:[`item.expire_date`]="{ item }">
-                                                    <td class="text-ellipsis w-50">{{item.selectable.expire_date ? format_date(item.selectable.expire_date) : '-'}}</td>
-                                                </template>
-                                                <template v-slot:[`item.action`]="{ item }">
-                                                    <td>
-                                                        <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="edit(item.selectable.id)">
-                                                            <img src="/assets/img/icons/edit.svg" class="img-width" title="Edit">
-                                                        </button>
-                                                        <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deleteData(item.selectable.id)">
-                                                            <img src="/assets/img/icons/bin.svg" class="img-width" title="Delete">
-                                                        </button>
-                                                    </td>
-                                                </template>
-                                                <template v-slot:top v-if="selected.length > 0">
-                                                    <div class="p-2 text-right">
-                                                        <v-btn
-                                                            elevation="2"
-                                                            variant="outlined"
-                                                            raised
-                                                            rounded="xl"
-                                                            class="me-1 disable-button"
-                                                            :disabled="permissions.delete_auth == '0'"
-                                                            @click="deleteSelected"
-                                                        >Remove Selected</v-btn>
-                                                    </div>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Eranet Domains</span>
+                        <v-spacer />
+                        <div v-if="showImportIcon">
+                            <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                                Demo.csv
+                            </v-btn>
+
+                            <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                                Import CSV
+                            </v-btn>
+
+                            <v-btn @click="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                                Add New
+                            </v-btn>
+                        </div>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Eranet Domains List
+                            <v-spacer></v-spacer>
+                            <div v-if="selected.length > 0" class="mr-2">
+                                <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                    Remove
+                                </v-btn>
                             </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                            </v-col>                            
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.account`]="{ item }">
+                                <div class="text-ellipsis w-150">
+                                    {{item.selectable.account ? item.selectable.account : '-'}}
+                                </div>
+                            </template>
+                            <template v-slot:[`item.status`]="{ item }">
+                                <div class="text-ellipsis w-150">
+                                    {{item.selectable.status ? item.selectable.status : '-'}}
+                                </div>
+                            </template>
+                            <template v-slot:[`item.domain`]="{ item }">
+                                <div class="text-ellipsis w-150">
+                                    {{item.selectable.domain ? item.selectable.domain : '-'}}
+                                </div>
+                            </template>
+                            <template v-slot:[`item.auto_renewals`]="{ item }">
+                                <v-switch disabled :model-value="item.selectable.auto_renewals == 'Active' ? true : false"></v-switch>
+                            </template>
+                            <template v-slot:[`item.expire_date`]="{ item }">
+                                <div class="text-ellipsis w-150">
+                                    {{item.selectable.expire_date ? format_date(item.selectable.expire_date) : '-'}}
+                                </div>
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon :disabled="permissions.update_auth == '0'" @click.prevent="edit(item.selectable.id)">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon :disabled="permissions.delete_auth == '0'" @click.prevent="deleteData(item.selectable.id)">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>                                                            
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <!-- Start Import CSV Modal -->
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Import Eranet</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Import Eranet Domains</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeImportCsvModal">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <form @submit.prevent="uploadCsv">
@@ -128,9 +119,11 @@
                                 <!-- <ErrorMessage class="text-red-600" name="selectFile"/> -->
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click.prevent="closeImportCsvModal">Close</button>
-                            <button type="submit" class="btn btn-primary">Import</button>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-import">Import</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeImportCsvModal">Close</v-btn>
+                            </v-col>
                         </div>
                     </form>
                 </div>
@@ -142,8 +135,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Report</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close" aria-label="Close" data-dismiss="modal">
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -165,72 +158,67 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Eranet</h5>
+                        <h5 class="modal-title">{{activityType}} Eranet Domains</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="card-body">
-                            <div class="col-12">
-                                <Form @submit="saveEranetDomainData" :validation-schema="schema" v-slot="{ errors }">
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <label class="form-control-label" for="input-username">Account (email)</label>
-                                            <Field type="text" id="input-username" name="Email" :class="{'form-control': true , 'border-red-600':errors.Email }" v-model="activity.account"/>
-                                            <ErrorMessage class="text-red-600" name="Email"/>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <label class="form-control-label" for="input-username">Domain Name</label>
-                                            <Field type="text" id="input-username" name="Name" :class="{'form-control': true , 'border-red-600':errors.Name }" v-model="activity.domain_name"/>
-                                            <span class="text-red-600" v-if="errors.Name">Domain name is a required field</span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0 mt-3">
-                                            <label class="form-control-label" for="input-username">Domain Creation Date</label>
-                                            <Field v-model="activity.creation_date" name="createDate">
-                                                <datepicker name="createDate" v-model:value="activity.creation_date" valueType="format" format="YYYY-MM-DD"></datepicker>                                                
-                                            </Field>
-                                            <span class="text-red-600" v-if="errors.createDate">Domain creation date is a required field</span>
-                                        </div>
-                                        <div class="col-lg-6 py-0 mt-3">
-                                            <label class="form-control-label" for="input-username">Domain Expiration Date</label>
-                                            <Field name="expDate" v-model="activity.expiration_date">
-                                                <datepicker name="expDate" v-model:value="activity.expiration_date" valueType="format" format="YYYY-MM-DD"></datepicker>
-                                            </Field>
-                                            <span class="text-red-600" v-if="errors.expDate">Domain expiration date is a required field</span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0 mt-3">
-                                            <label class="form-control-label" for="input-username">Domain Auto Renew Status</label>
-                                            <Field name="renewStatus" v-model="activity.auto_renew_status">
-                                                <v-select name="renewStatus" :class="{'form-control': true , 'border-red-600':errors.renewStatus }" :items="accountStatusList" v-model="activity.auto_renew_status"></v-select>
-                                            </Field>
-                                            <span class="text-red-600" v-if="errors.expDate">Domain auto renew status is a required field</span>
-                                        </div>
-                                        <div class="col-lg-6 py-0 mt-3">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Status</label>
-                                                <Field name="Status" v-model="activity.status">
-                                                    <v-select name="Status" :class="{'form-control': true , 'border-red-600':errors.Status}" :items="accountStatusList" v-model="activity.status"></v-select>
-                                                </Field>
-                                                <ErrorMessage class="text-red-600" name="Status"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Form>
-                            </div>
+
+                    <Form @submit="saveEranetDomainData" :validation-schema="schema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Account (email)</label>
+                                    <Field type="text" id="input-username" name="Email" :class="{'form-control': true , 'border-red-600':errors.Email }" v-model="activity.account"/>
+                                    <ErrorMessage class="text-red-600" name="Email"/>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Domain Name</label>
+                                    <Field type="text" id="input-username" name="Name" :class="{'form-control': true , 'border-red-600':errors.Name }" v-model="activity.domain_name"/>
+                                    <span class="text-red-600" v-if="errors.Name">Domain name is a required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Domain Creation Date</label>
+                                    <Field v-model="activity.creation_date" name="createDate">
+                                        <datepicker name="createDate" v-model:value="activity.creation_date" valueType="format" format="YYYY-MM-DD"></datepicker>                                                
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.createDate">Domain creation date is a required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Domain Expiration Date</label>
+                                    <Field name="expDate" v-model="activity.expiration_date">
+                                        <datepicker name="expDate" v-model:value="activity.expiration_date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.expDate">Domain expiration date is a required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Domain Auto Renew Status</label>
+                                    <Field name="renewStatus" v-model="activity.auto_renew_status">
+                                        <v-select name="renewStatus" :class="{'form-control autocomplete': true , 'border-red-600':errors.renewStatus }" :items="accountStatusList" v-model="activity.auto_renew_status"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.expDate">Domain auto renew status is a required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Status</label>
+                                    <Field name="Status" v-model="activity.status">
+                                        <v-select name="Status" :class="{'form-control autocomplete': true , 'border-red-600':errors.Status}" :items="accountStatusList" v-model="activity.status"></v-select>
+                                    </Field>
+                                    <ErrorMessage class="text-red-600" name="Status"/>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -260,9 +248,9 @@ export default {
                 { title: 'Account (email)', key: 'account'},
                 { title: 'Status', align: 'start', sortable: true, key: 'status' },
                 { title: 'Domain Name', key: 'domain' },
-                { title: 'Domain Auto Renew Status', key: 'auto_renewals' },
+                { title: 'Domain Auto Renew Status', key: 'auto_renewals', align: 'center' },
                 { title: 'Domain Expiration', key: 'expire_date' },
-                { title: 'Action', key: 'action' },
+                { title: 'Action', key: 'action', align: 'center' },
             ],
             file: '',
             selected: [],
@@ -579,9 +567,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-.img-width {
-    width: 25px;
-}
-</style>

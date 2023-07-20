@@ -31,9 +31,9 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Manual Network List
                             <v-spacer></v-spacer>
-                            <div class="col-3 pr-1">
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
-                            </div>
+                            </v-col>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -90,80 +90,84 @@
         <!-- Start confirmation alert box -->
         <template>
             <v-row justify="center">
-                <v-dialog v-model="confirmationBox" persistent max-width="400" class="delete-confirm-card">
-                    <v-card>
-                        <v-card-title class="text-h5 text-center">Delete Account</v-card-title>
-                        <v-card-text>Are you sure you want to delete your affiliate?.</v-card-text>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="green darken-1" text @click="cancel()"> Cancel </v-btn>
-                            <v-btn color="green darken-1" text @click="deleteAccount()"> Delete </v-btn>
-                        </v-card-actions>
-                    </v-card>
+                <v-dialog v-model="confirmationBox" persistent max-width="500">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Delete Account</h5>
+                            <button type="button" class="close" aria-label="Close" @click="cancel()">
+                                <span aria-hidden="true" class="mdi mdi-close-circle"></span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" >
+                                    <label class="font-weight-medium">
+                                        Are you sure you want to delete your affiliate?.
+                                    </label>
+                                </v-col>
+                            </v-row>
+                        </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-delete-empty" @click="deleteAccount()">Delete</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click="cancel()">Cancel</v-btn>
+                            </v-col>
+                        </div>
+                    </div>
                 </v-dialog>
             </v-row>
         </template>
         <!--End confirmation alert box -->
+        
         <!-- Create & Update Manual Network List-->
         <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Manual Network</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{activityType}} Manual Network</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <Form @submit="saveManualNetwork" :validation-schema="schema" v-slot="{ errors }">
-                                <div class="row">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Network Name</label>
-                                            <Field type="text" name="Name" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Name}" placeholder="Add Name" v-model="list.name"/>
-                                            <span class="text-red-600" v-if="errors.Name">Network name is required field</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Email</label>
-                                            <Field type="text" name="Email" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Email}" placeholder="Email" v-model="list.email"/>
-                                            <ErrorMessage class="text-red-600" name="Email"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Platform Type</label>
-                                            <Field type="text" name="Platform" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Platform}" placeholder="Type" v-model="list.platform_type"/>
-                                            <span class="text-red-600" v-if="errors.Name">Platform type is required field</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Company</label>
-                                            <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Company" v-model="list.company">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Notes</label>
-                                            <textarea :class="{'form-control': true}"  name="" cols="30" rows="5" v-model="list.notes"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                    </div>
-                                </div>
-                            </Form>
+                    <Form @submit="saveManualNetwork" :validation-schema="schema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row class="align-center">
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Network Name</label>
+                                    <Field type="text" name="Name" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Name}" placeholder="Add Name" v-model="list.name"/>
+                                    <span class="text-red-600" v-if="errors.Name">Network name is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Email</label>
+                                    <Field type="text" name="Email" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Email}" placeholder="Email" v-model="list.email"/>
+                                    <ErrorMessage class="text-red-600" name="Email"/>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Platform Type</label>
+                                    <Field type="text" name="Platform" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Platform}" placeholder="Type" v-model="list.platform_type"/>
+                                    <span class="text-red-600" v-if="errors.Name">Platform type is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Company</label>
+                                    <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Company" v-model="list.company">
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Notes</label>
+                                    <textarea :class="{'form-control': true}" name="Notes" rows="5" v-model="list.notes"></textarea>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form>
                 </div>
             </div>
         </div>

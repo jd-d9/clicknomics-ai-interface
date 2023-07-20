@@ -1,169 +1,167 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active text-capitalize" aria-current="page">Archived Reports Microsoft</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <v-app>
-                                    <v-card>
-                                        <v-card-title>
-                                            <v-spacer></v-spacer>
-                                            <v-row>
-                                                <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                                <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                                </v-col>
-                                                <v-col class="d-flex search_width" cols="12" sm="4">
-                                                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </v-card-title>
-                                        <v-data-table :headers="microsoftHeaders" :items="microsoftCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="microsoftExpanded" item-value="managerAccountName" class="elevation-1 table-hover-class table-expand add-side-borders" show-expand :itemsPerPage="itemsPerPage">
-                                            <template v-slot:[`item.management_system`]="{item}">
-                                                <div class="text-ellipsis" style="width:180px">
-                                                    <router-link to="" @click="showManagementTypeModal(item.selectable.id, item.selectable.management_type, item.selectable.management_system)">{{item.selectable.management_system ? item.selectable.management_system : '-' }}</router-link>
-                                                </div>
-                                            </template>
-                                            <template v-slot:expanded-row="{ columns, item }">
-                                                <td class="exapanded" :colspan="columns.length" style="padding:10px">
-                                                    <table class="table align-items-center" v-if="microsoftCampaignMetrics.length > 0">
-                                                        <thead class="thead-light">
-                                                            <tr>
-                                                                <th scope="col">Campaign Name</th>
-                                                                <th scope="col">Clicks </th>
-                                                                <th scope="col">Ctr </th>
-                                                                <th scope="col">Spend (USD Currency) </th>
-                                                                <th scope="col">Spend (Account Currency) </th>
-                                                                <th scope="col">Average Cpc </th>
-                                                                <th scope="col">Impressions </th>
-                                                                <th scope="col">Absolute Top Impression Rate Percent </th>
-                                                                <th scope="col">Campaign Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="list">
-                                                            <tr v-for="(row , index) in item.selectable.children" :key="index">
-                                                                <td>
-                                                                    {{row.CampaignName ? row.CampaignName : '-'}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toNumberWithoutDecimal(row.clicks ? row.clicks : 0)}}
-                                                                </td>
-                                                                <td>
-                                                                    {{parseFloat(row.ctr ? row.ctr : 0).toFixed(2)}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toCurrency(row.spend ? row.spend : 0)}}
-                                                                </td>
-                                                                <td v-if="row.currency && row.currency !='USD'">
-                                                                    {{`${row.currency} - `+parseFloat(row.spendConverted ? row.spendConverted :row.spend).toFixed(2) }}
-                                                                </td>
-                                                                <td v-else>
-                                                                    {{$filters.toCurrency(row.spend ? row.spend : 0)}}
-                                                                </td>
-                                                                <td>
-                                                                    {{parseFloat(row.averageCpc ? row.averageCpc : 0).toFixed(2)}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toNumberWithoutDecimal(row.impressions ? row.impressions : 0)}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toNumber(row.absoluteTopImpressionRatePercent ? row.absoluteTopImpressionRatePercent : 0)}}%
-                                                                </td>
-                                                                <td>
-                                                                    {{row.Status ? row.Status : '-'}}
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </template>
-                                            <template v-slot:tbody v-if="microsoftCampaignMetrics.length > 0">
-                                                <tr class="total_table">
-                                                    <td>Totals</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>{{$filters.toNumberWithoutDecimal(sumMicrosoftClick)}}</td>
-                                                    <td>{{$filters.toNumber(sumMicrosoftCtr)}}</td>
-                                                    <td>{{$filters.toCurrency(sumMicrosoftSpend)}}</td>
-                                                    <td>-</td>
-                                                    <td>{{$filters.toNumber(sumMicrosoftAverageCpc)}}</td>
-                                                    <td>{{$filters.toNumberWithoutDecimal(sumMicrosoftImpressions)}}</td>
-                                                    <td>{{$filters.toNumber(sumMicrosoftAbsoluteTopImpressionPercentage)}}%</td>
-                                                </tr>
-                                            </template>
-                                        </v-data-table>
-                                    </v-card>
-                                </v-app>
-                                <!-- Modal Management System Add -->
-                                <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 style="color:#fff;" class="modal-title">Management System Type</h5>
-                                                <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                                                    <span style="color:#fff;" aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="col-12">
-                                                    <Form @submit="addManagementType" :validation-schema="schema" v-slot="{ errors }">
-                                                        <div class="row">
-                                                            <div class="col-lg-12 py-0">
-                                                                <div class="form-group">
-                                                                    <label class="form-control-label" for="input-username">Select Management Type</label>
-                                                                    <Field name="Type" v-model="managementModal.type">
-                                                                        <v-select @update:modelValue="updateData" name="Type" :class="{'form-control': true , 'border-red-600':errors.Type }" :items="managementSystemType" v-model="managementModal.type" item-value="key"></v-select>
-                                                                    </Field>
-                                                                    <span class="text-red-600" v-if="errors.Type">Management type can not be empty</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-12 py-0">
-                                                                <div class="form-group">
-                                                                    <label class="form-control-label" for="input-username">Management System</label>
-                                                                    <Field name="System" v-model="managementModal.management_system">
-                                                                        <v-select :class="{'form-control': true , 'border-red-600':errors.System }" name="System" :items="managementSystemList" v-model="managementModal.management_system"></v-select>
-                                                                    </Field>
-                                                                    <span class="text-red-600" v-if="errors.System">Management system can not be empty</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-lg-12 py-0 text-right">
-                                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                                            </div>
-                                                        </div>
-                                                    </Form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Archived Reports Microsoft</span>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Archived Reports Microsoft List
+                            <v-spacer></v-spacer>
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                            </v-col>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :headers="microsoftHeaders" :items="microsoftCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="microsoftExpanded" item-value="managerAccountName" show-expand :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.management_system`]="{item}">
+                                <div class="text-ellipsis" style="width:180px">
+                                    <router-link to="" @click="showManagementTypeModal(item.selectable.id, item.selectable.management_type, item.selectable.management_system)">{{item.selectable.management_system ? item.selectable.management_system : '-' }}</router-link>
                                 </div>
-                            </div>
+                            </template>
+                            <template v-slot:expanded-row="{ columns, item }">
+                                <td class="exapanded bg-light-green-lighten-5" :colspan="columns.length" style="padding:10px">
+                                    <table class="table align-items-center" v-if="microsoftCampaignMetrics.length > 0">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Campaign Name</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Clicks </div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Ctr </div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Spend (USD Currency) </div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Spend (Account Currency) </div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Average Cpc </div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Impressions </div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Absolute Top Impression Rate Percent </div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Campaign Status</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="list">
+                                            <tr v-for="(row , index) in item.selectable.children" :key="index">
+                                                <td class="v-data-table__td">
+                                                    {{row.CampaignName ? row.CampaignName : '-'}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toNumberWithoutDecimal(row.clicks ? row.clicks : 0)}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{parseFloat(row.ctr ? row.ctr : 0).toFixed(2)}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toCurrency(row.spend ? row.spend : 0)}}
+                                                </td>
+                                                <td v-if="row.currency && row.currency !='USD'">
+                                                    {{`${row.currency} - `+parseFloat(row.spendConverted ? row.spendConverted :row.spend).toFixed(2) }}
+                                                </td>
+                                                <td v-else>
+                                                    {{$filters.toCurrency(row.spend ? row.spend : 0)}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{parseFloat(row.averageCpc ? row.averageCpc : 0).toFixed(2)}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toNumberWithoutDecimal(row.impressions ? row.impressions : 0)}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toNumber(row.absoluteTopImpressionRatePercent ? row.absoluteTopImpressionRatePercent : 0)}}%
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{row.Status ? row.Status : '-'}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </template>
+                            <template v-slot:tbody v-if="microsoftCampaignMetrics.length > 0">
+                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                    <td>Totals</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{$filters.toNumberWithoutDecimal(sumMicrosoftClick)}}</td>
+                                    <td>{{$filters.toNumber(sumMicrosoftCtr)}}</td>
+                                    <td>{{$filters.toCurrency(sumMicrosoftSpend)}}</td>
+                                    <td></td>
+                                    <td>{{$filters.toNumber(sumMicrosoftAverageCpc)}}</td>
+                                    <td>{{$filters.toNumberWithoutDecimal(sumMicrosoftImpressions)}}</td>
+                                    <td>{{$filters.toNumber(sumMicrosoftAbsoluteTopImpressionPercentage)}}%</td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
+        <!-- Modal Management System Add -->
+        <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Management System Type</h5>
+                        <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
+                        </button>
+                    </div> 
+
+                    <Form @submit="addManagementType" :validation-schema="schema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Select Management Type</label>
+                                    <Field name="Type" v-model="managementModal.type">
+                                        <v-select @update:modelValue="updateData(managementModal.type)" name="Type" :class="{'form-control autocomplete': true , 'border-red-600':errors.Type }" :items="managementSystemType" v-model="managementModal.type" item-value="key"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.Type">Management type can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Management System</label>
+                                    <Field name="System" v-model="managementModal.management_system">
+                                        <v-select :class="{'form-control autocomplete': true , 'border-red-600':errors.System }" name="System" :items="managementSystemList" v-model="managementModal.management_system"></v-select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.System">Management system can not be empty</span>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form>
                 </div>
             </div>
         </div>

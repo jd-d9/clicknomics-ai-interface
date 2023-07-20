@@ -24,9 +24,9 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Users
                             <v-spacer></v-spacer>
-                            <div class="col-3 pr-1">
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchUser"/>
-                            </div>
+                            </v-col>
                         </v-card-title>
 
                         <!-- data table component -->
