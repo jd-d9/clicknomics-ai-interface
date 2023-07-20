@@ -33,14 +33,14 @@
                                     </div>
                                 </div>
                                 <div class="col-4 text-end">
-                                    <v-btn to="/subscribe-plan" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                                    <v-btn to="/login" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                                         Back
                                     </v-btn> 
                                 </div>
                             </div>
                             <Form class="mt-5 login_form" @submit="signUpUser" :validation-schema="schema" v-slot="{ errors }">
                                 <div class="row">
-                                    <div class="col-12">
+                                    <!-- <div class="col-12">
                                         <div class="profile-image-wrapper">
                                             <label class="profile-image">
                                                 <input type="file" class="d-none" @change="uploadProfilePhoto">
@@ -51,7 +51,7 @@
                                                 <img src="/assets/img/icons/edit.svg" alt="img">
                                             </label>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col-6">
                                         <div class="form-group mb-3 position-relative">
                                             <span class="form_icon">
@@ -182,10 +182,12 @@
                     country_code: this.countryCode,
                     phone_number: this.mobileNumber,
                     profile_image: this.profileImage,
-                    plan_id: sessionStorage.getItem('subscriptionPlanId'),
+                    plan_id: 1,
+                    // plan_id: sessionStorage.getItem('subscriptionPlanId'),
                 })
                 .then(response => {
-                    let planId = sessionStorage.getItem('subscriptionPlanId');
+                    // let planId = sessionStorage.getItem('subscriptionPlanId');
+                    let planId = 1;
                     if(response.data.success) {
                         this.backendErrorMessage = '';
                         // set plan id
@@ -236,16 +238,16 @@
                     this.showLoader = false;
                 }); 
             },
-            // upload profile image
-            uploadProfilePhoto(event) {
-                const file = event.target.files[0];
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    let profileImage64 = reader.result;
-                    this.profileImage = profileImage64;
-                }
-                reader.readAsDataURL(file);
-            },
+            // // upload profile image
+            // uploadProfilePhoto(event) {
+            //     const file = event.target.files[0];
+            //     const reader = new FileReader();
+            //     reader.onloadend = () => {
+            //         let profileImage64 = reader.result;
+            //         this.profileImage = profileImage64;
+            //     }
+            //     reader.readAsDataURL(file);
+            // },
             // get and set country code
             getAndSetCountryCode() {
                 this.showLoader = true;
