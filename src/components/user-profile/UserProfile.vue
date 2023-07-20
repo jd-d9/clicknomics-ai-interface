@@ -32,11 +32,16 @@
                                     </label>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label>Phone number : 
-                                        <span class="font-weight-medium text-blue-darken-4" v-if="phoneNumber">{{ countryCode }} - {{ phoneNumber }}</span>
-                                        <span class="font-weight-medium text-blue-darken-4" v-else></span>
+                                    <label>Company Name : 
+                                        <span class="font-weight-medium text-blue-darken-4">{{ companyName ? companyName : '-' }}</span>
                                     </label>
                                 </v-col>
+                                <!-- <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label>Phone number : 
+                                        <span class="font-weight-medium text-blue-darken-4" v-if="phoneNumber">{{ countryCode }} - {{ phoneNumber }}</span>
+                                        <span class="font-weight-medium text-blue-darken-4" v-else>-</span>
+                                    </label>
+                                </v-col> -->
                             </v-row>
                             <Form @submit="updateUserDetails" :validation-schema="userSchema" v-slot="{ errors }" v-show="profileDetailsToggle">
                                 <v-row>
@@ -47,6 +52,12 @@
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label>Company Name</label>
+                                        <Field type="text" id="input-username" name="companyName" :class="{'form-control': true, 'border-red-600': errors.companyName}" placeholder="Company Name" v-model="companyName"/>
+                                        <span class="text-red-600" v-if="errors.companyName">Company name can not be empty</span>
+                                    </v-col>
+
+                                    <!-- <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                         <label>Select Country Code</label>
                                         <Field v-model="countryCode" name="Country" :class="{'border-red-600': errors.Country}">
                                             <select class="form-control" name="Country" v-model="countryCode" :class="{'border-red-600': errors.Country}">
@@ -62,7 +73,7 @@
                                         <label>Mobile Number</label>
                                         <Field type="number" name="Mobile" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="phoneNumber"/>
                                         <span class="text-red-600" v-if="errors.Mobile">Mobile Number can not be empty</span>
-                                    </v-col>
+                                    </v-col> -->
 
                                     <v-col cols="12" sm="12" md="12" lg="12">
                                         <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update</v-btn>    
@@ -289,8 +300,9 @@
                 email: '',
                 currentEmail: '',
                 name: '',
-                countryCode: '',
-                phoneNumber: '',
+                companyName: '',
+                // countryCode: '',
+                // phoneNumber: '',
                 password: '',
                 passwordConfirmation: '',
                 currentPassword: '',
@@ -311,8 +323,9 @@
             userSchema() {
                 return yup.object({
                     Name: yup.string().required(),
-                    Country: yup.string().required(),
-                    Mobile: yup.string().required(),
+                    companyName: yup.string().required(),
+                    // Country: yup.string().required(),
+                    // Mobile: yup.string().required(),
                 });
             },
             passSchema() {
@@ -328,6 +341,10 @@
                     Remember: yup.string().required(),
                 });
             },
+        },
+        mounted() {
+            this.getCurrentUserData();
+            // this.getAndSetCountry();
         },
         methods: {
             // get current loged in user data
@@ -345,8 +362,9 @@
                         this.profileImage = this.currentUserDetails.profile_image;
                         this.currentEmail = this.currentUserDetails.email;
                         this.name = this.currentUserDetails.name;
-                        this.countryCode = this.currentUserDetails.country_code;
-                        this.phoneNumber = this.currentUserDetails.phone_number;
+                        this.companyName = this.currentUserDetails.company_name;
+                        // this.countryCode = this.currentUserDetails.country_code;
+                        // this.phoneNumber = this.currentUserDetails.phone_number;
                         this.verificationStatus = this.currentUserDetails.verification_status;
                         this.remember2Fa = this.currentUserDetails.remember_2fa;
                         this.trialEndsAt = moment(this.currentUserDetails.trial_ends_at).format('YYYY-MM-DD');
@@ -370,34 +388,34 @@
                 }); 
             },
             // get and set country code
-            getAndSetCountry() {
-                this.showLoader = true;
-                this.axios.get(this.$api + '/settings/countries', {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                    }
-                })
-                .then(response => {
-                    if(response.data.success) {
-                        this.countryDetails = response.data.data;
-                        this.countryDetails.sort((a, b) => a.name - b.name);
-                        this.showLoader = false;
-                    }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.showLoader = false;
-                });
-            },
+            // getAndSetCountry() {
+            //     this.showLoader = true;
+            //     this.axios.get(this.$api + '/settings/countries', {
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //             Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+            //         }
+            //     })
+            //     .then(response => {
+            //         if(response.data.success) {
+            //             this.countryDetails = response.data.data;
+            //             this.countryDetails.sort((a, b) => a.name - b.name);
+            //             this.showLoader = false;
+            //         }else {
+            //             this.$toast.open({
+            //                 message: response.data.message,
+            //                 position: 'top-right',
+            //                 duration: '5000',
+            //                 type: 'error'
+            //             });
+            //             this.showLoader = false;
+            //         }
+            //     })
+            //     .catch(error => {
+            //         console.log(error);
+            //         this.showLoader = false;
+            //     });
+            // },
             // upload image
             updateProfilePhoto(event) {
                 this.showLoader = true;
@@ -497,8 +515,9 @@
                 this.showLoader = true;
                 this.axios.post(this.$api + '/userprofiles/updateUserDetail', {
                     name: this.name,
-                    phone_number : this.phoneNumber,
-                    country_code : this.countryCode
+                    company_name : this.companyName,
+                    // phone_number : this.phoneNumber,
+                    // country_code : this.countryCode
                 }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -630,10 +649,6 @@
                     this.showLoader = false;
                 });
             }
-        },
-        mounted() {
-            this.getCurrentUserData();
-            this.getAndSetCountry();
         }
     }
 </script>

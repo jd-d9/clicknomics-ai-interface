@@ -10,7 +10,7 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Users</span>
+                        <span>Subscribe Users</span>
                         <v-spacer />
 
                         <v-btn @click.prevent="addNewUser" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
@@ -22,7 +22,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Users
+                            Subscribe Users
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchUser"/>
@@ -35,13 +35,16 @@
                                 {{item.selectable.id}}
                             </template>
                             <template v-slot:[`item.name`]="{ item }">
-                                {{item.selectable.name}}
+                                {{item.selectable.name ? item.selectable.name : '-'}}
                             </template>
                             <template v-slot:[`item.email`]="{ item }">
-                                {{item.selectable.email}}
+                                {{item.selectable.email ? item.selectable.email : '-'}}
                             </template>
-                            <template v-slot:[`item.phone_number`]="{ item }">
-                                +{{item.selectable.country_code}} - {{item.selectable.phone_number}}
+                            <template v-slot:[`item.company_name`]="{ item }">
+                                {{item.selectable.company_name ? item.selectable.company_name : '-'}}
+                            </template>
+                            <template v-slot:[`item.status`]="{ item }">
+                                <v-switch color="#0d47a1" v-model="item.selectable.status" hide-details true-value="1" false-value="0" class="ms-auto d-inline-flex justify-content-end mr-2"></v-switch>
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editUser(item.selectable.id)" :disabled="permissions.update_auth == '0'">
@@ -86,7 +89,8 @@
                     { title: 'ID', key: 'id', align: 'start' },
                     { title: 'Name', key: 'name' },
                     { title: 'Email', key: 'email' },
-                    { title: 'Mobile No.', key: 'phone_number' },
+                    { title: 'Company Name', key: 'company_name' },
+                    { title: 'Status', key: 'status' },
                     { title: 'Action', align:'center', key: 'action', sortable: false },
                 ],
                 itemsPerPage: -1,
@@ -99,10 +103,10 @@
             }
         },
         methods: {
-            // get regestered user data
+            // get subscribe user data
             getUsersData() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/settings/user', {
+                this.axios.get(this.$api + '/settings/subscribeUser', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -110,10 +114,10 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        console.log(response.data.data.user.data, 'users');
-                        this.items = response.data.data.user.data;
-                        this.userFilter = response.data.data.user.data;
-                        this.permissions = response.data.data.permission;
+                        const getData = response.data;
+                        this.items = getData.data.data;
+                        this.userFilter = getData.data.data;
+                        this.permissions = getData.permission;
                         this.showLoader = false;
                     }
                 })
@@ -128,22 +132,21 @@
                     return val.name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
                            val.id.toString().includes(this.searchInput.toLowerCase()) || 
                            val.email.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                           val.country_code.concat(" ", val.phone_number).toLowerCase().includes(this.searchInput.toLowerCase())
+                           val.company_name.toLowerCase().includes(this.searchInput.toLowerCase())
                 })
             },
             // add new user
             addNewUser() {
-                this.$router.push('/settings/user_management/users/create')
+                this.$router.push('/settings/subscribe_user/create')
             },
             // redirect on edit page
             editUser(id) {
-                this.$router.push('/settings/user_management/users/' + id + '/edit');
+                this.$router.push('/settings/subscribe_user/' + id + '/edit');
             },
             // delete regestered user
             deleteUser(id) {
-                console.log(id, 'id')
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/settings/user/' + id, {
+                this.axios.delete(this.$api + '/settings/subscribeUser/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -153,12 +156,20 @@
                     if(response.data.success) {
                         this.showLoader = false;
                         this.$toast.open({
-                            message: 'User deleted',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.getUsersData();
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -175,6 +186,10 @@
         },
         mounted() {
             this.getUsersData();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
         }
     }
 </script>

@@ -57,9 +57,17 @@
                                             <span class="form_icon">
                                                 <img src="/assets/img/icons/person.svg">
                                             </span>
-                                            <Field id="name" type="text" name="Name" class="form-control" :class="{'border-red-600': errors.Name}" placeholder="Name" v-model="userName"/>
-                                            <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
+                                            <Field id="name" type="text" name="firstName" class="form-control" :class="{'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
+                                            <span class="text-red-600" v-if="errors.firstName">First name is required field</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group mb-3 position-relative">
+                                            <span class="form_icon">
+                                                <img src="/assets/img/icons/person.svg">
+                                            </span>
+                                            <Field id="name" type="text" name="lastName" class="form-control" :class="{'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
+                                            <span class="text-red-600" v-if="errors.lastName">Last name is required field</span>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -68,7 +76,6 @@
                                                 <img src="/assets/img/icons/envelope.svg">
                                             </span>
                                             <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
-                                            <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
                                             <ErrorMessage class="text-red-600" name="Email"/>
                                             <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                         </div>
@@ -76,11 +83,10 @@
                                     <div class="col-6">
                                         <div class="form-group mb-3 position-relative">
                                             <span class="form_icon">
-                                                <img src="/assets/img/icons/lock.svg">
+                                                <img src="/assets/img/icons/envelope.svg">
                                             </span>
-                                            <Field id="password" type="password" name="Password" class="form-control" :class="{'border-red-600': errors.Password}" autocomplete="current-password" placeholder="Password" v-model="userPassword"/>
-                                            <span class="text-red-600" v-if="errors.Password">Password can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Password"/> -->
+                                            <Field id="company" type="text" name="companyName" class="form-control" :class="{'border-red-600': errors.companyName}" placeholder="Company Name" v-model="companyName"/>
+                                            <span class="text-red-600" v-if="errors.companyName">Company name is required field</span>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -88,12 +94,20 @@
                                             <span class="form_icon">
                                                 <img src="/assets/img/icons/lock.svg">
                                             </span>
-                                            <Field id="confirm_password" type="password" name="confPassword" class="form-control" :class="{'border-red-600': errors.confPassword}" autocomplete="current-password" placeholder="Confirm password" v-model="confirmPassword"/>
-                                            <span class="text-red-600" v-if="errors.confPassword">Confirm password can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="confPassword"/> -->
+                                            <Field id="password" type="password" name="Password" class="form-control" :class="{'border-red-600': errors.Password}" placeholder="Password" v-model="userPassword"/>
+                                            <span class="text-red-600" v-if="errors.Password">Password is required field</span>
                                         </div>
                                     </div>
                                     <div class="col-6">
+                                        <div class="form-group mb-3 position-relative">
+                                            <span class="form_icon">
+                                                <img src="/assets/img/icons/lock.svg">
+                                            </span>
+                                            <Field id="confirm_password" type="password" name="passwordConfirmation" class="form-control" :class="{'border-red-600': errors.passwordConfirmation}" placeholder="Confirm password" v-model="confirmPassword"/>
+                                            <span class="text-red-600" v-if="errors.passwordConfirmation">Password did not match</span>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-6">
                                         <div class="form-group mb-3 position-relative">
                                             <span class="form_icon">
                                                 <img src="/assets/img/icons/country.png">
@@ -106,20 +120,18 @@
                                                     </option>
                                                 </select>
                                             </Field>
-                                            <span class="text-red-600" v-if="errors.Country">Country code can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Country"/> -->
+                                            <span class="text-red-600" v-if="errors.Country">Country code is required field</span>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
+                                    </div> -->
+                                    <!-- <div class="col-6">
                                         <div class="form-group mb-3 position-relative">
                                             <span class="form_icon form_icon_32">
                                                 <img src="/assets/img/icons/phone.png">
                                             </span>
                                             <Field id="confirm_password" type="number" name="Mobile" class="form-control" :class="{'border-red-600': errors.Mobile}" autocomplete="current-password" placeholder="Mobile number" v-model="mobileNumber"/>
-                                            <!-- <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty</span> -->
                                             <ErrorMessage class="text-red-600" name="Mobile"/>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Sign Up</button>
@@ -139,51 +151,58 @@
     import defaultImage from '../../assets/img/DefaultImage.js';
     export default {
         components: {
-            Form, Field, ErrorMessage
+            Form, 
+            Field, 
+            ErrorMessage
         },
         data() {
             return {
                 showLoader: false,
                 countryCodeListing: [],
-                userName: '',
+                firstName: '',
+                lastName: '',
                 userEmail: '',
+                companyName: '',
                 userPassword: '',
                 confirmPassword: '',
-                countryCode: '',
-                mobileNumber: '',
                 profileImage: defaultImage,
+                // countryCode: '',
+                // mobileNumber: '',
                 backendErrorMessage: '',
             }
         },
         computed: {
             schema() {
                 return yup.object({
-                    Name: yup.string().required(),
+                    firstName: yup.string().required(),
+                    lastName: yup.string().required(),
                     Email: yup.string().required().email(),
+                    companyName: yup.string().required(),
                     Password: yup.string().required(),
-                    confPassword: yup.string().required(),
-                    Country: yup.string().required(),
-                    Mobile: yup.string().required().min(10).max(10)
+                    passwordConfirmation: yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
+                    // Mobile: yup.string().required().min(10).max(10)
                 });
             },
         },
-        mounted() {
-            this.getAndSetCountryCode();
-        },
+        // mounted() {
+        //     this.getAndSetCountryCode();
+        // },
         methods: {
             // submit data and signup user
             signUpUser() {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/registration', {
-                    name: this.userName,
+                    first_name: this.firstName,
+                    last_name: this.lastName,
                     email: this.userEmail,
+                    company_name: this.companyName,
                     password: this.userPassword,
                     password_confirmation: this.confirmPassword,
-                    country_code: this.countryCode,
-                    phone_number: this.mobileNumber,
-                    profile_image: this.profileImage,
                     plan_id: 1,
                     // plan_id: sessionStorage.getItem('subscriptionPlanId'),
+                    // country_code: this.countryCode,
+                    // phone_number: this.mobileNumber,
+                    // profile_image: this.profileImage,
                 })
                 .then(response => {
                     // let planId = sessionStorage.getItem('subscriptionPlanId');
@@ -201,7 +220,7 @@
                         .then(response => {
                             if(response.data.success) {
                                 this.$toast.open({
-                                    message: 'User registration successfully',
+                                    message: response.data.message,
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'
@@ -249,22 +268,22 @@
             //     reader.readAsDataURL(file);
             // },
             // get and set country code
-            getAndSetCountryCode() {
-                this.showLoader = true;
-                this.axios.get(this.$api + '/countries')
-                .then(response => {
-                    if(response.data.success) {
-                        this.countryCodeListing = response.data.data;
-                        this.countryCodeListing.sort((a, b) => a.name - b.name);
-                        console.log(this.countryCodeListing, 'countryCodeListing');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.showLoader = false;
-                });
-            },
+            // getAndSetCountryCode() {
+            //     this.showLoader = true;
+            //     this.axios.get(this.$api + '/countries')
+            //     .then(response => {
+            //         if(response.data.success) {
+            //             this.countryCodeListing = response.data.data;
+            //             this.countryCodeListing.sort((a, b) => a.name - b.name);
+            //             console.log(this.countryCodeListing, 'countryCodeListing');
+            //             this.showLoader = false;
+            //         }
+            //     })
+            //     .catch(error => {
+            //         console.log(error);
+            //         this.showLoader = false;
+            //     });
+            // },
         }
     }
 </script>

@@ -130,7 +130,8 @@
                             
                             if(responseData.isTwoFactorVerified) {
                                 this.$toast.open({
-                                    message: 'You are successfully logged in',
+                                    // message: 'You are successfully logged in',
+                                    message: response.data.message,
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'
