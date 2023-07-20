@@ -205,6 +205,10 @@ export default {
     },
     mounted() {
         this.getCpaNetworkist();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {

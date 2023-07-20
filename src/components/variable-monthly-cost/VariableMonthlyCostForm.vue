@@ -91,6 +91,10 @@ export default {
             this.breadCrumbMessage = 'Update';
             this.toggleElement = false;
         }
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {

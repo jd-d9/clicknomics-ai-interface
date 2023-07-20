@@ -150,6 +150,10 @@ export default {
     },
     mounted() {
         this.getBingCustomerAccounts();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // open and close modal

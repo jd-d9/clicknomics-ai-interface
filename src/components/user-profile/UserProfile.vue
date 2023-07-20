@@ -342,10 +342,6 @@
                 });
             },
         },
-        mounted() {
-            this.getCurrentUserData();
-            // this.getAndSetCountry();
-        },
         methods: {
             // get current loged in user data
             getCurrentUserData() {
@@ -649,6 +645,14 @@
                     this.showLoader = false;
                 });
             }
+        },
+        mounted() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
+            this.getCurrentUserData();
+            this.getAndSetCountry();
         }
     }
 </script>

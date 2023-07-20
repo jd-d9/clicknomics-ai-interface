@@ -239,6 +239,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getAllUserRole();
         if(this.$route.params.id) {
             this.getUserRole();

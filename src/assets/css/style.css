@@ -290,3 +290,69 @@ td.v-data-table__td {
 }
 .v_select_design .v-chip.v-chip--density-default{height: 20px;}
 .v_select_design .v-chip.v-chip--density-default .v-chip__content{font-size: 11px;font-weight: 700;}
+
+
+
+
+
+
+/*--------------------- Intro js design -----------------*/
+.introjs-helperLayer{
+    border-radius: 0px !important;
+    box-shadow: rgb(255 255 255 / 0%) 0px 0px 1px 2px, rgb(33 33 33 / 14%) 0px 0px 0px 5000px !important;
+}
+.introjs-tooltip{border-radius: 12px;}
+.introjs-tooltip-header{
+    padding: 10px 15px;
+    border-radius: 12px 12px 0px 0px;
+    background: transparent linear-gradient(270deg, #0d47a1 0%, #005eb3 100%) 0% 0% no-repeat padding-box !important
+}
+.introjs-tooltip-title{
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+.introjs-skipbutton{
+    color: #fff !important;
+    font-weight: 100;
+    line-height: 40px;
+    height: 40px;
+}
+.introjs-arrow.top-middle, .introjs-arrow.top {
+    top: -20px;
+    left: 50%;
+    margin-left: -10px;
+    border-bottom-color: #0d47a1;
+    border-width: 10px;
+}
+.introjs-arrow.bottom-middle{border-top-color: #0d47a1;border-width: 10px;bottom: -20px;}
+.introjs-tooltiptext {
+    padding: 20px 15px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif !important;
+    color: #000;
+}
+.introjs-bullets{
+    padding: 0px;
+    margin-bottom: 10px;
+}
+.introjs-bullets ul li a{background: #a6c4dd;}
+.introjs-bullets ul li a.active {
+    width: 15px;
+    background: #094da6;
+}
+.introjs-button{
+    background-color: #0D47A1 !important;
+    color: #FFFFFF !important;
+    border: none;
+    text-shadow: none;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    padding: 5px 20px;
+    border-radius: 5px;
+}

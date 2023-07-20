@@ -221,6 +221,10 @@ export default {
     },
     mounted() {
         this.fetchGoogleAdsMetrics();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // update date range

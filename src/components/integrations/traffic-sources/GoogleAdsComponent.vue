@@ -201,6 +201,10 @@ export default {
     },
     mounted() {
         this.getCustomerAccounts();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {

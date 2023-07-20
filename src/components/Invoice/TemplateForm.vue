@@ -266,6 +266,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getInvoiceData();
         if(location.pathname == '/accounting/invoice/'+ this.$route.params.id +'/createFromTemplate') {
             this.dynamicBredCrumb = 'Create Invoice From Template';

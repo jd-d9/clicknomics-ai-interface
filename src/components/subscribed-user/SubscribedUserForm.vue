@@ -130,6 +130,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getUserRole();
         window.scrollTo({
             top: 0,

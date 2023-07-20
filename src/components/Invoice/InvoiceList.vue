@@ -294,6 +294,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getInvoicesList();
         this.fetchNetworkList();
         this.filterUsingNetwork();

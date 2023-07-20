@@ -247,6 +247,10 @@ export default {
         },
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         // const urlSearchParams = new URLSearchParams(window.location.search);
         // const params = Object.fromEntries(urlSearchParams.entries());
         // if(params.hasOwnProperty('month') && params.hasOwnProperty('year')) {

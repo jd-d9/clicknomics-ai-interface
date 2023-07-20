@@ -326,6 +326,10 @@ export default {
     },
     mounted() {
         this.getFixedMonthlyCostList();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         onSubmit(values) {

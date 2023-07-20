@@ -172,6 +172,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getManualNetworksEntry();
         this.updateCsvWithTodayDate('ipm-manual-networks-metrics-demo.csv');
     },

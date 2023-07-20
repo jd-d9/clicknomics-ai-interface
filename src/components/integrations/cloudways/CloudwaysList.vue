@@ -113,6 +113,10 @@ export default {
     },
     mounted() {
         this.getCloudwaysListing();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // open and close confirm delete modal
