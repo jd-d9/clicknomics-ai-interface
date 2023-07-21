@@ -21,37 +21,31 @@
                             <p class="font-weight-medium text-left">Use these awesome forms for Reset Password.</p>
                         </v-card-title>
 
-                        <form class="login_form" @submit.prevent="setNewPassword">
+                        <Form class="login_form" @submit="setNewPassword" :validation-schema="schema" v-slot="{ errors }">
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-email-variant" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <input id="email" type="email" class="form-control" :class="{'form-control': true ,'border-red-600': invalidEmail}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail" @keyup="emailIsValid">
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ invalidEmail }}</strong>
-                                    </span>
+                                    <Field name="Email" id="email" type="email" class="form-control" :class="{'form-control': true ,'border-red-600': errors.Email}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail"/>
+                                    <ErrorMessage class="text-red-600" name="Email"/>
                                     <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <input id="password" type="password" class="form-control" :class="{'form-control': true ,'border-red-600': invalidPassword}" autocomplete="password" autofocus placeholder="New Password" v-model="newPassword" @keyup="passwordIsValid">
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ invalidPassword }}</strong>
-                                    </span>
+                                    <Field id="password" type="password" name="Password" class="form-control" :class="{'form-control': true ,'border-red-600': errors.Password}" autocomplete="password" autofocus placeholder="New Password" v-model="newPassword"/>
+                                    <ErrorMessage class="text-red-600" name="Password"/>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <input id="password" type="password" class="form-control" :class="{'form-control': true ,'border-red-600': invalidConfirmPass}" autocomplete="current-password" placeholder="Confirm New Password" v-model="confirmNewPassword" @keyup="confirmPassValid">
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ invalidConfirmPass }}</strong>
-                                    </span>
+                                    <Field name="confirmPassword" id="password" type="password" class="form-control" :class="{'form-control': true ,'border-red-600': errors.confirmPassword}" autocomplete="current-password" placeholder="Confirm New Password" v-model="confirmNewPassword"/>
+                                    <span class="text-red-600" v-if="errors.confirmPassword">Password did not match</span>
                                 </v-col>
                             </v-row>
                             <div class="text-center">
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Reset Password</v-btn>   
                             </div>
-                        </form>
+                        </Form>
                     </v-card>
                 </v-col>
             </v-row>
@@ -61,14 +55,14 @@
 
 <script>
     import { useRoute } from 'vue-router';
-    // import * as yup from 'yup';
-    // import { Form, Field, ErrorMessage } from 'vee-validate';
+    import * as yup from 'yup';
+    import { Form, Field, ErrorMessage } from 'vee-validate';
     export default {
-        // components: {
-        //     Form, 
-        //     Field, 
-        //     ErrorMessage
-        // },
+        components: {
+            Form, 
+            Field, 
+            ErrorMessage
+        },
         data() {
             return {
                 showLoader: false,
@@ -84,91 +78,49 @@
             }
         },
         computed: {
-            // schema() {
-            //     return yup.object({
-            //         Authentication: yup.string().required(),
-            //     });
-            // },
+            schema() {
+                return yup.object({
+                    Email: yup.string().required().Email,
+                    Password: yup.string().required(),
+                    confirmPassword: yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
+                });
+            },
         },
         methods: {
-            // email validation
-            emailIsValid() {
-                const mailFormat = /^[^@]+@\w+(\.\w+)+\w$/;
-                if(!this.userEmail) {
-                    this.invalidEmail = 'Email is required.';
-                }
-                else if(!this.userEmail.match(mailFormat)) {
-                    this.invalidEmail = 'Please enter valid email.';
-                }
-                else {
-                    this.invalidEmail = '';
-                }
-            },
-            // password validation
-            passwordIsValid() {
-                if(!this.newPassword) {
-                    this.invalidPassword = 'Password is required.';
-                }
-                else if(this.newPassword.length < 6) {
-                    this.invalidPassword = 'Please enter valid password.';
-                }
-                else {
-                    this.invalidPassword = '';
-                }
-            },
-            // confirm password validation
-            confirmPassValid() {
-                if(!this.confirmNewPassword) {
-                    this.invalidConfirmPass = 'Field is required.';
-                }
-                else if(!this.confirmNewPassword.match(this.newPassword)) {
-                    this.invalidConfirmPass = 'Please re-enter password.';
-                }
-                else {
-                    this.invalidConfirmPass = '';
-                }
-            },
             // check validation and signin user
             setNewPassword() {
-                this.passwordIsValid();
-                this.confirmPassValid();
-                if(this.invalidEmail || !this.userEmail ||this.invalidConfirmPass || this.invalidPassword || !this.newPassword || !this.confirmNewPassword) {
-                    return false;
-                }
-                else{
-                    this.showLoader = true;
-                    this.axios.post(this.$api + '/resetpassword', {
-                        token: this.route.query.token,
-                        email: this.route.query.email,
-                        password: this.newPassword,
-                        password_confirmation: this.confirmNewPassword,
-                    })
-                    .then(response => {
-                        if(response.data.success) {
-                            this.$router.push('/login');
-                            this.backendErrorMessage = '';
-                            this.showLoader = false;
-                            this.$toast.open({
-                                message: response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
-                        }else {
-                            this.showLoader = false;
-                            this.$toast.open({
-                                message: response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        this.backendErrorMessage = error.response.data.message;
+                this.showLoader = true;
+                this.axios.post(this.$api + '/resetpassword', {
+                    token: this.route.query.token,
+                    email: this.route.query.email,
+                    password: this.newPassword,
+                    password_confirmation: this.confirmNewPassword,
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$router.push('/login');
+                        this.backendErrorMessage = '';
                         this.showLoader = false;
-                    }); 
-                }
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                    }else {
+                        this.showLoader = false;
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                })
+                .catch(error => {
+                    this.backendErrorMessage = error.response.data.message;
+                    this.showLoader = false;
+                }); 
             },
         },
         mounted() {
