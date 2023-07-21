@@ -34,14 +34,14 @@
                         <Form @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }">
                             <v-row>
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
-                                    <label>Enter an authenticator app code:</label>
-                                    <Field name="Authentication" placeholder="Authenticator app code" class="form-control" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
+                                    <label>Enter an authenticator app code</label>
+                                    <Field name="Authentication" placeholder="Authenticator app code" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
                                     <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
                                     <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
-                                    <label>2FA Verification For 30 Days.</label>
+                                    <label>2FA Verification For 30 Days</label>
                                     <select class="form-control" placeholder="User Status" v-model="rememberVerification">
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
