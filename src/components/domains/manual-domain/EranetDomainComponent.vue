@@ -35,7 +35,7 @@
                             <v-spacer></v-spacer>
                             <div v-if="selected.length > 0" class="mr-2">
                                 <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                    Remove
+                                    Remove Selected
                                 </v-btn>
                             </div>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
