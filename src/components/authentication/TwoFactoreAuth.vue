@@ -1,92 +1,97 @@
 <template>
-    <div class="main-content bg-default height" id="panel">
+    <div class="main-content bg-default height">
         <loader-component v-if="showLoader"></loader-component>
-            <div class="main-content">
-                <!-- Header -->
-                <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
-                    <div class="container">
-                        <div class="header-body text-center mb-5">
-                            <div class="row justify-content-center">
-                                <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-                                    <h1 class="text-white">Welcome to clicknomics</h1>
-                                    <p class="text-lead text-white">Please login to continue.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="separator separator-bottom separator-skew zindex-100">
-                        <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-                        </svg>
-                    </div>
-                </div>
-                <!-- Page content -->
-                <div class="container mt--7 mt-lg--8 pb-5">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-9 col-md-7">
-                            <div class="card bg-secondary border-0 mb-0">
-                                <div class="card-body px-lg-4 py-lg-4">
-                                    <div class="text-center logo_responsive  mb-5">
-                                        <img src="/assets/img/brand/logo.png" class="image-height">
-                                    </div>
-                                    <div class="text-center">
-                                        <div v-html="displayQrCode"></div>
-                                    </div>
-                                    <div class="text-center"></div>
-                                    <span class="d-block mb-4 font-size">
-                                        Unfortunately, you cannot recover your secret keys in your Authenticator app. If you haven't saved the QR codes or secret keys, you should contact the support team of service which you protect with Authenticator and they will help you to restore the access to your account.
-                                    </span>
-                                    <span class="mb-2">Enter an authenticator app code:</span>
-                                    <Form @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }">
-                                        <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
-                                        <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
-                                        <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
-                                        <div class="form-group">
-                                            <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
-                                            <select class="select-option" placeholder="User Status" v-model="rememberVerification">
-                                                <option value="1">Yes</option>
-                                                <option value="0">No</option>
-                                            </select>
-                                            <!-- <span class="text-red-600">error</span> -->
-                                        </div>
-                                        <div class="for-responsive">
-                                            <a href="javascript:void(0)" class="text-right"  @click.prevent="openModal">Regenerate 2FA click here?</a>
-                                            <router-link to="/authenticator/validate/email" class="float-right mb-2" @click="tryAnother === true">Try Another way.</router-link>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
-                                    </Form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Header -->
+        <div class="header bg-gradient-primary py-7 pb-lg-7 pt-lg-8">
+            <div class="separator separator-bottom separator-skew zindex-100">
+                <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+                </svg>
             </div>
+        </div>
+        <!-- Page content -->
+        <v-container class="mt--8 mt-lg--8 pb-5 login_screen">
+            <v-row>
+                <v-col cols="12" sm="12" md="8" lg="5" class="m-auto">
+                    <v-card class="card_design mb-4 pa-10">
+                        <v-card-title class="text-center">
+                            <img src="/assets/img/brand/logo.png" alt="logo" height="40">
+                            <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
+                            <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
+                            <p class="font-weight-medium text-left">Please login to continue.</p>
+                        </v-card-title>
+
+                        <v-row>
+                            <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
+                                <div class="d-flex justify-content-between align-center">
+                                    <div v-html="displayQrCode"></div>
+                                    <p class="font-weight-medium ml-3">
+                                        Unfortunately, you cannot recover your secret keys in your Authenticator app. If you haven't saved the QR codes or secret keys, you should contact the support team of service which you protect with Authenticator and they will help you to restore the access to your account.
+                                    </p>
+                                </div>
+                            </v-col>
+                        </v-row>
+                        <Form @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
+                                    <label>Enter an authenticator app code:</label>
+                                    <Field name="Authentication" placeholder="Authenticator app code" class="form-control" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
+                                    <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
+                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
+                                    <label>2FA Verification For 30 Days.</label>
+                                    <select class="form-control" placeholder="User Status" v-model="rememberVerification">
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="6" sm="6" md="6" lg="6" class="font-medium font-weight-normal position-relative text-left">
+                                    <router-link to="" class="text-underline" @click.prevent="openModal">
+                                        <small class="font-weight-600 text-blue-darken-2">Regenerate 2FA click here?</small>
+                                    </router-link>
+                                </v-col>
+                                <v-col cols="6" sm="6" md="6" lg="6" class="font-medium font-weight-normal position-relative text-right">
+                                    <router-link to="/authenticator/validate/email" class="text-underline" @click="tryAnother === true">
+                                        <small class="font-weight-600 text-blue-darken-2">Try Another way.</small>
+                                    </router-link>
+                                </v-col>
+                            </v-row>
+                            <div class="text-center">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Authenticate</v-btn>   
+                            </div>
+                        </Form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
             <!-- edited modal  -->
             <div class="modal fade" id="confirm2FAModal" tabindex="-1" role="dialog" aria-labelledby="confirm2FAModalTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title text-white">Confirm</h5>
+                            <h5 class="modal-title" id="exampleModalLongTitle">Confirm</h5>
                             <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                                <span class="text-white" aria-hidden="true">&times;</span>
+                                <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-lg-12 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Are you sure want to reset 2FA?</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0 text-right">
-                                        <button type="button" class="btn btn-primary btn-lg btn_animated" @click.prevent="resetTwoFactor">Yes</button>
-                                        <button type="button" class="btn btn-danger btn-lg btn_animated text-white" @click.prevent="closeModal">No</button>
-                                    </div>
-                                </div>
-                            </div>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" >
+                                    <label class="font-weight-medium" for="input-username">
+                                        Are you sure you want to reset 2FA?
+                                    </label>
+                                </v-col>
+                            </v-row>
+                        </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-red-darken-2 btn_animated mr-3" @click.prevent="resetTwoFactor">Yes</v-btn>    
+                                <v-btn class="text-none bg-blue-darken-4 btn_animated" @click.prevent="closeModal">No</v-btn>
+                            </v-col>
                         </div>
                     </div>
                 </div>

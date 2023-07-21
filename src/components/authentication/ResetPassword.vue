@@ -1,55 +1,44 @@
 <template>
-    <div class="bg-default">
+    <div class="main-content bg-default height">
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Main content -->
-        <div class="main-content height" id="panel">
-            <!-- Header -->
-            <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
-                <div class="container">
-                    <div class="header-body text-center mb-5">
-                        <div class="row justify-content-center">
-                            <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-                                <h1 class="text-white">Reset Password!</h1>
-                                <p class="text-lead text-white">Use these awesome forms to Reset Password.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="separator separator-bottom separator-skew zindex-100">
-                    <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                        <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-                    </svg>
-                </div>
-            </div>
-            <!-- Page content -->
-            <div class="container mt--7 mt-lg--8 pb-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5 col-md-7">
-                        <div class="card bg-secondary border-0 mb-0">
-                            <div class="card-body px-lg-5 py-lg-5">
-                                <div class="text-center logo_responsive">
-                                    <img src="/assets/img/brand/logo.png" style="width:50%">
-                                </div>
-                                <Form class="mt-5 login_form" @submit="sendResetPasswordLink" :validation-schema="schema" v-slot="{ errors }">
-                                    <div class="form-group mb-3 position-relative">
-                                        <span class="form_icon">
-                                            <img src="/assets/img/icons/envelope.svg">
-                                        </span>
-                                        <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail"/>
-                                        <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
-                                        <ErrorMessage class="text-red-600" name="Email"/>
-                                        <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Send Password Reset Link</button>
-                                    </div>
-                                </Form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Header -->
+        <div class="header bg-gradient-primary py-7 pb-lg-8 pt-lg-9">
+            <div class="separator separator-bottom separator-skew zindex-100">
+                <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+                </svg>
             </div>
         </div>
+        <!-- Page content -->
+        <v-container class="mt--8 mt-lg--8 pb-5 login_screen">
+            <v-row>
+                <v-col cols="12" sm="8" md="5" lg="4" class="m-auto">
+                    <v-card class="card_design mb-4 pa-10">
+                        <v-card-title class="text-center">
+                            <img src="/assets/img/brand/logo.png" alt="logo" height="40">
+                            <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
+                            <h1 class="mt-0 mb-0 text-left">Reset Password!</h1>
+                            <p class="font-weight-medium text-left">Use these awesome forms for Reset Password.</p>
+                        </v-card-title>
+
+                        <Form class="login_form" @submit="sendResetPasswordLink" :validation-schema="schema" v-slot="{ errors }">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-email-variant" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field id="email" type="email" name="Email" :class="{'form-control': true ,'border-red-600': errors.Email}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail"/>
+                                    <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
+                                    <ErrorMessage class="text-red-600" name="Email"/>
+                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+                            </v-row>
+                            <div class="text-center">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Send Password Reset Link</v-btn>   
+                            </div>
+                        </Form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -133,12 +122,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .form_icon img {
-        width: 30px;
-    }
-    .height {
-        height: 100vh;
-    }
-</style>

@@ -652,7 +652,7 @@
                 behavior: 'smooth',
             });
             this.getCurrentUserData();
-            this.getAndSetCountry();
+            // this.getAndSetCountry();
         }
     }
 </script>
