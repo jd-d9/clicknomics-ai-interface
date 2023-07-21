@@ -13,8 +13,8 @@
                         <span>Manual Network</span>
 
                         <v-spacer />
-                        <v-btn to="/networks/manualNetworks/list" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
-                            Back
+                        <v-btn to="/networks/manualNetworks/list" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated">
+                            View Manual Network Record
                         </v-btn>
                     </v-breadcrumbs>
                 </v-col>

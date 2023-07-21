@@ -4,7 +4,7 @@
             <!-- sidebar default start here -->
             <v-navigation-drawer class="sidebar navbar-vertical navbar-light" v-if="hideShowSidebar">
                 <v-list-item class="pa-0">
-                    <div class="text-center bg-white py-3 px-2 sticky-top" data-step="4" data-title="Step Four" data-intro='Hello step four!' data-position="bottom-middle-aligned">
+                    <div class="text-center bg-white py-3 px-2 sticky-top" data-step="1" data-title="Welcome to the clicknomics world!" data-intro='Please walk through our step-by-step guide to understand our app better.' data-position="bottom-middle-aligned">
                         <router-link to="/dashboard" class="sidebar-logo">
                             <img src="/assets/img/brand/logo.png" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
                             <img src="/assets/img/brand/favicon.png" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
@@ -105,6 +105,10 @@
                 <v-app-bar color="primary" style="position:relative; width: 100%;left: 0 !important;">
                     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
                     <v-spacer></v-spacer>
+                    <p class="text-white bg-deep-orange-accent-4 trial_text text-center mt-3" v-if="trialDays > 0">
+                        Your trial period is expiring in {{ trialDays }} days
+                    </p>
+                    <v-spacer></v-spacer>
 
                     <!-- dark and light mode -->
                     <v-btn icon @click="changeTheme">
@@ -122,7 +126,7 @@
                         </div>
                     </v-btn>
                     <!-- <v-switch color="black" hide-details inset true-value="Dark" false-value="Light" class="ms-auto d-inline-flex justify-content-end mr-2" @change="changeTheme"></v-switch> -->
-                    <v-menu>
+                    <!-- <v-menu>
                         <template v-slot:activator="{ props }">
                             <v-btn class="text-none" stacked v-bind="props">
                                 <v-badge content="5" color="success">
@@ -172,16 +176,16 @@
                                 <router-link to="/notification-list" class="view-all-notification d-block text-primary">View All</router-link>
                             </v-list>
                         </v-card>
-                    </v-menu>
+                    </v-menu> -->
 
                     <v-menu>
                         <template v-slot:activator="{ props }">
-                            <v-btn class="text-none" stacked v-bind="props" data-step="5" data-title="Step Five" data-intro='Hello step five!' data-position="bottom-middle-aligned">
+                            <v-btn class="text-none" stacked v-bind="props">
                                 <div class="d-flex align-center">
                                     <v-avatar size="36px">
                                         <v-img alt="Avatar" :src="profileImage ? profileImage : '/assets/img/icons/dummy-user.png'" ></v-img>
                                     </v-avatar>
-                                    <v-list-item-title class="text-subtitle-2 ml-2">
+                                    <v-list-item-title class="text-subtitle-2 ml-2 text-capitalize">
                                         {{ name }} <i class="fa-solid fa-angle-down"></i>
                                     </v-list-item-title>
                                 </div>
@@ -218,6 +222,8 @@
 </template>
 
 <script>
+    import introJs from 'intro.js';
+    import 'intro.js/minified/introjs.min.css';
     export default {
         emits: ['move-containts'],
         props: ['updatingUserDetails'],
@@ -234,6 +240,7 @@
                 name: '',
                 darkTheme: localStorage.getItem('dark-theme') ? localStorage.getItem('dark-theme') : false,
                 toggleIcon: false,
+                trialDays: null,
             }
         },
         mounted() { 
@@ -264,6 +271,10 @@
                     route.child.map((val) => {
                         if(val.routes == '#') {
                             val.children.filter((data) => {
+                                console.log(data, 'data')
+                                // if(window.location.pathname == '/settings/networks') {
+                                //     sessionStorage.setItem('activeMenu', true);
+                                // }   
                                 data.routes == window.location.pathname.slice(1) && active.push(val);
                             })
                         }
@@ -289,9 +300,18 @@
                 .then(response => {
                     if(response.data.success) {
                         this.allMenues = response.data.data;
+                        this.trialDays = response.data.trialEnd;
                         this.allMenues.sort((a, b) => a.position - b.position);
                         console.log(this.allMenues, 'sidebarAllData');
                         this.showLoader = false;
+                        introJs().start();
+                        // introJs().setOptions({ 
+                        //     'skipLabel': 'Exit',
+                        //     'tooltipPosition': 'right'
+                        // });
+                        // introJs().onexit(function() {
+                        //     alert("exit of introduction");
+                        // });
                     }
                 })
                 .catch(error => {

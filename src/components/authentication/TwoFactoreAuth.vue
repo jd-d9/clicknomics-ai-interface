@@ -17,8 +17,8 @@
                         <v-card-title class="text-center">
                             <img src="/assets/img/brand/logo.png" alt="logo" height="40">
                             <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
-                            <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
-                            <p class="font-weight-medium text-left">Please login to continue.</p>
+                            <!-- <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
+                            <p class="font-weight-medium text-left">Please login to continue.</p> -->
                         </v-card-title>
 
                         <v-row>
@@ -36,8 +36,7 @@
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                     <label>Enter an authenticator app code</label>
                                     <Field name="Authentication" placeholder="Authenticator app code" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
-                                    <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
-                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                    <span class="text-red-600" v-if="errors.Authentication">Authenticator code is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
@@ -46,6 +45,14 @@
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
                                     </select>
+                                </v-col>
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -119,6 +126,7 @@
                 rememberVerification: 1,
                 tryAnother: false,
                 backendErrorMessage: '',
+                multipleErrors: [],
             }
         },
         computed: {
@@ -176,6 +184,8 @@
                             type: 'success'
                         });
                         this.closeModal();
+                        this.backendErrorMessage = '';
+                        this.multipleErrors = [];
                         this.showLoader = false;
                     }else {
                         this.$toast.open({
@@ -188,15 +198,23 @@
                     }
                 })
                 .catch(error => {
-                    console.log(error);
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
-                }); 
+                });
             },
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
@@ -224,6 +242,7 @@
                         this.showLoader = false;
                         this.$router.push('/dashboard');
                         this.backendErrorMessage = '';
+                        this.multipleErrors = [];
                     }else {
                         this.$toast.open({
                             message: response.data.message,
@@ -235,8 +254,21 @@
                     }
                 })
                 .catch(error => {
-                    console.log(error);
-                    this.backendErrorMessage = error.message;
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 });
             }

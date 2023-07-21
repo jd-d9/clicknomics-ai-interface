@@ -24,22 +24,23 @@
                         <Form class="login_form" @submit="setNewPassword" :validation-schema="schema" v-slot="{ errors }">
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
-                                    <v-icon icon="mdi-email-variant" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <Field name="Email" id="email" type="email" class="form-control" :class="{'form-control': true ,'border-red-600': errors.Email}" autocomplete="email" autofocus placeholder="Email" v-model="userEmail"/>
-                                    <ErrorMessage class="text-red-600" name="Email"/>
-                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
-                                </v-col>
-
-                                <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <Field id="password" type="password" name="Password" class="form-control" :class="{'form-control': true ,'border-red-600': errors.Password}" autocomplete="password" autofocus placeholder="New Password" v-model="newPassword"/>
+                                    <Field id="password" type="password" name="Password" class="form-control" :class="{'form-control': true ,'border-red-600': errors.Password}" placeholder="New Password" v-model="newPassword"/>
                                     <ErrorMessage class="text-red-600" name="Password"/>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <Field name="confirmPassword" id="password" type="password" class="form-control" :class="{'form-control': true ,'border-red-600': errors.confirmPassword}" autocomplete="current-password" placeholder="Confirm New Password" v-model="confirmNewPassword"/>
+                                    <Field name="confirmPassword" id="password" type="password" class="form-control" :class="{'form-control': true ,'border-red-600': errors.confirmPassword}" placeholder="Confirm New Password" v-model="confirmNewPassword"/>
                                     <span class="text-red-600" v-if="errors.confirmPassword">Password did not match</span>
+                                </v-col>
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
                             </v-row>
                             <div class="text-center">
@@ -66,22 +67,17 @@
         data() {
             return {
                 showLoader: false,
-                userEmail: '',
                 newPassword: '',
                 confirmNewPassword: '',
-                invalidEmail: '',
-                invalidConfirmPass: '',
-                invalidPassword: '',
                 backendErrorMessage: '',
-                userDetailsForm: false,
+                multipleErrors: [],
                 route: useRoute(),
             }
         },
         computed: {
             schema() {
                 return yup.object({
-                    Email: yup.string().required().Email,
-                    Password: yup.string().required(),
+                    Password: yup.string().required().min(6),
                     confirmPassword: yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
                 });
             },
@@ -100,6 +96,7 @@
                     if(response.data.success) {
                         this.$router.push('/login');
                         this.backendErrorMessage = '';
+                        this.multipleErrors = [];
                         this.showLoader = false;
                         this.$toast.open({
                             message: response.data.message,
@@ -118,14 +115,25 @@
                     }
                 })
                 .catch(error => {
-                    this.backendErrorMessage = error.response.data.message;
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
-                }); 
+                });
             },
         },
-        mounted() {
-            this.userEmail = this.route.query.email;
-        }
     }
 </script>
 

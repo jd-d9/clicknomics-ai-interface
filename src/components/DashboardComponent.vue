@@ -7,16 +7,14 @@
                     <v-row class="mb-1 align-items-center">
                         <v-col class="d-flex" cols="12" sm="4">
                             <h6 class="font-weight-bold text-h6 px-2 mb-0">
-                                Date: {{daily_date}}
+                                Date: {{daily_date ? daily_date : '-'}}
                             </h6>
                         </v-col>
                         <!-- <v-col class="text-orange text-center" cols="12" sm="4" v-if="trialDays > 0">
                             You have only {{ trialDays }} days left of your trial period
                         </v-col> -->
-                        <v-col class="text-orange text-center" cols="12" sm="4" v-if="trialDays > 0">
-                            Your trial period is expiring in {{ trialDays }} days
-                        </v-col>
-                        <v-col class="d-flex justify-content-end font-medium font-weight-normal" cols="12" :sm="trialDays > 0 ? 4 : 8">
+                        <v-spacer></v-spacer>
+                        <v-col sm="4" class="d-flex justify-content-end font-medium font-weight-normal" cols="12">
                             <date-range-picker class="date_picker" style="padding: 9px 0px;" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                         </v-col>
                     </v-row>
@@ -24,7 +22,7 @@
                     <v-divider class="border-opacity-100 mb-3 mt-0 mx-2" color="success" />    
 
                     <!-- cost -->
-                    <h6 class="font-weight-bold text-h6 px-2 mb-3" data-step="1" data-title="Step One" data-intro='Hello step one!' data-position="bottom-middle-aligned">Cost</h6>
+                    <h6 class="font-weight-bold text-h6 px-2 mb-3">Cost</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_ops_cost == 0, 'bg-green-lighten-4': daily_ops_cost > 0, 'bg-orange-lighten-4': daily_ops_cost < 0}">
@@ -67,7 +65,7 @@
                     <!-- <v-divider class="border-opacity-100 my-4 mx-2" color="success" />  -->
 
                     <!-- renevue -->
-                    <h6 class="font-weight-bold text-h6 px-2 mb-3" data-step="2" data-title="Step Two" data-intro='Hello step two!' data-position="bottom-middle-aligned">Revenue</h6>
+                    <h6 class="font-weight-bold text-h6 px-2 mb-3">Revenue</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_conversion == 0, 'bg-green-lighten-4': daily_conversion > 0, 'bg-orange-lighten-4': daily_conversion < 0}">
@@ -95,7 +93,7 @@
                         </v-col>
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_roi == 0, 'bg-green-lighten-4': daily_roi > 0, 'bg-orange-lighten-4': daily_roi < 0}">
-                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal" data-step="3" data-title="Step Three" data-intro='Hello step three!' data-position="bottom-middle-aligned">ROI</v-card-title>
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">ROI</v-card-title>
                                 <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': daily_roi == 0, 'text-green-darken-1': daily_roi > 0, 'text-orange': daily_roi < 0}">{{$filters.toCurrency(daily_roi)}}</v-card-text>
                             </v-card>
                         </v-col>
@@ -261,7 +259,7 @@
                 </v-col>
 
                 <!-- subscription -->
-                <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="pa-0" v-if="subscribedUser">
                     <h6 class="font-weight-bold text-h6 px-2 mb-3">Subscription</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
@@ -278,8 +276,6 @@
 </template>
 
 <script>
-import introJs from 'intro.js';
-import 'intro.js/minified/introjs.min.css';
 import DateRangePicker from './common/DateRangePicker.vue';
 import moment from 'moment';
  export default {
@@ -323,7 +319,6 @@ import moment from 'moment';
             daily_roi: 0,
             daily_date: 0,
             selectedRange: `${moment().format('ddd MMM DD YYYY')} - ${moment().format('ddd MMM DD YYYY')}`,
-            trialDays: null,
         }
     },
     mounted() {
@@ -403,10 +398,7 @@ import moment from 'moment';
                     this.daily_roas = dashboardData.daily_roas;
                     this.daily_roi = dashboardData.daily_roi;
                     this.daily_date = dashboardData.daily_date;
-                    // trial days count
-                    this.trialDays = response.data.trialEnd;
                     this.showLoader = false;
-                    introJs().start();
                 }else {
                     this.$toast.open({
                         message: response.data.message,

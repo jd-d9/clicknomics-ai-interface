@@ -27,13 +27,20 @@
                                     <v-icon icon="mdi-email-variant" size="30" color="#00cd00" class="form_icon"></v-icon>
                                     <Field id="email" type="email" name="Email" :class="{'form-control': true ,'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
                                     <ErrorMessage class="text-red-600" name="Email"/>
-                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
                                     <Field id="password" type="password" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password}" autocomplete="current-password" placeholder="Password" v-model="userPassword"/>
                                     <ErrorMessage class="text-red-600" name="Password"/>
+                                </v-col>
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -79,6 +86,7 @@
                 invalidEmail: '',
                 invalidPassword: '',
                 backendErrorMessage: '',
+                multipleErrors: [],
                 userDetailsForm: false
             }
         },
@@ -86,7 +94,7 @@
             schema() {
                 return yup.object({
                     Email: yup.string().required().email(),
-                    Password: yup.string().required().min(6),
+                    Password: yup.string().required(),
                 });
             },
         },
@@ -106,6 +114,8 @@
             submitAndAuthenticateUser() {
                 this.showLoader = true;
                 this.axios.get(this.$api_main + '/sanctum/csrf-cookie').then(res => {
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
                     console.log(res, '212121')
                     this.axios.post(this.$api + '/login', {
                         email: this.userEmail,
@@ -121,8 +131,7 @@
                             
                             if(responseData.isTwoFactorVerified) {
                                 this.$toast.open({
-                                    // message: 'You are successfully logged in',
-                                    message: response.data.message,
+                                    message: 'You are successfully logged in',
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'
@@ -134,24 +143,52 @@
                                 } else {
                                     this.$router.push('/authenticator/validate');
                                 }
-                                this.backendErrorMessage = '';
+                                // this.backendErrorMessage = '';
                                 this.showLoader = false;
-                                this.$toast.open({
-                                    // message: 'Please scan qr code or can use try another for authentication',
-                                    message: response.data.message,
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'success'
-                                });
                             }
+                        }
+                        else {
+                            this.backendErrorMessage = response.data.message;
+                            this.showLoader = false;
                         }
                     })
                     .catch(error => {
-                        console.log(error, 'error')
-                        this.backendErrorMessage = error.response.data.message;
+                        if(error.response.data.message) {
+                            this.backendErrorMessage = error.response.data.message;
+                        }
+                        if(error.response.data.error) {
+                            this.backendErrorMessage = error.response.data.error;
+                        }
+                        if(error.response.data.errors) {
+                            if(error.response.data.errors.length == 1) {
+                                this.backendErrorMessage = error.response.data.errors[0];
+                            }else if(error.response.data.errors.length == 0){
+                                this.backendErrorMessage = '';
+                            }else {
+                                this.multipleErrors = error.response.data.errors;
+                            }
+                        }
                         this.showLoader = false;
-                    }); 
-                }); 
+                    });
+                })
+                .catch(error => {
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
+                    this.showLoader = false;
+                });
             },
         }
     }

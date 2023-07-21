@@ -31,7 +31,7 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Name Your Network</label>
                                     <Field type="text" id="input-username" name="network" :class="{'form-control': true, 'border-red-600': errors.network}" placeholder="Name Your Network" v-model.trim="network_name"/>
-                                    <span class="text-red-600" v-if="errors.network">Your Network can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.network">Your network is a required field</span>
                                 </v-col>  
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -41,9 +41,7 @@
                                         </div>
                                     </label>
                                     <Field type="text" id="input-username" name="url" :class="{'form-control': true, 'border-red-600': errors.url}" @blur="checkUrl" placeholder="login URL for Your Network / Domain" v-model="login_url"/>
-
-                                    <span class="text-red-600" v-if="backendValidationMessage">{{backendValidationMessage}}</span>
-                                    <span class="text-red-600" v-if="errors.url && !backendValidationMessage">URL can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.url">URL is a required field</span>
                                 </v-col>    
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -62,7 +60,7 @@
                                             <option value="other">Other</option>
                                         </select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.role">Network platform can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.role">Network platform is a required field</span>
                                 </v-col>  
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -73,14 +71,14 @@
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">API KEY</label>
-                                    <Field type="text" id="input-username" name="api" :class="{'form-control': true, 'border-red-600': errors.api}" placeholder="Name" v-model="api_key"/>
-                                    <span class="text-red-600" v-if="errors.api">Api key can not be empty</span>
+                                    <Field type="text" id="input-username" name="api" :class="{'form-control': true, 'border-red-600': errors.api}" placeholder="Api Key" v-model="api_key"/>
+                                    <span class="text-red-600" v-if="errors.api">Api key is a required field</span>
                                 </v-col>  
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Affiliate ID / Network ID / Domain & Script name</label>
-                                    <Field type="text" id="input-username" name="affiliatedid" :class="{'form-control': true, 'border-red-600': errors.affiliatedid}" placeholder="Name" v-model="affiliate_id"/>
-                                    <span class="text-red-600" v-if="errors.affiliatedid">Affiliate id can not be empty</span>
+                                    <Field type="text" id="input-username" name="affiliatedid" :class="{'form-control': true, 'border-red-600': errors.affiliatedid}" placeholder="Affiliate ID / Network ID / Domain & Script name" v-model="affiliate_id"/>
+                                    <span class="text-red-600" v-if="errors.affiliatedid">Affiliate id is a required field</span>
                                 </v-col>  
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -88,8 +86,16 @@
                                     <Field name="date" v-model="date" :class="{'border-red-600': errors.date}">
                                         <datepicker name="date" v-model:value="date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.date">Date can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.date">Date is a required field</span>
                                 </v-col> 
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                                </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12">
                                     <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
@@ -152,7 +158,8 @@ export default {
             ],
             reportRange: 'One Year',
             date: '',
-            backendValidationMessage: '',
+            backendErrorMessage: '',
+            multipleErrors: [],
         }
     },
     mounted() {
@@ -188,7 +195,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.backendValidationMessage = '';
+                    this.backendErrorMessage = '';
                     this.showLoader = false;
                 }else {
                     this.$toast.open({
@@ -201,7 +208,7 @@ export default {
                 }
             })
             .catch(error => {
-                this.backendValidationMessage = error.message;
+                this.backendErrorMessage = error.message;
                 console.log(error);
                 this.showLoader = false;
             });
@@ -244,13 +251,21 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.backendErrorMessage = error.response.data.message;
+                }
+                if(error.response.data.error) {
+                    this.backendErrorMessage = error.response.data.error;
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.backendErrorMessage = error.response.data.errors[0];
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.multipleErrors = error.response.data.errors;
+                    }
+                }
                 this.showLoader = false;
             });
         },
