@@ -105,13 +105,21 @@
                 <v-app-bar color="primary" style="position:relative; width: 100%;left: 0 !important;">
                     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
                     <v-spacer></v-spacer>
-                    <v-btn icon id="mode-switcher" @click="changeTheme">
-                        <v-icon v-if="toggleIcon" color="primary">
-                            mdi-weather-night
-                        </v-icon>
-                        <v-icon v-else color="primary">
-                            mdi-weather-sunny
-                        </v-icon>
+
+                    <!-- dark and light mode -->
+                    <v-btn icon @click="changeTheme">
+                        <div v-if="toggleIcon" >
+                            <v-icon color="success" >
+                                mdi-weather-night
+                            </v-icon>
+                            <v-tooltip activator="parent" location="left">Dark Mode</v-tooltip>
+                        </div>
+                        <div v-else>
+                            <v-icon color="white">
+                                mdi-white-balance-sunny
+                            </v-icon>
+                            <v-tooltip activator="parent" location="left">Light Mode</v-tooltip>
+                        </div>
                     </v-btn>
                     <!-- <v-switch color="black" hide-details inset true-value="Dark" false-value="Light" class="ms-auto d-inline-flex justify-content-end mr-2" @change="changeTheme"></v-switch> -->
                     <v-menu>
@@ -414,7 +422,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.profileImage = response.data.data.profile_image;
-                        this.name = response.data.data.name;
+                        this.name = response.data.data.first_name + ' ' + response.data.data.last_name;
                         this.backendErrorMessage = '';
                         this.showLoader = false;
                         sessionStorage.setItem('roleId', response.data.data.role_id)
@@ -430,11 +438,11 @@
                 this.toggleIcon = !this.toggleIcon;
                 localStorage.setItem('dark-theme', this.toggleIcon);
                 if(this.toggleIcon) {
-                    this.toggleIcon = true;
+                    // this.toggleIcon = true;
                     document.body.classList.add('dark-mode');
                 }
                 else {
-                    this.toggleIcon = false;
+                    // this.toggleIcon = false;
                     document.body.classList.remove('dark-mode');
                 }
             },

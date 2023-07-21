@@ -1,69 +1,59 @@
 <template>
-    <div class="bg-default">
+    <div class="main-content bg-default height">
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Main content -->
-        <div class="main-content height" id="panel">
-            <div class="main-content">
-                <!-- Header -->
-                <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
-                    <div class="container">
-                        <div class="header-body text-center mb-5">
-                            <div class="row justify-content-center">
-                                <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-                                    <h1 class="text-white">Welcome to clicknomics</h1>
-                                    <p class="text-lead text-white">Two Factor Verification.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="separator separator-bottom separator-skew zindex-100">
-                        <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-                        </svg>
-                    </div>
-                </div>
-                <!-- Page content -->
-                <div class="container mt--7 mt-lg--8">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-7 col-md-7">
-                            <div class="card bg-secondary border-0">
-                                <div class="card-body px-lg-5 py-lg-5">
-                                    <div class="text-center logo_responsive">
-                                        <img src="/assets/img/brand/logo.png" class="image-width">
-                                    </div>
-                                    <form class="mt-5 login_form" @submit.prevent="sendCodeInEmail" v-if="toggleComponent">
-                                        <div id="qrcode" class="text-center">
-                                            <span class="d-block">
-                                                Verify via email address?
-                                            </span>
-                                            <router-link to="/authenticator/validate" id="show_validate">Try Another Way</router-link>
-                                            <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Send Auth Code In Email.</button>
-                                        </div>
-                                    </form>
-                                    <Form class="mt-5 login_form" @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }" v-else>
-                                        <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
-                                        <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
-                                        <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
-                                        <div class="form-group">
-                                            <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
-                                            <select class="select-option" placeholder="User Status" v-model="rememberVerification">
-                                                <option value="1">Yes</option>
-                                                <option value="0">No</option>
-                                            </select>
-                                        </div>
-                                        <div class="for-responsive d-flex justify-content-between">
-                                            <router-link to="/authenticator/validate" class="float-right mb-2">Try Another Way</router-link>
-                                            <a href="javascript:void(0)" class="float-right mb-2" @click.prevent="sendCodeInEmail">Resend Code</a>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
-                                    </Form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Header -->
+        <div class="header bg-gradient-primary py-7 pb-lg-7 pt-lg-8">
+            <div class="separator separator-bottom separator-skew zindex-100">
+                <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+                </svg>
             </div>
         </div>
+        <!-- Page content -->
+        <v-container class="mt--8 mt-lg--8 pb-5 login_screen">
+            <v-row>
+                <v-col cols="12" sm="8" md="5" lg="4" class="m-auto">
+                    <v-card class="card_design mb-4 pa-10">
+                        <v-card-title class="text-center">
+                            <img src="/assets/img/brand/logo.png" alt="logo" height="40">
+                            <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
+                            <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
+                            <p class="font-weight-medium text-left">Two Factor Verification.</p>
+                        </v-card-title>
+
+                        <form class="login_form" @submit.prevent="sendCodeInEmail" v-if="toggleComponent">
+                            <div id="qrcode">
+                                <div class="mt-4 text-center">
+                                    <p class="font-weight-medium">Verify via email address?
+                                    <router-link to="/authenticator/validate" id="show_validate" class="text-blue-darken-2 font-weight-600">Try Another Way</router-link></p>
+                                </div>
+                                <div class="text-center">
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Send Auth Code In Email.</v-btn>   
+                                </div>
+                            </div>
+                        </form>
+
+                        <Form class="login_form" @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }" v-else>
+                            <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
+                            <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
+                            <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                            <div class="form-group">
+                                <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
+                                <select class="select-option" placeholder="User Status" v-model="rememberVerification">
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="for-responsive d-flex justify-content-between">
+                                <router-link to="/authenticator/validate" class="float-right mb-2">Try Another Way</router-link>
+                                <a href="javascript:void(0)" class="float-right mb-2" @click.prevent="sendCodeInEmail">Resend Code</a>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
+                        </Form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 

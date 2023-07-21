@@ -290,7 +290,11 @@ td.v-data-table__td {
 }
 .v_select_design .v-chip.v-chip--density-default{height: 20px;}
 .v_select_design .v-chip.v-chip--density-default .v-chip__content{font-size: 11px;font-weight: 700;}
-
+.login_screen .v-card-title h1{
+    font-size: 25px;
+    color: #071052;
+    font-weight: bold;
+}
 
 
 
