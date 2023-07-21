@@ -6194,8 +6194,12 @@ input.datetimepicker[data-color='yellow'] + .bootstrap-datetimepicker-widget tab
 input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus,input:-webkit-autofill:active{-webkit-box-shadow:0 0 0px 1000px #fff inset;transition:background-color 5000s ease-in-out 0s;}
 .input-group:not(.has-validation) > .form-control:not(:last-child), .input-group:not(.has-validation) > .custom-select:not(:last-child), .input-group:not(.has-validation) > .custom-file:not(:last-child) .custom-file-label::after{border-top-right-radius:12px;border-bottom-right-radius:12px;}
 
-.form_icon{position:absolute;top:14px;left:10px;}
-.form_icon + .form-control{padding-left:60px;}
+.form_icon{
+    position: absolute;
+    top: 20px;
+    left: 25px;
+}
+.form_icon + .form-control{padding-left:50px;}
 table img{transition:all .3s ease-in-out;}
 table img:hover{transform:translateY(-5px);transition:all .3s ease-in-out;}
 .alert{width:30%;position:fixed;bottom:20px;right:20px;z-index:1052;}
