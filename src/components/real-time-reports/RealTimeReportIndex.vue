@@ -1,125 +1,155 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Real Time Reports {{reportType}}</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card v-if="reportType == 'google'">
-                                            <v-data-table class="table-hover-class elevation-1"  v-model:items-per-page="itemsPerPage" :page="page" :server-items-length="totalPageCount" :pageCount="numberOfPages" :options="options" :headers="headers" :items="googleCampaignMetrics" v-model:expanded="expanded" show-expand item-value="name">
-                                                <template v-slot:expanded-row="{ columns, item }">
-                                                    <tr>
-                                                        <td :colspan="columns.length" style="padding:10px">
-                                                            <table class="table align-items-center">
-                                                                <thead class="thead-light">
-                                                                    <tr>
-                                                                        <th scope="col">Campaign Name </th>
-                                                                        <th scope="col">Clicks</th>
-                                                                        <th scope="col">Cost </th>
-                                                                        <th scope="col">Click Through Rate</th>
-                                                                        <th scope="col">Impressions</th>
-                                                                        <th scope="col">Cost Per Click</th>
-                                                                        <th scope="col">Conversions</th>
-                                                                        <th scope="col">Campaign Status</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr v-for="(row , index) in item.raw.children" :key="index">
-                                                                        <td>
-                                                                            {{row.campaign.name ? row.campaign.name : '-'}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{(row.metrics.clicks ? $filters.toNumberWithoutDecimal(row.metrics.clicks) : '0.00')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{(row.metrics.costMicros ? $filters.toNumber(parseFloat(row.metrics.costMicros / 1000000).toFixed(2))  : '0.00')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{(row.metrics.ctr ? $filters.toNumber((row.metrics.ctr * 100).toFixed(2)) : '0.00')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{(row.metrics.impressions ? $filters.toNumberWithoutDecimal(row.metrics.impressions) : '0.00')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{(row.metrics.averageCpc ? $filters.toNumber(parseFloat(row.metrics.averageCpc / 1000000).toFixed(2))  : '0.00')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{(row.metrics.conversions ? $filters.toNumber(row.metrics.conversions) : '0.00')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{ row.campaign.status ? row.campaign.status : '-'}}
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                        <v-card v-if="reportType == 'microsoft'">
-                                            <v-data-table class="table-hover-class elevation-1"  :itemsPerPage="itemsPerPage" :page="page" :server-items-length="totalPageCount" :pageCount="numberOfPages" :options="options" :headers="microsoftHeaders" :items="microsoftCampaignMetrics" v-model:expanded="expanded" show-expand item-value="name">
-                                                <template v-slot:expanded-row="{ columns, item }">
-                                                    <tr>
-                                                        <td :colspan="columns.length" style="padding:10px">
-                                                            <table class="table align-items-center">
-                                                                <thead class="thead-light">
-                                                                    <tr>
-                                                                        <th scope="col">Campaign Name</th>
-                                                                        <th scope="col">DailyBudget </th>
-                                                                        <th scope="col">Campaign Status</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr v-for="(row , index) in item.raw.children" :key="index">
-                                                                        <td>
-                                                                            {{row.name ? row.name : '-'}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{(row.dailyBudget ? $filters.toCurrency(row.dailyBudget) : '-')}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{row.status ? row.status : '-'}}
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
-                            </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>{{reportType}} Real Time Reports </span>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            {{reportType}} Real Time Reports List
+                        </v-card-title>
+                        <!-- data table component -->
+                        <div v-if="reportType == 'google'">
+                            <v-data-table class="table-hover-class mt-4"  v-model:items-per-page="itemsPerPage" :page="page" :server-items-length="totalPageCount" :pageCount="numberOfPages" :options="options" :headers="headers" :items="googleCampaignMetrics" v-model:expanded="expanded" show-expand item-value="name">
+                                <template v-slot:expanded-row="{ columns, item }">
+                                    <td :colspan="columns.length" style="padding:10px" class="exapanded bg-light-green-lighten-5">
+                                        <table class="table align-items-center">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Campaign Name 
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Clicks
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Cost 
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Click Through Rate
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Impressions
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Cost Per Click
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Conversions
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Campaign Status
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(row , index) in item.raw.children" :key="index">
+                                                    <td class="v-data-table__td">
+                                                        {{row.campaign.name ? row.campaign.name : '-'}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{(row.metrics.clicks ? $filters.toNumberWithoutDecimal(row.metrics.clicks) : '0.00')}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{(row.metrics.costMicros ? $filters.toNumber(parseFloat(row.metrics.costMicros / 1000000).toFixed(2))  : '0.00')}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{(row.metrics.ctr ? $filters.toNumber((row.metrics.ctr * 100).toFixed(2)) : '0.00')}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{(row.metrics.impressions ? $filters.toNumberWithoutDecimal(row.metrics.impressions) : '0.00')}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{(row.metrics.averageCpc ? $filters.toNumber(parseFloat(row.metrics.averageCpc / 1000000).toFixed(2))  : '0.00')}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{(row.metrics.conversions ? $filters.toNumber(row.metrics.conversions) : '0.00')}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{ row.campaign.status ? row.campaign.status : '-'}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </template>
+                            </v-data-table>
                         </div>
-                    </v-app>
-                </div>
-            </div>
-        </div>
+
+                        <!-- data table component -->
+                        <div v-if="reportType == 'microsoft'">
+                            <v-data-table class="table-hover-class mt-4"  :itemsPerPage="itemsPerPage" :page="page" :server-items-length="totalPageCount" :pageCount="numberOfPages" :options="options" :headers="microsoftHeaders" :items="microsoftCampaignMetrics" v-model:expanded="expanded" show-expand item-value="name">
+                                <template v-slot:expanded-row="{ columns, item }">
+                                    <td :colspan="columns.length" style="padding:10px" class="exapanded bg-light-green-lighten-5">
+                                        <table class="table align-items-center">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Campaign Name
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            DailyBudget 
+                                                        </div>
+                                                    </th>
+                                                    <th class="v-data-table__td" scope="col">
+                                                        <div class="v-data-table-header__content">
+                                                            Campaign Status
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(row , index) in item.raw.children" :key="index">
+                                                    <td class="v-data-table__td">
+                                                        {{row.name ? row.name : '-'}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{(row.dailyBudget ? $filters.toCurrency(row.dailyBudget) : '-')}}
+                                                    </td>
+                                                    <td class="v-data-table__td">
+                                                        {{row.status ? row.status : '-'}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </template>
+                            </v-data-table>
+                        </div>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -176,6 +206,7 @@ export default {
             showLoader: false,
             linkedNewtworks: [],
             headers: [
+                { title: '', key: 'data-table-expand' },
                 { title: 'Account Name', align: 'start', sortable: true, key: 'name' },
                 { title: 'Impressions', key: 'impressions',sortable: true, },
                 { title: 'Clicks', key: 'clicks',sortable: true, },
@@ -190,6 +221,7 @@ export default {
             // microsoft
             microsoftCampaignMetrics:[],
             microsoftHeaders: [
+                { title: '', key: 'data-table-expand' },
                 { title: 'Account Name', align: 'start', sortable: true, key: 'AccountName' },
                 { title: 'Clicks', key: 'Clicks', sortable: true,},
                 { title: 'Click Through Rate', key: 'Ctr', sortable: true,},
@@ -203,6 +235,10 @@ export default {
     },
     mounted() {
         this.reportType = this.$route.params.reportType ? this.$route.params.reportType : '';
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     watch:{
         '$route.params.reportType':{
