@@ -22,16 +22,16 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            User Roles
+                            User Roles List
                         </v-card-title>
 
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id}}
+                                {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
                             <template v-slot:[`item.role_name`]="{ item }">
-                                {{item.selectable.role_name}}
+                                {{item.selectable.role_name ? item.selectable.role_name : '-'}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon :disabled="permissions.update_auth == '0'" @click.prevent="editRole(item.selectable.id)">
@@ -141,6 +141,10 @@ export default {
         },
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getUserRole();
     }
 }

@@ -28,7 +28,7 @@
                             </v-btn>
                         </div>
 
-                        <v-btn href="/accounting/invoice/template" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/accounting/invoice/template" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -266,6 +266,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getInvoiceData();
         if(location.pathname == '/accounting/invoice/'+ this.$route.params.id +'/createFromTemplate') {
             this.dynamicBredCrumb = 'Create Invoice From Template';

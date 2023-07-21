@@ -13,7 +13,7 @@
                         <span>Integrate CPA Network</span>
 
                         <v-spacer />
-                        <v-btn href="/settings/networks" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/settings/networks" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -156,7 +156,10 @@ export default {
         }
     },
     mounted() {
-
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {
@@ -224,7 +227,7 @@ export default {
                 if(response.data.success) {
                     this.$router.push('/settings/networks');
                     this.$toast.open({
-                        message: 'CPA netwok integrated',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'

@@ -24,9 +24,14 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Email Notification List
                             <v-spacer></v-spacer>
-                            <div class="col-3 pr-1">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchData"/>
+                            <div v-if="selected.length > 0">
+                                <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                    Remove
+                                </v-btn>
                             </div>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchData"/>
+                            </v-col>
                         </v-card-title>
 
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!--  @current-items="currentItems"  -->
@@ -45,13 +50,13 @@
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn> 
                             </template>
-                            <template v-slot:top v-if="selected.length > 0">
+                            <!-- <template v-slot:top v-if="selected.length > 0">
                                 <div class="p-2 text-right">
                                     <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
                                         Remove
                                     </v-btn>
                                 </div>
-                            </template>
+                            </template> -->
                         </v-data-table>
                     </v-card>
                 </v-col>
@@ -272,6 +277,10 @@ export default {
         },
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getListings();
         // this.getDomainList();
         // this.dataMetrics = this.list

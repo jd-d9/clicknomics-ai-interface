@@ -13,7 +13,7 @@
                         <span>{{breadCrumbMessage}} Variable Monthly Cost</span>
 
                         <v-spacer />
-                        <v-btn href="/accounting/variableMonthlyCost" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/accounting/variableMonthlyCost" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -91,6 +91,10 @@ export default {
             this.breadCrumbMessage = 'Update';
             this.toggleElement = false;
         }
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {

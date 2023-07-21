@@ -83,7 +83,7 @@ td.v-data-table__td {
 .profile-image + p {font-size: 14px;}
 .profile-image + p i {font-size: 12px;}
 .side-menu {display: flex;justify-content: start;align-items: center;border-radius: 6px;padding: 7px 12px;}
-.side-menu:hover, .active-tab-big {background-color: #e8f0fe;}
+.side-menu:hover, .active-tab-big {background-color: #e8f0fe !important;}
 .side-menu img {width: 25px;margin-right: 8px;}
 .side-menu-hover img {width: 25px;margin-right: 5px !important;}
 .side-menu span {font-size: .875rem;}
@@ -236,7 +236,7 @@ td.v-data-table__td {
 .btn_animated:hover::before{left:120%;opacity:0.5s;}
 .btn_animated:hover::after{left:200%;opacity:0.6;}
 .date_picker{
-    padding: 2px 15px;
+    padding: 2px 0px;
     width: auto;
     align-items: center;
     color: #000000;
@@ -268,3 +268,95 @@ td.v-data-table__td {
 }
 .form-control.autocomplete .v-field{padding: 0px;}
 .form-control.autocomplete .v-field .v-field__outline{display: none;}
+.v_select_design .v-input__details{display: none;}
+.v_select_design .v-field__input{
+    font-size: 13px;
+    font-weight: 500;
+    color: #000000;
+    padding: 10px 15px;
+    min-height: 40px !important;
+    font-weight: 500 !important;
+}
+.v_select_design .v-field__input .v-select__selection-text{
+    font-size: 13px;
+    font-weight: 500;
+    color: #000000;
+}
+.v_select_design .v-field__outline{box-shadow: 1px 2px 2px #00000029;}
+.v_select_design .v-field__outline__start, .v_select_design .v-field__outline__end{
+    border-radius: 0px !important;
+    border-color: #D6D6D6;
+    opacity: 1;
+}
+.v_select_design .v-chip.v-chip--density-default{height: 20px;}
+.v_select_design .v-chip.v-chip--density-default .v-chip__content{font-size: 11px;font-weight: 700;}
+.login_screen .v-card-title h1{
+    font-size: 25px;
+    color: #071052;
+    font-weight: bold;
+}
+
+
+
+
+
+/*--------------------- Intro js design -----------------*/
+.introjs-helperLayer{
+    border-radius: 0px !important;
+    box-shadow: rgb(255 255 255 / 0%) 0px 0px 1px 2px, rgb(33 33 33 / 14%) 0px 0px 0px 5000px !important;
+}
+.introjs-tooltip{border-radius: 12px;}
+.introjs-tooltip-header{
+    padding: 10px 15px;
+    border-radius: 12px 12px 0px 0px;
+    background: transparent linear-gradient(270deg, #0d47a1 0%, #005eb3 100%) 0% 0% no-repeat padding-box !important
+}
+.introjs-tooltip-title{
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+.introjs-skipbutton{
+    color: #fff !important;
+    font-weight: 100;
+    line-height: 40px;
+    height: 40px;
+}
+.introjs-arrow.top-middle, .introjs-arrow.top {
+    top: -20px;
+    left: 50%;
+    margin-left: -10px;
+    border-bottom-color: #0d47a1;
+    border-width: 10px;
+}
+.introjs-arrow.bottom-middle{border-top-color: #0d47a1;border-width: 10px;bottom: -20px;}
+.introjs-tooltiptext {
+    padding: 20px 15px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif !important;
+    color: #000;
+}
+.introjs-bullets{
+    padding: 0px;
+    margin-bottom: 10px;
+}
+.introjs-bullets ul li a{background: #a6c4dd;}
+.introjs-bullets ul li a.active {
+    width: 15px;
+    background: #094da6;
+}
+.introjs-button{
+    background-color: #0D47A1 !important;
+    color: #FFFFFF !important;
+    border: none;
+    text-shadow: none;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    padding: 5px 20px;
+    border-radius: 5px;
+}

@@ -53,33 +53,50 @@ app.config.globalProperties.$filters = {
     return '$' + value
   },
   toNumberWithoutDecimal(value) {
-      var formatter = new Intl.NumberFormat('en-US', {
-          minimumFractionDigits: 0
-      });
+    var formatter = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0
+    });
+    if(value) {
       return formatter.format(value);
+    } else {
+      return formatter.format(0);
+    }
   },
   toCurrency(value) {
-    value = parseFloat(value).toFixed(2);
     var formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2
     });
-    return formatter.format(value);
+    if(value) {
+      value = parseFloat(value).toFixed(2);
+      return formatter.format(value);
+    }
+    else {
+      return formatter.format(0);
+    }
   },
   toNumber(value) {
     value = parseFloat(value).toFixed(2);
     var formatter = new Intl.NumberFormat('en-US', {
         minimumFractionDigits: 2
     });
-    return formatter.format(value);
+    if(value) {
+      return formatter.format(value);
+    } else {
+      return formatter.format(0);
+    }
   },
   toNumberWithPercentage(value) {
       value = parseFloat(value).toFixed(2);
       var formatter = new Intl.NumberFormat('en-US', {
           minimumFractionDigits: 2
       });
-      return formatter.format(value)+ '%';
+      if(value) {
+        return formatter.format(value)+ '%';
+      } else {
+        return formatter.format(0);
+      }
   },
 }
 app.use(router);

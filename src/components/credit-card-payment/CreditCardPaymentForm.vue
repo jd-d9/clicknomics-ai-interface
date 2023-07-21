@@ -13,7 +13,7 @@
                         <span>{{ breadCrumbMessage }} Credit Card Payment</span>
 
                         <v-spacer />
-                        <v-btn href="/accounting/creditCardPayments" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/accounting/creditCardPayments" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -41,7 +41,6 @@
                                     <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
                                     <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
                                 </v-col>
-
                             </v-row>
 
                             <v-row>
@@ -149,6 +148,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         if(this.$route.params.id) {
             this.toggleComponent = false;
             this.breadCrumbMessage = 'Edit';

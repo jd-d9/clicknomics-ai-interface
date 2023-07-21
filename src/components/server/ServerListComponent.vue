@@ -1,95 +1,84 @@
 <template>
-    <div>
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active text-capitalize" aria-current="page">Cloudways Server List</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="bg-default main-content-height">
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <div class="card">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
-                                        <v-app>
-                                            <v-card>
-                                                <v-card-title>
-                                                    <v-spacer></v-spacer>
-                                                    <v-row>
-                                                        <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                                        <v-col class="d-flex search_width" cols="12" sm="4">
-                                                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                </v-card-title>
-                                                <!-- data table component -->
-                                                <v-data-table :headers="headers" :items="serverListRecord" :search="search" :single-expand="singleExpand" show-expand v-model:expanded="expanded" item-value="server_id" class="table-hover-class adding-font-size elevation-1" :itemsPerPage="itemsPerPage">
-                                                    <template v-slot:expanded-row="{ columns, item }">
-                                                        <td class="exapanded" :colspan="columns.length">
-                                                            <!-- exapnded table data -->
-                                                            <table class="table align-items-center" v-if="serverListRecord.length > 0">
-                                                                <thead class="thead-light">
-                                                                    <tr>
-                                                                        <th class="border-right" scope="col">Label</th>
-                                                                        <th class="border-right" scope="col">App User</th>
-                                                                        <th class="border-right" scope="col">App FQDN</th>
-                                                                        <th class="border-right" scope="col">App CNAME</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody class="list">
-                                                                    <tr v-for="(row , index) in item.selectable.children" :key="index">
-                                                                        <td>
-                                                                            {{row.label}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{row.app_user}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{row.app_fqdn}}
-                                                                        </td>
-                                                                        <td>
-                                                                            {{row.cname}}
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                    </template>
-                                                </v-data-table>
-                                            </v-card>
-                                        </v-app>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Cloudways Server</span>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Cloudways Server List
+                            <v-row>
+                                <v-spacer></v-spacer>
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
+                                    <!-- <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field> -->
+                                </v-col>
+                            </v-row>
+                        </v-card-title>
+                        <!-- data table component -->
+                        <v-data-table :headers="headers" :items="serverListRecord" :search="search" :single-expand="singleExpand" show-expand v-model:expanded="expanded" item-value="server_id" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                            <template v-slot:expanded-row="{ columns, item }">
+                                <td class="exapanded bg-light-green-lighten-5" :colspan="columns.length" v-if="item.selectable.children.length > 0">
+                                    <!-- exapnded table data -->
+                                    <table class="table align-items-center" v-if="serverListRecord.length > 0">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Label</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">App User</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">App FQDN</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">App CNAME</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="list">
+                                            <tr v-for="(row , index) in item.selectable.children" :key="index">
+                                                <td class="v-data-table__td">
+                                                    {{row.label}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{row.app_user}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{row.app_fqdn}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{row.cname}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -115,6 +104,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getListingData();
     },
     methods: {

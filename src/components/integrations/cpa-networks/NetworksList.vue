@@ -10,7 +10,7 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>CPA Networks List</span>
+                        <span>CPA Networks</span>
                         <v-spacer />
                         <v-btn @click.prevent="this.$router.push('/settings/networks/affiliates')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
                             Integrate New CPA Network
@@ -125,7 +125,7 @@
                                 <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                             </button>
                         </div>
-                        <Form  @submit="updateCpaNetworkist" :validation-schema="schema" v-slot="{ errors }">
+                        <Form @submit="updateCpaNetworkist" :validation-schema="schema" v-slot="{ errors }">
                             <div class="modal-body">
                                 <v-row class="align-center">
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
@@ -205,6 +205,10 @@ export default {
     },
     mounted() {
         this.getCpaNetworkist();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {

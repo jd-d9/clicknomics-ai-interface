@@ -2,17 +2,7 @@
     <div class="main-content bg-default height">
         <loader-component v-if="showLoader"></loader-component>
         <!-- Header -->
-        <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
-            <div class="container">
-                <div class="header-body text-center mb-5">
-                    <div class="row justify-content-center">
-                        <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-                            <h1 class="text-white">Welcome to clicknomics</h1>
-                            <p class="text-lead text-white">Use these awesome forms to Register.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="header bg-gradient-primary py-7 pb-lg-8 pt-lg-8">
             <div class="separator separator-bottom separator-skew zindex-100">
                 <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
                     <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
@@ -20,116 +10,96 @@
             </div>
         </div>
         <!-- Page content -->
-        <div class="container mt--7 mt-lg--8 pb-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 col-md-7">
-                    <div class="card bg-secondary border-0 mb-0">
-                        <div class="card-body px-lg-5 py-lg-5">
-                            <div class="row">
-                                <div class="col-4"></div>
-                                <div class="col-4 text-center">
-                                    <div class="text-center logo_responsive d-flex justify-content-between">
-                                        <img src="/assets/img/brand/logo.png" alt="logo" class="mx-auto" style="width: 80%">
-                                    </div>
+        <v-container class="mt--8 mt-lg--8 pb-5 login_screen">
+            <v-row>
+                <v-col cols="12" sm="12" md="7" lg="5" class="m-auto">
+                    <v-card class="card_design mb-4 pa-10">
+                        <v-card-title class="text-center">
+                            <img src="/assets/img/brand/logo.png" alt="logo" height="40">
+                            <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
+                            <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
+                            <p class="font-weight-medium text-left">Use these awesome forms for Register.</p>
+                        </v-card-title>
+
+                        <Form class="login_form" @submit="signUpUser" :validation-schema="schema" v-slot="{ errors }">
+                            <!-- <div class="col-12">
+                                <div class="profile-image-wrapper">
+                                    <label class="profile-image">
+                                        <input type="file" class="d-none" @change="uploadProfilePhoto">
+                                        <img :src="profileImage" alt="img">
+                                    </label>
+                                    <label class="edit-icon">
+                                        <input type="file" class="d-none" @change="uploadProfilePhoto">
+                                        <img src="/assets/img/icons/edit.svg" alt="img">
+                                    </label>
                                 </div>
-                                <div class="col-4 text-end">
-                                    <v-btn to="/subscribe-plan" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
-                                        Back
-                                    </v-btn> 
-                                </div>
+                            </div> -->
+                            <v-row>
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-account" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field id="name" type="text" name="firstName" :class="{'form-control': true ,'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
+                                    <span class="text-red-600" v-if="errors.firstName">First name is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-account" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field id="name" type="text" name="lastName" :class="{'form-control': true ,'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
+                                    <span class="text-red-600" v-if="errors.lastName">Last name is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-email-variant" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field id="email" type="email" name="Email" :class="{'form-control': true ,'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
+                                    <ErrorMessage class="text-red-600" name="Email"/>
+                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-office-building" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field id="company" type="text" name="companyName" :class="{'form-control': true ,'border-red-600': errors.companyName}" placeholder="Company Name" v-model="companyName"/>
+                                    <span class="text-red-600" v-if="errors.companyName">Company name is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field id="password" type="password" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password}" placeholder="Password" v-model="userPassword"/>
+                                    <span class="text-red-600" v-if="errors.Password">Password is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field id="confirm_password" type="password" name="passwordConfirmation" :class="{'form-control': true ,'border-red-600': errors.passwordConfirmation}" placeholder="Confirm password" v-model="confirmPassword"/>
+                                    <span class="text-red-600" v-if="errors.passwordConfirmation">Password did not match</span>
+                                </v-col>
+
+                                <!-- <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-flag" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field v-model="countryCode" name="Country" :class="{'border-red-600': errors.Country}">
+                                        <select placeholder="Select country code" name="Country" v-model="countryCode" :class="{'form-control': true ,'border-red-600': errors.Country}">
+                                            <option value="">Select country code</option>
+                                            <option :value="item.dial_code" v-for="(item, index) in countryCodeListing" :key="index">
+                                                {{item.dial_code}} - {{item.name}}
+                                            </option>
+                                        </select>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.Country">Country code is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
+                                    <v-icon icon="mdi-phone" size="30" color="#00cd00" class="form_icon"></v-icon>
+                                    <Field id="confirm_password" type="number" name="Mobile" :class="{'form-control': true ,'border-red-600': errors.Mobile}" autocomplete="current-password" placeholder="Mobile number" v-model="mobileNumber"/>
+                                    <ErrorMessage class="text-red-600" name="Mobile"/>
+                                </v-col> -->
+                            </v-row>
+                            <div class="text-center">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Sign Up</v-btn>   
+                                <p class="font-weight-medium text-muted text-body-2 mb-0">Already have an account? <router-link to="/login" class="text-blue-darken-2"> Login </router-link></p>
                             </div>
-                            <Form class="mt-5 login_form" @submit="signUpUser" :validation-schema="schema" v-slot="{ errors }">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="profile-image-wrapper">
-                                            <label class="profile-image">
-                                                <input type="file" class="d-none" @change="uploadProfilePhoto">
-                                                <img :src="profileImage" alt="img">
-                                            </label>
-                                            <label class="edit-icon">
-                                                <input type="file" class="d-none" @change="uploadProfilePhoto">
-                                                <img src="/assets/img/icons/edit.svg" alt="img">
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-3 position-relative">
-                                            <span class="form_icon">
-                                                <img src="/assets/img/icons/person.svg">
-                                            </span>
-                                            <Field id="name" type="text" name="Name" class="form-control" :class="{'border-red-600': errors.Name}" placeholder="Name" v-model="userName"/>
-                                            <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Name"/> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-3 position-relative">
-                                            <span class="form_icon">
-                                                <img src="/assets/img/icons/envelope.svg">
-                                            </span>
-                                            <Field id="email" type="email" name="Email" class="form-control" :class="{'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
-                                            <!-- <span class="text-red-600" v-if="errors.Email">Email can not be empty</span> -->
-                                            <ErrorMessage class="text-red-600" name="Email"/>
-                                            <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-3 position-relative">
-                                            <span class="form_icon">
-                                                <img src="/assets/img/icons/lock.svg">
-                                            </span>
-                                            <Field id="password" type="password" name="Password" class="form-control" :class="{'border-red-600': errors.Password}" autocomplete="current-password" placeholder="Password" v-model="userPassword"/>
-                                            <span class="text-red-600" v-if="errors.Password">Password can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Password"/> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-3 position-relative">
-                                            <span class="form_icon">
-                                                <img src="/assets/img/icons/lock.svg">
-                                            </span>
-                                            <Field id="confirm_password" type="password" name="confPassword" class="form-control" :class="{'border-red-600': errors.confPassword}" autocomplete="current-password" placeholder="Confirm password" v-model="confirmPassword"/>
-                                            <span class="text-red-600" v-if="errors.confPassword">Confirm password can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="confPassword"/> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-3 position-relative">
-                                            <span class="form_icon">
-                                                <img src="/assets/img/icons/country.png">
-                                            </span>
-                                            <Field v-model="countryCode" name="Country" :class="{'border-red-600': errors.Country}">
-                                                <select class="form-control" name="Country" v-model="countryCode" :class="{'border-red-600': errors.Country}">
-                                                    <option value="">Select country code</option>
-                                                    <option :value="item.dial_code" v-for="(item, index) in countryCodeListing" :key="index">
-                                                        {{item.dial_code}} - {{item.name}}
-                                                    </option>
-                                                </select>
-                                            </Field>
-                                            <span class="text-red-600" v-if="errors.Country">Country code can not be empty</span>
-                                            <!-- <ErrorMessage class="text-red-600" name="Country"/> -->
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group mb-3 position-relative">
-                                            <span class="form_icon form_icon_32">
-                                                <img src="/assets/img/icons/phone.png">
-                                            </span>
-                                            <Field id="confirm_password" type="number" name="Mobile" class="form-control" :class="{'border-red-600': errors.Mobile}" autocomplete="current-password" placeholder="Mobile number" v-model="mobileNumber"/>
-                                            <!-- <span class="text-red-600" v-if="errors.Mobile">Mobile number can not be empty</span> -->
-                                            <ErrorMessage class="text-red-600" name="Mobile"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Sign Up</button>
-                                </div>
-                            </Form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </Form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -139,53 +109,62 @@
     import defaultImage from '../../assets/img/DefaultImage.js';
     export default {
         components: {
-            Form, Field, ErrorMessage
+            Form, 
+            Field, 
+            ErrorMessage
         },
         data() {
             return {
                 showLoader: false,
                 countryCodeListing: [],
-                userName: '',
+                firstName: '',
+                lastName: '',
                 userEmail: '',
+                companyName: '',
                 userPassword: '',
                 confirmPassword: '',
-                countryCode: '',
-                mobileNumber: '',
                 profileImage: defaultImage,
+                // countryCode: '',
+                // mobileNumber: '',
                 backendErrorMessage: '',
             }
         },
         computed: {
             schema() {
                 return yup.object({
-                    Name: yup.string().required(),
+                    firstName: yup.string().required(),
+                    lastName: yup.string().required(),
                     Email: yup.string().required().email(),
+                    companyName: yup.string().required(),
                     Password: yup.string().required(),
-                    confPassword: yup.string().required(),
-                    Country: yup.string().required(),
-                    Mobile: yup.string().required().min(10).max(10)
+                    passwordConfirmation: yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
+                    // Mobile: yup.string().required().min(10).max(10)
                 });
             },
         },
-        mounted() {
-            this.getAndSetCountryCode();
-        },
+        // mounted() {
+        //     this.getAndSetCountryCode();
+        // },
         methods: {
             // submit data and signup user
             signUpUser() {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/registration', {
-                    name: this.userName,
+                    first_name: this.firstName,
+                    last_name: this.lastName,
                     email: this.userEmail,
+                    company_name: this.companyName,
                     password: this.userPassword,
                     password_confirmation: this.confirmPassword,
-                    country_code: this.countryCode,
-                    phone_number: this.mobileNumber,
-                    profile_image: this.profileImage,
-                    plan_id: sessionStorage.getItem('subscriptionPlanId'),
+                    plan_id: 1,
+                    // plan_id: sessionStorage.getItem('subscriptionPlanId'),
+                    // country_code: this.countryCode,
+                    // phone_number: this.mobileNumber,
+                    // profile_image: this.profileImage,
                 })
                 .then(response => {
-                    let planId = sessionStorage.getItem('subscriptionPlanId');
+                    // let planId = sessionStorage.getItem('subscriptionPlanId');
+                    let planId = 1;
                     if(response.data.success) {
                         this.backendErrorMessage = '';
                         // set plan id
@@ -199,7 +178,7 @@
                         .then(response => {
                             if(response.data.success) {
                                 this.$toast.open({
-                                    message: 'User registration successfully',
+                                    message: response.data.message,
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'
@@ -236,83 +215,33 @@
                     this.showLoader = false;
                 }); 
             },
-            // upload profile image
-            uploadProfilePhoto(event) {
-                const file = event.target.files[0];
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    let profileImage64 = reader.result;
-                    this.profileImage = profileImage64;
-                }
-                reader.readAsDataURL(file);
-            },
+            // // upload profile image
+            // uploadProfilePhoto(event) {
+            //     const file = event.target.files[0];
+            //     const reader = new FileReader();
+            //     reader.onloadend = () => {
+            //         let profileImage64 = reader.result;
+            //         this.profileImage = profileImage64;
+            //     }
+            //     reader.readAsDataURL(file);
+            // },
             // get and set country code
-            getAndSetCountryCode() {
-                this.showLoader = true;
-                this.axios.get(this.$api + '/countries')
-                .then(response => {
-                    if(response.data.success) {
-                        this.countryCodeListing = response.data.data;
-                        this.countryCodeListing.sort((a, b) => a.name - b.name);
-                        console.log(this.countryCodeListing, 'countryCodeListing');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.showLoader = false;
-                });
-            },
+            // getAndSetCountryCode() {
+            //     this.showLoader = true;
+            //     this.axios.get(this.$api + '/countries')
+            //     .then(response => {
+            //         if(response.data.success) {
+            //             this.countryCodeListing = response.data.data;
+            //             this.countryCodeListing.sort((a, b) => a.name - b.name);
+            //             console.log(this.countryCodeListing, 'countryCodeListing');
+            //             this.showLoader = false;
+            //         }
+            //     })
+            //     .catch(error => {
+            //         console.log(error);
+            //         this.showLoader = false;
+            //     });
+            // },
         }
     }
 </script>
-
-<style scoped>
-    .form_icon img {
-        width: 30px;
-    }
-    .logo_responsive img {
-        width: 25%;
-    }
-    .height {
-        height: 100vh;
-    }
-    .form_icon_32 img {
-        width: 32px;
-    }
-    .profile-image {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        border: 1px solid #b9bbbc;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .profile-image-wrapper {
-        position: relative;
-        width: 150px;
-        margin: 0 auto;
-        margin-bottom: 20px;
-    }
-    .profile-image-wrapper .edit-icon {
-        position: absolute;
-        top: 75%;
-        right: 10px;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background-color: #e2e2e2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .profile-image-wrapper .edit-icon img {
-        width: 20px;
-        height: 20px;
-    }
-    .profile-image img {
-        width: 100%;
-    }
-</style>

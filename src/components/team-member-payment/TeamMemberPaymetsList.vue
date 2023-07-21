@@ -42,14 +42,14 @@
                         <v-card-title>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
-                                    Team Member Payments
+                                    Team Member Payments List
                                 </v-col>
                             </v-row>
 
                             <!-- tab panel title div -->
                             <div class="mt-4">
                                 <v-tabs v-model="tabteampayment" fixed-tabs bg-color="green-lighten-4" class="mb-3">
-                                    <v-tab value="payments" class="font-weight-bold" color="green-darken-4 ">Payments</v-tab>
+                                    <v-tab value="payments" class="font-weight-bold" color="green-darken-4">Payments</v-tab>
                                     <v-tab value="reports" class="font-weight-bold">Reports</v-tab>
                                     <!-- <li class="nav-item">
                                         <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="this.showImportIcon = true">
@@ -65,26 +65,26 @@
 
                                 <v-window v-model="tabteampayment">
                                     <v-window-item value="payments">
-                                        <v-row>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                                <select v-model="fromAccount" @change="getTeamMemberPaymentList" class="form-control serch_table">
+                                        <v-row class="d-flex align-center justify-end">
+                                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                                <!-- <select v-model="fromAccount" @change="getTeamMemberPaymentList" class="form-control serch_table">
                                                     <option disabled selected>From Account Filter</option>
                                                     <option :value="val.title" v-for="(val, index) of fromAccountFilter" :key="index">
                                                         {{ val.title }}
                                                     </option>
-                                                </select>
+                                                </select> -->
+                                                <v-select clearable variant="outlined" placeholder="From Account Filter" :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="getTeamMemberPaymentList"  ></v-select>
                                             </v-col>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                                <select v-model="toAccount" @change="getTeamMemberPaymentList" class="form-control serch_table">
+                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                                <!-- <select v-model="toAccount" @change="getTeamMemberPaymentList" class="form-control serch_table">
                                                     <option disabled selected>To Account Filter</option>
                                                     <option :value="val.title" v-for="(val, index) of toAccountFilter" :key="index">
                                                         {{ val.title }}
                                                     </option>
-                                                </select>
-                                            </v-col>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                            </v-col>
+                                                </select> -->
+                                                <v-select clearable variant="outlined" placeholder="From Account Filter" :items="toAccountFilter" v-model="toAccount" @update:modelValue="getTeamMemberPaymentList"  ></v-select>
+                                            </v-col>                                            
                                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
                                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
                                             </v-col>
@@ -98,10 +98,10 @@
                                             <template v-slot:[`item.payment_date`]="{ item }">
                                                 {{item.selectable.payment_date}}
                                             </template>
-                                            <template v-slot:[`item.fromaccountlist.team_member_name`]="{ item }">
+                                            <template v-slot:[`item.from_account`]="{ item }">
                                                 {{item.selectable.fromaccountlist.team_member_name}}
                                             </template>
-                                            <template v-slot:[`item.toaccountlist.team_member_name`]="{ item }">
+                                            <template v-slot:[`item.to_account`]="{ item }">
                                                 {{item.selectable.toaccountlist.team_member_name}}
                                             </template>
                                             <template v-slot:[`item.amount`]="{ item }">
@@ -141,11 +141,9 @@
                                     </v-window-item>
 
                                     <v-window-item value="reports">
-                                        <v-row>
+                                        <v-row class="d-flex align-center justify-end ma-0">
                                             <v-spacer />
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                            </v-col>
+                                            <date-range-picker class="date_picker" :value="selectedRangeTwo" @update:value="updateRangeTwo"></date-range-picker>
                                         </v-row>
 
                                         <v-row v-if="cardMemberList.length > 0" class="mt-4">
@@ -343,6 +341,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getTeamMemberPaymentList();
     },
     methods: {

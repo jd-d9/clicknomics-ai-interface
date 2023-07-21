@@ -1,172 +1,173 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Manual Network List</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <!-- <div class="col-lg-6 col-5 text-right">
-                            <a href="/admin/img/doc/manual-networks-metrics.csv" class="btn btn-lg btn-neutral btn_animated" download>
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </a>
-                            <a href="#exampleModalCenter"  data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-lg btn-neutral btn_animated">Import CSV</a>
-                            <a href="/networks/manualNetworks/create" class="btn btn-lg btn-neutral btn_animated">Add Revenue</a>
-                        </div> -->
-                        <div class="col-lg-6 col-5 text-right">
-                            <button @click.prevent="createActivity" class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'">Add Manual Network</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-spacer></v-spacer>
-                                                <v-row>
-                                                    <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                                    <div class="col-3 ms-auto mt-2 add-height">
-                                                        <div class="ms-auto search-input position-relative">
-                                                            <input type="search" placeholder="Search" v-model="searchInput" @keyup="searchPayments">
-                                                        </div>
-                                                    </div>
-                                                </v-row>
-                                            </v-card-title>
-                                            <v-data-table class="table-hover-class" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search"  @current-items="currentItems" :itemsPerPage="itemsPerPage">
-                                                <template v-slot:item="{ item }">
-                                                    <tr class="table-body-back">
-                                                        <td>{{item.selectable.id}}</td>
-                                                        <td>{{item.selectable.network}}</td>
-                                                        <td>{{item.selectable.email ? item.selectable.email : '-'}}</td>
-                                                        <td>{{item.selectable.platform_type ? item.selectable.platform_type : '-'}}</td>
-                                                        <td>{{item.selectable.company ? item.selectable.company : '-'}}</td>
-                                                        <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
-                                                        <td>{{format_date(item.selectable.created_at)}}</td>
-                                                        <td>
-                                                            <button @click.prevent="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'" class="disable-button">
-                                                                <img src="/assets/img/icons/edit.svg" class="icon-width">
-                                                            </button>
-                                                            <button @click.prevent="showConfirmation(item.selectable.id)" :disabled="permissions.delete_auth == '0'" class="disable-button">
-                                                                <img src="/assets/img/icons/bin.svg" class="icon-width">
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
-                            </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Manual Network</span>
+                        <v-spacer />
+                        <!-- <v-btn to="/admin/img/doc/manual-networks-metrics.csv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                            Demo.csv
+                        </v-btn>
+
+                        <v-btn to="#exampleModalCenter" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                            Import CSV
+                        </v-btn> -->
+
+                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            Add New
+                        </v-btn>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Manual Network List
+                            <v-spacer></v-spacer>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
+                            </v-col>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search"  @current-items="currentItems" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.id`]="{ item }">
+                                {{item.selectable.id}}
+                            </template>
+                            <template v-slot:[`item.network`]="{ item }">
+                                {{item.selectable.network}}
+                            </template>
+                            <template v-slot:[`item.email`]="{ item }">
+                                {{item.selectable.email ? item.selectable.email : '-'}}
+                            </template>
+                            <template v-slot:[`item.platform_type`]="{ item }">
+                                {{item.selectable.platform_type ? item.selectable.platform_type : '-'}}
+                            </template>
+                            <template v-slot:[`item.company`]="{ item }">
+                                {{item.selectable.company ? item.selectable.company : '-'}}
+                            </template>
+                            <template v-slot:[`item.notes`]="{ item }">
+                                {{item.selectable.notes ? item.selectable.notes : '-'}}
+                            </template>
+                            <template v-slot:[`item.created_at`]="{ item }">
+                                {{format_date(item.selectable.created_at)}}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="showConfirmation(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>                                                            
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <!-- Start confirmation alert box -->
         <template>
             <v-row justify="center">
-                <v-dialog v-model="confirmationBox" persistent max-width="400" class="delete-confirm-card">
-                    <v-card>
-                        <v-card-title class="text-h5 text-center">Delete Account</v-card-title>
-                        <v-card-text>Are you sure you want to delete your affiliate?.</v-card-text>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="green darken-1" text @click="cancel()"> Cancel </v-btn>
-                            <v-btn color="green darken-1" text @click="deleteAccount()"> Delete </v-btn>
-                        </v-card-actions>
-                    </v-card>
+                <v-dialog v-model="confirmationBox" persistent max-width="500">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Delete Account</h5>
+                            <button type="button" class="close" aria-label="Close" @click="cancel()">
+                                <span aria-hidden="true" class="mdi mdi-close-circle"></span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" >
+                                    <label class="font-weight-medium">
+                                        Are you sure you want to delete your affiliate?.
+                                    </label>
+                                </v-col>
+                            </v-row>
+                        </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-delete-empty" @click="deleteAccount()">Delete</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click="cancel()">Cancel</v-btn>
+                            </v-col>
+                        </div>
+                    </div>
                 </v-dialog>
             </v-row>
         </template>
         <!--End confirmation alert box -->
+        
         <!-- Create & Update Manual Network List-->
         <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Manual Network</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{activityType}} Manual Network</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <Form @submit="saveManualNetwork" :validation-schema="schema" v-slot="{ errors }">
-                                <div class="row">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Network Name</label>
-                                            <Field type="text" name="Name" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Name}" placeholder="Add Name" v-model="list.name"/>
-                                            <span class="text-red-600" v-if="errors.Name">Network name is required field</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Email</label>
-                                            <Field type="text" name="Email" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Email}" placeholder="Email" v-model="list.email"/>
-                                            <ErrorMessage class="text-red-600" name="Email"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Platform Type</label>
-                                            <Field type="text" name="Platform" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Platform}" placeholder="Type" v-model="list.platform_type"/>
-                                            <span class="text-red-600" v-if="errors.Name">Platform type is required field</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Company</label>
-                                            <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Company" v-model="list.company">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Notes</label>
-                                            <textarea :class="{'form-control': true}"  name="" cols="30" rows="5" v-model="list.notes"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                    </div>
-                                </div>
-                            </Form>
+                    <Form @submit="saveManualNetwork" :validation-schema="schema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row class="align-center">
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Network Name</label>
+                                    <Field type="text" name="Name" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Name}" placeholder="Add Name" v-model="list.name"/>
+                                    <span class="text-red-600" v-if="errors.Name">Network name is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Email</label>
+                                    <Field type="text" name="Email" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Email}" placeholder="Email" v-model="list.email"/>
+                                    <ErrorMessage class="text-red-600" name="Email"/>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Platform Type</label>
+                                    <Field type="text" name="Platform" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Platform}" placeholder="Type" v-model="list.platform_type"/>
+                                    <span class="text-red-600" v-if="errors.Name">Platform type is required field</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Company</label>
+                                    <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Company" v-model="list.company">
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Notes</label>
+                                    <textarea :class="{'form-control': true}" name="Notes" rows="5" v-model="list.notes"></textarea>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -196,7 +197,7 @@ export default {
                 { title: 'Company', key: 'company' },
                 { title: 'Notes', key: 'notes' },
                 { title: 'Date Added', key: 'created_at' },
-                { title: 'Action',  key: '', sortable: false},
+                { title: 'Action',  key: 'action', sortable: false},
             ],
             currentItemsTable: [],
             itemsPerPage: -1,
@@ -226,6 +227,10 @@ export default {
         },
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getManualNetworkListing();
     },
     methods: {

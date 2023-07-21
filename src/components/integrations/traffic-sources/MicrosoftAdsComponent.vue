@@ -70,41 +70,36 @@
 
          <!-- edited modal  -->
         <div class="modal fade" id="updateEditedData" tabindex="-1" role="dialog" aria-labelledby="updateEditedDataTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">Enable/Disable Currency Converstion (USD)</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Enable/Disable Currency Converstion (USD)</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeUpdateModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="col-12">
-                            <Form @submit="updateCurrencyConverstionCheck" :validation-schema="schema" v-slot="{ errors }">
-                                <div class="row">
-                                    <div class="col-lg-12 py-0">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="input-username">Currency Converstion (USD)</label>
-                                            <v-app>
-                                                <Field name="Currency" v-model="editedModal.currency_conversion_check">
-                                                    <v-radio-group name="Currency" class="monitor_main" v-model="editedModal.currency_conversion_check" row :class="{'form-control': true, 'border-red-600':errors.Currency}" >
-                                                        <v-radio class="monitor" label="Enabled" value="1"></v-radio>
-                                                        <v-radio class="monitor" label="Disabled" value="0"></v-radio>
-                                                    </v-radio-group>
-                                                </Field>
-                                                <span class="text-red-600" v-if="errors.Currency">Currency converstion can not be empty</span>
-                                            </v-app>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 py-0 text-right">
-                                        <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                    </div>
-                                </div>
-                            </Form>
+                    <Form @submit="updateCurrencyConverstionCheck" :validation-schema="schema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    <label class="form-control-label" for="input-username">Currency Converstion (USD)</label>
+                                    <Field name="Currency" v-model="editedModal.currency_conversion_check">
+                                        <v-radio-group inline v-model="editedModal.currency_conversion_check">
+                                            <v-radio class="monitor me-3" label="Enabled" value="1"></v-radio>
+                                            <v-radio class="monitor" label="Disabled" value="0"></v-radio>
+                                        </v-radio-group>
+                                    </Field>
+                                    <span class="text-red-600" v-if="errors.Currency">Currency converstion can not be empty</span>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeUpdateModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -155,6 +150,10 @@ export default {
     },
     mounted() {
         this.getBingCustomerAccounts();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // open and close modal

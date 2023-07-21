@@ -1,62 +1,95 @@
 <template>
-    <div class="bg-default">
+    <div class="main-content bg-default height">
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Main content -->
-        <div class="main-content height" id="panel">
-            <div class="main-content">
-                <!-- Header -->
-                <div class="header bg-gradient-primary py-5 pb-lg-7 pt-lg-6">
-                    <div class="container">
-                        <div class="header-body text-center mb-5">
-                            <div class="row justify-content-center">
-                                <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-                                    <h1 class="text-white">Welcome to clicknomics</h1>
-                                    <p class="text-lead text-white">Two Factor Verification.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="separator separator-bottom separator-skew zindex-100">
-                        <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-                        </svg>
-                    </div>
-                </div>
-                <!-- Page content -->
-                <div class="container mt--7 mt-lg--8">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-7 col-md-7">
-                            <div class="card bg-secondary border-0">
-                                <div class="card-body px-lg-5 py-lg-5">
-                                    <div class="text-center logo_responsive">
-                                        <img src="/assets/img/brand/logo.png" class="image-width">
-                                    </div>
-                                    <form class="mt-5 login_form" @submit.prevent="sendCodeInEmail">
-                                        <div id="qrcode" class="text-center">
-                                            <span class="d-block">
-                                                Verify via email address?
-                                            </span>
-                                            <router-link to="/authenticator/validate" id="show_validate">Try Another Way</router-link>
-                                            <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Send Auth Code In Email.</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Header -->
+        <div class="header bg-gradient-primary py-7 pb-lg-7 pt-lg-8">
+            <div class="separator separator-bottom separator-skew zindex-100">
+                <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+                </svg>
             </div>
         </div>
+        <!-- Page content -->
+        <v-container class="mt--8 mt-lg--8 pb-5 login_screen">
+            <v-row>
+                <v-col cols="12" sm="8" md="5" lg="4" class="m-auto">
+                    <v-card class="card_design mb-4 pa-10">
+                        <v-card-title class="text-center">
+                            <img src="/assets/img/brand/logo.png" alt="logo" height="40">
+                            <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
+                            <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
+                            <p class="font-weight-medium text-left">Two Factor Verification.</p>
+                        </v-card-title>
+
+                        <form class="login_form" @submit.prevent="sendCodeInEmail" v-if="toggleComponent">
+                            <div id="qrcode">
+                                <div class="mt-4 text-center">
+                                    <p class="font-weight-medium">Verify via email address?
+                                    <router-link to="/authenticator/validate" id="show_validate" class="text-blue-darken-2 font-weight-600">Try Another Way</router-link></p>
+                                </div>
+                                <div class="text-center">
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Send Auth Code In Email.</v-btn>   
+                                </div>
+                            </div>
+                        </form>
+
+                        <Form class="login_form" @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }" v-else>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal">
+                                    <label>Enter an authenticator app code</label>
+                                    <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
+                                    <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
+                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal py-0">
+                                    <label>2FA Verification For 30 Days.</label>
+                                    <select class="form-control" placeholder="User Status" v-model="rememberVerification">
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="6" sm="6" md="6" lg="6" class="font-medium font-weight-normal position-relative text-left">
+                                    <router-link to="" class="text-underline" @click.prevent="sendCodeInEmail">
+                                        <small class="font-weight-600 text-blue-darken-2">Resend Code</small>
+                                    </router-link>
+                                </v-col>
+                                <v-col cols="6" sm="6" md="6" lg="6" class="font-medium font-weight-normal position-relative text-right">
+                                    <router-link to="/authenticator/validate" class="text-underline">
+                                        <small class="font-weight-600 text-blue-darken-2">Try Another way.</small>
+                                    </router-link>
+                                </v-col>
+                            </v-row>
+                            <div class="text-center">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Authenticate</v-btn>   
+                            </div>
+                        </Form>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
 <script>
+    import * as yup from 'yup';
+    import { Form, Field } from 'vee-validate';
     export default {
+        components: {
+            Form, Field
+        },
         data() {
             return {
                 // images: {
                 //     logo: require('/assets/img/brand/logo.png'),
                 // },
+                authCode: '',
+                key: '',
+                verifiedBy: '',
+                rememberVerification: 1,
+                toggleComponent: true,
                 showLoader: false,
             }
         },
@@ -70,6 +103,13 @@
                 this.$router.push('/login');
             }
         }, 
+        computed: {
+            schema() {
+                return yup.object({
+                    Authentication: yup.string().required(),
+                });
+            },
+        },
         methods: {
             // send validation code in email(try another way method)
             sendCodeInEmail() {
@@ -88,7 +128,15 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        this.$router.push('/authenticator/validate');
+                        this.toggleComponent = false;
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                         this.showLoader = false;
                     }
                 })
@@ -100,6 +148,47 @@
                         type: 'error'
                     });
                     console.log(error)
+                    this.showLoader = false;
+                });
+            },
+            // check authentication code and allow user to logged in
+            checkCodeAndAuthUser() {
+                this.showLoader = true;
+                this.axios.post(this.$api + '/authenticator/validateTwoFactorCode', {
+                    two_factor_code: this.authCode,
+                    remember_2fa: this.rememberVerification,
+                    email: sessionStorage.getItem('Email'),
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        sessionStorage.setItem('isTwoFactorVerified', true);
+                        this.showLoader = false;
+                        this.$router.push('/dashboard');
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.backendErrorMessage = error.message;
                     this.showLoader = false;
                 });
             }

@@ -12,6 +12,9 @@ import UserProfile from './components/user-profile/UserProfile.vue';
 import DisplayUsers from './components/user/UsersList.vue';
 import CreateUser from './components/user/CreateUser.vue';
 import UpdateUser from './components/user/UpdateUser.vue';
+import DisplaySubscribeUsers from './components/subscribed-user/SubscribedUsersList.vue';
+import CreateSubscribeUser from './components/subscribed-user/CreateSubscribedUser.vue';
+import UpdateSubscribeUser from './components/subscribed-user/UpdateSubscribedUser.vue';
 import DisplayUserRole from './components/user-role/UserRoleList.vue';
 import CreateUserRole from './components/user-role/CreateUserRole.vue';
 import UpdateUserRole from './components/user-role/UpdateUserRole.vue';
@@ -92,6 +95,10 @@ const router = createRouter({
         {path: '/settings/user_management/user_roles', component: DisplayUserRole, meta: {auth: true}},
         {path: '/settings/user_management/user_roles/create', component: CreateUserRole, meta: {auth: true}},
         {path: '/settings/user_management/user_roles/:id/edit', component: UpdateUserRole, meta: {auth: true}},
+        // subscribed user module
+        {path: '/settings/subscribe_user', component: DisplaySubscribeUsers, meta: {auth: true}},
+        {path: '/settings/subscribe_user/create', component: CreateSubscribeUser, meta: {auth: true}},
+        {path: '/settings/subscribe_user/:id/edit', component: UpdateSubscribeUser, meta: {auth: true}},
         // invoice and template
         {path: '/accounting/invoice', component: DisplayInvoices, meta: {auth: true}},
         {path: '/accounting/invoice/template', component: DisplayTemplates, meta: {auth: true}},

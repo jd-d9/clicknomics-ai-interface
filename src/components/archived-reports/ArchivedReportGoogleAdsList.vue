@@ -1,122 +1,121 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active text-capitalize" aria-current="page">Archived Reports Google</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <v-app>
-                                    <v-card>
-                                        <v-card-title>
-                                            <!-- Google Ads Metrics -->
-                                            <v-spacer></v-spacer>
-                                            <v-row>
-                                                <v-col class="d-flex" cols="12" sm="4"></v-col>
-                                                <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                                </v-col>
-                                                <v-col class="d-flex search_width" cols="12" sm="4">
-                                                    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </v-card-title>
-                                        <v-data-table :headers="headers" :items="googleCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="expanded" item-value="name" show-expand class="elevation-1 table-hover-class adding-font-size add-side-borders" :itemsPerPage="itemsPerPage">
-                                            <template v-slot:expanded-row="{ columns, item }">
-                                                <td class="exapanded" :colspan="columns.length" style="padding:10px">
-                                                    <table class="table align-items-center" v-if="googleCampaignMetrics.length > 0">
-                                                        <thead class="thead-light">
-                                                            <tr>
-                                                                <th scope="col">Campaign Name</th>
-                                                                <th scope="col">Clicks</th>
-                                                                <th scope="col">Cost (USD Currency)</th>
-                                                                <th scope="col">Cost (Account Currency)</th>
-                                                                <th scope="col">Click Through Rate</th>
-                                                                <th scope="col">Impressions</th>
-                                                                <th scope="col">Cost Per Click</th>
-                                                                <th scope="col">Conversions</th>
-                                                                <th scope="col">Campaign Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="list">
-                                                            <tr v-for="(row , index) in item.selectable.children" :key="index">
-                                                                <td>
-                                                                    {{row.campaign_name}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toNumberWithoutDecimal(row.clicks ? row.clicks : '0')}}
-                                                                </td>
-                                                                <td>
-                                                                    {{row.costMicros ? '$' + parseFloat(row.costMicros / 1000000).toFixed(2)  : '$0.00'}}
-                                                                </td>
-                                                                <td>
-                                                                    {{row.costMicrosConverted ? `${item.currency} -` + parseFloat(row.costMicrosConverted / 1000000).toFixed(2)  : row.costMicros ? '$' + parseFloat(row.costMicros / 1000000).toFixed(2)  : '$0.00'}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toNumber(row.ctr ? (row.ctr * 100).toFixed(2) : '0')}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toNumberWithoutDecimal(row.impressions ? row.impressions : '0')}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toNumber(row.averageCpc ? parseFloat(row.averageCpc / 1000000).toFixed(2)  : '0')}}
-                                                                </td>
-                                                                <td>
-                                                                    {{$filters.toNumber(row.conversions ? row.conversions : '0')}}
-                                                                </td>
-                                                                <td>
-                                                                    {{row.campaign_status ? row.campaign_status : '-'}}
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Archived Reports Google</span>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Archived Reports Google List
+                            <v-spacer></v-spacer>
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                            </v-col>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table :headers="headers" :items="googleCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="expanded" item-value="name" show-expand class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                            <template v-slot:expanded-row="{ columns, item }">
+                                <td class="exapanded bg-light-green-lighten-5" :colspan="columns.length" style="padding:10px" v-if="item.selectable.children.length > 0">
+                                    <table class="table align-items-center" v-if="googleCampaignMetrics.length > 0">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Campaign Name</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Clicks</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Cost (USD Currency)</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Cost (Account Currency)</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Click Through Rate</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Impressions</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Cost Per Click</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Conversions</div>
+                                                </th>
+                                                <th class="v-data-table__td" scope="col">
+                                                    <div class="v-data-table-header__content">Campaign Status</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="list">
+                                            <tr v-for="(row , index) in item.selectable.children" :key="index">
+                                                <td class="v-data-table__td">
+                                                    {{row.campaign_name}}
                                                 </td>
-                                            </template>
-                                            <template v-slot:tbody v-if="googleCampaignMetrics.length > 0">
-                                                <tr class="total_table">
-                                                    <td>Totals</td>
-                                                    <td>-</td>
-                                                    <td>{{$filters.toNumberWithoutDecimal(sumImpressions)}}</td>
-                                                    <td>{{$filters.toNumberWithoutDecimal(sumClick)}}</td>
-                                                    <td>{{$filters.toCurrency(sumCostMicros)}}</td>
-                                                    <td>-</td>
-                                                    <td>{{$filters.toCurrency(sumAverageCpc)}}</td>
-                                                    <td>{{$filters.toNumberWithPercentage(sumCtr)}}</td>
-                                                    <td>{{$filters.toNumber(sumAbsoluteTopImpressionPercentage)}}%</td>
-                                                    <td>{{$filters.toNumber(sumConversions)}}</td>
-                                                    <td>{{$filters.toNumber(sumConversionsFromInteractions)}}</td>
-                                                    <td>{{$filters.toNumber(sumCostPerConversion)}}</td>
-                                                </tr>
-                                            </template>
-                                        </v-data-table>
-                                    </v-card>
-                                </v-app>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toNumberWithoutDecimal(row.clicks ? row.clicks : '0')}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{row.costMicros ? '$' + parseFloat(row.costMicros / 1000000).toFixed(2)  : '$0.00'}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{row.costMicrosConverted ? `${item.currency} -` + parseFloat(row.costMicrosConverted / 1000000).toFixed(2)  : row.costMicros ? '$' + parseFloat(row.costMicros / 1000000).toFixed(2)  : '$0.00'}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toNumber(row.ctr ? (row.ctr * 100).toFixed(2) : '0')}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toNumberWithoutDecimal(row.impressions ? row.impressions : '0')}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toNumber(row.averageCpc ? parseFloat(row.averageCpc / 1000000).toFixed(2)  : '0')}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{$filters.toNumber(row.conversions ? row.conversions : '0')}}
+                                                </td>
+                                                <td class="v-data-table__td">
+                                                    {{row.campaign_status ? row.campaign_status : '-'}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </template>
+                            <template v-slot:tbody v-if="googleCampaignMetrics.length > 0">
+                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                    <td>Totals</td>
+                                    <td></td>
+                                    <td>{{$filters.toNumberWithoutDecimal(sumImpressions)}}</td>
+                                    <td>{{$filters.toNumberWithoutDecimal(sumClick)}}</td>
+                                    <td>{{$filters.toCurrency(sumCostMicros)}}</td>
+                                    <td></td>
+                                    <td>{{$filters.toCurrency(sumAverageCpc)}}</td>
+                                    <td>{{$filters.toNumberWithPercentage(sumCtr)}}</td>
+                                    <td>{{$filters.toNumber(sumAbsoluteTopImpressionPercentage)}}%</td>
+                                    <td>{{$filters.toNumber(sumConversions)}}</td>
+                                    <td>{{$filters.toNumber(sumConversionsFromInteractions)}}</td>
+                                    <td>{{$filters.toNumber(sumCostPerConversion)}}</td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -222,6 +221,10 @@ export default {
     },
     mounted() {
         this.fetchGoogleAdsMetrics();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // update date range

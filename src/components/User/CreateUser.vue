@@ -13,7 +13,7 @@
                         <span>Create User</span>
 
                         <v-spacer />
-                        <v-btn href="/settings/user" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/settings/user" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -43,7 +43,10 @@ export default {
 
     },
     mounted() {
-
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }
 }
 </script>

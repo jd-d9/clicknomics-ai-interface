@@ -10,7 +10,7 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Variable Monthly Cost List</span>
+                        <span>Variable Monthly Cost</span>
                         <v-spacer />
                         <v-btn @click.prevent="this.$router.push('/accounting/variableMonthlyCost/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
                             Add New
@@ -21,12 +21,12 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Variable Monthly Cost
+                            Variable Monthly Cost List
                             <v-spacer></v-spacer>
                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                            <div class="col-3 pr-1">
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
-                            </div>
+                            </v-col>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -86,7 +86,7 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                        <form>
+                    <form>
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
@@ -145,6 +145,10 @@ export default {
     },
     mounted() {
         this.getVariablePaymentList();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // update date range

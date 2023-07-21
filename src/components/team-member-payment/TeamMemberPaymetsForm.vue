@@ -13,7 +13,7 @@
                         <span>{{ breadCrumbMessage }} Team Member Payments</span>
 
                         <v-spacer />
-                        <v-btn href="/accounting/teamMembersPayments" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/accounting/teamMembersPayments" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -22,7 +22,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between">
-                            {{ breadCrumbMessage }} Credit Card Payment
+                            {{ breadCrumbMessage }} Team Member Payments
                         </v-card-title>
 
                         <v-divider class="border-opacity-100 my-4" color="success" />  
@@ -117,6 +117,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         this.getFromToAccountDropdownData();
         if(this.$route.params.id) {
             this.toggleComponent = false;

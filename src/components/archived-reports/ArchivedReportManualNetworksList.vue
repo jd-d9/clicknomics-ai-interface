@@ -1,72 +1,52 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <!-- header content -->
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Archived Reports Manual Network</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <!-- page content -->
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <v-row>
-                                                    <v-col class="d-flex" cols="12" sm="4">
-                                                        <v-select solo :items="networkNameFilter" label="Network Name Filter" item-value="key" :clearable="true" v-model="networkName" @update:modelValue="getManualNetworksReport"></v-select>
-                                                    </v-col>
-                                                    <v-col class="d-flex justify-content-end" cols="12" sm="4">
-                                                        <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                                    </v-col>
-                                                    <v-col class="d-flex search_width" cols="12" sm="4">
-                                                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-card-title>
-                                            <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" class="elevation-1 table-expand">
-                                                <template v-slot:item="{ item }">
-                                                    <tr>
-                                                        <td>{{item.selectable.manual_network.network}}</td>
-                                                        <td>{{$filters.toCurrency(item.selectable.amount)}}</td>
-                                                    </tr>
-                                                </template>
-                                                <template v-slot:tbody v-if="dataMetrics.length > 0">
-                                                    <tr class="total_table">
-                                                        <td>Totals</td>
-                                                        <td>{{ $filters.toCurrency(sumField) }}</td>
-                                                    </tr>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
-                            </div>
-                        </div>
-                    </v-app>
-                </div>
-            </div>
-        </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Archived Reports Manual Network</span>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Archived Reports Manual Network List
+                            <v-spacer></v-spacer>
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
+                                <v-select variant="outlined" :items="networkNameFilter" placeholder="Network Name Filter" item-value="key" :clearable="true" v-model="networkName" @update:modelValue="getManualNetworksReport"></v-select>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                            </v-col>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" >
+                            <template v-slot:[`item.network`]="{ item }">
+                                {{item.selectable.manual_network.network ? item.selectable.manual_network.network : '-'}}
+                            </template>
+                            <template v-slot:[`item.amount`]="{ item }">
+                                {{$filters.toCurrency(item.selectable.amount)}}
+                            </template>
+                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                                <tr class="total_table table-body-back bg-blue-darken-2">
+                                    <td>Totals</td>
+                                    <td>{{ $filters.toCurrency(sumField) }}</td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -103,6 +83,10 @@ export default {
     },
     mounted() {
         this.getManualNetworksReport();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // update date range
@@ -133,6 +117,7 @@ export default {
                 if(response.data.success) {
                     this.dataMetrics = response.data.data;
                     if(response) {
+                        this.networkNameFilter = [];
                         response.data.allNetworks.map((data) => {
                             this.networkNameFilter.push({
                                 title : data.network,
@@ -265,7 +250,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>

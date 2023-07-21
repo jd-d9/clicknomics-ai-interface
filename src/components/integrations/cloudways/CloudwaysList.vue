@@ -10,7 +10,7 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Cloudways List</span>
+                        <span>Cloudways</span>
 
                         <v-spacer />
                         <v-btn @click.prevent="this.$router.push('/settings/cloudways/integrate')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
@@ -113,6 +113,10 @@ export default {
     },
     mounted() {
         this.getCloudwaysListing();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     methods: {
         // open and close confirm delete modal

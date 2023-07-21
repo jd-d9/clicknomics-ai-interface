@@ -10,10 +10,10 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>{{breadCrumbText}} Plan</span>
+                        <span>{{breadCrumbText}} Plan Management</span>
 
                         <v-spacer />
-                        <v-btn href="/settings/plan-management" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/settings/plan-management" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -22,7 +22,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between">
-                            {{breadCrumbText}} Plan
+                            {{breadCrumbText}} Plan Management
                         </v-card-title>
                         <v-divider class="border-opacity-100 my-4" color="success" />  
                         <form @submit.prevent="managePlan">
@@ -34,8 +34,13 @@
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                    <label class="form-control-label">Add Account Limit</label>
-                                    <input type="number" id="input-username" name="addAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Add Account Limit" v-model="addAccountLimit"/>
+                                    <label class="form-control-label">Google Account Limit</label>
+                                    <input type="number" id="input-username" name="googleAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Google Account Limit" v-model="googleAccountLimit"/>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <label class="form-control-label">Microsoft Account Limit</label>
+                                    <input type="number" id="input-username" name="microsoftAccountLimit" :class="{'form-control': true}" step=".01" placeholder="Microsoft Account Limit" v-model="microsoftAccountLimit"/>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -126,9 +131,16 @@
                 </div>
                 <div class="col-lg-4 py-0">
                     <div class="form-group">
-                        <label class="form-control-label">Add Account Limit</label>
-                        <Field type="number" id="input-username" name="addAccountLimit" :class="{'form-control': true , 'border-red-600':errors.addAccountLimit}" step=".01" placeholder="Interval Count" v-model="addAccountLimit"/>
-                        <span class="text-red-600" v-if="errors.addAccountLimit">Add account limit can not be empty</span>
+                        <label class="form-control-label">Google Account Limit</label>
+                        <Field type="number" id="input-username" name="googleAccountLimit" :class="{'form-control': true , 'border-red-600':errors.googleAccountLimit}" step=".01" placeholder="Google Add Account" v-model="googleAccountLimit"/>
+                        <span class="text-red-600" v-if="errors.googleAccountLimit">Google account limit can not be empty</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 py-0">
+                    <div class="form-group">
+                        <label class="form-control-label">Microsoft Account Limit</label>
+                        <Field type="number" id="input-username" name="microsoftAccountLimit" :class="{'form-control': true , 'border-red-600':errors.microsoftAccountLimit}" step=".01" placeholder="Microsoft Add Account" v-model="microsoftAccountLimit"/>
+                        <span class="text-red-600" v-if="errors.microsoftAccountLimit">Microsoft account limit can not be empty</span>
                     </div>
                 </div>
                 <div class="col-lg-4 py-0">
@@ -235,7 +247,8 @@ export default {
                 }
             ],
             description: '',
-            addAccountLimit: '',
+            googleAccountLimit: '',
+            microsoftAccountLimit: '',
             networkAccountLimit: '',
             toggleButton: true,
             breadCrumbText: 'Create',
@@ -249,6 +262,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         if(this.$route.params.id) {
             this.getDataForEdit();
             this.breadCrumbText = 'Edit';
@@ -263,7 +280,8 @@ export default {
     //             original_price: yup.string().required(),
     //             Amount: yup.string().required(),
     //             discount_value: yup.string().required(),
-    //             addAccountLimit: yup.string().required(),
+    //             googleAccountLimit: yup.string().required(),
+    //             microsoftAccountLimit: yup.string().required(),
     //             networkAccountLimit: yup.string().required(),
     //             Description: yup.string().required(),
     //         });
@@ -285,7 +303,8 @@ export default {
                     const Data = response.data.data;
                     this.addMultipleField = Data.plan_data;
                     this.name = Data.name;
-                    this.addAccountLimit = Data.add_account_limit;
+                    this.googleAccountLimit = Data.google_account_limit;
+                    this.microsoftAccountLimit = Data.microsoft_account_limit;
                     this.networkAccountLimit = Data.network_account_limit;
                     this.description = Data.description;
                     this.showLoader = false;
@@ -323,7 +342,8 @@ export default {
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('name', this.name);
-                formData.append('add_account_limit', this.addAccountLimit);
+                formData.append('google_account_limit', this.googleAccountLimit);
+                formData.append('microsoft_account_limit', this.microsoftAccountLimit);
                 formData.append('network_account_limit', this.networkAccountLimit);
                 formData.append('description', this.description);
                 formData.append('plan', JSON.stringify(this.addMultipleField));
@@ -363,7 +383,8 @@ export default {
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('name', this.name);
-                formData.append('add_account_limit', this.addAccountLimit);
+                formData.append('google_account_limit', this.googleAccountLimit);
+                formData.append('microsoft_account_limit', this.microsoftAccountLimit);
                 formData.append('network_account_limit', this.networkAccountLimit);
                 formData.append('description', this.description);
                 formData.append('plan', JSON.stringify(this.addMultipleField));

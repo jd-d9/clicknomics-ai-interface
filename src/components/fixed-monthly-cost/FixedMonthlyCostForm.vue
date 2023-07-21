@@ -13,7 +13,7 @@
                         <span>{{breadCrumbText}} Fixed Monthly Cost</span>
 
                         <v-spacer />
-                        <v-btn href="/accounting/fixedMonthlyCost" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/accounting/fixedMonthlyCost" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -81,6 +81,10 @@ export default {
             this.breadCrumbText = 'Edit';
             this.getDataForEdit();
         }
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     },
     computed: {
         schema() {

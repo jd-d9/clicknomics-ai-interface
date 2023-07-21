@@ -17,7 +17,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between">
-                            {{breadCrumbText}} Fixed Monthly Cost
+                            Add Process Email Report 
                         </v-card-title>
                         <v-divider class="border-opacity-100 my-4" color="success" />    
 
@@ -72,6 +72,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         // this.$nextTick(() => {
         //     window.$('.mx-datepicker input').addClass('datepicker-input');
         // })
