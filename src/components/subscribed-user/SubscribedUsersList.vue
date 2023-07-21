@@ -24,7 +24,7 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Subscribe Users
                             <v-spacer></v-spacer>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchUser"/>
                             </v-col>
                         </v-card-title>

@@ -33,7 +33,7 @@
                             <v-spacer></v-spacer>
                             <div v-if="selected.length > 0" class="mr-2">
                                 <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                    Remove
+                                    Remove Selected
                                 </v-btn>
                                 <v-btn @click="openCreateUpdateData" :disabled="permissions.update_auth == '0'" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-pencil">
                                     Edit

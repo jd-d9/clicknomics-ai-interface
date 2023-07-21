@@ -69,6 +69,9 @@ import ArchivedReportManualNetworksList from './components/archived-reports/Arch
 import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
+// report section
+import RealTimeReportIndex from './components/real-time-reports/RealTimeReportIndex';
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -173,6 +176,9 @@ const router = createRouter({
         {path: '/bank_accounts/onesscorp/list', component: IpmOsscList, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/create', component: IpmOsscForm, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/:id/edit', component: IpmOsscForm, meta: {auth: true}},
+        // report section
+        {path: '/reporting/realTimeReports/:reportType', component: RealTimeReportIndex, meta: {auth: true}},
+
         // archived reports module
         {path: '/reporting/archivedReports/microsoft', component: ArchivedReportMicrosoftAdsList, meta: {auth: true}},
         {path: '/reporting/archivedReports/google', component: ArchivedReportGoogleAdsList, meta: {auth: true}},
@@ -181,6 +187,8 @@ const router = createRouter({
         {path: '/reporting/archivedReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
+
+
         // not found page
         {path: '/:notFound(.*)', component: NotFoundPage},
     ]
