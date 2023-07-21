@@ -34,21 +34,37 @@
                         </form>
 
                         <Form class="login_form" @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }" v-else>
-                            <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
-                            <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
-                            <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
-                            <div class="form-group">
-                                <label for="formGroupExampleInput2" class="d-block form-control-label">Remember 2FA Verification For 30 Days.</label>
-                                <select class="select-option" placeholder="User Status" v-model="rememberVerification">
-                                    <option value="1">Yes</option>
-                                    <option value="0">No</option>
-                                </select>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal">
+                                    <label>Enter an authenticator app code</label>
+                                    <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
+                                    <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
+                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal py-0">
+                                    <label>2FA Verification For 30 Days.</label>
+                                    <select class="form-control" placeholder="User Status" v-model="rememberVerification">
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="6" sm="6" md="6" lg="6" class="font-medium font-weight-normal position-relative text-left">
+                                    <router-link to="" class="text-underline" @click.prevent="sendCodeInEmail">
+                                        <small class="font-weight-600 text-blue-darken-2">Resend Code</small>
+                                    </router-link>
+                                </v-col>
+                                <v-col cols="6" sm="6" md="6" lg="6" class="font-medium font-weight-normal position-relative text-right">
+                                    <router-link to="/authenticator/validate" class="text-underline">
+                                        <small class="font-weight-600 text-blue-darken-2">Try Another way.</small>
+                                    </router-link>
+                                </v-col>
+                            </v-row>
+                            <div class="text-center">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Authenticate</v-btn>   
                             </div>
-                            <div class="for-responsive d-flex justify-content-between">
-                                <router-link to="/authenticator/validate" class="float-right mb-2">Try Another Way</router-link>
-                                <a href="javascript:void(0)" class="float-right mb-2" @click.prevent="sendCodeInEmail">Resend Code</a>
-                            </div>
-                            <button type="submit" class="btn btn-primary mt-4 btn-block btn_animated">Authenticate</button>
                         </Form>
                     </v-card>
                 </v-col>
