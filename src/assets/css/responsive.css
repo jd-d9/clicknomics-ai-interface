@@ -9,6 +9,8 @@
 @media (max-width: 1440px)
 {
     .dashboard_card .card-title{padding: 10px 5px;font-weight: 400;font-size: 14px;}
+    .card_design .v-card-title {white-space: normal;line-height: inherit;min-height: 42px;}
+    .card_design.v-card .v-card-text.text-h4{font-size: 28px !important;}
 }
 @media (max-width: 1400px)
 {
@@ -30,6 +32,7 @@
 @media (max-width: 1200px)
 {
     .dashboard_card.col-md-2{flex: 0 0 20%;max-width: 20%;}
+    .navbar-vertical.navbar-light{transform: translate(0px) !important;}
 }
 /* @media (max-width: 1199px)
 {

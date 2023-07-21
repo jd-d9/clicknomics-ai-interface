@@ -433,22 +433,3 @@ export default {
     }
 }
 </script>
-<style scoped>
-.thead-light {
-    height: 50px !important;
-}
-.border-right, .thead-light {
-    border: 1px solid #dedede !important;
-}
-.list tr td{
-    height: 45px !important;
-}
-.exapanded {
-    box-shadow: inset 0 0 6px #aaa;
-    padding: 10px !important;
-}
-.add-side-borders tbody td, .add-side-borders thead th{
-    border-left: 1px solid #dee2e6 !important;
-    border-right: 1px solid #dee2e6 !important;
-}
-</style>
