@@ -1,149 +1,130 @@
 <template>
     <div class="bg-default main-content-height">
-        <div class="header bg-primary pb-6">
-            <div class="container-fluid">
-                <div class="header-body">
-                    <div class="row align-items-center mt--4">
-                        <div class="col-lg-6 col-7 pt-0">
-                            <nav aria-label="breadcrumb" class="d-none d-block ">
-                                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                                    <li class="breadcrumb-item">
-                                        <router-link to="/dashboard"><i class="fas fa-home"></i></router-link>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Management System Residential VPS</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div class="col-lg-6 text-right" v-if="showImportIcon">
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="downloadCsv">
-                                <div>
-                                    <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i> </span>
-                                    <span class="btn-inner--text">Demo.csv</span>
-                                </div>
-                            </router-link>
-                            <router-link to="" class="btn btn-lg btn-neutral btn_animated" @click="openModal">Import CSV</router-link>
-                            <button class="btn btn-lg btn-neutral btn_animated" :disabled="permissions.create_auth == '0'" @click.prevent="createActivity">Add New Record</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <loader-component v-if="showLoader"></loader-component>
-        <!-- Page content -->
-        <div class="container-fluid mt--3">
-            <div class="row justify-content-center">
-                <div class="col" v-if="permissions.view == '1' && !showLoader">
-                    <v-app>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-app>
-                                        <v-card>
-                                            <v-card-title>
-                                                <!-- <v-spacer></v-spacer> -->
-                                                <v-row>
-                                                    <v-col class="d-flex" cols="12" sm="3" v-if="false">
-                                                        <v-select solo :items="descriptionFilter" label="Description Filter" :clearable="true" v-model="descriptionValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
-                                                    </v-col>
-                                                    <v-col class="d-flex" cols="12" sm="3" v-if="false">
-                                                        <v-select solo :items="transactionTypeFilter" label="Transaction Type Filter" :clearable="true" v-model="transactionTypeValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
-                                                    </v-col>
-                                                    <v-col class="d-flex" cols="12" sm="3" v-if="false">
-                                                        <template>
-                                                            <!-- <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
-                                                                <div slot="header" slot-scope="header" class="slot">
-                                                                    <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                                                </div>
-                                                                <template #input="picker" style="min-width: 350px;">
-                                                                    {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                                                                </template>
-                                                                <template #date="data">
-                                                                    <span class="small">{{ data.date | dateCell }}</span>
-                                                                </template>
-                                                                <template #ranges="ranges">
-                                                                    <div class="ranges">
-                                                                        <ul>
-                                                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                                                            {{ range[1].toDateString() }}</small>
-                                                                        </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </template>
-                                                                <div slot="footer" slot-scope="data" class="slot">
-                                                                    <div>
-                                                                        <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                                                    </div>
-                                                                    <div style="margin-left: auto">
-                                                                        <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
-                                                                    </div>
-                                                                </div>
-                                                            </date-range-picker> -->
-                                                        </template>
-                                                    </v-col>
-                                                    <v-col class="d-flex search_width" cols="12" sm="3">
-                                                        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-card-title>
-                                            <v-data-table class="table-hover-class table-with-checkbox" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!-- @current-items="currentItems"  -->
-                                                <template v-slot:[`item.company`]="{ item }">
-                                                    <td>{{item.selectable.company}}</td>
-                                                </template>
-                                                <template v-slot:[`item.ip`]="{ item }">
-                                                    <td>{{item.selectable.ip}}</td>
-                                                </template>
-                                                <template v-slot:[`item.notes`]="{ item }">
-                                                    <td>{{item.selectable.notes ? item.selectable.notes : '-'}}</td>
-                                                </template>
-                                                <template v-slot:[`item.action`]="{ item }">
-                                                    <td>
-                                                        <button class="disable-button" :disabled="permissions.update_auth == '0'" @click.prevent="edit(item.selectable.id)">
-                                                            <img src="/assets/img/icons/edit.svg" class="icon-width" title="Edit">
-                                                        </button>
-                                                        <button class="disable-button" :disabled="permissions.delete_auth == '0'" @click.prevent="deleteData(item.selectable.id)">
-                                                            <img src="/assets/img/icons/bin.svg" class="icon-width" title="Delete">
-                                                        </button>
-                                                    </td>
-                                                </template>
-                                                <template v-slot:top v-if="selected.length > 0">
-                                                    <div class="p-2 text-right">
-                                                        <v-btn
-                                                            elevation="2"
-                                                            variant="outlined"
-                                                            raised
-                                                            rounded="xl"
-                                                            class="me-1 disable-button"
-                                                            :disabled="permissions.delete_auth == '0'"
-                                                            @click="deleteSelected"
-                                                        >Remove Selected</v-btn>
-                                                    </div>
-                                                </template>
-                                            </v-data-table>
-                                        </v-card>
-                                    </v-app>
-                                </div>
+        <v-container>
+            <v-row class="ma-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                    <v-breadcrumbs>
+                        <router-link to="/dashboard" class="d-flex align-center">
+                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                            <span>Dashboard</span>
+                        </router-link>
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Residential VPS System </span>
+                        <v-spacer />
+                        <div v-if="showImportIcon">
+                            <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                                Demo.csv
+                            </v-btn>
+    
+                            <v-btn @click="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                                Import CSV
+                            </v-btn>
+    
+                            <v-btn :disabled="permissions.create_auth == '0'" @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                                Add New
+                            </v-btn>
+                        </div>
+                    </v-breadcrumbs>
+                </v-col>
+
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-space-between align-center">
+                            Residential VPS System List
+                            <v-spacer></v-spacer>
+                            <div v-if="selected.length > 0" class="mr-2">
+                                <v-btn :disabled="permissions.delete_auth == '0'" @click="deleteSelected" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                    Remove Selected
+                                </v-btn>
                             </div>
-                        </div>
-                    </v-app>
-                </div>
-                <div class="col" v-if="permissions.view != '1' && !showLoader">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="text-center">You have no access for this page</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0" v-if="false">
+                                <v-select :items="descriptionFilter" placeholder="Description Filter" clearable variant="outlined" v-model="descriptionValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0" v-if="false">
+                                <v-select :items="transactionTypeFilter" placeholder="Transaction Type Filter" clearable variant="outlined" v-model="transactionTypeValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
+                            </v-col>
+                            <!-- <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
+                                <div slot="header" slot-scope="header" class="slot">
+                                    <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
+                                </div>
+                                <template #input="picker" style="min-width: 350px;">
+                                    {{ picker.startDate | date }} - {{ picker.endDate | date }}
+                                </template>
+                                <template #date="data">
+                                    <span class="small">{{ data.date | dateCell }}</span>
+                                </template>
+                                <template #ranges="ranges">
+                                    <div class="ranges">
+                                        <ul>
+                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
+                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
+                                            {{ range[1].toDateString() }}</small>
+                                        </li>
+                                        </ul>
+                                    </div>
+                                </template>
+                                <div slot="footer" slot-scope="data" class="slot">
+                                    <div>
+                                        <b class="text-black">Calendar footer</b> {{ data.rangeText }}
+                                    </div>
+                                    <div style="margin-left: auto">
+                                        <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
+                                    </div>
+                                </div>
+                            </date-range-picker> -->
+                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                            </v-col>
+                        </v-card-title>
+
+                        <!-- data table component -->
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!-- @current-items="currentItems"  -->
+                            <template v-slot:[`item.company`]="{ item }">
+                                {{item.selectable.company}}
+                            </template>
+                            <template v-slot:[`item.ip`]="{ item }">
+                                {{item.selectable.ip}}
+                            </template>
+                            <template v-slot:[`item.notes`]="{ item }">
+                                {{item.selectable.notes ? item.selectable.notes : '-'}}
+                            </template>
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon :disabled="permissions.update_auth == '0'" @click.prevent="edit(item.selectable.id)">
+                                    <v-icon color="green-darken-2">
+                                        mdi-pencil
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                                </v-btn>
+
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon :disabled="permissions.delete_auth == '0'" @click.prevent="deleteData(item.selectable.id)">
+                                    <v-icon color="red-darken-4">
+                                        mdi-delete-empty
+                                    </v-icon>
+                                    <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                                </v-btn>  
+                            </template>
+                        </v-data-table>
+                    </v-card>
+                </v-col>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+
         <!-- Start Import CSV Modal -->
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Import Management System Residential VPS</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Import Datacenter VPS Management System</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
-                            <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <form @submit.prevent="uploadCsv">
@@ -157,22 +138,25 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click.prevent="closeModal">Close</button>
-                            <button type="submit" class="btn btn-primary">Import</button>
+                        <div class="modal-footer pt-0">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-import">Import</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                            </v-col>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
         <!-- End Import CSV Modal -->
+
         <div class="modal fade" id="viewDetail" tabindex="-1" role="dialog" aria-labelledby="viewDetailTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Report</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close" aria-label="Close" data-dismiss="modal" >
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -189,56 +173,47 @@
                 </div>
             </div>
         </div>
+
         <!-- Create & Update RM AMEX Plum Activity-->
         <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 style="color:#fff;" class="modal-title">{{activityType}} Management System Residential VPS</h5>
+                        <h5 class="modal-title">{{activityType}} Residential VPS System</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeRmAmexModal">
-                            <span style="color:#fff;" aria-hidden="true">&times;</span>
+                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="card-body">
-                            <div class="col-12">
-                                <Form @submit="saveResidentialVpcManagementSystem" :validation-schema="schema" v-slot="{ errors }">
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Name</label>
-                                                <Field type="text" id="input-username" name="Company" :class="{'form-control': true , 'border-red-600':errors.Company }" v-model="activity.company"/>
-                                                <span class="text-red-600" v-if="errors.Company">Name Can not be empty</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">IP</label>
-                                                <Field type="text" id="input-username" name="Ip" :class="{'form-control': true , 'border-red-600':errors.Ip }" v-model="activity.ip"/>
-                                                <span class="text-red-600" v-if="errors.Ip">IP Can not be empty</span>
-                                                <!-- <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span> -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-12 py-0 mt-3">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-username">Notes</label>
-                                                <textarea :class="{'form-control': true}"  name="" cols="30" rows="10" v-model="activity.notes"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 py-0">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary btn-lg btn_animated">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Form>
-                            </div>
+
+                    <Form @submit="saveResidentialVpcManagementSystem" :validation-schema="schema" v-slot="{ errors }">
+                        <div class="modal-body">
+                            <v-row class="align-center">
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">Company Name</label>
+                                    <Field type="text" id="input-username" name="Company" :class="{'form-control': true , 'border-red-600':errors.Company }" v-model="activity.company" placeholder="Company Name" />
+                                    <span class="text-red-600" v-if="errors.Company">Company Name Can not be empty</span>
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label">IP Address</label>
+                                    <Field type="text" id="input-username" name="Ip" :class="{'form-control': true , 'border-red-600':errors.Ip }" v-model="activity.ip" placeholder="IP Address" />
+                                    <span class="text-red-600" v-if="errors.Ip">IP Address Can not be empty</span>
+                                    <!-- <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span> -->
+                                </v-col>
+
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
+                                    <label class="form-control-label" for="input-username">Notes</label>
+                                    <textarea :class="{'form-control': true}" placeholder="Notes" name="Notes" rows="3" v-model="activity.notes"></textarea>
+                                </v-col>
+                            </v-row>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeRmAmexModal">Close</v-btn>
+                            </v-col>
+                        </div>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -264,7 +239,7 @@ export default {
                 { title: 'Name', align: 'start', sortable: false, key: 'company' },
                 { title: 'IP ', key: 'ip' },
                 { title: 'Notes', key: 'notes' },
-                { title: 'Action', key: 'action' },
+                { title: 'Action', key: 'action', align: 'center' },
             ],
             dateRange: {startDate, endDate},
             file: '',

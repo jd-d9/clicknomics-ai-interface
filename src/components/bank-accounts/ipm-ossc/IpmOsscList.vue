@@ -38,7 +38,7 @@
                                 <v-spacer></v-spacer>
                                 <div v-if="selected.length > 0" class="mr-2">
                                     <v-btn @click="deleteSelected" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                        Remove
+                                        Remove Selected
                                     </v-btn>
                                 </div>
                                 <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
@@ -48,7 +48,7 @@
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
                                     <v-select :items="recepientFilter" clearable variant="outlined" placeholder="Recepient Type Filter" v-model="recepientValue" @update:modelValue="getOnessCorpReport"></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal pr-0">
+                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
                                     <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                                 </v-col>
                             </v-row>
