@@ -28,7 +28,7 @@
                             <v-row id="userDetailsForm" v-if="!profileDetailsToggle">
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label>Name : 
-                                        <span class="font-weight-medium text-blue-darken-4">{{ firstName + ' ' + lastName }}</span>
+                                        <span class="font-weight-medium text-blue-darken-4 text-capitalize">{{ firstName + ' ' + lastName }}</span>
                                     </label>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -47,13 +47,13 @@
                                 <v-row>
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                         <label>First Name</label>
-                                        <Field type="text" id="input-username" name="firstName" :class="{'form-control': true, 'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
+                                        <Field type="text" id="input-username" name="firstName" class="text-capitalize" :class="{'form-control': true, 'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
                                         <span class="text-red-600" v-if="errors.firstName">First name is a required field</span>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                         <label>Last Name</label>
-                                        <Field type="text" id="input-username" name="lastName" :class="{'form-control': true, 'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
+                                        <Field type="text" id="input-username" name="lastName" class="text-capitalize" :class="{'form-control': true, 'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
                                         <span class="text-red-600" v-if="errors.lastName">Last name is a required field</span>
                                     </v-col>
 
@@ -83,7 +83,7 @@
 
                                     <v-col cols="12" sm="12" md="12" lg="12">
                                         <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update</v-btn>    
-                                        <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="profileDetailsToggle = !profileDetailsToggle">Close</v-btn>
+                                        <v-btn type="reset" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="closeProfileDetailsForm">Close</v-btn>
                                     </v-col>
                                 </v-row>
                             </Form>
@@ -115,8 +115,8 @@
 
                                         <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                             <label>New Password</label>
-                                            <Field type="password" id="input-username" name="newPass" :class="{'form-control': true, 'border-red-600': errors.newPass}" placeholder="New Password" v-model="password"/>
-                                            <span class="text-red-600" v-if="errors.newPass">New Password is a required field</span>
+                                            <Field type="password" id="input-username" name="Password" :class="{'form-control': true, 'border-red-600': errors.Password}" placeholder="New Password" v-model="password"/>
+                                            <ErrorMessage class="text-red-600" name="Password"/>
                                         </v-col>
 
                                         <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -127,7 +127,7 @@
 
                                         <v-col cols="12" sm="12" md="12" lg="12">
                                             <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update</v-btn>        
-                                            <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="passwordToggle = !passwordToggle">Close</v-btn>
+                                            <v-btn type="reset" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="passwordToggle = !passwordToggle">Close</v-btn>
                                         </v-col>
                                     </v-row>
                                 </Form>                                
@@ -147,7 +147,7 @@
                                     <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                         <label>
                                             <span class="font-weight-medium text-blue-darken-4">
-                                                {{ verificationStatus === '1' ? 'Enabled' : 'Disabled' }}
+                                                {{ verificationStatus == '1' ? 'Enabled' : 'Disabled' }}
                                             </span>
                                         </label>
                                     </v-col>
@@ -215,7 +215,7 @@
                                     <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                         <label>Expiring Trial On : 
                                             <span class="font-weight-medium text-blue-darken-4">
-                                                {{trialEndsAt ? trialEndsAt : 'Example trial duration'}}
+                                                {{trialEndsAt ? trialEndsAt : '-'}}
                                             </span>
                                         </label>
                                     </v-col>
@@ -270,7 +270,7 @@
                                     </div>
                                     <div>
                                         <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update Email</v-btn>
-                                        <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click="userEmailToggle = !userEmailToggle">Close</v-btn>
+                                        <v-btn type="reset" class="text-none bg-red-darken-2 btn_animated email-close-button-toggle" append-icon="mdi-close" @click="userEmailToggle = !userEmailToggle">Close</v-btn>
                                     </div>
                                 </Form>
                             </div>
@@ -308,13 +308,16 @@
                 firstName: '',
                 lastName: '',
                 companyName: '',
+                fName: '',
+                lName: '',
+                cName: '',
                 // countryCode: '',
                 // phoneNumber: '',
                 password: '',
                 passwordConfirmation: '',
                 currentPassword: '',
-                verificationStatus: '1',
-                remember2Fa: '1',
+                verificationStatus: 1,
+                remember2Fa: 1,
                 subscriptionPlan: '',
                 trialEndsAt: '',
                 showLoader: false,
@@ -339,8 +342,8 @@
             passSchema() {
                 return yup.object({
                     currentPass: yup.string().required(),
-                    newPass: yup.string().required(),
-                    repeatPass: yup.string().required().oneOf([yup.ref('newPass')], 'Passwords do not match'),
+                    Password: yup.string().required().min(6),
+                    repeatPass: yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
                 });
             },
             verifySchema() {
@@ -368,6 +371,9 @@
                         this.firstName = this.currentUserDetails.first_name;
                         this.lastName = this.currentUserDetails.last_name;
                         this.companyName = this.currentUserDetails.company_name;
+                        this.fName = this.currentUserDetails.first_name;
+                        this.lName = this.currentUserDetails.last_name;
+                        this.cName = this.currentUserDetails.company_name;
                         // this.countryCode = this.currentUserDetails.country_code;
                         // this.phoneNumber = this.currentUserDetails.phone_number;
                         this.verificationStatus = this.currentUserDetails.verification_status;
@@ -459,13 +465,41 @@
                     }
                     })
                     .catch(error => {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                        console.log(error);
+                        if(error.response.data.message) {
+                            this.$toast.open({
+                                message: error.response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                        if(error.response.data.error) {
+                            this.$toast.open({
+                                message: error.response.data.error,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                        if(error.response.data.errors) {
+                            if(error.response.data.errors.length == 1) {
+                                this.$toast.open({
+                                    message: error.response.data.errors[0],
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            }else {
+                                error.response.data.errors.map((error) => {
+                                    this.$toast.open({
+                                        message: error,
+                                        position: 'top-right',
+                                        duration: '5000',
+                                        type: 'error'
+                                    });
+                                })
+                            }
+                        }
                         this.showLoader = false;
                     });
                 }
@@ -492,8 +526,9 @@
                         });
                         this.showLoader = false;
                         this.getCurrentUserData();
-                        this.userEmailToggle = false;
                         sessionStorage.setItem('Email', this.email);
+                        // this.userEmailToggle = false;
+                        document.getElementsByClassName('email-close-button-toggle')[0].click();
                     }else {
                         this.$toast.open({
                             message: response.data.message,
@@ -505,13 +540,42 @@
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error);
+                    console.log(error, 'error')
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else {
+                            error.response.data.errors.map((error) => {
+                                this.$toast.open({
+                                    message: error,
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            })
+                        }
+                    }
                     this.showLoader = false;
                 });
             },
@@ -553,15 +617,52 @@
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error);
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else {
+                            error.response.data.errors.map((error) => {
+                                this.$toast.open({
+                                    message: error,
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            })
+                        }
+                    }
                     this.showLoader = false;
                 });
+            },
+            // close profile details form
+            closeProfileDetailsForm() {
+                this.profileDetailsToggle = !this.profileDetailsToggle;
+                setTimeout(() => {
+                    this.firstName = this.fName;
+                    this.lastName = this.lName;
+                    this.companyName = this.cName;
+                }, 50);
             },
             // updating user password
             updateUserPassword() {
@@ -601,13 +702,41 @@
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error);
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else {
+                            error.response.data.errors.map((error) => {
+                                this.$toast.open({
+                                    message: error,
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            })
+                        }
+                    }
                     this.showLoader = false;
                 });
             },
@@ -645,13 +774,41 @@
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error);
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else {
+                            error.response.data.errors.map((error) => {
+                                this.$toast.open({
+                                    message: error,
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            })
+                        }
+                    }
                     this.showLoader = false;
                 });
             }

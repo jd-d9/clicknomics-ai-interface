@@ -16,9 +16,10 @@
                     <v-card class="card_design mb-4 pa-10">
                         <v-card-title class="text-center">
                             <img src="/assets/img/brand/logo.png" alt="logo" height="40">
-                            <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
-                            <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
-                            <p class="font-weight-medium text-left">Use these awesome forms for Register.</p>
+                            <v-divider class="border-opacity-100 mt-4 mb-4" color="success" />
+                            <h1 class="mt-0 mb-3 text-center">Register</h1>
+                            <!-- <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
+                            <p class="font-weight-medium text-left">Use these awesome forms for Register.</p> -->
                         </v-card-title>
 
                         <Form class="login_form" @submit="signUpUser" :validation-schema="schema" v-slot="{ errors }">
@@ -37,21 +38,20 @@
                             <v-row>
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-account" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <Field id="name" type="text" name="firstName" :class="{'form-control': true ,'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
+                                    <Field id="name" type="text" name="firstName" class="text-capitalize" :class="{'form-control': true ,'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
                                     <span class="text-red-600" v-if="errors.firstName">First name is required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-account" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <Field id="name" type="text" name="lastName" :class="{'form-control': true ,'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
+                                    <Field id="name" type="text" name="lastName" class="text-capitalize" :class="{'form-control': true ,'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
                                     <span class="text-red-600" v-if="errors.lastName">Last name is required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-email-variant" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <Field id="email" type="email" name="Email" :class="{'form-control': true ,'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail"/>
+                                    <Field id="email" type="email" name="Email" :class="{'form-control': true ,'border-red-600': errors.Email}" autocomplete="email" placeholder="Email" v-model="userEmail" @blur="emailIsAvail"/>
                                     <ErrorMessage class="text-red-600" name="Email"/>
-                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
@@ -63,13 +63,21 @@
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
                                     <Field id="password" type="password" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password}" placeholder="Password" v-model="userPassword"/>
-                                    <span class="text-red-600" v-if="errors.Password">Password is required field</span>
+                                    <ErrorMessage class="text-red-600" name="Password"/>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
                                     <Field id="confirm_password" type="password" name="passwordConfirmation" :class="{'form-control': true ,'border-red-600': errors.passwordConfirmation}" placeholder="Confirm password" v-model="confirmPassword"/>
                                     <span class="text-red-600" v-if="errors.passwordConfirmation">Password did not match</span>
+                                </v-col>
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
 
                                 <!-- <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
@@ -127,6 +135,7 @@
                 // countryCode: '',
                 // mobileNumber: '',
                 backendErrorMessage: '',
+                multipleErrors: [],
             }
         },
         computed: {
@@ -136,7 +145,7 @@
                     lastName: yup.string().required(),
                     Email: yup.string().required().email(),
                     companyName: yup.string().required(),
-                    Password: yup.string().required(),
+                    Password: yup.string().required().min(6),
                     passwordConfirmation: yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
                     // Mobile: yup.string().required().min(10).max(10)
                 });
@@ -167,6 +176,7 @@
                     let planId = 1;
                     if(response.data.success) {
                         this.backendErrorMessage = '';
+                        this.multipleErrors = [],
                         // set plan id
                         this.showLoader = true;
                         this.axios.get(this.$api + '/subscription/' + planId, {
@@ -178,7 +188,7 @@
                         .then(response => {
                             if(response.data.success) {
                                 this.$toast.open({
-                                    message: response.data.message,
+                                    message: 'User registration successfully!',
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'
@@ -196,7 +206,21 @@
                             }
                         })
                         .catch(error => {
-                            console.log(error);
+                            if(error.response.data.message) {
+                                this.backendErrorMessage = error.response.data.message;
+                            }
+                            if(error.response.data.error) {
+                                this.backendErrorMessage = error.response.data.error;
+                            }
+                            if(error.response.data.errors) {
+                                if(error.response.data.errors.length == 1) {
+                                    this.backendErrorMessage = error.response.data.errors[0];
+                                }else if(error.response.data.errors.length == 0){
+                                    this.backendErrorMessage = '';
+                                }else {
+                                    this.multipleErrors = error.response.data.errors;
+                                }
+                            }
                             this.showLoader = false;
                         });
                     }else {
@@ -210,10 +234,64 @@
                     }
                 })
                 .catch(error => {
-                    console.log(error, 'error')
-                    this.backendErrorMessage = error.message;
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 }); 
+            },
+            // email is available or not
+            emailIsAvail() {
+                this.showLoader = true;
+                this.axios.post(this.$api + '/registration/checkEmail', {
+                    email: this.userEmail,
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.backendErrorMessage = '';
+                        this.multipleErrors = [];
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
+                    this.showLoader = false;
+                });
             },
             // // upload profile image
             // uploadProfilePhoto(event) {

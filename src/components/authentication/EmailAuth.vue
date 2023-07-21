@@ -16,12 +16,12 @@
                     <v-card class="card_design mb-4 pa-10">
                         <v-card-title class="text-center">
                             <img src="/assets/img/brand/logo.png" alt="logo" height="40">
-                            <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
-                            <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
-                            <p class="font-weight-medium text-left">Two Factor Verification.</p>
+                            <v-divider class="border-opacity-100 mt-5 mb-1" color="success" />
+                            <!-- <h1 class="mt-0 mb-0 text-left">Welcome to clicknomics</h1>
+                            <p class="font-weight-medium text-left">Two Factor Verification.</p> -->
                         </v-card-title>
 
-                        <form class="login_form" @submit.prevent="sendCodeInEmail" v-if="toggleComponent">
+                        <form class="login_form mt" @submit.prevent="sendCodeInEmail" v-if="toggleComponent">
                             <div id="qrcode">
                                 <div class="mt-4 text-center">
                                     <p class="font-weight-medium">Verify via email address?
@@ -33,13 +33,12 @@
                             </div>
                         </form>
 
-                        <Form class="login_form" @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }" v-else>
+                        <Form class="login_form mt-3" @submit="checkCodeAndAuthUser" :validation-schema="schema" v-slot="{ errors }" v-else>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal">
                                     <label>Enter an authenticator app code</label>
                                     <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
                                     <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
-                                    <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal py-0">
@@ -48,6 +47,14 @@
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
                                     </select>
+                                </v-col>
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -91,6 +98,8 @@
                 rememberVerification: 1,
                 toggleComponent: true,
                 showLoader: false,
+                backendErrorMessage: '',
+                multipleErrors: [],
             }
         },
         mounted() {
@@ -122,12 +131,15 @@
                 })
                 .then(response => {
                     if(response.data.success) {
+                        console.log(response.data, 'response.data')
                         this.$toast.open({
                             message: 'We have emailed a verification code',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
+                        this.backendErrorMessage = '';
+                        this.multipleErrors = [];
                         this.toggleComponent = false;
                         this.showLoader = false;
                     }else {
@@ -141,13 +153,21 @@
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error)
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 });
             },
@@ -167,7 +187,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: response.data.message,
+                            message: 'You are successfully logged in',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -176,6 +196,7 @@
                         this.showLoader = false;
                         this.$router.push('/dashboard');
                         this.backendErrorMessage = '';
+                        this.multipleErrors = [];
                     }else {
                         this.$toast.open({
                             message: response.data.message,
@@ -187,8 +208,22 @@
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.backendErrorMessage = error.message;
+                    console.log(error.response)
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 });
             }

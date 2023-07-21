@@ -226,6 +226,7 @@ export default {
                     console.log(getData, 'getData');
                     this.dataMetrics = getData.data.data;
                     this.dataMetricsFilter = getData.data.data;
+                    this.networkNameFilter = [];
                     getData.allNetworks.forEach((val) => {
                         this.networkNameFilter.push(
                             {
