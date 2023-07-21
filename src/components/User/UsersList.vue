@@ -32,16 +32,17 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items" :search="search" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id}}
+                                {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
-                            <template v-slot:[`item.name`]="{ item }">
-                                {{item.selectable.name}}
+                            <template v-slot:[`item.first_name`]="{ item }">
+                                <span v-if="item.selectable.first_name != null && item.selectable.last_name != null">{{item.selectable.first_name + ' ' + item.selectable.last_name}}</span>
+                                <span v-else>-</span>
                             </template>
                             <template v-slot:[`item.email`]="{ item }">
-                                {{item.selectable.email}}
+                                {{item.selectable.email ? item.selectable.email : '-'}}
                             </template>
-                            <template v-slot:[`item.phone_number`]="{ item }">
-                                +{{item.selectable.country_code}} - {{item.selectable.phone_number}}
+                            <template v-slot:[`item.company_name`]="{ item }">
+                                {{item.selectable.company_name ? item.selectable.company_name : '-'}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editUser(item.selectable.id)" :disabled="permissions.update_auth == '0'">
@@ -84,9 +85,10 @@
                 search: '',
                 headers: [
                     { title: 'ID', key: 'id', align: 'start' },
-                    { title: 'Name', key: 'name' },
+                    { title: 'Name', key: 'first_name' },
                     { title: 'Email', key: 'email' },
-                    { title: 'Mobile No.', key: 'phone_number' },
+                    { title: 'Company', key: 'company_name' },
+                    // { title: 'Mobile No.', key: 'phone_number' },
                     { title: 'Action', align:'center', key: 'action', sortable: false },
                 ],
                 itemsPerPage: -1,
@@ -115,6 +117,14 @@
                         this.userFilter = response.data.data.user.data;
                         this.permissions = response.data.data.permission;
                         this.showLoader = false;
+                    }else {
+                        this.showLoader = false;
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                     }
                 })
                 .catch(error => {
@@ -153,12 +163,20 @@
                     if(response.data.success) {
                         this.showLoader = false;
                         this.$toast.open({
-                            message: 'User deleted',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.getUsersData();
+                    }else {
+                        this.showLoader = false;
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                     }
                 })
                 .catch(error => {

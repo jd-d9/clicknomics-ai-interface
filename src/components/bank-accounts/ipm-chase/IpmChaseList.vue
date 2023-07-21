@@ -20,13 +20,13 @@
                             Import CSV
                         </v-btn>
 
-                        <v-btn to="/bank_accounts/ipmchase/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                        <v-btn to="/bank_accounts/ipmchase/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">  <!--  :disabled="permissions.create_auth == '0'" -->
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0"> <!-- v-if="permissions.view == '1' && !showLoader" -->
                     <v-card class="card_design mb-4">
                         <v-card-title>
                             <v-row>
@@ -72,21 +72,21 @@
                                 {{item.selectable.type ? item.selectable.type : '-' }}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click="edit(item.selectable.id)">
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click="edit(item.selectable.id)"> <!--  :disabled="permissions.update_auth == '0'"  -->
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click="deleteData(item.selectable.id)">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click="deleteData(item.selectable.id)"> <!-- :disabled="permissions.delete_auth == '0'" -->
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn>  
                                 
-                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click="view(item.selectable.id)">
+                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click="view(item.selectable.id)"> <!-- :disabled="permissions.view == '0'" -->
                                     <v-icon color="deep-purple-darken-4">
                                         mdi-eye
                                     </v-icon>
@@ -97,8 +97,7 @@
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
-                                    <td>${{ sumField }}</td>
-                                    <!-- <td>{{ sumField | toCurrency }}</td> -->
+                                    <td>{{ $filters.toCurrency(sumField) }}</td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -110,6 +109,13 @@
                         </v-data-table>
                     </v-card>
                 </v-col>
+                <!-- <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                    <v-card class="card_design mb-4">
+                        <v-card-title class="d-flex justify-content-center align-center">
+                            You have no access for this page
+                        </v-card-title>
+                    </v-card>
+                </v-col> -->
             </v-row>
         </v-container>
 
@@ -208,6 +214,7 @@ export default {
             transactionTypeFilter: [],
             descriptionValue: null,
             transactionTypeValue: null,
+            permissions: {},
             selectedFile: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
@@ -309,6 +316,7 @@ export default {
                     const Data = response.data;
                     console.log(Data, '-- Data --')
                     this.dataMetrics = Data.data.data;
+                    this.permissions = Data.permission;
                     Data.allDescription.forEach((val) => {
                         this.descriptionFilter.push({
                             title: val.description

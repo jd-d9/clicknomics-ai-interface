@@ -11,9 +11,15 @@
             <Form @submit="manageUser" :validation-schema="schema" v-slot="{ errors }">
                 <v-row>
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                        <label class="form-control-label">Name</label>
-                        <Field type="text" id="input-username" name="Name" :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model.trim="userName"/>
-                        <span class="text-red-600" v-if="errors.Name">Name is a required field</span>
+                        <label class="form-control-label">First Name</label>
+                        <Field type="text" id="input-username" name="firstName" :class="{'form-control': true, 'border-red-600': errors.firstName}" placeholder="First Name" v-model.trim="firstName"/>
+                        <span class="text-red-600" v-if="errors.firstName">First name is a required field</span>
+                    </v-col>
+
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Last Name</label>
+                        <Field type="text" id="input-username" name="lastName" :class="{'form-control': true, 'border-red-600': errors.lastName}" placeholder="Last Name" v-model.trim="lastName"/>
+                        <span class="text-red-600" v-if="errors.lastName">Last name is a required field</span>
                     </v-col>
 
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -22,12 +28,6 @@
                         <ErrorMessage class="text-red-600" name="Email"/>
                         <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                     </v-col>    
-                    
-                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                        <label class="form-control-label">Company Name</label>
-                        <Field type="text" id="input-username" name="companyName" :class="{'form-control': true, 'border-red-600': errors.companyName}" placeholder="Company Name" v-model.trim="companyName"/>
-                        <span class="text-red-600" v-if="errors.companyName">Company name is a required field</span>
-                    </v-col>
 
                     <!-- <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                         <label class="form-control-label">Mobile Number</label>
@@ -49,6 +49,12 @@
                         </Field>
                         <span class="text-red-600" v-if="errors.Country">Country code is a required field</span>
                     </v-col> -->
+
+                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                        <label class="form-control-label">Company Name</label>
+                        <Field type="text" id="input-username" name="companyName" :class="{'form-control': true, 'border-red-600': errors.companyName}" placeholder="Company Name" v-model.trim="companyName"/>
+                        <span class="text-red-600" v-if="errors.companyName">Company name is a required field</span>
+                    </v-col>
 
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                         <label class="form-control-label">Role</label>
@@ -113,7 +119,8 @@ export default {
             userEmail: '',
             userPassword: '',
             confirmPassword: '',
-            userName: '',
+            firstName: '',
+            lastName: '',
             companyName: '',
             // userContact: '',
             // selectedCountry: '91',
@@ -140,7 +147,8 @@ export default {
     computed: {
         schema() {
             return yup.object({
-                Name: yup.string().required(),
+                firstName: yup.string().required(),
+                lastName: yup.string().required(),
                 Email: yup.string().required().email(),
                 companyName: yup.string().required(),
                 Password: !this.toggleComponent ? '' : yup.string().required(),
@@ -159,7 +167,8 @@ export default {
             if(this.$route.params.id) {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/settings/user/' + this.$route.params.id, {
-                    name: this.userName,
+                    first_name: this.firstName,
+                    last_name: this.lastName,
                     email: this.userEmail,
                     password: this.userPassword,
                     role_id: this.roleId,
@@ -178,10 +187,18 @@ export default {
                     if(response.data.success) {
                         this.$router.push('/settings/user');
                         this.$toast.open({
-                            message: 'User details updated',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
+                        });
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
                         });
                         this.showLoader = false;
                     }
@@ -201,7 +218,8 @@ export default {
             else {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/settings/user', {
-                    name: this.userName,
+                    first_name: this.firstName,
+                    last_name: this.lastName,
                     email: this.userEmail,
                     password: this.userPassword,
                     role_id: this.roleId,
@@ -221,11 +239,19 @@ export default {
                         this.showLoader = false;
                         this.backendErrorMessage = '';
                         this.$toast.open({
-                            message: 'New user created',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
@@ -249,6 +275,14 @@ export default {
                     this.roles = response.data.data.roles;
                     console.log(this.roles, 'this.roles')
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -268,14 +302,23 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data.data;
-                    this.userName = getData.name
-                    this.userEmail = getData.email
-                    this.userPassword = getData.password
-                    this.roleId = getData.role_id
-                    this.status = getData.status
-                    this.companyName = getData.company_name
+                    this.firstName = getData.first_name;
+                    this.lastName = getData.last_name;
+                    this.userEmail = getData.email;
+                    this.userPassword = getData.password;
+                    this.roleId = getData.role_id;
+                    this.status = getData.status;
+                    this.companyName = getData.company_name;
                     // this.userContact = getData.phone_number
                     // this.selectedCountry = getData.country_code
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.showLoader = false;
                 }
             })

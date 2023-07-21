@@ -23,6 +23,7 @@
 
                     <v-divider class="border-opacity-100 mb-3 mt-0 mx-2" color="success" />    
 
+                    <!-- cost -->
                     <h6 class="font-weight-bold text-h6 px-2 mb-3" data-step="1" data-title="Step One" data-intro='Hello step one!' data-position="bottom-middle-aligned">Cost</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
@@ -65,6 +66,7 @@
 
                     <!-- <v-divider class="border-opacity-100 my-4 mx-2" color="success" />  -->
 
+                    <!-- renevue -->
                     <h6 class="font-weight-bold text-h6 px-2 mb-3" data-step="2" data-title="Step Two" data-intro='Hello step two!' data-position="bottom-middle-aligned">Revenue</h6>
                     <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-2">
@@ -100,6 +102,7 @@
                     </v-row>
                 </v-col>
 
+                <!-- general stats -->
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
                     <h6 class="font-weight-bold text-h6 px-2 mb-3">General Stats</h6>                    
                     <!-- Start Microsoft -->
@@ -234,7 +237,7 @@
                         </v-col>
                     </v-row> -->
 
-                    <!-- Start general -->
+                    <!-- Start network -->
                     <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': networks == 0, 'bg-green-lighten-4': networks > 0, 'bg-orange-lighten-4': networks < 0}">
@@ -252,6 +255,19 @@
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': (networks + manualNetworks) == 0, 'bg-green-lighten-4': (networks + manualNetworks) > 0, 'bg-orange-lighten-4': (networks + manualNetworks) < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Total Networks</v-card-title>
                                 <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': (networks + manualNetworks) == 0, 'text-green-darken-1': (networks + manualNetworks) > 0, 'text-orange': (networks + manualNetworks) < 0}">{{(networks ? networks : 0) + (manualNetworks ? manualNetworks : 0)}}</v-card-text>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </v-col>
+
+                <!-- subscription -->
+                <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
+                    <h6 class="font-weight-bold text-h6 px-2 mb-3">Subscription</h6>
+                    <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
+                        <v-col class="py-0 five_row mb-2">
+                            <v-card class="card_design" :class="{'bg-blue-lighten-4': subscribedUser == 0, 'bg-green-lighten-4': subscribedUser > 0, 'bg-orange-lighten-4': subscribedUser < 0}">
+                                <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Total Subscribed User</v-card-title>
+                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="{'text-blue-darken-2': subscribedUser == 0, 'text-green-darken-1': subscribedUser > 0, 'text-orange': subscribedUser < 0}">{{subscribedUser ? subscribedUser : 0}}</v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -274,6 +290,7 @@ import moment from 'moment';
         return {
             showLoader: false,
             dataMetrics: [],
+            subscribedUser: 0,
             facebookAccount: 0,
             googleAccount: 0,
             microsoftAccount: 0,
@@ -353,6 +370,7 @@ import moment from 'moment';
                 if(response.data.success) {
                     console.log(response.data.data);
                     const dashboardData = response.data.data;
+                    this.subscribedUser = dashboardData.subscriptionUserCount
                     this.facebookAccount = dashboardData.facebook_account
                     this.googleAccount = dashboardData.google_account;
                     this.microsoftAccount = dashboardData.microsoft_account;

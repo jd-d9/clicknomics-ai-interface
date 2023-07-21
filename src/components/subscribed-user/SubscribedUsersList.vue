@@ -32,10 +32,11 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items" :search="search" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id}}
+                                {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
-                            <template v-slot:[`item.name`]="{ item }">
-                                {{item.selectable.name ? item.selectable.name : '-'}}
+                            <template v-slot:[`item.first_name`]="{ item }">
+                                <span v-if="item.selectable.first_name != null && item.selectable.last_name != null">{{item.selectable.first_name + ' ' + item.selectable.last_name}}</span>
+                                <span v-else>-</span>
                             </template>
                             <template v-slot:[`item.email`]="{ item }">
                                 {{item.selectable.email ? item.selectable.email : '-'}}
@@ -44,7 +45,7 @@
                                 {{item.selectable.company_name ? item.selectable.company_name : '-'}}
                             </template>
                             <template v-slot:[`item.status`]="{ item }">
-                                <v-switch color="#0d47a1" v-model="item.selectable.status" hide-details true-value="1" false-value="0" class="ms-auto d-inline-flex justify-content-end mr-2"></v-switch>
+                                <v-switch color="#0d47a1" v-model="item.selectable.status" hide-details true-value="1" false-value="0" class="ms-auto d-inline-flex justify-content-end mr-2" @click="updateStatus(item.selectable.id)"></v-switch>
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editUser(item.selectable.id)" :disabled="permissions.update_auth == '0'">
@@ -87,7 +88,7 @@
                 search: '',
                 headers: [
                     { title: 'ID', key: 'id', align: 'start' },
-                    { title: 'Name', key: 'name' },
+                    { title: 'Name', key: 'first_name' },
                     { title: 'Email', key: 'email' },
                     { title: 'Company Name', key: 'company_name' },
                     { title: 'Status', key: 'status' },
@@ -175,6 +176,46 @@
                 .catch(error => {
                     this.$toast.open({
                         message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    console.log(error)
+                    this.showLoader = false;
+                }); 
+            },
+            // update status
+            updateStatus(id) {
+                this.showLoader = true;
+                this.axios.get(this.$api + '/settings/subscribeUser/changeStatus/' + id, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.showLoader = false;
+                        this.$toast.open({
+                            message: response.data.success,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'success'
+                        });
+                        this.getUsersData();
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    this.$toast.open({
+                        message: error.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'error'

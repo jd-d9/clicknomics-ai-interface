@@ -28,7 +28,7 @@
                             <v-row id="userDetailsForm" v-if="!profileDetailsToggle">
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label>Name : 
-                                        <span class="font-weight-medium text-blue-darken-4">{{ name }}</span>
+                                        <span class="font-weight-medium text-blue-darken-4">{{ firstName + ' ' + lastName }}</span>
                                     </label>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -46,15 +46,21 @@
                             <Form @submit="updateUserDetails" :validation-schema="userSchema" v-slot="{ errors }" v-show="profileDetailsToggle">
                                 <v-row>
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                        <label>Name</label>
-                                        <Field type="text" id="input-username" name="Name" :class="{'form-control': true, 'border-red-600': errors.Name}" placeholder="Name" v-model="name"/>
-                                        <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
+                                        <label>First Name</label>
+                                        <Field type="text" id="input-username" name="firstName" :class="{'form-control': true, 'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
+                                        <span class="text-red-600" v-if="errors.firstName">First name is a required field</span>
+                                    </v-col>
+
+                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <label>Last Name</label>
+                                        <Field type="text" id="input-username" name="lastName" :class="{'form-control': true, 'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
+                                        <span class="text-red-600" v-if="errors.lastName">Last name is a required field</span>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                         <label>Company Name</label>
                                         <Field type="text" id="input-username" name="companyName" :class="{'form-control': true, 'border-red-600': errors.companyName}" placeholder="Company Name" v-model="companyName"/>
-                                        <span class="text-red-600" v-if="errors.companyName">Company name can not be empty</span>
+                                        <span class="text-red-600" v-if="errors.companyName">Company name is a required field</span>
                                     </v-col>
 
                                     <!-- <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -66,13 +72,13 @@
                                                 </option>
                                             </select>
                                         </Field>
-                                        <span class="text-red-600" v-if="errors.Country">Country Code can not be empty</span>
+                                        <span class="text-red-600" v-if="errors.Country">Country Code is a required field</span>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                         <label>Mobile Number</label>
                                         <Field type="number" name="Mobile" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Mobile}" placeholder="Mobile Number" v-model="phoneNumber"/>
-                                        <span class="text-red-600" v-if="errors.Mobile">Mobile Number can not be empty</span>
+                                        <span class="text-red-600" v-if="errors.Mobile">Mobile Number is a required field</span>
                                     </v-col> -->
 
                                     <v-col cols="12" sm="12" md="12" lg="12">
@@ -104,19 +110,19 @@
                                         <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                             <label>Current Password</label>
                                             <Field type="password" name="currentPass" :class="{'form-control outlined': true, 'border-red-600': errors.currentPass}" placeholder="Current Password" v-model="currentPassword"/>
-                                            <span class="text-red-600" v-if="errors.currentPass">Current Password can not be empty</span>
+                                            <span class="text-red-600" v-if="errors.currentPass">Current Password is a required field</span>
                                         </v-col>
 
                                         <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                             <label>New Password</label>
                                             <Field type="password" id="input-username" name="newPass" :class="{'form-control': true, 'border-red-600': errors.newPass}" placeholder="New Password" v-model="password"/>
-                                            <span class="text-red-600" v-if="errors.newPass">New Password can not be empty</span>
+                                            <span class="text-red-600" v-if="errors.newPass">New Password is a required field</span>
                                         </v-col>
 
                                         <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                             <label>Confirm Password</label>
                                             <Field type="password" id="input-username" name="repeatPass" :class="{'form-control': true, 'border-red-600': errors.repeatPass}" placeholder="Confirm Password" v-model="passwordConfirmation"/>
-                                            <span class="text-red-600" v-if="errors.repeatPass">Confirm Password can not be empty</span>
+                                            <span class="text-red-600" v-if="errors.repeatPass">Password did not match</span>
                                         </v-col>
 
                                         <v-col cols="12" sm="12" md="12" lg="12">
@@ -156,7 +162,7 @@
                                                     <option value="0">Disabled</option>
                                                 </select>
                                             </Field>
-                                            <span class="text-red-600" v-if="errors.TwoFaVerify">Verification status can not be empty</span>
+                                            <span class="text-red-600" v-if="errors.TwoFaVerify">Verification status is a required field</span>
                                         </v-col>
 
                                         <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -167,7 +173,7 @@
                                                     <option value="0">No</option>
                                                 </select>
                                             </Field>
-                                            <span class="text-red-600" v-if="errors.Remember">2FA verification can not be empty</span>
+                                            <span class="text-red-600" v-if="errors.Remember">2FA verification is a required field</span>
                                         </v-col>
 
                                         <v-col cols="12" sm="12" md="12" lg="12">
@@ -192,7 +198,7 @@
                                     <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                         <label>
                                             <span class="font-weight-medium text-blue-darken-4">
-                                                {{subscriptionPlan ? subscriptionPlan : 'Example plan name'}}
+                                                {{subscriptionPlan ? subscriptionPlan : '-'}}
                                             </span>
                                         </label>
                                     </v-col>
@@ -201,7 +207,7 @@
                                     <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                         <label>Plan Name : 
                                             <span class="font-weight-medium text-blue-darken-4">
-                                                {{subscriptionPlan ? subscriptionPlan : 'Example plan name'}}
+                                                {{subscriptionPlan ? subscriptionPlan : '-'}}
                                             </span>
                                         </label>
                                     </v-col>
@@ -299,7 +305,8 @@
                 profileImage: '',
                 email: '',
                 currentEmail: '',
-                name: '',
+                firstName: '',
+                lastName: '',
                 companyName: '',
                 // countryCode: '',
                 // phoneNumber: '',
@@ -322,7 +329,8 @@
             },
             userSchema() {
                 return yup.object({
-                    Name: yup.string().required(),
+                    firstName: yup.string().required(),
+                    lastName: yup.string().required(),
                     companyName: yup.string().required(),
                     // Country: yup.string().required(),
                     // Mobile: yup.string().required(),
@@ -332,7 +340,7 @@
                 return yup.object({
                     currentPass: yup.string().required(),
                     newPass: yup.string().required(),
-                    repeatPass: yup.string().required(),
+                    repeatPass: yup.string().required().oneOf([yup.ref('newPass')], 'Passwords do not match'),
                 });
             },
             verifySchema() {
@@ -357,13 +365,14 @@
                         this.currentUserDetails = response.data.data;
                         this.profileImage = this.currentUserDetails.profile_image;
                         this.currentEmail = this.currentUserDetails.email;
-                        this.name = this.currentUserDetails.name;
+                        this.firstName = this.currentUserDetails.first_name;
+                        this.lastName = this.currentUserDetails.last_name;
                         this.companyName = this.currentUserDetails.company_name;
                         // this.countryCode = this.currentUserDetails.country_code;
                         // this.phoneNumber = this.currentUserDetails.phone_number;
                         this.verificationStatus = this.currentUserDetails.verification_status;
                         this.remember2Fa = this.currentUserDetails.remember_2fa;
-                        this.trialEndsAt = moment(this.currentUserDetails.trial_ends_at).format('YYYY-MM-DD');
+                        this.trialEndsAt = this.currentUserDetails.trial_ends_at ? moment(this.currentUserDetails.trial_ends_at).format('YYYY-MM-DD') : '-';
                         this.subscriptionPlan = response.data.subscriptions.name;
                         this.backendErrorMessage = '';
                         this.showLoader = false;
@@ -510,7 +519,8 @@
             updateUserDetails() {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/userprofiles/updateUserDetail', {
-                    name: this.name,
+                    first_name: this.firstName,
+                    last_name: this.lastName,
                     company_name : this.companyName,
                     // phone_number : this.phoneNumber,
                     // country_code : this.countryCode
