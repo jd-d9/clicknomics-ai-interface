@@ -37,7 +37,7 @@
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal">
                                     <label>Enter an authenticator app code</label>
-                                    <Field name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
+                                    <Field id="authentication-code" name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
                                     <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
                                 </v-col>
 
@@ -133,13 +133,17 @@
                     if(response.data.success) {
                         console.log(response.data, 'response.data')
                         this.$toast.open({
-                            message: 'We have emailed a verification code',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.backendErrorMessage = '';
                         this.multipleErrors = [];
+                        if(this.authCode) {
+                            this.authCode = '';
+                            document.getElementById('authentication-code').focus();
+                        }
                         this.toggleComponent = false;
                         this.showLoader = false;
                     }else {
@@ -187,7 +191,8 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'You are successfully logged in',
+                            message: 'Logged in successfully!',
+                            // message: 'You are successfully logged in',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'

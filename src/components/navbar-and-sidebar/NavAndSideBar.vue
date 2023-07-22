@@ -14,10 +14,10 @@
                 <v-list nav class="pa-0">
                     <v-list-item class="pa-0">
                         <div class="sidebar-contents">
-                            <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none" :class="{'active-tab-big': addActiveClass(data)}" v-for="data in allMenues" :key="data" @click="changeSidebar(data)">
+                            <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none" :class="{'active-tab-big': addActiveClass(data)}" v-for="data in allMenues" :key="data" @click="changeSidebar(data)" :data-step="setIntroStep(data.menu)" :data-title="setIntroTitle(data.menu)" :data-intro="setIntroDescription(data.menu)" data-position="bottom-middle-aligned">
                                 <img :src="'/assets/img/icons/' + data.icon" alt="icon" title="Dashboard">
                                 <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
-                                <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
+                                <i class="fa-solid fa-angle-right ms-auto" v-if="data.child.length > 0"></i>
                             </router-link>
                         </div>
                     </v-list-item>
@@ -42,26 +42,26 @@
                                 <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" :class="{'active-tab': addActiveClass(data)}" @mouseenter="showHoveredDropdown(data)" :id="ind + 'tab'" v-for="(data, ind) in allMenues" :key="data.id">
                                     <img :src="'/assets/img/icons/' + data.icon" alt="icon">
                                     <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
-                                    <i class="fa-solid fa-angle-right ms-auto" v-if="data.child"></i>
+                                    <i class="fa-solid fa-angle-right ms-auto" v-if="data.child.length > 0"></i>
                                     <!-- add tooltip -->
-                                    <v-tooltip activator="parent" location="bottom" v-if="!data.child">{{data.menu}}</v-tooltip>
+                                    <v-tooltip activator="parent" location="bottom" v-if="data.child.length == 0">{{data.menu}}</v-tooltip>
                                 </router-link>
 
                                 <!-- sidebar dropdown start here -->
                                 <div v-for="data in selectedMenu" :key="data" @mouseleave="hideHoveredDropdown">
-                                    <div class="sidebar-dropdown-menu side_submenuitem" :class="{'d-block': showOnClick && data.child}">
+                                    <div class="sidebar-dropdown-menu side_submenuitem" :class="{'d-block': showOnClick && data.child.length > 0}">
                                         <div class="sidebar-dropdown-head px-3 py-2">
                                             <p class="mb-0 text-white py-1">{{ data.menu }}</p>
                                         </div>
                                         <v-expansion-panels>
                                             <v-expansion-panel v-for="subChild in data.child" :key="subChild">
                                                 <!-- accordian start here -->
-                                                <div v-if="subChild.children.length !== 0">
+                                                <div v-if="subChild.child.length !== 0">
                                                     <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
                                                         {{ subChild.menu }}
                                                     </v-expansion-panel-title>
-                                                    <v-expansion-panel-text v-for="childs in subChild.children" :key="childs">
-                                                        <div v-if="childs.children.length == 0">
+                                                    <v-expansion-panel-text v-for="childs in subChild.child" :key="childs">
+                                                        <div v-if="childs.child.length == 0">
                                                             <router-link :to="childs.routes === '#' ? '' : '/' + childs.routes">
                                                                 {{ childs.menu }}
                                                             </router-link>
@@ -71,7 +71,7 @@
                                                             <v-expansion-panel-title expand-icon="mdi-plus" collapse-icon="mdi-minus">
                                                                 {{ childs.menu }}
                                                             </v-expansion-panel-title>
-                                                            <v-expansion-panel-text v-for="grandChilds in childs.children" :key="grandChilds">
+                                                            <v-expansion-panel-text v-for="grandChilds in childs.child" :key="grandChilds">
                                                                 <div>
                                                                     <router-link :to="grandChilds.routes === '#' ? '' : '/' + grandChilds.routes">
                                                                         {{ grandChilds.menu }}
@@ -105,9 +105,14 @@
                 <v-app-bar color="primary" style="position:relative; width: 100%;left: 0 !important;">
                     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
                     <v-spacer></v-spacer>
-                    <p class="text-white bg-deep-orange-accent-4 trial_text text-center mt-3" v-if="trialDays > 0">
-                        Your trial period is expiring in {{ trialDays }} days
-                    </p>
+                    <div v-if="trialDays">
+                        <p class="text-white bg-deep-orange-accent-4 trial_text text-center mt-3" v-if="trialDays > 0">
+                            Your trial period will expire in {{ trialDays }} {{ trialDays == 1 ? 'day' : 'days' }}.
+                        </p>
+                        <p class="text-white bg-deep-orange-accent-4 trial_text text-center mt-3" v-if="trialDays == 0">
+                            Your trial expires today.
+                        </p>
+                    </div>
                     <v-spacer></v-spacer>
 
                     <!-- dark and light mode -->
@@ -241,6 +246,7 @@
                 darkTheme: localStorage.getItem('dark-theme') ? localStorage.getItem('dark-theme') : false,
                 toggleIcon: false,
                 trialDays: null,
+                lastLogin: true,
             }
         },
         mounted() { 
@@ -250,18 +256,19 @@
             });       
             this.toggleComponents();
             this.getSidebarMenues();
+            console.log('static');
             this.getCurrentUserData();
             this.addDarkThemeClass();
-            window.addEventListener('resize', () => {
-                this.toggleComponents();
-                if(screen.width < 1200) {
-                    this.hideShowSidebar = false;
-                }
-                else {
-                    this.hideShowSidebar = true;
-                }
-                this.$emit('move-contents', this.hideShowSidebar);
-            });
+            // window.addEventListener('resize', () => {
+            //     this.toggleComponents();
+            //     if(screen.width < 1200) {
+            //         this.hideShowSidebar = false;
+            //     }
+            //     else {
+            //         this.hideShowSidebar = true;
+            //     }
+            //     this.$emit('move-contents', this.hideShowSidebar);
+            // });
         },
         methods: {
             // added css active class for current tab
@@ -270,23 +277,88 @@
                     let active = [];
                     route.child.map((val) => {
                         if(val.routes == '#') {
-                            val.children.filter((data) => {
-                                console.log(data, 'data')
-                                // if(window.location.pathname == '/settings/networks') {
-                                //     sessionStorage.setItem('activeMenu', true);
-                                // }   
-                                data.routes == window.location.pathname.slice(1) && active.push(val);
+                            val.child.filter((data) => {
+                                if(data.child.length > 0) {
+                                    data.child.filter((data) => {
+                                        data.routes == window.location.pathname.slice(1) && active.push(val);
+                                    })
+                                }else {
+                                    data.routes == window.location.pathname.slice(1) && active.push(val);
+                                }
                             })
                         }
                         else {
                             val.routes == window.location.pathname.slice(1) && active.push(val);
                         }
                     })
-                    return active.length != 0 ? true : false;
+                    if(window.location.pathname == '/settings/networks') {
+                        return route.menu == 'Settings' ? true : false;
+                    }else {
+                        return active.length != 0 ? true : false;
+                    }
                 }
                 else {
                     return route.routes == window.location.pathname.slice(1);
                 }
+            },
+            // set introjs step dynamically
+            setIntroStep(val) {
+                let step;
+                if(val == 'Settings') {
+                    step = 2;
+                }
+                if(val == 'Networks') {
+                    step = 3;
+                }
+                if(val == 'Reporting') {
+                    step = 4;
+                }
+                return step;
+            },
+            // set introjs title dynamically
+            setIntroTitle(val) {
+                let title;
+                if(val == 'Settings') {
+                    title = 'Integration!';
+                }
+                if(val == 'Networks') {
+                    title = 'Network Integration!';
+                }
+                if(val == 'Reporting') {
+                    title = 'Reporting!';
+                }
+                return title;
+            },
+            // set introjs description dynamically
+            setIntroDescription(val) {
+                let description;
+                if(val == 'Settings') {
+                    description = 'You can integrate your Google Ads and Microsoft Ads accounts from our setting menu.';
+                }
+                if(val == 'Networks') {
+                    description = 'Please add all your manual networks using our networks page.';
+                }
+                if(val == 'Reporting') {
+                    description = 'You can access all your real-time reports as well as archived reports from our reporting ;section.'
+                }
+                return description;
+            },
+            // close intro js package after show once
+            closeIntroJs() { 
+                this.axios.get(this.$api + '/firstTimeLoginUser', {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        console.log(response);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
             },
             // get sidebar menu tabs
             getSidebarMenues() { 
@@ -299,19 +371,19 @@
                 })
                 .then(response => {
                     if(response.data.success) {
+                        console.log(response,'response')
                         this.allMenues = response.data.data;
                         this.trialDays = response.data.trialEnd;
-                        this.allMenues.sort((a, b) => a.position - b.position);
+                        this.lastLogin = response.data.lastLogin;
                         console.log(this.allMenues, 'sidebarAllData');
                         this.showLoader = false;
-                        introJs().start();
-                        // introJs().setOptions({ 
-                        //     'skipLabel': 'Exit',
-                        //     'tooltipPosition': 'right'
-                        // });
-                        // introJs().onexit(function() {
-                        //     alert("exit of introduction");
-                        // });
+                        if(this.lastLogin) {
+                            setTimeout(() => {
+                                introJs().onbeforeexit(() => {
+                                    this.closeIntroJs();
+                                }).start();
+                            }, 600)
+                        }
                     }
                 })
                 .catch(error => {
@@ -322,18 +394,22 @@
             // hide/show components
             toggleComponents() {
                 this.hideShowSidebar = false;
-                if(screen.width > 1199) {
-                    if(window.location.pathname === '/dashboard' || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers' || this.$route.params.notFound) {   //  || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers'
+                // if(screen.width > 1199) {
+                    // if(window.location.pathname === '/dashboard' || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers' || this.$route.params.notFound) {   //  || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers'
+                    //     this.hideShowSidebar = true;
+                    // } 
+                    if(window.location.pathname === '/dashboard') {
                         this.hideShowSidebar = true;
-                    } else {
+                    } 
+                    else {
                         this.hideShowSidebar = false;
                     }
                     this.$emit('move-contents', this.hideShowSidebar);
-                }
+                // }
             },
             // toggle sidebar and dropdown
             toggleSidebar() {
-                if(window.location.pathname === '/dashboard' && screen.width > 1199) {  
+                if(window.location.pathname === '/dashboard') {   //  && screen.width > 1199
                     this.hideShowSidebar = !this.hideShowSidebar;
                     this.$emit('move-contents', this.hideShowSidebar);
                 }
@@ -347,7 +423,7 @@
                         if(elem.routes == '#') {
                             elem.child.map((val) => {
                                 if(val.routes == '#') {
-                                    val.children.filter((data) => {
+                                    val.child.filter((data) => {
                                         data.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
                                     })
                                 }
@@ -402,12 +478,6 @@
                     if(response.data.success) {
                         this.showLoader = false;
                         sessionStorage.clear();
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
                         this.$router.push('/login');
                     }else {
                         this.showLoader = false;
@@ -474,11 +544,11 @@
                 else {
                     document.body.classList.remove('dark-mode');
                 }
-            }
+            },
         },
         watch: {
             updatingUserDetails(val) {
-                if(val === 'update') {
+                if(val) {
                     this.getCurrentUserData();
                 }
             },

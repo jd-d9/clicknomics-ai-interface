@@ -159,8 +159,8 @@
             signUpUser() {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/registration', {
-                    first_name: this.firstName,
-                    last_name: this.lastName,
+                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     email: this.userEmail,
                     company_name: this.companyName,
                     password: this.userPassword,

@@ -20,7 +20,7 @@
                             Import CSV
                         </v-btn> -->
 
-                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0' || !restrictUser" prepend-icon="mdi-plus">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -163,6 +163,7 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="reset" id="reset_button" class="text-none" append-icon="mdi-content-save">Reset</v-btn>    
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
                             </v-col>
@@ -215,6 +216,9 @@ export default {
             accountIdToEdit: '',
             permissions: {},
             searchInput: '',
+            backendErrorMessage: '',
+            multipleErrors: [],
+            restrictUser: true
         }
     },
     computed: {
@@ -278,11 +282,54 @@ export default {
                     this.dataMetrics = data.data.data;
                     this.dataMetricsFilter = data.data.data;
                     this.permissions = data.permission;
+                    this.restrictUser = data.restrict_user;
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -307,7 +354,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: this.activityType == 'Create' ? 'Manual network created' : 'Manual network updated',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
@@ -315,21 +362,57 @@ export default {
                     this.getManualNetworkListing();
                     this.closeModal();
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
-            })
-            .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+            }).catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
         // open modal for create new network
         createActivity() {
+            document.getElementById('reset_button').click();
             this.activityType = 'Create';
             this.list.name = '';
             this.list.email = '';
@@ -340,18 +423,21 @@ export default {
         },
         // get data for edit
         edit(id) {
-            const restult = this.dataMetrics.find((val) => {
-                return val.id == id
-            });
-            this.accountIdToEdit = id;
-            this.activityType = 'Update'
-            this.list.id = id;
-            this.list.name = restult.network;
-            this.list.email = restult.email;
-            this.list.platform_type = restult.platform_type;
-            this.list.notes = restult.notes ? restult.notes : '';
-            this.list.company = restult.company ? restult.company : '';
-            this.openModal();
+            document.getElementById('reset_button').click();
+            setTimeout(() => {
+                const restult = this.dataMetrics.find((val) => {
+                    return val.id == id
+                });
+                this.accountIdToEdit = id;
+                this.activityType = 'Update'
+                this.list.id = id;
+                this.list.name = restult.network;
+                this.list.email = restult.email;
+                this.list.platform_type = restult.platform_type;
+                this.list.notes = restult.notes ? restult.notes : '';
+                this.list.company = restult.company ? restult.company : '';
+                this.openModal();
+            }, 100)
         },
         // open and close delet modal
         showConfirmation(id) {
@@ -374,7 +460,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Network deleted',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
@@ -382,16 +468,51 @@ export default {
                     this.getManualNetworkListing();
                     this.cancel();
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
-            })
-            .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+            }).catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -402,5 +523,9 @@ export default {
 <style scoped>
     .add-height {
         height: 50px;
+    }
+    #reset_button {
+        opacity: 0 !important;
+        cursor: default !important;
     }
 </style>

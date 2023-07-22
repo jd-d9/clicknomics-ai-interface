@@ -13,7 +13,7 @@
                         <span>Google Ads Integration</span>
 
                         <v-spacer />
-                        <v-btn @click.prevent="getAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated">
+                        <v-btn @click.prevent="getAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="!restrictUser">
                             <img src="/assets/img/icons/google-ads.svg" class="add-width mr-2">
                             <span class="btn-inner--text">Sync Google Accounts</span>
                         </v-btn>
@@ -154,6 +154,13 @@
                                     </Field>
                                     <span class="text-red-600" v-if="errors.Currency">Currency converstion can not be empty</span>
                                 </v-col>
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                                </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer pt-0">
@@ -197,6 +204,9 @@ export default {
                 currency_conversion_check: '',
             },
             permissions: {},
+            backendErrorMessage: '',
+            multipleErrors: [],
+            restrictUser: true,
         }
     },
     mounted() {
@@ -240,13 +250,21 @@ export default {
                 if(response.data.success) {
                     console.log('response', response)
                     this.$toast.open({
-                        message: 'Account accessed',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
                     this.showLoader = false;
                     window.location.href = response.data.redirectUrl;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
@@ -268,6 +286,7 @@ export default {
                     const Data = response.data;
                     this.customers = Data.data;
                     this.permissions = Data.permission;
+                    this.restrictUser = Data.restrict_user;
                     this.showLoader = false;
                 }else {
                     this.$toast.open({
@@ -297,23 +316,59 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'Account deleted',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.getCustomerAccounts();
                         this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error);
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -340,24 +395,42 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Currency conversion updated',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
                     this.closeUpdateModal();
                     this.getCustomerAccounts();
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.showLoader = false;
                 }
             })
             .catch(error => {
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
-                console.log(error);
+                if(error.response.data.message) {
+                    this.backendErrorMessage = error.response.data.message;
+                }
+                if(error.response.data.error) {
+                    this.backendErrorMessage = error.response.data.error;
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.backendErrorMessage = error.response.data.errors[0];
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.multipleErrors = error.response.data.errors;
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -385,7 +458,7 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'Data saved',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -393,6 +466,13 @@ export default {
                         window.$('#metricsModel').modal({backdrop: 'static', keyboard: false});
                         this.openModal();
                         this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                     }
                 })
                 .catch(error => {

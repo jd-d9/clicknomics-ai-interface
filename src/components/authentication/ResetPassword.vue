@@ -18,7 +18,7 @@
                             <img src="/assets/img/brand/logo.png" alt="logo" height="40">
                             <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
                             <h1 class="mt-0 mb-0 text-center">Forgot Your Password?</h1>
-                            <p class="font-weight-medium text-left">Enter your email and we'll send you a link to reset your password.</p>
+                            <p class="font-weight-medium text-left text-wrap">Enter your email and we'll send you a link to reset your password.</p>
                             <!-- <h1 class="mt-0 mb-0 text-left">Reset Password!</h1>
                                 <p class="font-weight-medium text-left">Use these awesome forms for Reset Password.</p> -->
                         </v-card-title>

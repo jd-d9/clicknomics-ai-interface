@@ -98,9 +98,9 @@ const router = createRouter({
         {path: '/settings/user_management/user_roles/create', component: CreateUserRole, meta: {auth: true}},
         {path: '/settings/user_management/user_roles/:id/edit', component: UpdateUserRole, meta: {auth: true}},
         // subscribed user module
-        {path: '/settings/subscribe_user', component: DisplaySubscribeUsers, meta: {auth: true}},
-        {path: '/settings/subscribe_user/create', component: CreateSubscribeUser, meta: {auth: true}},
-        {path: '/settings/subscribe_user/:id/edit', component: UpdateSubscribeUser, meta: {auth: true}},
+        {path: '/settings/subscribed_user', component: DisplaySubscribeUsers, meta: {auth: true}},
+        {path: '/settings/subscribed_user/create', component: CreateSubscribeUser, meta: {auth: true}},
+        {path: '/settings/subscribed_user/:id/edit', component: UpdateSubscribeUser, meta: {auth: true}},
         // invoice and template
         {path: '/accounting/invoice', component: DisplayInvoices, meta: {auth: true}},
         {path: '/accounting/invoice/template', component: DisplayTemplates, meta: {auth: true}},

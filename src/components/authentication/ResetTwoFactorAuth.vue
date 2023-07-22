@@ -77,7 +77,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: '2Factor authentication reset',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'

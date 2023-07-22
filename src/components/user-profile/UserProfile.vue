@@ -453,7 +453,7 @@
                             });
                             this.showLoader = false;
                             this.getCurrentUserData();
-                            this.$emit('updating-profile-details', 'update');
+                            this.$emit('updating-profile-details', Date.now());
                         }else {
                             this.$toast.open({
                                 message: response.data.message,
@@ -583,8 +583,8 @@
             updateUserDetails() {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/userprofiles/updateUserDetail', {
-                    first_name: this.firstName,
-                    last_name: this.lastName,
+                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     company_name : this.companyName,
                     // phone_number : this.phoneNumber,
                     // country_code : this.countryCode
@@ -605,7 +605,7 @@
                         this.showLoader = false;
                         this.getCurrentUserData();
                         this.profileDetailsToggle = false;
-                        this.$emit('updating-profile-details', 'update');
+                        this.$emit('updating-profile-details', Date.now());
                     }else {
                         this.$toast.open({
                             message: response.data.message,

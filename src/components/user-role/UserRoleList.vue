@@ -26,7 +26,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items">
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1]}" :itemsPerPage="itemsPerPage" :headers="headers" :items="items">
                             <template v-slot:[`item.id`]="{ item }">
                                 {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
@@ -75,6 +75,7 @@ export default {
                 { title: 'Role Name', key: 'role_name' },
                 { title: 'Action', align:'center', key: 'action', sortable: false },
             ],
+            itemsPerPage: -1
         }
     },
     methods: {

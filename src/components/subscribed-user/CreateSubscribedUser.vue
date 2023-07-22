@@ -13,7 +13,7 @@
                         <span>Create Subscribe User</span>
 
                         <v-spacer />
-                        <v-btn to="/settings/subscribe_user" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to="/settings/subscribed_user" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>

@@ -34,8 +34,9 @@
             },
             // updating user profile detail which stay in navbar
             updatingUserProfileDetails(data) {
-                console.log(data, 'data');
+                console.log(data, '---data---');
                 this.profileImageUpdate = data;
+                console.log(this.profileImageUpdate, '---this.profileImageUpdate---');
             }
         },
         watch: {

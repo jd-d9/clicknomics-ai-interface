@@ -12,7 +12,7 @@
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>CPA Networks</span>
                         <v-spacer />
-                        <v-btn @click.prevent="this.$router.push('/settings/networks/affiliates')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="this.$router.push('/settings/networks/affiliates')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0' || !restrictUser" prepend-icon="mdi-plus">
                             Integrate New CPA Network
                         </v-btn>
                     </v-breadcrumbs>
@@ -211,6 +211,7 @@ export default {
             itemsPerPage: -1,
             backendErrorMessage: '',
             multipleErrors: [],
+            restrictUser: true
         }
     },
     mounted() {
@@ -262,7 +263,16 @@ export default {
                     const allData = response.data;
                     this.linkedNewtworks = allData.data.data;
                     this.permissions = allData.permission;
+                    this.restrictUser = allData.restrict_user;
                     this.showLoader = false;
+                }else {
+                    this.showLoader = false;
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                 }
             })
             .catch(error => {
@@ -282,24 +292,62 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'CPA network deleted',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
                     this.cancel();
                     this.getCpaNetworkist();
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
                     this.showLoader = false;
+                }else {
+                    this.showLoader = false;
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -335,7 +383,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'CPA network updated',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
@@ -345,6 +393,14 @@ export default {
                     this.backendErrorMessage = '',
                     this.multipleErrors = [],
                     this.showLoader = false;
+                }else {
+                    this.showLoader = false;
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                 }
             })
             .catch(error => {
