@@ -19,6 +19,7 @@ import { createVuetify } from 'vuetify';
 import * as directives from 'vuetify/directives';
 import * as labsComponents from 'vuetify/labs/components';
 import { VDataTable } from 'vuetify/labs/VDataTable';
+import { VDataTableServer } from 'vuetify/labs/VDataTable'
 // bootstrap
 import 'bootstrap/dist/js/bootstrap.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -31,7 +32,8 @@ const vuetify = createVuetify({
   directives,
   labsComponents,
   components: {
-    VDataTable
+    VDataTable,
+    VDataTableServer
   },
   theme: {
     themes: {
