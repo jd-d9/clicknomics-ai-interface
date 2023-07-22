@@ -3,10 +3,10 @@
         <loader-component v-if="showLoader"></loader-component>
         <v-card class="card_design mb-4">
             <v-card-title class="d-flex justify-space-between" v-if="toggleComponent">
-                Create Subscribe Users
+                Create Users
             </v-card-title>
             <v-card-title class="d-flex justify-space-between" v-else>
-                Edit Subscribe Users
+                Edit Users
             </v-card-title>
 
             <v-divider class="border-opacity-100 my-4" color="success" />
@@ -137,8 +137,8 @@ export default {
             if(this.$route.params.id) {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/settings/subscribeUser/' + this.$route.params.id, {
-                    first_name: this.firstName,
-                    last_name: this.lastName,
+                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     email: this.userEmail,
                     company_name: this.companyName,
                     // status: this.status,
@@ -153,7 +153,7 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.$router.push('/settings/subscribe_user');
+                        this.$router.push('/settings/subscribed_user');
                         this.$toast.open({
                             message: response.data.message,
                             position: 'top-right',
@@ -186,8 +186,8 @@ export default {
             else {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/settings/subscribeUser', {
-                    first_name: this.firstName,
-                    last_name: this.lastName,
+                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     email: this.userEmail,
                     company_name: this.companyName,
                     // status: this.status,
@@ -201,7 +201,7 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.$router.push('/settings/subscribe_user');
+                        this.$router.push('/settings/subscribed_user');
                         this.showLoader = false;
                         this.backendErrorMessage = '';
                         this.$toast.open({

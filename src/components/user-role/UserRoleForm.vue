@@ -11,45 +11,61 @@
                 <v-row>
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                         <label class="form-control-label">Role Name</label>
-                        <input type="text" id="input-username" name="Rolename" :class="{'form-control': true, 'border-red-600': roleNameInvalid}" placeholder="Role Name" v-model.trim="roleName" @blur="roleNameIsValid" />
+                        <input type="text" id="input-username" name="Rolename"
+                            :class="{ 'form-control': true, 'border-red-600': roleNameInvalid }" placeholder="Role Name"
+                            v-model.trim="roleName" @blur="roleNameIsValid" />
                         <span class="text-red-600" v-if="roleNameInvalid">Role name can not be empty</span>
                     </v-col>
                 </v-row>
 
                 <!-- data table component -->
-                <v-data-table class="table-hover-class mt-4" :headers="headers" :items="menuItem">
-                    <template v-slot:[`item.module_name`]="{ item }">
-                        {{item.selectable.menu}}
+                <v-data-table class="table-hover-class mt-4" :headers="headers" :items="menuItem"
+                    :itemsPerPage="itemsPerPage">
+                    <template v-slot:[`item.parent`]="{ item }">
+                        {{ item.selectable.parent ? item.selectable.parent.menu : '-' }}
+                    </template>
+                    <template v-slot:[`item.menu`]="{ item }">
+                        {{ item.selectable.menu }}
                     </template>
                     <template v-slot:[`item.view`]="{ item }">
                         <label class="custom-toggle">
-                            <input type="checkbox"  v-model="item.view">
-                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                            <input type="checkbox" v-model="item.selectable.view"
+                                :disabled="isDisabled(item.selectable, 'view')">
+                            <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                data-label-on="Yes"></span>
                         </label>
                     </template>
                     <template v-slot:[`item.create`]="{ item }">
                         <label class="custom-toggle">
-                            <input type="checkbox"  v-model="item.create_auth">
-                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                            <input type="checkbox" v-model="item.selectable.create_auth"
+                                :disabled="isDisabled(item.selectable, 'create')">
+                            <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                data-label-on="Yes"></span>
                         </label>
                     </template>
                     <template v-slot:[`item.edit`]="{ item }">
                         <label class="custom-toggle">
-                            <input type="checkbox"  v-model="item.update_auth">
-                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                            <input type="checkbox" v-model="item.selectable.update_auth"
+                                :disabled="isDisabled(item.selectable, 'edit')">
+                            <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                data-label-on="Yes"></span>
                         </label>
                     </template>
                     <template v-slot:[`item.delete`]="{ item }">
                         <label class="custom-toggle">
-                            <input type="checkbox"  v-model="item.delete_auth">
-                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                            <input type="checkbox" v-model="item.selectable.delete_auth"
+                                :disabled="isDisabled(item.selectable, 'delete')">
+                            <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                data-label-on="Yes"></span>
                         </label>
                     </template>
                 </v-data-table>
 
                 <v-col cols="12" sm="12" md="12" lg="12">
-                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
-                    <v-btn type="reset" v-if="!toggleButton" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-backup-restore">Reset</v-btn>    
+                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3"
+                        append-icon="mdi-content-save">Save</v-btn>
+                    <v-btn type="reset" v-if="!toggleButton" class="text-none bg-red-darken-2 btn_animated"
+                        append-icon="mdi-backup-restore">Reset</v-btn>
                 </v-col>
             </form>
         </v-card>
@@ -73,7 +89,8 @@ export default {
             menuItem: [],
             toggleButton: false,
             headers: [
-                { title: 'Module', key: 'menu', align: 'start' },
+                { title: 'Parent Menu', key: 'parent', align: 'start' },
+                { title: 'Menu Name', key: 'menu', align: 'start' },
                 { title: 'View', key: 'view', align: 'center' },
                 { title: 'Create', key: 'create', align: 'center' },
                 { title: 'Edit', key: 'edit', align: 'center' },
@@ -83,6 +100,7 @@ export default {
             create: 'No',
             edit: 'No',
             delete: 'No',
+            itemsPerPage: -1
         }
     },
     // computed: {
@@ -102,21 +120,21 @@ export default {
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.menuItem = response.data.data;
-                    console.log(this.menuItem);
+                .then(response => {
+                    if (response.data.success) {
+                        this.menuItem = response.data.data;
+                        console.log(this.menuItem);
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
                     this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                this.showLoader = false;
-                console.log(error)
-            }); 
+                    console.log(error)
+                });
         },
         // role name validation
         roleNameIsValid() {
-            if(!this.roleName) {
+            if (!this.roleName) {
                 this.roleNameInvalid = 'Role name must not be empty';
             }
             else {
@@ -132,25 +150,25 @@ export default {
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.menuItem = response.data.data.menus;
-                    this.roleName = response.data.data.role.role_name;
+                .then(response => {
+                    if (response.data.success) {
+                        this.menuItem = response.data.data.menus;
+                        this.roleName = response.data.data.role.role_name;
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
                     this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                this.showLoader = false;
-                console.log(error)
-            }); 
+                    console.log(error)
+                });
         },
         // create and update user role
         manageUserRole() {
             this.roleNameIsValid();
             // update user role
-            if(this.$route.params.id) {
-                if(!this.roleName || this.roleNameInvalid) {
-                    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+            if (this.$route.params.id) {
+                if (!this.roleName || this.roleNameInvalid) {
+                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
                     return false;
                 }
                 else {
@@ -165,37 +183,37 @@ export default {
                             Authorization: `Bearer ${sessionStorage.getItem('Token')}`
                         }
                     })
-                    .then(response => {
-                        if(response.data.success) {
+                        .then(response => {
+                            if (response.data.success) {
+                                this.$toast.open({
+                                    message: response.data.message,
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'success'
+                                });
+                                this.$router.push('/settings/user_management/user_roles');
+                                this.showLoader = false;
+                            }
+                        })
+                        .catch(error => {
                             this.$toast.open({
-                                message: response.data.message,
+                                message: error.response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
-                                type: 'success'
+                                type: 'error'
                             });
-                            this.$router.push('/settings/user_management/user_roles');
                             this.showLoader = false;
-                        }
-                    })
-                    .catch(error => {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
+                            console.log(error)
                         });
-                        this.showLoader = false;
-                        console.log(error)
-                    }); 
                 }
             }
             // create user role
             else {
-                if(!this.roleName || this.roleNameInvalid) {
-                    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+                if (!this.roleName || this.roleNameInvalid) {
+                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
                     return false;
                 }
-                else{
+                else {
                     this.showLoader = true;
                     this.axios.post(this.$api + '/settings/role', {
                         role_name: this.roleName,
@@ -206,37 +224,73 @@ export default {
                             Authorization: `Bearer ${sessionStorage.getItem('Token')}`
                         }
                     })
-                    .then(response => {
-                        if(response.data.success) {
-                            this.menuItem = response.data;
-                            console.log(this.menuItem);
+                        .then(response => {
+                            if (response.data.success) {
+                                this.menuItem = response.data;
+                                console.log(this.menuItem);
+                                this.$toast.open({
+                                    message: 'New role created',
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'success'
+                                });
+                                this.$router.push('/settings/user_management/user_roles');
+                                this.showLoader = false;
+                            }
+                        })
+                        .catch(error => {
                             this.$toast.open({
-                                message: 'New role created',
+                                message: error.response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
-                                type: 'success'
+                                type: 'error'
                             });
-                            this.$router.push('/settings/user_management/user_roles');
+                            console.log(error)
                             this.showLoader = false;
-                        }
-                    })
-                    .catch(error => {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
                         });
-                        console.log(error)
-                        this.showLoader = false;
-                    }); 
                 }
             }
         },
         // reset form data
         resetForm() {
             window.location.reload();
-        }
+        },
+        isDisabled(value, type) {
+            console.log(value, type)
+            if (value.menu == 'Dashboard') {
+                if (type != 'view') {
+                    return true;
+                }
+            } else if (value.view != true) {
+                value.create_auth = false;
+                value.update_auth = false;
+                value.delete_auth = false;
+                console.log(value.view)
+                if (type == 'view') {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else if (value.resource) {
+                const permission = value.resource.split(',');
+                if (type == 'view') {
+                    return permission.includes('0') ? false : true;
+                    // console.log(permission.includes('0'), value.menu, type);
+                } else if (type == 'create') {
+                    return permission.includes('1') ? false : true;
+                    // console.log(permission.includes('1'), value.menu, type);
+                } else if (type == 'edit') {
+                    return permission.includes('2') ? false : true;
+                    // console.log(permission.includes('2'), value.menu, type);
+                } else if (type == 'delete') {
+                    return permission.includes('3') ? false : true;
+                    // console.log(permission.includes('3'), value.menu, type);
+                }
+            } else {
+                return false;
+            }
+        },
+
     },
     mounted() {
         window.scrollTo({
@@ -244,7 +298,7 @@ export default {
             behavior: 'smooth',
         });
         this.getAllUserRole();
-        if(this.$route.params.id) {
+        if (this.$route.params.id) {
             this.getUserRole();
             this.toggleButton = true;
         }

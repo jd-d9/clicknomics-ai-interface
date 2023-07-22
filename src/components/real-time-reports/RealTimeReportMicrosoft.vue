@@ -23,7 +23,7 @@
                         <div>
                             <v-data-table class="table-hover-class mt-4"  :itemsPerPage="itemsPerPage" :page="page" :server-items-length="totalPageCount" :pageCount="numberOfPages" v-model:options="options" :headers="microsoftHeaders" :items="microsoftCampaignMetrics" v-model:expanded="expanded" show-expand item-value="name">
                                 <template v-slot:expanded-row="{ columns, item }">
-                                    <td :colspan="columns.length" style="padding:10px" class="exapanded bg-light-green-lighten-5">
+                                    <td :colspan="columns.length" style="padding:10px" class="exapanded bg-light-green-lighten-5" v-if="item.selectable.children.length > 0">
                                         <table class="table align-items-center">
                                             <thead class="thead-light">
                                                 <tr>
@@ -58,6 +58,9 @@
                                                 </tr>
                                             </tbody>
                                         </table>
+                                    </td>
+                                    <td class="exapanded bg-light-green-lighten-5 text-center" :colspan="columns.length" style="padding:10px" v-else>
+                                        No Data Found
                                     </td>
                                 </template>
                             </v-data-table>

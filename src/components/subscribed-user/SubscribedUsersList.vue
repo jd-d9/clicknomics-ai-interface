@@ -47,6 +47,9 @@
                             <template v-slot:[`item.status`]="{ item }">
                                 <v-switch color="#0d47a1" v-model="item.selectable.status" hide-details true-value="1" false-value="0" class="ms-auto d-inline-flex justify-content-end mr-2" @click="updateStatus(item.selectable.id)"></v-switch>
                             </template>
+                            <template v-slot:[`item.trial_ends_at`]="{ item }">
+                                {{format_date(item.selectable.trial_ends_at) ? format_date(item.selectable.trial_ends_at) : '-'}}
+                            </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editUser(item.selectable.id)" :disabled="permissions.update_auth == '0'">
                                     <v-icon color="green-darken-2">
@@ -78,6 +81,7 @@
 </template>
 
 <script>
+    import moment from 'moment';
     export default {
         data() {
             return {
@@ -92,6 +96,7 @@
                     { title: 'Email', key: 'email' },
                     { title: 'Company Name', key: 'company_name' },
                     { title: 'Status', key: 'status' },
+                    { title: 'Expire On', key: 'trial_ends_at' },
                     { title: 'Action', align:'center', key: 'action', sortable: false },
                 ],
                 itemsPerPage: -1,
@@ -104,6 +109,12 @@
             }
         },
         methods: {
+            // formate date
+            format_date(value){
+                if (value) {
+                    return moment(String(value)).format('YYYY-MM-DD')
+                }
+            },
             // get subscribe user data
             getUsersData() {
                 this.showLoader = true;
@@ -138,11 +149,11 @@
             },
             // add new user
             addNewUser() {
-                this.$router.push('/settings/subscribe_user/create')
+                this.$router.push('/settings/subscribed_user/create')
             },
             // redirect on edit page
             editUser(id) {
-                this.$router.push('/settings/subscribe_user/' + id + '/edit');
+                this.$router.push('/settings/subscribed_user/' + id + '/edit');
             },
             // delete regestered user
             deleteUser(id) {

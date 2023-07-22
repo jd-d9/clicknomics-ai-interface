@@ -101,7 +101,7 @@
         mounted() {
             const isAuthenticated = sessionStorage.getItem('Token');
             const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
-            const verifiedBy = JSON.parse(sessionStorage.getItem('verifiedBy'));
+            const verifiedBy = sessionStorage.getItem('verifiedBy');
 
             if(isAuthenticated && isVerified) {
                 this.$router.push('/dashboard');
@@ -131,7 +131,7 @@
                             
                             if(responseData.isTwoFactorVerified) {
                                 this.$toast.open({
-                                    message: 'You are successfully logged in',
+                                    message: 'Logged in successfully!',
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'success'

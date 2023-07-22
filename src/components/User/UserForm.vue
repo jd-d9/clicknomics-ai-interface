@@ -167,8 +167,8 @@ export default {
             if(this.$route.params.id) {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/settings/user/' + this.$route.params.id, {
-                    first_name: this.firstName,
-                    last_name: this.lastName,
+                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     email: this.userEmail,
                     password: this.userPassword,
                     role_id: this.roleId,
@@ -218,8 +218,8 @@ export default {
             else {
                 this.showLoader = true;
                 this.axios.post(this.$api + '/settings/user', {
-                    first_name: this.firstName,
-                    last_name: this.lastName,
+                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     email: this.userEmail,
                     password: this.userPassword,
                     role_id: this.roleId,

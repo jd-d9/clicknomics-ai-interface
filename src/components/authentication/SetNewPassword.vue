@@ -16,9 +16,8 @@
                     <v-card class="card_design mb-4 pa-10">
                         <v-card-title class="text-center">
                             <img src="/assets/img/brand/logo.png" alt="logo" height="40">
-                            <v-divider class="border-opacity-100 mt-5 mb-4" color="success" />
-                            <h1 class="mt-0 mb-0 text-left">Reset Password!</h1>
-                            <p class="font-weight-medium text-left">Use these awesome forms for Reset Password.</p>
+                            <v-divider class="border-opacity-100 mt-5 mb-3" color="success" />
+                            <h1 class="mt-0 mb-3 text-center">Set New Password!</h1>
                         </v-card-title>
 
                         <Form class="login_form" @submit="setNewPassword" :validation-schema="schema" v-slot="{ errors }">

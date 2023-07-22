@@ -233,7 +233,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'You are successfully logged in',
+                            message: 'Logged in successfully!',
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
