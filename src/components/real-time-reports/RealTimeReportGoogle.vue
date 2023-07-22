@@ -10,18 +10,18 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>{{reportType}} Real Time Reports </span>
+                        <span>Google Real Time Reports </span>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            {{reportType}} Real Time Reports List
+                            Google Real Time Reports List
                         </v-card-title>
                         <!-- data table component -->
-                        <div v-if="reportType == 'google'">
-                            <v-data-table class="table-hover-class mt-4"  v-model:items-per-page="itemsPerPage" :page="page" :server-items-length="totalPageCount" :pageCount="numberOfPages" :options="options" :headers="headers" :items="googleCampaignMetrics" v-model:expanded="expanded" show-expand item-value="name">
+                        <div>
+                            <v-data-table-server class="table-hover-class mt-4"  v-model:items-per-page="itemsPerPage"  :items-length="totalPageCount" v-model:options="options" :headers="headers" :items="googleCampaignMetrics" v-model:expanded="expanded" show-expand item-value="name">
                                 <template v-slot:expanded-row="{ columns, item }">
                                     <td :colspan="columns.length" style="padding:10px" class="exapanded bg-light-green-lighten-5">
                                         <table class="table align-items-center">
@@ -100,51 +100,7 @@
                                         </table>
                                     </td>
                                 </template>
-                            </v-data-table>
-                        </div>
-
-                        <!-- data table component -->
-                        <div v-if="reportType == 'microsoft'">
-                            <v-data-table class="table-hover-class mt-4"  :itemsPerPage="itemsPerPage" :page="page" :server-items-length="totalPageCount" :pageCount="numberOfPages" :options="options" :headers="microsoftHeaders" :items="microsoftCampaignMetrics" v-model:expanded="expanded" show-expand item-value="name">
-                                <template v-slot:expanded-row="{ columns, item }">
-                                    <td :colspan="columns.length" style="padding:10px" class="exapanded bg-light-green-lighten-5">
-                                        <table class="table align-items-center">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th class="v-data-table__td" scope="col">
-                                                        <div class="v-data-table-header__content">
-                                                            Campaign Name
-                                                        </div>
-                                                    </th>
-                                                    <th class="v-data-table__td" scope="col">
-                                                        <div class="v-data-table-header__content">
-                                                            DailyBudget 
-                                                        </div>
-                                                    </th>
-                                                    <th class="v-data-table__td" scope="col">
-                                                        <div class="v-data-table-header__content">
-                                                            Campaign Status
-                                                        </div>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="(row , index) in item.raw.children" :key="index">
-                                                    <td class="v-data-table__td">
-                                                        {{row.name ? row.name : '-'}}
-                                                    </td>
-                                                    <td class="v-data-table__td">
-                                                        {{(row.dailyBudget ? $filters.toCurrency(row.dailyBudget) : '-')}}
-                                                    </td>
-                                                    <td class="v-data-table__td">
-                                                        {{row.status ? row.status : '-'}}
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </template>
-                            </v-data-table>
+                            </v-data-table-server>
                         </div>
                     </v-card>
                 </v-col>
@@ -160,8 +116,7 @@ import _ from 'lodash';
 export default {
     data() {
         return {
-            reportType:'',
-            options:[],
+            options:{},
             itemsData: [
                 {
                     text: 'All Time',
@@ -218,61 +173,39 @@ export default {
                 { title: 'Conversion Rate', key: 'conversions_from_interactions_rate',sortable: true, },
                 { title: 'Cost Per Conversion', key: 'cost_per_conversion',sortable: true, },
             ],
-            // microsoft
-            microsoftCampaignMetrics:[],
-            microsoftHeaders: [
-                { title: '', key: 'data-table-expand' },
-                { title: 'Account Name', align: 'start', sortable: true, key: 'AccountName' },
-                { title: 'Clicks', key: 'Clicks', sortable: true,},
-                { title: 'Click Through Rate', key: 'Ctr', sortable: true,},
-                { title: 'Spend', key: 'Spend', sortable: true,},
-                { title: 'Cost Per Click', key: 'AverageCpc', sortable: true,},
-                { title: 'Impressions', key: 'Impressions', sortable: true,},
-                { title: 'Impressions (Top)%', key: 'AbsoluteTopImpressionRatePercent', sortable: true,},
-            ],
             permissions: {},
         }
     },
     mounted() {
-        this.reportType = this.$route.params.reportType ? this.$route.params.reportType : '';
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
         });
     },
     watch:{
-        '$route.params.reportType':{
-            handler(value){
-                this.reportType = value
-                this.pull()
+        options: {
+            handler() {
+                this.getGoogleAdsMetrics();
             },
-            deep:true,
-            immediate: true
-        }
+        },
+        deep: true,
     },
     methods: {
-        // pull data
-        pull(){
-            if(this.reportType == 'google') {
-                this.getGoogleAdsMetrics();
-            }else if(this.reportType == 'microsoft') {
-                this.getMicrosoftAdsMetrics();
-            }
-        },
         // get google analytics data
         getGoogleAdsMetrics() {
             this.googleCampaignMetrics = [];
             this.showLoader = true;
-            const { sortBy, sortDesc, page } = this.options;
+            const { sortBy, sortDesc, page,itemsPerPage } = this.options;
             let pageNumber = 1;
-            if (sortBy && sortBy.length === 1 && sortDesc.length === 1) {
-                console.log(this.page, 'page');
-                pageNumber = this.page;
+            // if (sortBy && sortBy.length === 1 && sortDesc.length === 1) {
+            //     console.log(this.page, 'page'); 
+            // }
+            if(page){
+                pageNumber = page;
             }
             let formData = new FormData();
             formData.append('reportRange','TODAY')
-            // // const filter = _.find(this.items, (o) =>  { return o.text == this.reportRange; });
-            this.axios.get(this.$api + `/realTimeReports/googleAdsReport?size=${this.itemsPerPage}&page=${pageNumber}&reportRange=Today` ,{
+            this.axios.get(this.$api + `/realTimeReports/googleAdsReport?size=${itemsPerPage}&page=${pageNumber}&reportRange=Today` ,{
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
@@ -344,68 +277,6 @@ export default {
                 console.log(error);
             })
         },
-        getMicrosoftAdsMetrics() {
-            this.microsoftCampaignMetrics = [];
-            this.showLoader = true;
-            let formData = new FormData();
-            // const filter = _.find(this.dateFilterMicrosoft, (o) =>  { return o.text == this.microsoftReportRange; });
-            const { sortBy, sortDesc, page } = this.options;
-            // let pageNumber = page;
-            let pageNumber = 1;
-            if (sortBy && sortBy.length === 1 && sortDesc.length === 1) {
-                pageNumber = this.page;
-            }
-            formData.append('reportRange', 'Today');
-
-            this.axios.get(this.$api + `/realTimeReport?size=${this.itemsPerPage}&page=${pageNumber}&reportRange=Today`,{
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                }
-            })
-            .then(response => {
-                const responseData = response.data.data;
-                responseData.map((data) => {
-                    if(Array.isArray(data.metrics)) {
-                        this.microsoftCampaignMetrics.push({
-                            'AccountName': data.metrics[0].AccountName,
-                            'Clicks': this.$filters.toNumberWithoutDecimal(data.metrics[0].Clicks),
-                            'Ctr': data.metrics[0].Ctr ? this.$filters.toNumber(data.metrics[0].Ctr) : this.$filters.toNumber(0),
-                            'Spend': this.$filters.toCurrency(data.metrics[0].Spend),
-                            'AverageCpc': this.$filters.toNumber(data.metrics[0].AverageCpc),
-                            'Impressions': this.$filters.toNumberWithoutDecimal(data.metrics[0].Impressions),
-                            'AbsoluteTopImpressionRatePercent': data.metrics[0].AbsoluteTopImpressionRatePercent ? this.$filters.toNumberWithPercentage(data.metrics[0].AbsoluteTopImpressionRatePercent) : 0,
-                            'children' : data.campaign
-                        });
-                    }
-                });
-                // For Pagination
-                this.totalPageCountMicrosoft = response.data.accounts.total;
-                this.numberOfPagesMicrosoft = response.data.accounts.last_page;
-                this.pageMicrosoft = page;
-                this.showLoader = false;
-                if (sortBy && sortBy.length === 1 && sortDesc.length === 1) {
-                    this.microsoftCampaignMetrics = this.microsoftCampaignMetrics.sort((a, b) => {
-                        const sortA = a[sortBy[0]];
-                        const sortB = b[sortBy[0]];
-
-                        if (sortDesc[0]) {
-                        if (sortA < sortB) return 1;
-                        if (sortA > sortB) return -1;
-                            return 0;
-                        } else {
-                            if (sortA < sortB) return -1;
-                            if (sortA > sortB) return 1;
-                            return 0;
-                        }
-                    });
-                }
-            }).catch(error => {
-                console.log(error)
-                this.showLoader = false;
-            })
-        },
-
         // formate date
         format_date(value){
             if (value) {
