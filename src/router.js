@@ -70,7 +70,8 @@ import CommingSoonComponent from './components/common/CommingSoonComponent.vue';
 import NotFoundPage from './components/common/NotFoundPage.vue';
 
 // report section
-import RealTimeReportIndex from './components/real-time-reports/RealTimeReportIndex';
+import RealTimeReportGoogle from './components/real-time-reports/RealTimeReportGoogle';
+import RealTimeReportMicrosoft from './components/real-time-reports/RealTimeReportMicrosoft';
 import ReportsComponent from './components/real-time-reports/ReportsComponent';
 
 const router = createRouter({
@@ -178,7 +179,8 @@ const router = createRouter({
         {path: '/bank_accounts/onesscorp/create', component: IpmOsscForm, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/:id/edit', component: IpmOsscForm, meta: {auth: true}},
         // report section
-        {path: '/reporting/realTimeReports/:reportType', component: RealTimeReportIndex, meta: {auth: true}},
+        {path: '/reporting/realTimeReports/google', component: RealTimeReportGoogle, meta: {auth: true}},
+        {path: '/reporting/realTimeReports/microsoft', component: RealTimeReportMicrosoft, meta: {auth: true}},
         {path: '/reporting/realTimeReports/networks', component: ReportsComponent, meta: {auth: true}},
 
         // archived reports module
