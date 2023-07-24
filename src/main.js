@@ -2,11 +2,13 @@
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
 
+
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router.js';
 import { loadFonts } from './plugins/webfontloader';
 import axios from 'axios';
+import VueCryptojs from 'vue-cryptojs'
 axios.defaults.withCredentials = true;
 
 import VueAxios from 'vue-axios';
@@ -104,6 +106,7 @@ app.config.globalProperties.$filters = {
 app.use(router);
 app.use(VueAxios, axios);
 app.use(ToastPlugin);
+app.use(VueCryptojs);
 app.use(vuetify);
 // css
 require('@/assets/css/argon.css');

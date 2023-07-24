@@ -75,12 +75,14 @@
 <script>
 // import * as yup from 'yup';
 // import { Form, Field, ErrorMessage } from 'vee-validate';
+import mixin from '../../mixin.js'
 export default {
     // components: {
     //     Form, 
     //     Field, 
     //     ErrorMessage
     // },
+    mixins:[mixin],
     data() {
         return {
             roleName: '',
@@ -117,7 +119,7 @@ export default {
             this.axios.get(this.$api + '/settings/rolemenulist', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
                 .then(response => {

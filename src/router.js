@@ -200,7 +200,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     if(to.meta.auth) {
-        const registeredUserId = sessionStorage.getItem('Token');
+        const registeredUserId = localStorage.getItem('user-session')
         if(registeredUserId) {
             next();
         }
