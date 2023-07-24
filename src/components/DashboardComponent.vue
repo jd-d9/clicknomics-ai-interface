@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-default main-content-height">
         <loader-component v-if="showLoader"></loader-component>
         <v-container>
             <v-row class="ma-0">
