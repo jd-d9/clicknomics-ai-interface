@@ -32,10 +32,10 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.date`]="{ item }">
-                                {{item.selectable.date}}
+                                {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">
-                                ${{item.selectable.amount}}
+                                {{$filters.toCurrency(item.selectable.amount)}}
                             </template>
                             <template v-slot:[`item.notes`]="{ item }">
                                 {{item.selectable.notes ? item.selectable.notes : '-'}}
@@ -59,7 +59,7 @@
                             <template v-slot:tbody v-if="dataMetrics.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
-                                    <td class="text-center">${{ sumField }}</td>
+                                    <td class="text-center">{{ $filters.toCurrency(sumField) }}</td>
                                     <td></td>
                                     <td></td>
                                 </tr>
@@ -187,10 +187,52 @@ export default {
                     this.dataMetricsFilter = allData.data.data;
                     this.permissions = allData.permission;
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -206,17 +248,59 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Variable monthly cost deleted',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
                     this.getVariablePaymentList();
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         }

@@ -28,10 +28,10 @@
 
                         <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="googleHeaders" :items="customers" :single-expand="singleExpand" item-key="customer_id" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.name`]="{ item }">
-                                {{item.selectable.name}}
+                                {{item.selectable.name ? item.selectable.name : '-'}}
                             </template>
                             <template v-slot:[`item.customer_id`]="{ item }">
-                                {{item.selectable.customer_id}}
+                                {{item.selectable.customer_id ? item.selectable.customer_id : '-'}}
                             </template>
                             <template v-slot:[`item.manager_account`]="{ item }">
                                 {{item.selectable.manager_account ? item.selectable.manager_account :  '-'}}
@@ -154,6 +154,7 @@
                                     </Field>
                                     <span class="text-red-600" v-if="errors.Currency">Currency converstion can not be empty</span>
                                 </v-col>
+                                
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
                                     <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </v-col>
@@ -268,7 +269,41 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -299,7 +334,41 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -476,7 +545,41 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error);
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
                 });
             } else {

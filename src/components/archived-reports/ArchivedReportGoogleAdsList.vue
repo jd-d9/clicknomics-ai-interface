@@ -326,7 +326,8 @@ export default {
                     });
                     this.showLoader = false;
                 }
-            }).catch(error => {
+            })
+            .catch(error => {
                 if(error.response.data.message) {
                     this.$toast.open({
                         message: error.response.data.message,
@@ -355,7 +356,7 @@ export default {
                         this.backendErrorMessage = '';
                     }else {
                         this.$toast.open({
-                            message: error.response.data.errors,
+                            message: error.response.data.errors[0],
                             position: 'top-right',
                             duration: '5000',
                             type: 'error'

@@ -3,10 +3,10 @@
         <loader-component v-if="showLoader"></loader-component>
         <v-card class="card_design mb-4">
             <v-card-title class="d-flex justify-space-between" v-if="toggleComponent">
-                Create Users
+                Create User
             </v-card-title>
             <v-card-title class="d-flex justify-space-between" v-else>
-                Edit Users
+                Edit User
             </v-card-title>
 
             <v-divider class="border-opacity-100 my-4" color="success" />
@@ -36,7 +36,15 @@
                         <label class="form-control-label">Company Name</label>
                         <Field type="text" id="input-username" name="companyName" :class="{'form-control': true, 'border-red-600': errors.companyName}" placeholder="Company Name" v-model.trim="companyName"/>
                         <span class="text-red-600" v-if="errors.companyName">Company name is a required field</span>
-                    </v-col>    
+                    </v-col>   
+                    
+                    <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                        <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                    </v-col>
+
+                    <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                        <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                    </v-col>
                     
                     <!-- <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                         <label class="form-control-label">Mobile Number</label>
@@ -104,6 +112,8 @@ export default {
             // countryDetails: [],
             showLoader: false,
             toggleComponent: true,
+            backendErrorMessage: '',
+            multipleErrors: [],
         }
     },
     mounted() {
@@ -160,6 +170,8 @@ export default {
                             duration: '5000',
                             type: 'success'
                         });
+                        this.backendErrorMessage = '';
+                        this.multipleErrors = [];
                         this.showLoader = false;
                     }else {
                         this.$toast.open({
@@ -172,13 +184,21 @@ export default {
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error);
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -204,6 +224,7 @@ export default {
                         this.$router.push('/settings/subscribed_user');
                         this.showLoader = false;
                         this.backendErrorMessage = '';
+                        this.multipleErrors = [];
                         this.$toast.open({
                             message: response.data.message,
                             position: 'top-right',
@@ -221,10 +242,23 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error.response);
-                    this.backendErrorMessage = error.message;
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
-                }); 
+                });
             }
         },
         // edit user details
@@ -250,7 +284,41 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },

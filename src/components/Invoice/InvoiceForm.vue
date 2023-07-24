@@ -9,6 +9,11 @@
                             <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
                             <span>Dashboard</span>
                         </router-link>
+                        <router-link to="/accounting/invoice" class="d-flex align-center">
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Invoices</span>
+                        </router-link>
+
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>{{ dynamicBredCrumb }} Invoice</span>
 
@@ -381,22 +386,58 @@ export default {
                     if(response.data.success) {
                         this.$router.push('/accounting/invoice');
                         this.$toast.open({
-                            message: 'Invoice created',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -417,7 +458,41 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -441,22 +516,58 @@ export default {
                 if(response.data.success) {
                     this.$router.push('/accounting/invoice');
                     this.$toast.open({
-                        message: 'Invoice updated',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -496,18 +607,59 @@ export default {
                     if(response.data.success) {
                         this.$router.push('/accounting/invoice/template');
                         this.$toast.open({
-                            message: 'Saved as template',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.showLoader = false;
                         this.closeModal();
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error);
-                    this.errorMessage = error;
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
                 });
             }

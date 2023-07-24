@@ -10,7 +10,7 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Subscribe Users</span>
+                        <span>Subscribed Users</span>
                         <v-spacer />
 
                         <v-btn @click.prevent="addNewUser" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
@@ -22,7 +22,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Subscribe Users
+                            Subscribed Users
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchUser"/>
@@ -48,7 +48,7 @@
                                 <v-switch color="#0d47a1" v-model="item.selectable.status" hide-details true-value="1" false-value="0" class="ms-auto d-inline-flex justify-content-end mr-2" @click="updateStatus(item.selectable.id)"></v-switch>
                             </template>
                             <template v-slot:[`item.trial_ends_at`]="{ item }">
-                                {{format_date(item.selectable.trial_ends_at) ? format_date(item.selectable.trial_ends_at) : '-'}}
+                                {{format_date(item.selectable.trial_ends_at)}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editUser(item.selectable.id)" :disabled="permissions.update_auth == '0'">
@@ -85,10 +85,6 @@
     export default {
         data() {
             return {
-                // images: {
-                //     edit: require('/assets/img/icons/edit.svg'),
-                //     bin: require('/assets/img/icons/bin.svg'),
-                // },
                 search: '',
                 headers: [
                     { title: 'ID', key: 'id', align: 'start' },
@@ -112,7 +108,9 @@
             // formate date
             format_date(value){
                 if (value) {
-                    return moment(String(value)).format('YYYY-MM-DD')
+                    return moment(String(value)).format('YYYY-MM-DD');
+                } else {
+                    return '-';
                 }
             },
             // get subscribe user data
@@ -130,6 +128,14 @@
                         this.items = getData.data.data;
                         this.userFilter = getData.data.data;
                         this.permissions = getData.permission;
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                         this.showLoader = false;
                     }
                 })
@@ -185,15 +191,43 @@
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error)
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
-                }); 
+                });
             },
             // update status
             updateStatus(id) {
@@ -225,15 +259,43 @@
                     }
                 })
                 .catch(error => {
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    console.log(error)
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
-                }); 
+                });
             }
         },
         mounted() {

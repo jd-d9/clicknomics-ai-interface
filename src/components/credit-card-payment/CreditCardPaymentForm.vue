@@ -9,8 +9,13 @@
                             <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
                             <span>Dashboard</span>
                         </router-link>
+                        <router-link to="/accounting/creditCardPayments" class="d-flex align-center">
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Credit Card Payment</span>
+                        </router-link>
+
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>{{ breadCrumbMessage }} Credit Card Payment</span>
+                        <span>{{ breadCrumbMessage }}</span>
 
                         <v-spacer />
                         <v-btn to="/accounting/creditCardPayments" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
@@ -66,6 +71,14 @@
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.Status}" :items="statusList" v-model="status" placeholder="Select Status"></v-select>
                                     </Field>
                                     <span class="text-red-600" v-if="errors.Status">Status can not be empty</span>
+                                </v-col>
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12">
@@ -145,6 +158,8 @@ export default {
             invalidFromAccount: '',
             invalidToAccount: '',
             invalidStatus: '',
+            backendErrorMessage: '',
+            multipleErrors: [],
         }
     },
     mounted() {
@@ -192,22 +207,40 @@ export default {
                     if(response.data.success) {
                         this.$router.push('/accounting/creditCardPayments');
                         this.$toast.open({
-                            message: 'Credit card payment updated',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
+                        });
+                        this.backendErrorMessage = '';
+                        this.multipleErrors = [];
+                        this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
                         });
                         this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -230,22 +263,40 @@ export default {
                     if(response.data.success) {
                         this.$router.push('/accounting/creditCardPayments');
                         this.$toast.open({
-                            message: 'Credit card payment created',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
+                        this.backendErrorMessage = '';
+                        this.multipleErrors = [];
                         this.showLoader = false;
-                    }
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
+                }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -267,10 +318,52 @@ export default {
                     this.toAccount = response.data.data.to_account;
                     this.status = response.data.data.status;
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },

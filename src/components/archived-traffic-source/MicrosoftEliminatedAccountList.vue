@@ -22,13 +22,13 @@
 
                         <v-data-table :headers="networkHeaders" :items="linkedNewtworks"  :single-expand="singleExpand" item-key="customer_id" :itemsPerPage="itemsPerPage" class="table-hover-class mt-4">
                             <template v-slot:[`item.name`]="{ item }">
-                                {{item.selectable.name}}
+                                {{item.selectable.name ? item.selectable.name : '-'}}
                             </template>
                             <template v-slot:[`item.account_id`]="{ item }">
-                                {{item.selectable.account_id}}
+                                {{item.selectable.account_id ? item.selectable.account_id : '-'}}
                             </template>
                             <template v-slot:[`item.number`]="{ item }">
-                                {{item.selectable.number}}
+                                {{item.selectable.number ? item.selectable.number : '-'}}
                             </template>
                             <template v-slot:[`item.deleted_at`]="{ item }">
                                 {{format_date(item.selectable.deleted_at)}}
@@ -143,7 +143,7 @@ export default {
                             message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
-                            type: 'success'
+                            type: 'error'
                         });
                         this.showLoader = false;
                     }
@@ -191,7 +191,10 @@ export default {
         // format date
         format_date(value){
             if (value) {
-                return moment(String(value)).format('YYYY-MM-DD')
+                return moment(String(value)).format('YYYY-MM-DD');
+            }
+            else {
+                return '-';
             }
         },
     }

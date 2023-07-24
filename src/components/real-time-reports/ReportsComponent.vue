@@ -39,15 +39,15 @@
                                             </thead>
                                             <tbody v-if="item.raw.child.length > 0">
                                                 <tr v-for="(row , index) in item.raw.child" :key="index">
-                                                    <td>{{ row.offer_name}}</td>
-                                                    <td>{{ row.price_format}}</td>
+                                                    <td>{{ row.offer_name ? row.offer_name : '-'}}</td>
+                                                    <td>{{ row.price_format ? row.price_format : '-'}}</td>
                                                     <!-- <td>{{ row.price | toCurrency}}</td> -->
-                                                    <td>{{ row.clicks}}</td>
-                                                    <td>{{ row.conversions}}</td>
+                                                    <td>{{ row.clicks ? row.clicks : '-'}}</td>
+                                                    <td>{{ row.conversions ? row.conversions : '-'}}</td>
                                                     <td>{{ formatPercentage(row.conversion_rate * 100) + '%'}}</td>
                                                     <td>{{ $filters.toCurrency(row.revenue)}}</td>
                                                     <td>{{ formatPercentage(row.epc) }}</td>
-                                                    <td>{{ row.events}}</td>
+                                                    <td>{{ row.events ? row.events : '-'}}</td>
                                                 </tr>
                                             </tbody>
                                             <tbody v-else>
@@ -71,9 +71,9 @@
                                             <tbody v-if="item.raw.child.length > 0">
                                                 <tr v-for="(row , index) in item.raw.child" :key="index">
                                                     <!-- <td>{{ row.Stat.date}}</td> -->
-                                                    <td>{{ row.Offer.name}}</td>
-                                                    <td>{{ row.Stat.clicks}}</td>
-                                                    <td>{{ row.Stat.conversions}}</td>
+                                                    <td>{{ row.Offer.name ? row.Offer.name : '-'}}</td>
+                                                    <td>{{ row.Stat.clicks ? row.Stat.clicks : '-'}}</td>
+                                                    <td>{{ row.Stat.conversions ? row.Stat.conversions : '-'}}</td>
                                                     <!-- <td>{{ row.Stat.conversion_status}}</td>
                                                     <td>{{ row.Stat.approved_payout | toCurrency}}</td>
                                                     <td>{{ row.Stat.ad_id}}</td> -->
@@ -101,11 +101,11 @@
                                             </thead>
                                             <tbody v-if="item.raw.child.length > 0">
                                                 <tr v-for="(row , index) in item.raw.child" :key="index">
-                                                    <td>{{ row.offer_name}}</td>
-                                                    <td>{{ row.total_click}}</td>
-                                                    <td>{{ row.unique_click}}</td>
-                                                    <td>{{ row.duplicate_click}}</td>
-                                                    <td>{{ row.invalid_click}}</td>
+                                                    <td>{{ row.offer_name ? row.offer_name : '-'}}</td>
+                                                    <td>{{ row.total_click ? row.total_click : '-'}}</td>
+                                                    <td>{{ row.unique_click ? row.unique_click : '-'}}</td>
+                                                    <td>{{ row.duplicate_click ? row.duplicate_click : '-'}}</td>
+                                                    <td>{{ row.invalid_click ? row.invalid_click : '-'}}</td>
                                                     <td>{{ formatPercentage(row.cvr) + '%'}}</td>
                                                     <td>{{ $filters.toCurrency(row.rpc)}}</td>
                                                     <td>{{ $filters.toCurrency(row.revenue)}}</td>
@@ -130,8 +130,8 @@
                                             </thead>
                                             <tbody v-if="item.raw.child.length > 0">
                                                 <tr v-for="(row , index) in item.raw.child" :key="index">
-                                                    <td>{{ row.clicks}}</td>
-                                                    <td>{{ row.conversions}}</td>
+                                                    <td>{{ row.clicks ? row.clicks : '-'}}</td>
+                                                    <td>{{ row.conversions ? row.conversions : '-'}}</td>
                                                     <td>{{ formatPercentage(row.conversion_rate)}}</td>
                                                     <td>{{ $filters.toCurrency(row.revenue)}}</td>
                                                     <td>{{ formatPercentage(row.epc)}}</td>
@@ -155,9 +155,9 @@
                                             </thead>
                                             <tbody v-if="item.raw.child.length > 0">
                                                 <tr v-for="(row , index) in item.raw.child" :key="index">
-                                                    <td>{{ row.clicks}}</td>
-                                                    <td>{{ row.conversions}}</td>
-                                                    <td>{{ row.events}}</td>
+                                                    <td>{{ row.clicks ? row.clicks : '-'}}</td>
+                                                    <td>{{ row.conversions ? row.conversions : '-'}}</td>
+                                                    <td>{{ row.events ? row.events : '-'}}</td>
                                                     <td>{{ $filters.toCurrency(row.revenue)}}</td>
                                                     <td>{{ formatPercentage(row.epc)}}</td>
                                                 </tr>
@@ -180,9 +180,9 @@
                                             </thead>
                                             <tbody v-if="item.raw.child.length > 0">
                                                 <tr v-for="(row , index) in item.raw.child" :key="index">
-                                                    <td>{{ row.campaign_id}}</td>
-                                                    <td>{{ row.total_clicks}}</td>
-                                                    <td>{{ row.total_conversions}}</td>
+                                                    <td>{{ row.campaign_id ? row.campaign_id : '-'}}</td>
+                                                    <td>{{ row.total_clicks ? row.total_clicks : '-'}}</td>
+                                                    <td>{{ row.total_conversions ? row.total_conversions : '-'}}</td>
                                                     <td>{{ $filters.toCurrency(row.payout ? row.payout : 0)}}</td>
                                                     <td>{{ formatPercentage(row.epc)}}</td>
                                                 </tr>
@@ -204,8 +204,8 @@
                                             </thead>
                                             <tbody v-if="item.raw.child.length > 0">
                                                 <tr v-for="(row , index) in item.raw.child" :key="index">
-                                                    <td>{{ row.clicks}}</td>
-                                                    <td>{{ row.conversions}}</td>
+                                                    <td>{{ row.clicks ? row.clicks : '-'}}</td>
+                                                    <td>{{ row.conversions ? row.conversions : '-'}}</td>
                                                     <td>{{ $filters.toCurrency(row.payouts ? row.payouts : 0)}}</td>
                                                     <td>{{ formatPercentage(row.epc)}}</td>
                                                 </tr>
@@ -271,7 +271,11 @@ export default {
     },
     methods: {
         formatPercentage(value) {
-            return parseFloat(value).toFixed(2);
+            if(value) {
+                return parseFloat(value).toFixed(2);
+            }else {
+                return '-';
+            }
         },
         fetchNetworkReport() {
             this.showLoader = true;
@@ -345,8 +349,51 @@ export default {
                     this.numberOfPages = response.data.networks.last_page;
                     this.showLoader = false;
                 }
+                else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                }
             }).catch(error => {
-                console.log(error, '1111');
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },

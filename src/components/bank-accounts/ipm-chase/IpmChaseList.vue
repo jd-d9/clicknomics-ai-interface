@@ -20,13 +20,13 @@
                             Import CSV
                         </v-btn>
 
-                        <v-btn to="/bank_accounts/ipmchase/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">  <!--  :disabled="permissions.create_auth == '0'" -->
+                        <v-btn to="/bank_accounts/ipmchase/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus" :disabled="permissions.create_auth == '0'">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0"> <!-- v-if="permissions.view == '1' && !showLoader" -->
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title>
                             <v-row>
@@ -57,7 +57,7 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.amount`]="{ item }">
-                                {{$filters.currencyUSD(item.selectable.amount)}}
+                                {{$filters.toCurrency(item.selectable.amount)}}
                             </template>
                             <template v-slot:[`item.network`]="{ item }">
                                 {{item.selectable.network ? item.selectable.network : '-' }}
@@ -66,27 +66,27 @@
                                 {{item.selectable.balance ? item.selectable.balance : '-' }}
                             </template>
                             <template  v-slot:[`item.description`]="{ item }">
-                                <div class="text-ellipsis w-200">{{item.selectable.description}}</div>
+                                <div class="text-ellipsis w-200">{{item.selectable.description ? item.selectable.description : '-'}}</div>
                             </template>
                             <template v-slot:[`item.type`]="{ item }">
                                 {{item.selectable.type ? item.selectable.type : '-' }}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click="edit(item.selectable.id)"> <!--  :disabled="permissions.update_auth == '0'"  -->
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'">
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click="deleteData(item.selectable.id)"> <!-- :disabled="permissions.delete_auth == '0'" -->
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn>  
                                 
-                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click="view(item.selectable.id)"> <!-- :disabled="permissions.view == '0'" -->
+                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click="view(item.selectable.id)" :disabled="permissions.view == '0'">
                                     <v-icon color="deep-purple-darken-4">
                                         mdi-eye
                                     </v-icon>
@@ -109,13 +109,13 @@
                         </v-data-table>
                     </v-card>
                 </v-col>
-                <!-- <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-content-center align-center">
                             You have no access for this page
                         </v-card-title>
                     </v-card>
-                </v-col> -->
+                </v-col>
             </v-row>
         </v-container>
 
@@ -165,7 +165,7 @@
                             <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Amount :</span> {{$filters.currencyUSD(viewModalDetail.amount)}}
+                            <span class="font-weight-bold"> Amount :</span> {{$filters.toCurrency(viewModalDetail.amount)}}
                         </p>
                         <p>
                             <span class="font-weight-bold"> Network :</span> {{viewModalDetail.network ? viewModalDetail.network : '-'}}
@@ -328,10 +328,52 @@ export default {
                         })
                     });
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -353,7 +395,7 @@ export default {
                     if(response.data.success) {
                         this.getIpmChaseReport();
                         this.$toast.open({
-                            message: 'Data deleted',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -370,13 +412,41 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error);
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -401,7 +471,7 @@ export default {
                     if(response.data.success) {
                         this.getIpmChaseReport();
                         this.$toast.open({
-                            message: 'Records deleted',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
@@ -418,13 +488,41 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.log(error);
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -456,13 +554,41 @@ export default {
                 });
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -484,7 +610,7 @@ export default {
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({
-                        message: 'File imported',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
@@ -500,13 +626,41 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },

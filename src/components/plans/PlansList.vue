@@ -22,7 +22,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Plan Management List
+                            Plan List
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPlan"/>
@@ -32,13 +32,13 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id}}
+                                {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
                             <template v-slot:[`item.name`]="{ item }">
-                                {{item.selectable.name}}
+                                {{item.selectable.name ? item.selectable.name : '-'}}
                             </template>
                             <template v-slot:[`item.plan_detail`]="{ item }">
-                                ${{displayAmount(item.selectable.plan_detail)}}
+                                {{$filters.toCurrency(item.selectable.plan_detail.amount)}}
                             </template>
                             <template v-slot:[`item.status`]="{ item }">
                                 {{item.selectable.status == 0 ? 'Inactive' : 'Active'}}
@@ -84,7 +84,7 @@ export default {
             headers: [
                 { title: 'ID', key: 'id', align: 'start' },
                 { title: 'Name', key: 'name' },
-                { title: 'Amount', key: 'amount' },
+                { title: 'Amount', key: 'plan_detail' },
                 { title: 'Status', key: 'status' },
                 { title: 'Action', align:'center', key: 'action', sortable: false },
             ],
@@ -124,6 +124,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const data = response.data;
+                    console.log(data, 'data -- data')
                     this.items = data.data;
                     // this.items = data.data.map((val) => {
                     //     return {...val,planData: JSON.parse(val.planData)}
@@ -132,12 +133,54 @@ export default {
                     this.plansFilter = data.data;
                     this.permissions = data.permission;
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
-                console.log(error)
-            }); 
+            });
         },
         // for display amount value which has interval value month
         displayAmount(data) {
@@ -172,23 +215,60 @@ export default {
                 if(response.data.success) {
                     this.showLoader = false;
                     this.$toast.open({
-                        message: 'Plan deleted',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
                     this.getPlans();
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
-                this.$toast.open({
-                    message: error.response.data.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
-            }); 
+            });
         },
     }
 }

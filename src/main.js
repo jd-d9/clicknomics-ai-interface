@@ -47,6 +47,36 @@ const vuetify = createVuetify({
   },
 })
 
+axios.interceptors.request.use(
+  config => {
+    console.log(config, 'config ----')
+    const userSession = localStorage.getItem('user-session');
+    if(userSession) {
+      // to do some code penging which add after get code of amit sir.
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  },
+);
+
+// Response interceptor
+axios.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    if (error.response && error.response.status === 401) {
+      // Handle 401 Unauthorized error
+      sessionStorage.clear();
+      // Redirect to login page or any other handling for 401 error
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  },
+);
+
 const app = createApp(App);
 app.config.globalProperties.$api = process.env.VUE_APP_API;
 app.config.globalProperties.$api_main = process.env.VUE_APP_API_MAIN;

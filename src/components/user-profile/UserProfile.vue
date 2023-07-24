@@ -185,25 +185,15 @@
                             </div>
                         </div>
 
-                        <v-divider class="border-opacity-100 my-4" color="success" />   
+                        <v-divider class="border-opacity-100 my-4" color="success" v-if="roleId != 1"/>   
 
                          <!-- subscription plan section -->
-                        <div>
+                        <div v-if="roleId != 1">
                             <v-card-title class="d-flex justify-space-between">
                                 Subscription Plan
-                                <v-icon v-if="!subscriptionPlanToggle" @click="subscriptionPlanToggle = !subscriptionPlanToggle" icon="mdi-eye" size="small" color="#00cd00"></v-icon>
                             </v-card-title>
                             <div>
-                                <v-row v-if="!subscriptionPlanToggle">
-                                    <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
-                                        <label>
-                                            <span class="font-weight-medium text-blue-darken-4">
-                                                {{subscriptionPlan ? subscriptionPlan : '-'}}
-                                            </span>
-                                        </label>
-                                    </v-col>
-                                </v-row>
-                                <v-row v-show="subscriptionPlanToggle">
+                                <v-row>
                                     <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                         <label>Plan Name : 
                                             <span class="font-weight-medium text-blue-darken-4">
@@ -218,10 +208,6 @@
                                                 {{trialEndsAt ? trialEndsAt : '-'}}
                                             </span>
                                         </label>
-                                    </v-col>
-
-                                    <v-col cols="12" sm="12" md="12" lg="12">    
-                                        <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="subscriptionPlanToggle = !subscriptionPlanToggle">Close</v-btn>
                                     </v-col>
                                 </v-row>                                
                             </div>
@@ -300,7 +286,6 @@
                 profileDetailsToggle: false,
                 passwordToggle: false,
                 TwoFaVerifyToggle: false,
-                subscriptionPlanToggle: false,
                 currentUserDetails: {},
                 profileImage: '',
                 email: '',
@@ -322,6 +307,7 @@
                 trialEndsAt: '',
                 showLoader: false,
                 countryDetails: [],
+                roleId: sessionStorage.getItem('roleId'),
             }
         },
         computed: {
@@ -379,10 +365,10 @@
                         this.verificationStatus = this.currentUserDetails.verification_status;
                         this.remember2Fa = this.currentUserDetails.remember_2fa;
                         this.trialEndsAt = this.currentUserDetails.trial_ends_at ? moment(this.currentUserDetails.trial_ends_at).format('YYYY-MM-DD') : '-';
-                        this.subscriptionPlan = response.data.subscriptions.name;
-                        this.backendErrorMessage = '';
+                        if(response.data.subscriptions) {
+                            this.subscriptionPlan = response.data.subscriptions.name;
+                        }
                         this.showLoader = false;
-                        console.log(this.currentUserDetails, 'currentUserData');
                     }else {
                         this.$toast.open({
                             message: response.data.message,
@@ -394,9 +380,44 @@
                     }
                 })
                 .catch(error => {
-                    this.backendErrorMessage = error.message;
+                    console.log(error)
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
-                }); 
+                });
             },
             // get and set country code
             // getAndSetCountry() {
