@@ -99,15 +99,23 @@
             },
         },
         mounted() {
-            const isAuthenticated = sessionStorage.getItem('Token');
-            const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
-            const verifiedBy = sessionStorage.getItem('verifiedBy');
+            
+            let userSession = localStorage.getItem('user-session')
+            if(userSession){
+                const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
+                let sessionData = JSON.parse(decryptedObject)
 
-            if(isAuthenticated && isVerified) {
-                this.$router.push('/dashboard');
-            } else if(isAuthenticated && !isVerified) {
-                verifiedBy === 'email' ? this.$router.push('/authenticator/validate/email') :this.$router.push('/authenticator/validate');
+                const isAuthenticated = sessionData.Token;
+                const isVerified = sessionData.isTwoFactorVerified;
+                const verifiedBy = sessionData.verifiedBy;
+
+                if(isAuthenticated && isVerified) {
+                    this.$router.push('/dashboard');
+                } else if(isAuthenticated && !isVerified) {
+                    verifiedBy === 'email' ? this.$router.push('/authenticator/validate/email') :this.$router.push('/authenticator/validate');
+                }
             }
+            
         },
         methods: {
             // check validation and signin user
@@ -124,11 +132,20 @@
                     .then(response => {
                         if(response.data.success) {
                             const responseData = response.data;
-                            sessionStorage.setItem('Token', responseData.token);
-                            sessionStorage.setItem('Email', this.userEmail);
-                            sessionStorage.setItem('verifiedBy', responseData.verified_by);
-                            sessionStorage.setItem('isTwoFactorVerified', responseData.isTwoFactorVerified);
-                            
+                            // Temporary commented
+                            // this.$storage.setStorageSync('Token', responseData.token);
+                            // this.$storage.setStorageSync('Email', this.userEmail);
+                            // this.$storage.setStorageSync('verifiedBy', responseData.verified_by);
+                            // this.$storage.setStorageSync('isTwoFactorVerified', responseData.isTwoFactorVerified);
+                            let data = {
+                                "Token" : responseData.token,
+                                "Email" : this.userEmail,
+                                "verifiedBy" : responseData.verified_by,
+                                "isTwoFactorVerified" : responseData.isTwoFactorVerified,
+                            }
+                            const encryptedData = this.$CryptoJS.AES.encrypt(JSON.stringify(data), "Clicknomics-AI").toString()
+                            localStorage.setItem('user-session',encryptedData)
+
                             if(responseData.isTwoFactorVerified) {
                                 this.$toast.open({
                                     message: 'Logged in successfully!',
@@ -136,16 +153,18 @@
                                     duration: '5000',
                                     type: 'success'
                                 });
+                                console.log('if')
                                 this.$router.push('/dashboard');
                             } else {
+                                console.log('else')
                                 if(responseData.verified_by === 'email') {
                                     this.$router.push('/authenticator/validate/email');
                                 } else {
                                     this.$router.push('/authenticator/validate');
                                 }
                                 // this.backendErrorMessage = '';
-                                this.showLoader = false;
                             }
+                            this.showLoader = false;
                         }
                         else {
                             this.backendErrorMessage = response.data.message;
