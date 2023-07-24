@@ -277,11 +277,13 @@
 
 <script>
 import DateRangePicker from './common/DateRangePicker.vue';
+import mixin from '../mixin.js';
 import moment from 'moment';
  export default {
     components: {
         DateRangePicker,
     },
+    mixins:[mixin],
     data() {
         return {
             showLoader: false,
@@ -326,17 +328,31 @@ import moment from 'moment';
             top: 0,
             behavior: 'smooth',
         });
-        
-        const isAuthenticated = sessionStorage.getItem('Token');
-        const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
+        let userSession = localStorage.getItem('user-session')
+        if(userSession){
+            const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
+            let sessionData = JSON.parse(decryptedObject)
 
-        if(isAuthenticated && isVerified) {
-            this.$router.push('/dashboard');
+            const isAuthenticated = sessionData.Token;
+            const isVerified = sessionData.isTwoFactorVerified;
+            const verifiedBy = sessionData.verifiedBy;
+
+            if(!isAuthenticated && !isVerified) {
+                this.$router.push('/login');
+            } else if(isAuthenticated && !isVerified) {
+                verifiedBy === 'email' ? this.$router.push('/authenticator/validate/email') :this.$router.push('/authenticator/validate');
+            }
         }
-        else{
-            sessionStorage.clear();
-            this.$router.push('/login');
-        }
+        // const isAuthenticated = sessionStorage.getItem('Token');
+        // const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
+
+        // if(isAuthenticated && isVerified) {
+        //     this.$router.push('/dashboard');
+        // }
+        // else{
+        //     sessionStorage.clear();
+        //     this.$router.push('/login');
+        // }
         this.fetchDashboardRecord();
     },
     methods: {
@@ -358,7 +374,7 @@ import moment from 'moment';
             this.axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
