@@ -27,7 +27,15 @@
             },
             // dynamically add class for toggle sidebar
             addDynamicClass() {
-                if(!sessionStorage.getItem('Email') || window.location.pathname === '/login' || window.location.pathname === '/signup' || window.location.pathname === '/subscribe-plan' || window.location.pathname === '/password/reset' || window.location.pathname === '/authenticator/validate' || window.location.pathname === '/authenticator/validate/email' || window.location.pathname === '/authenticator/reset2FA' || window.location.pathname === '/set_new_password') {  
+                let userSession = localStorage.getItem('user-session')
+                let Email
+                if(userSession){
+                    const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
+                    let sessionData = JSON.parse(decryptedObject)
+                    Email = sessionData.Email
+                }
+
+                if(!Email || window.location.pathname === '/login' || window.location.pathname === '/signup' || window.location.pathname === '/subscribe-plan' || window.location.pathname === '/password/reset' || window.location.pathname === '/authenticator/validate' || window.location.pathname === '/authenticator/validate/email' || window.location.pathname === '/authenticator/reset2FA' || window.location.pathname === '/set_new_password') {  
                     this.toggleClass = false;
                 }
                 else {
