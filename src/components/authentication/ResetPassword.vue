@@ -51,6 +51,7 @@
 </template>
 
 <script>
+    import axios from '@axios';
     import * as yup from 'yup';
     import { Form, Field, ErrorMessage } from 'vee-validate';
     export default {
@@ -79,7 +80,7 @@
             // send reset password link in mail
             sendResetPasswordLink() {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/forgotpassword', {
+                axios.post(this.$api + '/forgotpassword', {
                     email: this.userEmail,
                 })
                 .then(response => {

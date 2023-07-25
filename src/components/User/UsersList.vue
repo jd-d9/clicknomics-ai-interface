@@ -45,7 +45,7 @@
                                 {{item.selectable.company_name ? item.selectable.company_name : '-'}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editUser(item.selectable.id)" :disabled="permissions.update_auth == '0'">
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editUser(item.selectable.id)" :disabled="permissions.update_auth == '0' || item.selectable.role_id == '1'">
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
@@ -75,13 +75,10 @@
 </template>
 
 <script>
+    import axios from '@axios';
     export default {
         data() {
             return {
-                // images: {
-                //     edit: require('/assets/img/icons/edit.svg'),
-                //     bin: require('/assets/img/icons/bin.svg'),
-                // },
                 search: '',
                 headers: [
                     { title: 'ID', key: 'id', align: 'start' },
@@ -104,7 +101,7 @@
             // get regestered user data
             getUsersData() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/settings/user', {
+                axios.get(this.$api + '/settings/user', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -187,7 +184,7 @@
             deleteUser(id) {
                 console.log(id, 'id')
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/settings/user/' + id, {
+                axios.delete(this.$api + '/settings/user/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()

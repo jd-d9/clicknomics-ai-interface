@@ -59,6 +59,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -101,7 +102,7 @@ export default {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('date', this.date);
-            this.axios.post(this.$api + '/settings/processEmailReport/genrateEmailDailyReport', formData, {
+            axios.post(this.$api + '/settings/processEmailReport/genrateEmailDailyReport', formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

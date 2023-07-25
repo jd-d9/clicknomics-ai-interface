@@ -239,6 +239,7 @@
 <script>
 // import * as yup from 'yup';
 // import { Form, Field } from 'vee-validate';
+import axios from '@axios';
 import { JoditEditor } from 'jodit-vue';
 import 'jodit/build/jodit.min.css';
 export default {
@@ -313,7 +314,7 @@ export default {
         // get data for edit plan
         getDataForEdit() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/plan/' + this.$route.params.id, {
+            axios.get(this.$api + '/settings/plan/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -421,7 +422,7 @@ export default {
                 formData.append('description', this.description);
                 formData.append('plan', JSON.stringify(this.addMultipleField));
                 formData.append('_method', 'PUT');
-                this.axios.post(this.$api + '/settings/plan/' + this.$route.params.id, formData, {
+                axios.post(this.$api + '/settings/plan/' + this.$route.params.id, formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -477,7 +478,7 @@ export default {
                 formData.append('network_account_limit', this.networkAccountLimit);
                 formData.append('description', this.description);
                 formData.append('plan', JSON.stringify(this.addMultipleField));
-                this.axios.post(this.$api + '/settings/plan', formData, {
+                axios.post(this.$api + '/settings/plan', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()

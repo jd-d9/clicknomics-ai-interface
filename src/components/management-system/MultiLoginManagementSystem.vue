@@ -229,6 +229,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 export default {
@@ -324,7 +325,7 @@ export default {
         // get data center vps listings data
         getMultiloginManagementSystemReport() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/management_system/multilogin', {
+            axios.get(this.$api + '/management_system/multilogin', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -434,7 +435,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/management_system/multilogin/' + id, {
+                axios.delete(this.$api + '/management_system/multilogin/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -510,7 +511,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('selectedRecord', JSON.stringify(multipleRow));
-                this.axios.post(this.$api + '/management_system/multilogin/deleteMutipleRecord', formData, {
+                axios.post(this.$api + '/management_system/multilogin/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -587,7 +588,7 @@ export default {
             formData.append('notes', this.activity.notes);
             this.activityType != 'Create' && formData.append('_method', 'PUT');
             const postUrl = this.activityType == 'Create' ? '/management_system/multilogin' : `/management_system/multilogin/${this.activity.id}`
-            this.axios.post(`${this.$api}${postUrl}`, formData, {
+            axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -638,7 +639,7 @@ export default {
         },
         // downloading csv
         downloadCsv() {
-            this.axios.post(this.$api + '/settings/downloadfile', {
+            axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'multilogin'
             }, {
                 headers: {
@@ -706,7 +707,7 @@ export default {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('file', this.selectedFile);
-            this.axios.post(this.$api + '/management_system/multilogin/importLocalCSV', formData, {
+            axios.post(this.$api + '/management_system/multilogin/importLocalCSV', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: this.getAccessToken()

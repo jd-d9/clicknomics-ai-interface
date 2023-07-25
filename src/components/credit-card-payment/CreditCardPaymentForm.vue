@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -190,7 +191,7 @@ export default {
             // update credit card payment
             if(this.$route.params.id) {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/creditCardPayments/' + this.$route.params.id, {
+                axios.post(this.$api + '/accounting/creditCardPayments/' + this.$route.params.id, {
                     _method: 'PUT',
                     payment_date: moment(this.date).format('YYYY-MM-DD'),
                     amount: this.amount,
@@ -247,7 +248,7 @@ export default {
             // create credit card payment
             else {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/creditCardPayments', {
+                axios.post(this.$api + '/accounting/creditCardPayments', {
                     payment_date: moment(this.date).format('YYYY-MM-DD'),
                     amount: this.amount,
                     from_account: this.fromAccount,
@@ -304,7 +305,7 @@ export default {
         // get data for edit credit card payment
         getSingleForEdit() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/creditCardPayments/' + this.$route.params.id, {
+            axios.get(this.$api + '/accounting/creditCardPayments/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

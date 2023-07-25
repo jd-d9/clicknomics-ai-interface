@@ -116,6 +116,7 @@
     import * as yup from 'yup';
     import { Form, Field, ErrorMessage } from 'vee-validate';
     import defaultImage from '../../assets/img/DefaultImage.js';
+    import axios from '@axios';
     export default {
         components: {
             Form, 
@@ -153,9 +154,24 @@
                 });
             },
         },
-        // mounted() {
-        //     this.getAndSetCountryCode();
-        // },
+        mounted() {
+            // this.getAndSetCountryCode();
+            let userSession = localStorage.getItem('user-session')
+            if(userSession){
+                const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
+                let sessionData = JSON.parse(decryptedObject)
+
+                const isAuthenticated = sessionData.Token;
+                const isVerified = sessionData.isTwoFactorVerified;
+                const verifiedBy = sessionData.verifiedBy;
+
+                if(isAuthenticated && isVerified) {
+                    this.$router.push('/dashboard');
+                } else if(isAuthenticated && !isVerified) {
+                    verifiedBy === 'email' ? this.$router.push('/authenticator/validate/email') :this.$router.push('/authenticator/validate');
+                }
+            }
+        },
         methods: {
             // password validation
             validatePassword() {
@@ -173,7 +189,7 @@
                 }
                 else {
                     this.showLoader = true;
-                    this.axios.post(this.$api + '/registration', {
+                    axios.post(this.$api + '/registration', {
                         first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
                         last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                         email: this.userEmail,
@@ -194,7 +210,7 @@
                             this.multipleErrors = [],
                             // set plan id
                             this.showLoader = true;
-                            this.axios.get(this.$api + '/subscription/' + planId, {
+                            axios.get(this.$api + '/subscription/' + planId, {
                                 headers: {
                                     "Content-Type": "application/json",
                                     Authorization: `Bearer ${response.data.data}`
@@ -271,7 +287,7 @@
             // email is available or not
             emailIsAvail() {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/registration/checkEmail', {
+                axios.post(this.$api + '/registration/checkEmail', {
                     email: this.userEmail,
                 })
                 .then(response => {
@@ -322,7 +338,7 @@
             // get and set country code
             // getAndSetCountryCode() {
             //     this.showLoader = true;
-            //     this.axios.get(this.$api + '/countries')
+            //     axios.get(this.$api + '/countries')
             //     .then(response => {
             //         if(response.data.success) {
             //             this.countryCodeListing = response.data.data;

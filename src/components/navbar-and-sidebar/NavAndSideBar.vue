@@ -156,6 +156,7 @@
 </template>
 
 <script>
+    import axios from '@axios';
     import introJs from 'intro.js';
     import 'intro.js/minified/introjs.min.css';
     
@@ -265,7 +266,7 @@
             },
             // close intro js package after show once
             closeIntroJs() { 
-                this.axios.get(this.$api + '/firstTimeLoginUser', {
+                axios.get(this.$api + '/firstTimeLoginUser', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -283,7 +284,7 @@
             // get sidebar menu tabs
             getSidebarMenues() { 
                 this.showLoader = true;
-                this.axios.get(this.$api + '/settings/menu', {
+                axios.get(this.$api + '/settings/menu', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -371,7 +372,7 @@
                 const bodyParameters = {
                     key: "value"
                 };
-                this.axios.post(this.$api + '/logout', bodyParameters, {
+                axios.post(this.$api + '/logout', bodyParameters, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -380,7 +381,7 @@
                 .then(response => {
                     if(response.data.success) {
                         this.showLoader = false;
-                        sessionStorage.clear();
+                        localStorage.clear();
                         this.$router.push('/login');
                     }else {
                         this.showLoader = false;
@@ -406,7 +407,7 @@
             // get current loged in user data
             getCurrentUserData() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/settings/getprofileuser', {
+                axios.get(this.$api + '/settings/getprofileuser', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()

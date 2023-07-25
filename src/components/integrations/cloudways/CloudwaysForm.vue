@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
@@ -95,7 +96,7 @@ export default {
         // create new cloudway
         integrateCloudwaysServer() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/settings/cloudways', {
+            axios.post(this.$api + '/settings/cloudways', {
                 email: this.email,
                 api_key: this.api_key,
             }, {

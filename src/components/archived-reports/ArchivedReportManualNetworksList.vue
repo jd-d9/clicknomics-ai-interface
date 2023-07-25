@@ -53,6 +53,7 @@
 <script>
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
+import axios from '@axios';
 export default {
     components: {
         DateRangePicker
@@ -107,7 +108,7 @@ export default {
                 queryString.set('network_id', this.networkName);
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

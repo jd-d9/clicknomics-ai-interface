@@ -295,6 +295,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 import * as yup from 'yup';
@@ -442,7 +443,7 @@ export default {
             queryString.set('page', page)
 
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -451,7 +452,8 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const allData = response.data;
-                    this.teamMemberPaymentList = allData.data;
+                    console.log(allData, 'allData ---')
+                    this.teamMemberPaymentList = allData.data.data;
                     this.teamMemberPaymentFilter = allData.data.data;
                     this.permissions = allData.permission;
                     this.viewPermission = allData.permission.view ? allData.permission.view : '1'
@@ -523,7 +525,7 @@ export default {
         // delete team member payment
         deleteData(id) {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/accounting/teamMemberPayment/' + id, {
+            axios.delete(this.$api + '/accounting/teamMemberPayment/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -591,7 +593,7 @@ export default {
         // adding to account
         addToAccount() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/teamMemberPayments/addToAccountMembers', {
+            axios.post(this.$api + '/accounting/teamMemberPayments/addToAccountMembers', {
                 team_member_name: this.teamMemberName
             }, {
                 headers: {
@@ -645,7 +647,7 @@ export default {
         // adding from account
         addFromAccount() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/teamMemberPayments/addFromAccountMembers', {
+            axios.post(this.$api + '/accounting/teamMemberPayments/addFromAccountMembers', {
                 team_member_name: this.teamMemberName
             }, {
                 headers: {
@@ -710,7 +712,7 @@ export default {
             //     }
             // });
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport', {
+            axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport', {
                 startDate: moment(this.selectedRangeTwo.split('-').shift()).format('DD-MM-YYYY'),
                 endDate: moment(this.selectedRangeTwo.split('-').pop()).format('DD-MM-YYYY'),
             }, {
@@ -774,7 +776,7 @@ export default {
         },
         // downloading csv
         downloadCsv() {
-            this.axios.post(this.$api + '/settings/downloadfile', {
+            axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'teamMembersPayments'
             }, {
                 headers: {
@@ -840,7 +842,7 @@ export default {
         // choose file and import csv
         importCsv() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/creditCardPayments/importCreditCardPayment', {
+            axios.post(this.$api + '/accounting/creditCardPayments/importCreditCardPayment', {
                 file: this.selectedFile
             }, {
                 headers: {

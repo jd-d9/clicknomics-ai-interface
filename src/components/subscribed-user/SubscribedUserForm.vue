@@ -91,6 +91,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
@@ -145,7 +146,7 @@ export default {
             // update user
             if(this.$route.params.id) {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/settings/subscribeUser/' + this.$route.params.id, {
+                axios.post(this.$api + '/settings/subscribeUser/' + this.$route.params.id, {
                     first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
                     last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     email: this.userEmail,
@@ -204,7 +205,7 @@ export default {
             // create user
             else {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/settings/subscribeUser', {
+                axios.post(this.$api + '/settings/subscribeUser', {
                     first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
                     last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     email: this.userEmail,
@@ -263,7 +264,7 @@ export default {
         // edit user details
         editUserDetails(id) {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/subscribeUser/' + id, {
+            axios.get(this.$api + '/settings/subscribeUser/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -324,7 +325,7 @@ export default {
         // get and set country code
         // getAndSetCountry() {
         //     this.showLoader = true;
-        //     this.axios.get(this.$api + '/settings/countries', {
+        //     axios.get(this.$api + '/settings/countries', {
         //         headers: {
         //             "Content-Type": "application/json",
         //             Authorization: this.getAccessToken(),

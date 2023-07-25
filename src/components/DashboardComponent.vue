@@ -276,6 +276,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import DateRangePicker from './common/DateRangePicker.vue';
 import moment from 'moment';
  export default {
@@ -326,21 +327,21 @@ import moment from 'moment';
             top: 0,
             behavior: 'smooth',
         });
-        let userSession = localStorage.getItem('user-session')
-        if(userSession){
-            const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
-            let sessionData = JSON.parse(decryptedObject)
+        // let userSession = localStorage.getItem('user-session')
+        // if(userSession){
+        //     const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
+        //     let sessionData = JSON.parse(decryptedObject)
 
-            const isAuthenticated = sessionData.Token;
-            const isVerified = sessionData.isTwoFactorVerified;
-            const verifiedBy = sessionData.verifiedBy;
+        //     const isAuthenticated = sessionData.Token;
+        //     const isVerified = sessionData.isTwoFactorVerified;
+        //     const verifiedBy = sessionData.verifiedBy;
 
-            if(!isAuthenticated && !isVerified) {
-                this.$router.push('/login');
-            } else if(isAuthenticated && !isVerified) {
-                verifiedBy === 'email' ? this.$router.push('/authenticator/validate/email') :this.$router.push('/authenticator/validate');
-            }
-        }
+        //     if(!isAuthenticated && !isVerified) {
+        //         this.$router.push('/login');
+        //     } else if(isAuthenticated && !isVerified) {
+        //         verifiedBy === 'email' ? this.$router.push('/authenticator/validate/email') :this.$router.push('/authenticator/validate');
+        //     }
+        // }
         // const isAuthenticated = sessionStorage.getItem('Token');
         // const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
 
@@ -369,7 +370,7 @@ import moment from 'moment';
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

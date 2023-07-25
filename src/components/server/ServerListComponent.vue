@@ -83,6 +83,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 export default {
     data() {
         return {
@@ -114,7 +115,7 @@ export default {
         // get all data listings
         getListingData() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/server', {
+            axios.get(this.$api + '/server', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

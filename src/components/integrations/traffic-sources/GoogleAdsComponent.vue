@@ -13,7 +13,7 @@
                         <span>Google Ads Integration</span>
 
                         <v-spacer />
-                        <v-btn @click.prevent="getAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="!restrictUser">
+                        <v-btn @click.prevent="fetchAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="!restrictUser">
                             <img src="/assets/img/icons/google-ads.svg" class="add-width mr-2">
                             <span class="btn-inner--text">Sync Google Accounts</span>
                         </v-btn>
@@ -178,6 +178,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Field, Form } from 'vee-validate';
 export default {
@@ -239,9 +240,9 @@ export default {
             window.$('#metricsModel').modal('hide');
         },
         // get access token
-        getAccessToken() {
+        fetchAccessToken() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/googleAd/getAccessToken', {
+            axios.get(this.$api + '/settings/googleAd/getAccessToken', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -310,7 +311,7 @@ export default {
         // get all customer data
         getCustomerAccounts() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/googleAds', {
+            axios.get(this.$api + '/settings/googleAds', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -376,7 +377,7 @@ export default {
         deleteCustomer(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/settings/googleAds/' + id, {
+                axios.delete(this.$api + '/settings/googleAds/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken(),
@@ -455,7 +456,7 @@ export default {
             let formData = new FormData();
             formData.append('id', this.editedModal.id);
             formData.append('currency_conversion_check', this.editedModal.currency_conversion_check);
-            this.axios.post(this.$api + '/settings/googleAd/googleCurrencyConverstionCheck', formData, {
+            axios.post(this.$api + '/settings/googleAd/googleCurrencyConverstionCheck', formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -518,7 +519,7 @@ export default {
                 formData.append('customerId', id);
                 formData.append('manager_id', manager_id);
                 formData.append('token_id', token_id);
-                this.axios.post(this.$api + '/settings/googleAds', formData, {
+                axios.post(this.$api + '/settings/googleAds', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken(),

@@ -228,6 +228,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 export default {
@@ -323,7 +324,7 @@ export default {
         // get data center vps listings data
         getDatacenterVpcManagementSystemReport() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/management_system/residentialvps', {
+            axios.get(this.$api + '/management_system/residentialvps', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -440,7 +441,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/management_system/residentialvps/' + id, {
+                axios.delete(this.$api + '/management_system/residentialvps/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -516,7 +517,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('selectedRecord', JSON.stringify(multipleRow));
-                this.axios.post(this.$api + '/management_system/residentialvps/deleteMutipleRecord', formData, {
+                axios.post(this.$api + '/management_system/residentialvps/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -599,7 +600,7 @@ export default {
             formData.append('notes', this.activity.notes);
             this.activityType != 'Create' && formData.append('_method', 'PUT');
             const postUrl = this.activityType == 'Create' ? '/management_system/residentialvps' : `/management_system/residentialvps/${this.activity.id}`
-            this.axios.post(`${this.$api}${postUrl}`, formData, {
+            axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -649,7 +650,7 @@ export default {
         },
         // downloading csv
         downloadCsv() {
-            this.axios.post(this.$api + '/settings/downloadfile', {
+            axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'datacenterVpcManagementSystem'
             }, {
                 headers: {
@@ -689,7 +690,7 @@ export default {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('file', this.selectedFile);
-            this.axios.post(this.$api + '/management_system/residentialvps/importLocalCSV', formData, {
+            axios.post(this.$api + '/management_system/residentialvps/importLocalCSV', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: this.getAccessToken()

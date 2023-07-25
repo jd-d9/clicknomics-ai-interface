@@ -131,7 +131,7 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <form @submit="importCsv">
+                    <form @submit.prevent="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
@@ -156,6 +156,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 import mixin from '../../mixin.js'
@@ -276,7 +277,7 @@ export default {
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -353,7 +354,7 @@ export default {
         // delete card payment list 
         deleteData(id) {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/accounting/creditCardPayments/' + id, {
+            axios.delete(this.$api + '/accounting/creditCardPayments/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -420,7 +421,7 @@ export default {
         // downloading csv
         downloadCsv() {
             // /admin/img/doc/ipm-credit-card-payment-demo.csv
-            this.axios.post(this.$api + '/settings/downloadfile', {
+            axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'creditCardPayments'
             }, {
                 headers: {
@@ -486,7 +487,7 @@ export default {
         // choose file and import csv
         importCsv() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/creditCardPayments/importCreditCardPayment', {
+            axios.post(this.$api + '/accounting/creditCardPayments/importCreditCardPayment', {
                 file: this.selectedFile
             }, {
                 headers: {

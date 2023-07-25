@@ -74,7 +74,7 @@
 
 <script>
 import moment from 'moment';
-
+import axios from '@axios';
 export default {
     data() {
         return {
@@ -168,7 +168,7 @@ export default {
             // }
             formData.append('reportRange', 'Today');
 
-            this.axios.get(this.$api + `/realTimeReport?size=${itemsPerPage}&page=${page}&reportRange=Today`,{
+            axios.get(this.$api + `/realTimeReport?size=${itemsPerPage}&page=${page}&reportRange=Today`,{
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

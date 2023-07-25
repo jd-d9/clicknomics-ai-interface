@@ -74,6 +74,7 @@
 <script>
     import * as yup from 'yup';
     import { Form, Field, ErrorMessage } from 'vee-validate';
+    import axios from '@axios';
     export default {
         components: {
             Form, Field, ErrorMessage
@@ -121,11 +122,11 @@
             // check validation and signin user
             submitAndAuthenticateUser() {
                 this.showLoader = true;
-                this.axios.get(this.$api_main + '/sanctum/csrf-cookie').then(res => {
+                axios.get(this.$api_main + '/sanctum/csrf-cookie').then(res => {
                     this.backendErrorMessage = '';
                     this.multipleErrors = [];
                     console.log(res, '212121')
-                    this.axios.post(this.$api + '/login', {
+                    axios.post(this.$api + '/login', {
                         email: this.userEmail,
                         password: this.userPassword
                     })
@@ -212,3 +213,4 @@
         }
     }
 </script>
+../../plugins/axios.js

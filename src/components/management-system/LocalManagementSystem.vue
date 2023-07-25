@@ -214,6 +214,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 export default {
@@ -336,7 +337,7 @@ export default {
         // get management system data
         getLocalManagementSystemReport() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/management_system/local', {
+            axios.get(this.$api + '/management_system/local', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -400,7 +401,7 @@ export default {
         // get and set country code
         getAndSetCountry() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/countries', {
+            axios.get(this.$api + '/settings/countries', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -497,7 +498,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/management_system/local/' + id, {
+                axios.delete(this.$api + '/management_system/local/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -573,7 +574,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('selectedRecord', JSON.stringify(multipleRow));
-                this.axios.post(this.$api + '/management_system/local/deleteMutipleRecord', formData, {
+                axios.post(this.$api + '/management_system/local/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -657,7 +658,7 @@ export default {
             formData.append('notes', this.activity.notes);
             this.activityType != 'Create' && formData.append('_method', 'PUT');
             const postUrl = this.activityType == 'Create' ? '/management_system/local' : `/management_system/local/${this.activity.id}`
-            this.axios.post(`${this.$api}${postUrl}`, formData, {
+            axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -707,7 +708,7 @@ export default {
         },
         // downloading csv
         downloadCsv() {
-            this.axios.post(this.$api + '/settings/downloadfile', {
+            axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'localmanagementsystem'
             }, {
                 headers: {
@@ -775,7 +776,7 @@ export default {
             this.showLoader = true;
             let formData = new FormData();
             formData.append('file', this.selectedFile);
-            this.axios.post(this.$api + '/management_system/local/importLocalCSV', formData, {
+            axios.post(this.$api + '/management_system/local/importLocalCSV', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: this.getAccessToken()

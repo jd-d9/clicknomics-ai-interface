@@ -97,6 +97,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Field, Form } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -175,7 +176,7 @@ export default {
             formData.append('grand_total', this.grandtotal);
             !this.toggleElement && formData.append('_method', 'PUT');
             const url = this.toggleElement ? this.$api + '/bank_account/onesscorp' : this.$api + '/bank_account/onesscorp/' + this.$route.params.id;
-            this.axios.post(url, formData, {
+            axios.post(url, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -225,7 +226,7 @@ export default {
         // get ipm chase payment data for update
         getDataForEdit() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/bank_account/onesscorp/' + this.$route.params.id, {
+            axios.get(this.$api + '/bank_account/onesscorp/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),

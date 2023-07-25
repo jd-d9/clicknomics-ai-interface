@@ -193,6 +193,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 export default {
@@ -321,7 +322,7 @@ export default {
         // get listing data
         getListings() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/emailNotification', {
+            axios.get(this.$api + '/settings/emailNotification', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -426,7 +427,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/settings/emailNotification/' + id, {
+                axios.delete(this.$api + '/settings/emailNotification/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -502,7 +503,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('id', JSON.stringify(multipleRow));
-                this.axios.post(this.$api + '/settings/emailNotification/deleteMutipleRows', formData, {
+                axios.post(this.$api + '/settings/emailNotification/deleteMutipleRows', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -590,7 +591,7 @@ export default {
             formData.append('speed_test_report', this.activity.speed_test_report);
             this.activityType != 'Add' && formData.append('_method', 'PUT');
             const postUrl = this.activityType == 'Add' ? '/settings/emailNotification' : `/settings/emailNotification/${this.activity.id}`
-            this.axios.post(`${this.$api}${postUrl}`, formData, {
+            axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

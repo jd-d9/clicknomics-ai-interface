@@ -146,7 +146,7 @@
 </template>
 
 <script>
-// import Bus from 'path/of/bus';
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 import moment from 'moment';
@@ -211,7 +211,7 @@ export default {
         // get domain listing
         getDomainListing() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/domain', {
+            axios.get(this.$api + '/settings/domain', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -275,7 +275,7 @@ export default {
         // delete network name
         deleteAccount() {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/settings/domain/' + this.accountIdToDelete, {
+            axios.delete(this.$api + '/settings/domain/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

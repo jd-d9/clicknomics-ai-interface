@@ -91,6 +91,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import moment from 'moment';
 export default {
     // props: ['cloudwaysList'],
@@ -131,7 +132,7 @@ export default {
         // get cloudways listing data
         getCloudwaysListing() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/cloudways', {
+            axios.get(this.$api + '/settings/cloudways', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -195,7 +196,7 @@ export default {
         // delete cloudway data
         deleteAccount() {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/settings/cloudways/' + this.accountIdToDelete, {
+            axios.delete(this.$api + '/settings/cloudways/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

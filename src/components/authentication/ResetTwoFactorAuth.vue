@@ -51,6 +51,7 @@
 
 <script>
     import { useRoute } from 'vue-router';
+    import axios from '@axios';
     export default {
         data() {
             return {
@@ -66,7 +67,7 @@
             // send token and reset authentication
             resetTwoFactorAuth() {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/authenticator/reset', {
+                axios.post(this.$api + '/authenticator/reset', {
                     token: this.route.query.token,
                 }, {
                     headers: {

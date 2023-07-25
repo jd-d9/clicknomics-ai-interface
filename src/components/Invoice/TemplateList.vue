@@ -118,6 +118,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 export default {
     data() {
         return {
@@ -176,7 +177,7 @@ export default {
         // get templates
         getTemplateData() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/invoices/invoiceTemplate', {
+            axios.get(this.$api + '/accounting/invoices/invoiceTemplate', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -240,7 +241,7 @@ export default {
         // deleting template
         deleteTemplate(id) {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/invoices/deleteInvoiceTemplate', {  // must use post method for this(from backend side)
+            axios.post(this.$api + '/accounting/invoices/deleteInvoiceTemplate', {  // must use post method for this(from backend side)
                 id: id,
             }, {
                 headers: {
@@ -311,7 +312,7 @@ export default {
         editTemplateName(id) {
             this.openModal();
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/invoices/invoicetemplateShow/' + id, {
+            axios.get(this.$api + '/accounting/invoices/invoicetemplateShow/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -374,7 +375,7 @@ export default {
         // update template name
         updateTemplateName() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/invoices/updateInvoiceTemplateName', {
+            axios.post(this.$api + '/accounting/invoices/updateInvoiceTemplateName', {
                 id: this.selectedTemplateId,
                 template_name: this.selectedTemplateName
             }, {

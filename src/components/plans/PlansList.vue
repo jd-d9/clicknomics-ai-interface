@@ -74,13 +74,10 @@
 </template>
 
 <script>
+import axios from '@axios';
 export default {
     data() {
         return {
-            // images: {
-            //     edit: require('/assets/img/icons/edit.svg'),
-            //     bin: require('/assets/img/icons/bin.svg'),
-            // },
             headers: [
                 { title: 'ID', key: 'id', align: 'start' },
                 { title: 'Name', key: 'name' },
@@ -115,7 +112,7 @@ export default {
         // get all plans
         getPlans() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/plan', {
+            axios.get(this.$api + '/settings/plan', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -205,7 +202,7 @@ export default {
         // delete plan
         deletePlan(id) {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/settings/plan/' + id, {
+            axios.delete(this.$api + '/settings/plan/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

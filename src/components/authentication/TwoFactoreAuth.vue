@@ -109,6 +109,7 @@
 <script>
     import * as yup from 'yup';
     import { Form, Field } from 'vee-validate';
+    import axios from '@axios';
     export default {
         components: {
             Form, Field
@@ -118,6 +119,8 @@
                 showLoader: false,
                 displayQrCode: '',
                 authCode: '',
+                email: '',
+                sessionData: '',
                 key: '',
                 verifiedBy: '',
                 rememberVerification: 1,
@@ -144,7 +147,7 @@
             // get and show QR code
             showAuthQrcode() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/authenticator/getQrcode', {
+                axios.get(this.$api + '/authenticator/getQrcode', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -166,7 +169,7 @@
             // reset 2factor authentication
             resetTwoFactor() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/authenticator/reset2FAEmail', {
+                axios.get(this.$api + '/authenticator/reset2FAEmail', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -209,12 +212,18 @@
             },
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
+                let userSession = localStorage.getItem('user-session')
+                if(userSession){
+                    const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
+                    this.sessionData = JSON.parse(decryptedObject)
+                    this.email = this.sessionData.Email
+                }
                 this.showLoader = true;
-                this.axios.post(this.$api + '/authenticator/validateCode', {
+                axios.post(this.$api + '/authenticator/validateCode', {
                     google2fa_secret: this.authCode,
                     key: this.key,
                     remember_2fa: this.rememberVerification,
-                    email: sessionStorage.getItem('Email'),
+                    email: this.email,
                 }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -229,7 +238,10 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        sessionStorage.setItem('isTwoFactorVerified', true);
+                        this.sessionData.isTwoFactorVerified = true;
+                        const encryptedData = this.$CryptoJS.AES.encrypt(JSON.stringify(this.sessionData), "Clicknomics-AI").toString()
+                        localStorage.setItem('user-session',encryptedData)
+
                         this.showLoader = false;
                         this.$router.push('/dashboard');
                         this.backendErrorMessage = '';
@@ -265,14 +277,14 @@
             }
         },
         mounted() {
-            const isAuthenticated = sessionStorage.getItem('Token');
-            const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
+            // const isAuthenticated = sessionStorage.getItem('Token');
+            // const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
 
-            if(isAuthenticated && isVerified) {
-                this.$router.push('/dashboard');
-            } else if(!isAuthenticated && !isVerified) {
-                this.$router.push('/login');
-            }
+            // if(isAuthenticated && isVerified) {
+            //     this.$router.push('/dashboard');
+            // } else if(!isAuthenticated && !isVerified) {
+            //     this.$router.push('/login');
+            // }
             this.showAuthQrcode();
         }
     }
