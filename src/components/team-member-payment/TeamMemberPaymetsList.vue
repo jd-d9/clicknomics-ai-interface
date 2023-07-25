@@ -37,7 +37,7 @@
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="viewPermission == '1'">
                     <v-card class="card_design mb-4">
                         <v-card-title>
                             <v-row>
@@ -86,12 +86,13 @@
                                                 <v-select clearable variant="outlined" placeholder="From Account Filter" :items="toAccountFilter" v-model="toAccount" @update:modelValue="getTeamMemberPaymentList"  ></v-select>
                                             </v-col>                                            
                                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
+                                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="options.search"/>
                                             </v-col>
                                         </v-row> 
 
                                         <!-- data table component -->
-                                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="teamMemberPaymentList" :itemsPerPage="itemsPerPage">
+                                        <v-data-table-server class="table-hover-class mt-4" :headers="headers" :items="teamMemberPaymentList.data" v-model:options="options" :items-length="teamMemberPaymentList.total" v-model:items-per-page="teamMemberPaymentList.per_page" :search="search"  >
+
                                             <template v-slot:[`item.id`]="{ item }">
                                                 {{item.selectable.id ? item.selectable.id : '-'}}
                                             </template>
@@ -137,7 +138,7 @@
                                                     <td></td>
                                                 </tr>
                                             </template>
-                                        </v-data-table>
+                                        </v-data-table-server>
                                     </v-window-item>
 
                                     <v-window-item value="reports">
@@ -298,17 +299,20 @@ import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
+import mixin from '../../mixin'
 export default {
     components: {
         Form, 
         Field,
         DateRangePicker
     },
+    mixins:[mixin],
     data() {
         return {
             showLoader: false,
             teamMemberPaymentList: [],
             teamMemberPaymentFilter: [],
+            options: {},
             permissions: {},
             search: '',
             headers: [
@@ -334,9 +338,10 @@ export default {
             searchInput: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
             selectedRangeTwo: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
-            tabteampayment: null,
+            tabteampayment: 'payments',
             backendErrorMessage: '',
             multipleErrors: [],
+            viewPermission:'1'
         }
     },
     computed: {
@@ -356,12 +361,20 @@ export default {
             return this.teamMemberPaymentList.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         }
     },
+    watch:{
+        options: {
+            handler() {
+                this.getTeamMemberPaymentList()
+            },
+            deep:true
+        },
+    },
     mounted() {
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
         });
-        this.getTeamMemberPaymentList();
+        // this.getTeamMemberPaymentList();
     },
     methods: {
         // open/close import csv modal
@@ -411,6 +424,7 @@ export default {
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/accounting/teamMemberPayment';
+            const { page,itemsPerPage,search } = this.options;
             if(this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
@@ -421,6 +435,12 @@ export default {
             if(this.toAccount) {
                 queryString.set('toAccount', this.toAccount)
             }
+            if(search) {
+                queryString.set('search', search)
+            }
+            queryString.set('perPage', itemsPerPage)
+            queryString.set('page', page)
+
             const url = `${ajaxUrl}?${queryString.toString()}`;
             this.axios.get(url, {
                 headers: {
@@ -431,9 +451,10 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const allData = response.data;
-                    this.teamMemberPaymentList = allData.data.data;
+                    this.teamMemberPaymentList = allData.data;
                     this.teamMemberPaymentFilter = allData.data.data;
                     this.permissions = allData.permission;
+                    this.viewPermission = allData.permission.view ? allData.permission.view : '1'
                     this.fromAccountFilter = [];
                     allData.allfromAccount.forEach((val) => {
                         this.fromAccountFilter.push({
@@ -495,6 +516,7 @@ export default {
                         });
                     }
                 }
+                this.viewPermission = '0'
                 this.showLoader = false;
             });
         },

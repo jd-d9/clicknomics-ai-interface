@@ -158,10 +158,12 @@
 <script>
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
+import mixin from '../../mixin.js'
 export default {
     components: {
         DateRangePicker,
     },
+    mixins:[mixin],
     data() {
         let today = new Date();
         let startDate = new Date(today.getFullYear(), today.getMonth(), 1);
