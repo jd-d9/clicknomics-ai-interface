@@ -2,7 +2,7 @@
     <div>
         <!-- navbar & sidebar component -->
         <nav-and-side-bar :updatingUserDetails="profileImageUpdate" @move-contents="moveRouteContents" v-if="toggleClass"></nav-and-side-bar>
-        <div class="height_spacing"></div>
+        <div class="height_spacing" v-if="toggleClass"></div>
         <router-view :class="{'padding-left': true, 'toggle-padding': !toggleContents, 'all-contents': toggleClass}" @updating-profile-details="updatingUserProfileDetails">
         </router-view>  
     </div>
