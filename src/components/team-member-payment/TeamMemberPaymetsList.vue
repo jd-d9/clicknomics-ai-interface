@@ -425,7 +425,7 @@ export default {
             this.axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -504,7 +504,7 @@ export default {
             this.axios.delete(this.$api + '/accounting/teamMemberPayment/' + id, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -574,7 +574,7 @@ export default {
             }, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -628,7 +628,7 @@ export default {
             }, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -694,7 +694,7 @@ export default {
             }, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -757,7 +757,7 @@ export default {
             }, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 },
                 responseType: 'blob',
             })
@@ -823,7 +823,7 @@ export default {
             }, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {

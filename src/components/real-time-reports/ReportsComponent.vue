@@ -289,7 +289,7 @@ export default {
             this.axios.get(this.$api + `/realTimeReports/networkAdsReport?size=${itemsPerPage}&page=${page}`,{
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {

@@ -358,7 +358,7 @@
                 this.axios.get(this.$api + '/firstTimeLoginUser', {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -376,7 +376,7 @@
                 this.axios.get(this.$api + '/settings/menu', {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -482,7 +482,7 @@
                 this.axios.post(this.$api + '/logout', bodyParameters, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -517,7 +517,7 @@
                 this.axios.get(this.$api + '/settings/getprofileuser', {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {

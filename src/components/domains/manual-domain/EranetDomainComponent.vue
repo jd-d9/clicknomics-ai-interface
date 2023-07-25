@@ -360,7 +360,7 @@ export default {
             this.axios.get(this.$api + '/domains/eranetDomains', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -456,7 +456,7 @@ export default {
                 this.axios.delete(this.$api + '/domains/eranetDomains/' + id, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -546,7 +546,7 @@ export default {
             this.axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -618,7 +618,7 @@ export default {
             }, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 },
                 responseType: 'blob',
             })
@@ -684,7 +684,7 @@ export default {
             }, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {

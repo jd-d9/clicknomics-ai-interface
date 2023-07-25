@@ -57,7 +57,7 @@
                                                     <p class="mb-0 text-center text-size">Per {{displayInterval(plan.plan_detail)}}</p>
                                                     <hr class="my-4 dropdown-divider">
                                                     <div class="plan-content">
-                                                        <p>{{plan.description}}</p>
+                                                        <div v-html="plan.description"></div>
                                                         <p>{{plan.user_limit}}</p>
                                                         <router-link to='' class="btn btn-primary mt-4 btn-block btn_animated" @click="selectPlan(plan.id)">Select Plan</router-link>
                                                     </div>
@@ -78,7 +78,7 @@
                                                     <p class="mb-0 text-center text-size">Per {{displayInterval(plan.plan_detail)}}</p>
                                                     <hr class="my-4 dropdown-divider">
                                                     <div class="plan-content">
-                                                        <p>{{plan.description}}</p>
+                                                        <div v-html="plan.description"></div>
                                                         <p>{{plan.user_limit}}</p>
                                                         <router-link to='' class="btn btn-primary mt-4 btn-block btn_animated" @click="selectPlan(plan.id)">Select Plan</router-link>
                                                     </div>

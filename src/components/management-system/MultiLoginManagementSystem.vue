@@ -199,7 +199,6 @@
                                     <label class="form-control-label">IP Provider</label>
                                     <Field type="text" id="input-username" name="IpProvider" :class="{'form-control': true , 'border-red-600':errors.IpProvider }" v-model="activity.ip_provider" placeholder="IP Provider"/>
                                     <span class="text-red-600" v-if="errors.IpProvider">IP Provider Can not be empty</span>
-                                    <!-- <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span> -->
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
@@ -328,7 +327,7 @@ export default {
             this.axios.get(this.$api + '/management_system/multilogin', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -438,7 +437,7 @@ export default {
                 this.axios.delete(this.$api + '/management_system/multilogin/' + id, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -514,7 +513,7 @@ export default {
                 this.axios.post(this.$api + '/management_system/multilogin/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -591,7 +590,7 @@ export default {
             this.axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -644,7 +643,7 @@ export default {
             }, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 },
                 responseType: 'blob',
             })
@@ -710,7 +709,7 @@ export default {
             this.axios.post(this.$api + '/management_system/multilogin/importLocalCSV', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {

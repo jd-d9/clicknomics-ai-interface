@@ -355,7 +355,7 @@ export default {
                 this.axios.get(url, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -473,7 +473,7 @@ export default {
             this.axios.post(this.$api + '/archivedReports/addManagementTypeToMicrosoftAccount', formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -548,7 +548,7 @@ export default {
                 this.axios.get(url, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {

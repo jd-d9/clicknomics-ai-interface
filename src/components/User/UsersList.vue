@@ -107,7 +107,7 @@
                 this.axios.get(this.$api + '/settings/user', {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -190,7 +190,7 @@
                 this.axios.delete(this.$api + '/settings/user/' + id, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
