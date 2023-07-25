@@ -1811,7 +1811,7 @@ a.bg-light:hover,a.bg-light:focus,button.bg-light:hover,button.bg-light:focus{ba
 .bg-dark{background-color:#212529 !important;}
 a.bg-dark:hover,a.bg-dark:focus,button.bg-dark:hover,button.bg-dark:focus{background-color:#0a0c0d !important;}
 .bg-default{background-color:#ECEEF1 !important;}
-.main-content-height {min-height: 100vh;}
+/* .main-content-height {min-height: 100vh;} */
 a.bg-default:hover,a.bg-default:focus,button.bg-default:hover,button.bg-default:focus{background-color:#0b1526 !important;}
 .bg-white{background-color:#fff !important;}
 a.bg-white:hover,a.bg-white:focus,button.bg-white:hover,button.bg-white:focus{background-color:#e6e6e6 !important;}
