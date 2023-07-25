@@ -158,9 +158,12 @@
 <script>
     import introJs from 'intro.js';
     import 'intro.js/minified/introjs.min.css';
+    import mixin from '../../mixin.js';
+    
     export default {
         emits: ['move-containts'],
         props: ['updatingUserDetails'],
+        mixins:[mixin],
         data() {
             return {
                 hideShowSidebar: false,
@@ -267,7 +270,7 @@
                 this.axios.get(this.$api + '/firstTimeLoginUser', {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -285,7 +288,7 @@
                 this.axios.get(this.$api + '/settings/menu', {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -373,7 +376,7 @@
                 this.axios.post(this.$api + '/logout', bodyParameters, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -408,7 +411,7 @@
                 this.axios.get(this.$api + '/settings/getprofileuser', {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
