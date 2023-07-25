@@ -277,13 +277,11 @@
 
 <script>
 import DateRangePicker from './common/DateRangePicker.vue';
-import mixin from '../mixin.js';
 import moment from 'moment';
  export default {
     components: {
         DateRangePicker,
     },
-    mixins:[mixin],
     data() {
         return {
             showLoader: false,

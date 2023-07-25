@@ -244,7 +244,7 @@ export default {
             this.axios.get(this.$api + '/settings/googleAd/getAccessToken', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -313,7 +313,7 @@ export default {
             this.axios.get(this.$api + '/settings/googleAds', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -379,7 +379,7 @@ export default {
                 this.axios.delete(this.$api + '/settings/googleAds/' + id, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {
@@ -458,7 +458,7 @@ export default {
             this.axios.post(this.$api + '/settings/googleAd/googleCurrencyConverstionCheck', formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -521,7 +521,7 @@ export default {
                 this.axios.post(this.$api + '/settings/googleAds', formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {

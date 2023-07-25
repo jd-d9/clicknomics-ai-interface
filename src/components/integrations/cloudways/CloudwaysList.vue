@@ -134,7 +134,7 @@ export default {
             this.axios.get(this.$api + '/settings/cloudways', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -198,7 +198,7 @@ export default {
             this.axios.delete(this.$api + '/settings/cloudways/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {

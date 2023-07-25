@@ -178,7 +178,7 @@ export default {
             this.axios.post(url, formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -228,7 +228,7 @@ export default {
             this.axios.get(this.$api + '/bank_account/onesscorp/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {

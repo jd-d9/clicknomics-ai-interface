@@ -29,7 +29,6 @@
                         <label class="form-control-label">Email</label>
                         <Field type="email" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model.trim="userEmail"/>
                         <ErrorMessage class="text-red-600" name="Email"/>
-                        <small class="backend-error" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                     </v-col>    
 
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -158,7 +157,7 @@ export default {
                 }, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {
@@ -216,7 +215,7 @@ export default {
                 }, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -267,7 +266,7 @@ export default {
             this.axios.get(this.$api + '/settings/subscribeUser/' + id, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -328,7 +327,7 @@ export default {
         //     this.axios.get(this.$api + '/settings/countries', {
         //         headers: {
         //             "Content-Type": "application/json",
-        //             Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+        //             Authorization: this.getAccessToken(),
         //         }
         //     })
         //     .then(response => {

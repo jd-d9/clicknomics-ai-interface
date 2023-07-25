@@ -35,7 +35,6 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Name</label>
                                     <input type="text" name="Name" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Name" v-model="name"/>
-                                    <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -55,7 +54,8 @@
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Description</label>
-                                    <textarea rows="3" name="Description" placeholder="Description" :class="{'form-control': true}" v-model="description"></textarea>
+                                    <jodit-editor :class="{'form-control': true}" v-model="description" v-if="toggleEditor"/>
+                                    <!-- <textarea rows="3" name="Description" placeholder="Description" :class="{'form-control': true}" v-model="description"></textarea> -->
                                 </v-col>
                             </v-row>
 
@@ -138,7 +138,6 @@
                         <label class="form-control-label">Name</label>
                         <Field type="text" name="Name" id="input-username" :class="{'form-control': true , 'border-red-600':errors.Name}" step=".01" placeholder="Name" v-model="name"/>
                         <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
-                        <span class="text-red-600" v-if="backendErrorMessage">{{backendErrorMessage}}</span>
                     </div>
                 </div>
                 <div class="col-lg-4 py-0">
@@ -240,10 +239,19 @@
 <script>
 // import * as yup from 'yup';
 // import { Form, Field } from 'vee-validate';
+import { JoditEditor } from 'jodit-vue';
+import 'jodit/build/jodit.min.css';
 export default {
-    // components: {
-    //     Form, Field
-    // },
+    components: {
+        // Form, 
+        // Field,
+        JoditEditor,
+    },
+    watch: {
+        description(val) {
+            console.log(val, '-- val --')
+        }
+    },
     data() {
         return {
             showLoader: false,
@@ -272,6 +280,7 @@ export default {
             ],
             backendErrorMessage: '',
             multipleErrors: [],
+            toggleEditor: false,
         }
     },
     mounted() {
@@ -307,19 +316,22 @@ export default {
             this.axios.get(this.$api + '/settings/plan/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
                 if(response.data.success) {
                     console.log(response.data, 'response.data---edit');
                     const Data = response.data.data;
-                    this.addMultipleField = Data.plan_data;
+                    this.addMultipleField = Data.plan_detail;
                     this.name = Data.name;
                     this.googleAccountLimit = Data.google_account_limit;
                     this.microsoftAccountLimit = Data.microsoft_account_limit;
                     this.networkAccountLimit = Data.network_account_limit;
-                    this.description = Data.description;
+                    setTimeout(() => {
+                        this.toggleEditor = true;
+                        this.description = Data.description;
+                    }, 100)
                     this.showLoader = false;
                 }else {
                     this.$toast.open({
@@ -412,7 +424,7 @@ export default {
                 this.axios.post(this.$api + '/settings/plan/' + this.$route.params.id, formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -468,7 +480,7 @@ export default {
                 this.axios.post(this.$api + '/settings/plan', formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {

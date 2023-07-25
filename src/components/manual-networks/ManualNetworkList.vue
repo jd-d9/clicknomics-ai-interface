@@ -282,7 +282,7 @@ export default {
             this.axios.get(this.$api + '/network/manualNetworks', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -358,7 +358,7 @@ export default {
             this.axios.post(`${this.$api}/${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -447,7 +447,7 @@ export default {
             this.axios.delete(this.$api + '/network/manualNetworks/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {

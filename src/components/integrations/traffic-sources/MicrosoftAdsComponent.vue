@@ -178,7 +178,7 @@ export default {
             this.axios.get(this.$api + '/settings/microsoftAd/getAccessToken', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -246,7 +246,7 @@ export default {
             this.axios.get(this.$api + '/settings/microsoftAds', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -313,7 +313,7 @@ export default {
                 this.axios.delete(this.$api + '/settings/microsoftAds/' + id, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {
@@ -391,7 +391,7 @@ export default {
             this.axios.post(this.$api + '/settings/microsoftAd/microsoftCurrencyConverstionCheck', formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {

@@ -82,8 +82,9 @@
                 <v-row v-if="toggleComponent">
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                         <label class="form-control-label">Password</label>
-                        <Field type="password" id="input-username" name="Password" :class="{'form-control': true, 'border-red-600': errors.Password}" placeholder="Password" v-model.trim="userPassword"/>
-                        <span class="text-red-600" v-if="errors.Password">Password is a required field</span>
+                        <Field type="password" id="input-username" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password || passwordValidation}" placeholder="Password" v-model="userPassword" @keyup="validatePassword"/>
+                        <ErrorMessage class="text-red-600" name="Password" v-if="!passwordValidation"/>
+                        <span class="text-red-600" v-if="passwordValidation">{{passwordValidation}}</span>
                     </v-col>
 
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -106,7 +107,7 @@
                 <v-row>
                     <v-col cols="12" sm="12" md="12" lg="12">
                         <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">{{toggleComponent ? 'Save' : 'Update'}}</v-btn>    
-                        <v-btn type="reset" v-if="toggleComponent" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-backup-restore">Reset</v-btn>    
+                        <v-btn type="reset" v-if="toggleComponent" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-backup-restore" @click="passwordValidation = ''">Reset</v-btn>    
                     </v-col>
                 </v-row>
             </Form>                    
@@ -142,6 +143,7 @@ export default {
             backendErrorMessage: '',
             multipleErrors: [],
             breadCrumbMessage: 'Create',
+            passwordValidation: '',
         }
     },
     mounted() {
@@ -174,6 +176,15 @@ export default {
         },
     },
     methods:{
+        // password validation
+        validatePassword() {
+            const validPassword = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
+            if(!this.userPassword.match(validPassword)) {
+                this.passwordValidation = 'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
+            }else {
+                this.passwordValidation = '';
+            }
+        },
         // save and update user
         manageUser() {
             // update user
@@ -193,7 +204,7 @@ export default {
                 }, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {
@@ -239,63 +250,68 @@ export default {
             }
             // create user
             else {
-                this.showLoader = true;
-                this.axios.post(this.$api + '/settings/user', {
-                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
-                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
-                    email: this.userEmail,
-                    password: this.userPassword,
-                    role_id: this.roleId,
-                    status: this.status,
-                    company_name: this.companyName,
-                    // phone_number: this.userContact,
-                    // country_code: this.selectedCountry,
-                }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
-                    }
-                })
-                .then(response => {
-                    if(response.data.success) {
-                        this.$router.push('/settings/user');
-                        this.showLoader = false;
-                        this.backendErrorMessage = '';
-                        this.multipleErrors = [];
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
-                    }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if(error.response.data.message) {
-                        this.backendErrorMessage = error.response.data.message;
-                    }
-                    if(error.response.data.error) {
-                        this.backendErrorMessage = error.response.data.error;
-                    }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.backendErrorMessage = error.response.data.errors[0];
-                        }else if(error.response.data.errors.length == 0){
-                            this.backendErrorMessage = '';
-                        }else {
-                            this.multipleErrors = error.response.data.errors;
+                if(this.passwordValidation) {
+                    return false;
+                }
+                else {
+                    this.showLoader = true;
+                    this.axios.post(this.$api + '/settings/user', {
+                        first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                        last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
+                        email: this.userEmail,
+                        password: this.userPassword,
+                        role_id: this.roleId,
+                        status: this.status,
+                        company_name: this.companyName,
+                        // phone_number: this.userContact,
+                        // country_code: this.selectedCountry,
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: this.getAccessToken()
                         }
-                    }
-                    this.showLoader = false;
-                });
+                    })
+                    .then(response => {
+                        if(response.data.success) {
+                            this.$router.push('/settings/user');
+                            this.showLoader = false;
+                            this.backendErrorMessage = '';
+                            this.multipleErrors = [];
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                        }else {
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                            this.showLoader = false;
+                        }
+                    })
+                    .catch(error => {
+                        if(error.response.data.message) {
+                            this.backendErrorMessage = error.response.data.message;
+                        }
+                        if(error.response.data.error) {
+                            this.backendErrorMessage = error.response.data.error;
+                        }
+                        if(error.response.data.errors) {
+                            if(error.response.data.errors.length == 1) {
+                                this.backendErrorMessage = error.response.data.errors[0];
+                            }else if(error.response.data.errors.length == 0){
+                                this.backendErrorMessage = '';
+                            }else {
+                                this.multipleErrors = error.response.data.errors;
+                            }
+                        }
+                        this.showLoader = false;
+                    });
+                }
             }
         },
         // get all user data
@@ -304,7 +320,7 @@ export default {
             this.axios.get(this.$api + '/settings/role', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -333,7 +349,7 @@ export default {
             this.axios.get(this.$api + '/settings/user/' + id, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -404,7 +420,7 @@ export default {
         //     this.axios.get(this.$api + '/settings/countries', {
         //         headers: {
         //             "Content-Type": "application/json",
-        //             Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+        //             Authorization: this.getAccessToken(),
         //         }
         //     })
         //     .then(response => {

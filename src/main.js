@@ -25,6 +25,11 @@ import { VDataTableServer } from 'vuetify/labs/VDataTable'
 // bootstrap
 import 'bootstrap/dist/js/bootstrap.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// mixins
+import mixin from './mixin.js';
+// text editor
+import 'jodit/build/jodit.min.css';
+import JoditVue from 'jodit-vue';
 // components
 import LoaderComponent from './components/common/LoaderComponent.vue';
 import NavAndSideBar from './components/navbar-and-sidebar/NavAndSideBar.vue';
@@ -53,8 +58,14 @@ axios.interceptors.request.use(
   config => {
     console.log(config, 'config ----')
     const userSession = localStorage.getItem('user-session');
+    // to do
     if(userSession) {
-      // to do some code penging which add after get code of amit sir.
+      // const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
+      // let sessionData = JSON.parse(decryptedObject)
+      console.log('---- decryptedObject ----')
+      // const isAuthenticated = sessionData.Token;
+      // const isVerified = sessionData.isTwoFactorVerified;
+      // const verifiedBy = sessionData.verifiedBy;
     }
     return config;
   },
@@ -138,6 +149,8 @@ app.use(VueAxios, axios);
 app.use(ToastPlugin);
 app.use(VueCryptojs);
 app.use(vuetify);
+app.use(JoditVue);
+app.mixin(mixin);
 // css
 require('@/assets/css/argon.css');
 require('@/assets/css/style.css');

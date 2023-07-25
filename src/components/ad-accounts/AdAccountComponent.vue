@@ -333,7 +333,7 @@ export default {
             this.axios.get(this.$api + '/adsaccount', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -463,7 +463,7 @@ export default {
             this.axios.post(this.$api + '/adsaccount/' + this.item.id,  formData,{
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
