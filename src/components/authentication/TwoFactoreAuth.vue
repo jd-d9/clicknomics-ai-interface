@@ -115,9 +115,6 @@
         },
         data() {
             return {
-                // images: {
-                //     logo: require('/assets/img/brand/logo.png'),
-                // },
                 showLoader: false,
                 displayQrCode: '',
                 authCode: '',
@@ -177,12 +174,6 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.$toast.open({
-                            message: 'We have emailed you a reset 2FA link',
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
                         this.closeModal();
                         this.backendErrorMessage = '';
                         this.multipleErrors = [];

@@ -9,9 +9,13 @@
                             <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
                             <span>Dashboard</span>
                         </router-link>
+                        <router-link to="/settings/user" class="d-flex align-center">
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Users</span>
+                        </router-link>
+
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>Create User</span>
-
                         <v-spacer />
                         <v-btn to="/settings/user" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back

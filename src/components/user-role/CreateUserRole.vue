@@ -9,9 +9,13 @@
                             <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
                             <span>Dashboard</span>
                         </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Create User Roles</span>
+                        <router-link to="/settings/user_management/user_roles" class="d-flex align-center">
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>User Roles</span>
+                        </router-link>
 
+                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                        <span>Create Role</span>
                         <v-spacer />
                         <v-btn to="/settings/user_management/user_roles" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back

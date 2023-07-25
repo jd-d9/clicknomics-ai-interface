@@ -28,7 +28,7 @@
                         <!-- datatable component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networkHeaders" :items="listData" :single-expand="singleExpand" item-key="customer_id" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id}}
+                                {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
                             <template v-slot:[`item.email`]="{ item }">
                                 {{item.selectable.email ? item.selectable.email : '-' }}
@@ -143,10 +143,52 @@ export default {
                     this.listData = data.data.data;
                     this.permissions = data.permission;
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -162,7 +204,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Record deleted',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
@@ -170,22 +212,60 @@ export default {
                     this.getCloudwaysListing();
                     this.cancel();
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
         format_date(value){
             if (value) {
-                return moment(String(value)).format('YYYY-MM-DD')
+                return moment(String(value)).format('YYYY-MM-DD');
+            }else {
+                return '-';
             }
         },
     }

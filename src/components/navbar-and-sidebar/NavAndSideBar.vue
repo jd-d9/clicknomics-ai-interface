@@ -102,13 +102,13 @@
                             <v-icon color="success" >
                                 mdi-weather-night
                             </v-icon>
-                            <v-tooltip activator="parent" location="left">Switch to Dark Theme</v-tooltip>
+                            <v-tooltip activator="parent" location="left">Switch to Light Theme</v-tooltip>
                         </div>
                         <div v-else>
                             <v-icon color="white">
                                 mdi-white-balance-sunny
                             </v-icon>
-                            <v-tooltip activator="parent" location="left">Switch to Light Theme</v-tooltip>
+                            <v-tooltip activator="parent" location="left">Switch to Dark Theme</v-tooltip>
                         </div>
                     </v-btn>
                     

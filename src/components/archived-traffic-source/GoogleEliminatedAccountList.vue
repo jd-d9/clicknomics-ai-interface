@@ -22,10 +22,10 @@
 
                         <v-data-table :headers="networkHeaders" :items="linkedNewtworks" :single-expand="singleExpand" item-key="customer_id" :itemsPerPage="itemsPerPage" class="table-hover-class mt-4">
                             <template v-slot:[`item.name`]="{ item }">
-                                {{item.selectable.name}}
+                                {{item.selectable.name ? item.selectable.name : '-'}}
                             </template>
                             <template v-slot:[`item.customer_id`]="{ item }">
-                                {{item.selectable.customer_id}}
+                                {{item.selectable.customer_id ? item.selectable.customer_id : '-'}}
                             </template>
                             <template v-slot:[`item.deleted_at`]="{ item }">
                                 {{format_date(item.selectable.deleted_at)}}
@@ -84,33 +84,67 @@ export default {
     methods: {
         // get listing of all data
         getAllData() {
-                this.showLoader = true;
-                this.axios.get(this.$api + '/settings/archivedgoogleads', {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                    }
-                })
-                .then(response => {
-                    if(response.data.success) {
-                        const Data = response.data;
-                        this.linkedNewtworks = Data.data.data;
-                        this.permissions = Data.permission;
-                        this.showLoader = false;
-                    }else {
+            this.showLoader = true;
+            this.axios.get(this.$api + '/settings/archivedgoogleads', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    const Data = response.data;
+                    this.linkedNewtworks = Data.data.data;
+                    this.permissions = Data.permission;
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'success'
+                    });
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
                         this.$toast.open({
-                            message: response.data.message,
+                            message: error.response.data.errors[0],
                             position: 'top-right',
                             duration: '5000',
-                            type: 'success'
+                            type: 'error'
                         });
-                        this.showLoader = false;
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
                     }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
         // restore account
         restoreGoogleAdsAccount(id) {
@@ -139,7 +173,7 @@ export default {
                             message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
-                            type: 'success'
+                            type: 'error'
                         });
                         this.showLoader = false;
                     }
@@ -187,7 +221,10 @@ export default {
         // format date
         format_date(value){
             if (value) {
-                return moment(String(value)).format('YYYY-MM-DD')
+                return moment(String(value)).format('YYYY-MM-DD');
+            }
+            else {
+                return '-';
             }
         },
     }

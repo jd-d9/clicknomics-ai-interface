@@ -65,7 +65,7 @@
                             </template>
                             <template v-slot:[`item.expire_date`]="{ item }">
                                 <div class="text-ellipsis w-150">
-                                    {{item.selectable.expire_date ? format_date(item.selectable.expire_date) : '-'}}
+                                    {{format_date(item.selectable.expire_date)}}
                                 </div>
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
@@ -144,8 +144,8 @@
                             <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Amount :</span> {{viewModalDetail.amount}}
-                        </p> <!--  {{viewModalDetail.amount | toCurrency}}  -->
+                            <span class="font-weight-bold"> Amount :</span> {{$filters.toCurrency(viewModalDetail.amount)}}
+                        </p>
                         <p>
                             <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description}}
                         </p>
@@ -209,6 +209,14 @@
                                         <v-select name="Status" :class="{'form-control autocomplete': true , 'border-red-600':errors.Status}" :items="accountStatusList" v-model="activity.status"></v-select>
                                     </Field>
                                     <ErrorMessage class="text-red-600" name="Status"/>
+                                </v-col>
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
                             </v-row>
                         </div>
@@ -290,6 +298,8 @@ export default {
             ],
             showImportIcon: true,
             permissions: {},
+            backendErrorMessage: '',
+            multipleErrors: [],
         }
     },
     filters: {
@@ -360,10 +370,52 @@ export default {
                     this.permissions = getData.permission;
                     console.log(getData, 'getData');
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -410,23 +462,59 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'Data deleted',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.getDomainList();
                         this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -464,24 +552,62 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Data saved',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
                     this.closeModal();
                     this.getDomainList();
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -505,20 +631,48 @@ export default {
                 document.body.appendChild(link);
                 link.click();
                 this.$toast.open({
-                    message: 'File downloaded',
+                    message: response.data.message,
                     position: 'top-right',
                     duration: '5000',
                     type: 'success'
                 });
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -540,21 +694,57 @@ export default {
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({
-                        message: 'File imported',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -565,7 +755,9 @@ export default {
         // formatting date
         format_date(value){
             if (value) {
-                return moment(String(value)).format('YYYY-MM-DD')
+                return moment(String(value)).format('YYYY-MM-DD');
+            }else {
+                return '-';
             }
         },
     }

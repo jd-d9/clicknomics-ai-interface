@@ -268,6 +268,14 @@ export default {
                             }
                         });
                     }
+                }else if(response.data.success != true) {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
 
                 // For Pagination
@@ -276,14 +284,50 @@ export default {
                 this.page = page;
                 this.showLoader = false;
             }).catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
-                console.log(error);
-            })
+            });
         },
         // formate date
         format_date(value){
             if (value) {
-                return moment(String(value)).format('YYYY-MM-DD')
+                return moment(String(value)).format('YYYY-MM-DD');
+            }else {
+                return '-';
             }
         },
     }

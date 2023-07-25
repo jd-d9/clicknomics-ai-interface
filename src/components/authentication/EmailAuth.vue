@@ -131,13 +131,6 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        console.log(response.data, 'response.data')
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
                         this.backendErrorMessage = '';
                         this.multipleErrors = [];
                         if(this.authCode) {

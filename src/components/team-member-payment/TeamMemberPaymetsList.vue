@@ -93,22 +93,22 @@
                                         <!-- data table component -->
                                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="teamMemberPaymentList" :itemsPerPage="itemsPerPage">
                                             <template v-slot:[`item.id`]="{ item }">
-                                                {{item.selectable.id}}
+                                                {{item.selectable.id ? item.selectable.id : '-'}}
                                             </template>
                                             <template v-slot:[`item.payment_date`]="{ item }">
-                                                {{item.selectable.payment_date}}
+                                                {{item.selectable.payment_date ? item.selectable.payment_date : '-'}}
                                             </template>
                                             <template v-slot:[`item.from_account`]="{ item }">
-                                                {{item.selectable.fromaccountlist.team_member_name}}
+                                                {{item.selectable.fromaccountlist.team_member_name ? item.selectable.fromaccountlist.team_member_name : '-'}}
                                             </template>
                                             <template v-slot:[`item.to_account`]="{ item }">
-                                                {{item.selectable.toaccountlist.team_member_name}}
+                                                {{item.selectable.toaccountlist.team_member_name ? item.selectable.toaccountlist.team_member_name : '-'}}
                                             </template>
                                             <template v-slot:[`item.amount`]="{ item }">
-                                                ${{item.selectable.amount}}
+                                                {{$filters.toCurrency(item.selectable.amount)}}
                                             </template>
                                             <template v-slot:[`item.status`]="{ item }">
-                                                {{item.selectable.status}}
+                                                {{item.selectable.status ? item.selectable.status : '-'}}
                                             </template>
                                             <template v-slot:[`item.action`]="{ item }">    
                                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/accounting/teamMembersPayments/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'">
@@ -132,7 +132,7 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td>${{ sumField }}</td>
+                                                    <td>{{ $filters.toCurrency(sumField) }}</td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
@@ -151,12 +151,12 @@
                                                 <v-card class="card_design bg-blue-lighten-4">
                                                     <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                                         <div class="d-flex align-cenyer justify-space-between">
-                                                            <span>From: {{item.from_account}}</span>
-                                                            <span>TO: {{item.to_account}}</span>
+                                                            <span>From: {{item.from_account ? item.from_account : '-'}}</span>
+                                                            <span>TO: {{item.to_account ? item.to_account : '-'}}</span>
                                                         </div>
                                                     </v-card-title>
                                                     <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">
-                                                        {{item.total_amount}}
+                                                        {{item.total_amount ? item.total_amount : '-'}}
                                                     </v-card-text>
                                                 </v-card>
                                             </v-col>
@@ -234,6 +234,13 @@
                                     <Field name="toAccName" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.toAccName}" placeholder="Account Name" v-model="teamMemberName"/>
                                     <span class="text-red-600" v-if="errors.toAccName">Account Name can not be empty</span>
                                 </v-col>
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                                </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer">
@@ -263,6 +270,13 @@
                                     <label class="form-control-label" for="input-username">From Account Name</label>
                                     <Field name="fromAccName" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.fromAccName}" placeholder="Account Name" v-model="teamMemberName"/>
                                     <span class="text-red-600" v-if="errors.fromAccName">Account Name can not be empty</span>
+                                </v-col>
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
                             </v-row>
                         </div>
@@ -321,6 +335,8 @@ export default {
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
             selectedRangeTwo: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
             tabteampayment: null,
+            backendErrorMessage: '',
+            multipleErrors: [],
         }
     },
     computed: {
@@ -433,10 +449,52 @@ export default {
                         })
                     });
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -452,23 +510,59 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Team member payment deleted',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
                     this.getTeamMemberPaymentList();
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -486,25 +580,43 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Team member added',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
                     this.showLoader = false;
                     this.getTeamMemberPaymentList();
                     this.closeTeamMemberModal();
                     this.teamMemberName = '';
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.backendErrorMessage = error.response.data.message;
+                }
+                if(error.response.data.error) {
+                    this.backendErrorMessage = error.response.data.error;
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.backendErrorMessage = error.response.data.errors[0];
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.multipleErrors = error.response.data.errors;
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -522,25 +634,43 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Team member added',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
                     this.showLoader = false;
                     this.getTeamMemberPaymentList();
                     this.closeFromAccountModal();
                     this.teamMemberName = '';
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.backendErrorMessage = error.response.data.message;
+                }
+                if(error.response.data.error) {
+                    this.backendErrorMessage = error.response.data.error;
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.backendErrorMessage = error.response.data.errors[0];
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.multipleErrors = error.response.data.errors;
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -571,16 +701,52 @@ export default {
                 if(response.data.success) {
                     this.cardMemberList = response.data.data;
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -604,20 +770,48 @@ export default {
                 document.body.appendChild(link);
                 link.click();
                 this.$toast.open({
-                    message: 'File downloaded',
+                    message: response.data.message,
                     position: 'top-right',
                     duration: '5000',
                     type: 'success'
                 });
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -639,21 +833,57 @@ export default {
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({
-                        message: 'File imported',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },

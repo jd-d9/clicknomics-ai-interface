@@ -59,6 +59,18 @@
                                         </v-row>
 
                                         <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="googleHeaders" :items="googleCampaigns" :search="search"  :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                                            <template v-slot:[`item.campaign_id`]="{ item }">
+                                                {{item.selectable.campaign_id ? item.selectable.campaign_id : '-'}}
+                                            </template>
+                                            <template v-slot:[`item.campaign_name`]="{ item }">
+                                                {{item.selectable.campaign_name ? item.selectable.campaign_name : '-'}}
+                                            </template>
+                                            <template v-slot:[`item.google_ads_account`]="{ item }">
+                                                {{item.selectable.google_ads_account.name ? item.selectable.google_ads_account.name : '-'}}
+                                            </template>
+                                            <template v-slot:[`item.campaign_status`]="{ item }">
+                                                {{item.selectable.campaign_status ? item.selectable.campaign_status : '-'}}
+                                            </template>
                                         </v-data-table>
                                     </v-window-item>
 
@@ -74,6 +86,18 @@
                                         </v-row>
 
                                         <v-data-table :headers="micosoftHeaders" :items="micosoftCampaigns" :search="microsoftSearch" :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                                            <template v-slot:[`item.CampaignId`]="{ item }">
+                                                {{item.selectable.CampaignId ? item.selectable.CampaignId : '-'}}
+                                            </template>
+                                            <template v-slot:[`item.CampaignName`]="{ item }">
+                                                {{item.selectable.CampaignName ? item.selectable.CampaignName : '-'}}
+                                            </template>
+                                            <template v-slot:[`item.microsoft_ads_account`]="{ item }">
+                                                {{item.selectable.microsoft_ads_account.name ? item.selectable.microsoft_ads_account.name : '-'}}
+                                            </template>
+                                            <template v-slot:[`item.Status`]="{ item }">
+                                                {{item.selectable.Status ? item.selectable.Status : '-'}}
+                                            </template>
                                         </v-data-table>
                                     </v-window-item>
                                 </v-window>
@@ -106,13 +130,13 @@ export default {
             googleHeaders: [
                 { title: 'Campaign ID', key: 'campaign_id' },
                 { title: 'Campaign Name', key: 'campaign_name' },
-                { title: 'Account Name', align: 'start', sortable: false, key: 'google_ads_account.name' },
+                { title: 'Account Name', align: 'start', sortable: false, key: 'google_ads_account' },
                 { title: 'Campaign Status', key: 'campaign_status', align: 'center' },
             ],
             micosoftHeaders: [
                 { title: 'Campaign ID', key: 'CampaignId' },
                 { title: 'Campaign Name', key: 'CampaignName' },
-                { title: 'Account Name', align: 'start', sortable: false, key: 'microsoft_ads_account.name' },
+                { title: 'Account Name', align: 'start', sortable: false, key: 'microsoft_ads_account' },
                 { title: 'Campaign Status', key: 'Status', align: 'center' },
             ],
             googleCampaigns: [],
@@ -156,10 +180,52 @@ export default {
                     this.micosoftCampaignsList = Data.microsoftcampaign;
                     this.permissions = Data.permission;
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },

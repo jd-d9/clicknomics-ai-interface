@@ -23,19 +23,19 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="linkedNewtworks" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id}}
+                                {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
                             <template v-slot:[`item.name`]="{ item }">
-                                {{item.selectable.name}}
+                                {{item.selectable.name ? item.selectable.name : '-'}}
                             </template>
                             <template v-slot:[`item.email`]="{ item }">
                                 {{item.selectable.email ? item.selectable.email : '-' }}
                             </template>
                             <template v-slot:[`item.affiliate_id`]="{ item }">
-                                {{item.selectable.affiliate_id}}
+                                {{item.selectable.affiliate_id ? item.selectable.affiliate_id : '-'}}
                             </template>
                             <template v-slot:[`item.network`]="{ item }">
-                                <div class="text-capitalize">{{item.selectable.network}}</div>
+                                <div class="text-capitalize">{{item.selectable.network ? item.selectable.network : '-'}}</div>
                             </template>
                             <template v-slot:[`item.company`]="{ item }">
                                 {{item.selectable.company ? item.selectable.company : '-' }}
@@ -110,7 +110,10 @@ export default {
         // formate date
         format_date(value){
             if (value) {
-                return moment(String(value)).format('YYYY-MM-DD')
+                return moment(String(value)).format('YYYY-MM-DD');
+            }
+            else {
+                return '-';
             }
         },
         // get manual network listing
@@ -198,44 +201,45 @@ export default {
                         type: 'success'
                     });
                     this.linkedNewtworks = response.data.data;
-                }).catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
+                })
+                .catch(error => {
+                    if(error.response.data.message) {
                         this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
+                            message: error.response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'error'
                         });
                     }
-                }
-                this.showLoader = false;
-            });
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
+                    this.showLoader = false;
+                });
             }
         },
     }

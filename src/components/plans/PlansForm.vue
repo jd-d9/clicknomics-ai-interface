@@ -9,8 +9,13 @@
                             <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
                             <span>Dashboard</span>
                         </router-link>
+                        <router-link to="/settings/plan-management" class="d-flex align-center">
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Plan Management</span>
+                        </router-link>
+                        
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>{{breadCrumbText}} Plan Management</span>
+                        <span>{{breadCrumbText}} Plan</span>
 
                         <v-spacer />
                         <v-btn to="/settings/plan-management" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
@@ -22,7 +27,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between">
-                            {{breadCrumbText}} Plan Management
+                            {{breadCrumbText}} Plan
                         </v-card-title>
                         <v-divider class="border-opacity-100 my-4" color="success" />  
                         <form @submit.prevent="managePlan">
@@ -62,7 +67,7 @@
                                     </v-col>
     
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                        <label class="form-control-label">Original Price</label>
+                                        <label class="form-control-label">Original Price(In Dollar)</label>
                                         <input type="number" name="original_price" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.original_price"/>
                                     </v-col>
     
@@ -83,7 +88,7 @@
     
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                         <label class="form-control-label">Amount</label>
-                                        <input type="number" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Amount" v-model="data.amount" disabled/>
+                                        <input type="text" id="input-username" :class="{'form-control': true}" step=".01" placeholder="Amount" v-model="data.amount" disabled/>
                                     </v-col>
     
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -109,6 +114,13 @@
                                     </v-col>
                                 </v-row>
                             </div>
+                            <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                            </v-col>
+
+                            <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                            </v-col>
                             <v-col cols="12" sm="12" md="12" lg="12">
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" v-if="toggleButton">Save</v-btn>    
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-arrow-up-bold" v-else>Update</v-btn>    
@@ -243,7 +255,7 @@ export default {
                     discount_type: 'flat',
                     discount_value: '',
                     trial_period_days: 0,
-                    amount: 0,
+                    amount: this.$filters.toCurrency(0),
                 }
             ],
             description: '',
@@ -252,13 +264,14 @@ export default {
             networkAccountLimit: '',
             toggleButton: true,
             breadCrumbText: 'Create',
-            backendErrorMessage: '',
             intervalData: [
-                {title: 'Month', key: 'month'},
+                {title: 'Monthly', key: 'month'},
                 {title: '3 Month', key: '3month'},
                 {title: '6 Month', key: '6month'},
-                {title: 'Year', key: 'year'}
-            ],            
+                {title: 'Yearly', key: 'year'}
+            ],
+            backendErrorMessage: '',
+            multipleErrors: [],
         }
     },
     mounted() {
@@ -308,10 +321,52 @@ export default {
                     this.networkAccountLimit = Data.network_account_limit;
                     this.description = Data.description;
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -319,10 +374,16 @@ export default {
         calculateAmount(ind) {
             if(this.addMultipleField[ind].discount_type == 'flat') {
                 this.addMultipleField[ind].amount = this.addMultipleField[ind].original_price - this.addMultipleField[ind].discount_value;
+                this.addMultipleField[ind].amount = this.$filters.toCurrency(this.addMultipleField[ind].amount);
             }
             else {
                 this.addMultipleField[ind].amount = this.addMultipleField[ind].original_price - ((this.addMultipleField[ind].original_price * this.addMultipleField[ind].discount_value)/100);
+                this.addMultipleField[ind].amount = this.$filters.toCurrency(this.addMultipleField[ind].amount);
             }
+        },
+        // set original price
+        setOriginalPrice(e) {
+            return e.target.value = this.$filters.toCurrency(e.target.value);
         },
         // add more fields
         addMoreField() {
@@ -332,7 +393,7 @@ export default {
                 discount_type: 'flat',
                 discount_value: '',
                 trial_period_days: 0,
-                amount: 0,
+                amount: this.$filters.toCurrency(0),
             });
         },
         // update plan and create new plan
@@ -364,17 +425,33 @@ export default {
                             type: 'success'
                         });
                         this.backendErrorMessage = '';
+                        this.multipleErrors = [];
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.backendErrorMessage = error.response.data.message;
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -404,17 +481,33 @@ export default {
                             type: 'success'
                         });
                         this.backendErrorMessage = '';
+                        this.multipleErrors = [];
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.backendErrorMessage = error.response.data.message;
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -422,3 +515,16 @@ export default {
     }
 }
 </script>
+
+<style>
+    .input-amount {
+        position: relative;
+    }
+    .input-amount::before {
+        content: "$";
+        font-size: 18px;
+        position: absolute;
+        top: 200%;
+        left: 5px;
+    }
+</style>

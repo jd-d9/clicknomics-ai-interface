@@ -82,7 +82,7 @@
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td></td>
                                     <td>Totals</td>
-                                    <td class="text-center">${{ sumField }}</td>
+                                    <td class="text-center">{{ $filters.toCurrency(sumField) }}</td>
                                     <td class="text-center"></td>
                                 </tr>
                             </template>
@@ -173,6 +173,12 @@
                                     <label class="form-control-label" for="input-username">Amount</label>
                                     <Field name="Amount" type="number" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Amount}" placeholder="Add Amount" v-model="item.amount"/>
                                     <ErrorMessage class="text-red-600" name="Amount"/>
+                                </v-col>
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
                                 </v-col>
                             </v-row>
                         </div>
@@ -293,6 +299,8 @@ export default {
             initialData: {
                 seletedForEdit: [],
             },
+            backendErrorMessage: '',
+            multipleErrors: [],
             // schema: yup.object().shape({
             //     users: yup
             //     .array()
@@ -400,10 +408,52 @@ export default {
                     this.permissions = getData.permission;
                     console.log(getData, 'getData');
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -423,23 +473,59 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.$toast.open({
-                            message: 'Record deleted',
+                            message: response.data.message,
                             position: 'top-right',
                             duration: '5000',
                             type: 'success'
                         });
                         this.getFixedMonthlyCostList();
                         this.showLoader = false;
+                    }else {
+                        this.$toast.open({
+                            message: response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                        this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if(error.response.data.message) {
+                        this.$toast.open({
+                            message: error.response.data.message,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.error) {
+                        this.$toast.open({
+                            message: error.response.data.error,
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.$toast.open({
+                                message: error.response.data.errors[0],
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                    }
                     this.showLoader = false;
                 });
             }
@@ -458,24 +544,42 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Record updated',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
                     this.closeCreateUpdateData();
                     this.getFixedMonthlyCostList();
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
                     this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.backendErrorMessage = error.response.data.message;
+                }
+                if(error.response.data.error) {
+                    this.backendErrorMessage = error.response.data.error;
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.backendErrorMessage = error.response.data.errors[0];
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.multipleErrors = error.response.data.errors;
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -491,23 +595,59 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$toast.open({
-                        message: 'Fixed monthly cost deleted',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
                     this.getFixedMonthlyCostList();
                     this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -531,20 +671,48 @@ export default {
                 document.body.appendChild(link);
                 link.click();
                 this.$toast.open({
-                    message: 'File downloaded',
+                    message: response.data.message,
                     position: 'top-right',
                     duration: '5000',
                     type: 'success'
                 });
             })
             .catch(error => {
-                console.log(error)
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -566,21 +734,57 @@ export default {
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.$toast.open({
-                        message: 'File imported',
+                        message: response.data.message,
                         position: 'top-right',
                         duration: '5000',
                         type: 'success'
                     });
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
                 }
             })
             .catch(error => {
-                console.log(error);
-                this.$toast.open({
-                    message: error.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'error'
-                });
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },

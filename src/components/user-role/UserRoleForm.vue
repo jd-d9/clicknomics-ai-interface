@@ -3,7 +3,7 @@
         <loader-component v-if="showLoader"></loader-component>
         <v-card class="card_design mb-4">
             <v-card-title class="d-flex justify-space-between">
-                User Roles
+                {{breadCrumbMessage}} Role
             </v-card-title>
             <v-divider class="border-opacity-100 my-4" color="success" />
 
@@ -25,7 +25,7 @@
                         {{ item.selectable.parent ? item.selectable.parent.menu : '-' }}
                     </template>
                     <template v-slot:[`item.menu`]="{ item }">
-                        {{ item.selectable.menu }}
+                        {{ item.selectable.menu ? item.selectable.menu : '-' }}
                     </template>
                     <template v-slot:[`item.view`]="{ item }">
                         <label class="custom-toggle">
@@ -102,7 +102,8 @@ export default {
             create: 'No',
             edit: 'No',
             delete: 'No',
-            itemsPerPage: -1
+            itemsPerPage: -1,
+            breadCrumbMessage: 'Create',
         }
     },
     // computed: {
@@ -122,17 +123,51 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        this.menuItem = response.data.data;
-                        console.log(this.menuItem);
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
+            .then(response => {
+                if (response.data.success) {
+                    this.menuItem = response.data.data;
+                    console.log(this.menuItem);
                     this.showLoader = false;
-                    console.log(error)
-                });
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
+                this.showLoader = false;
+            });
         },
         // role name validation
         roleNameIsValid() {
@@ -152,17 +187,59 @@ export default {
                     Authorization: `Bearer ${sessionStorage.getItem('Token')}`
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        this.menuItem = response.data.data.menus;
-                        this.roleName = response.data.data.role.role_name;
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
+            .then(response => {
+                if (response.data.success) {
+                    this.menuItem = response.data.data.menus;
+                    this.roleName = response.data.data.role.role_name;
                     this.showLoader = false;
-                    console.log(error)
-                });
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
+                this.showLoader = false;
+            });
         },
         // create and update user role
         manageUserRole() {
@@ -185,28 +262,64 @@ export default {
                             Authorization: `Bearer ${sessionStorage.getItem('Token')}`
                         }
                     })
-                        .then(response => {
-                            if (response.data.success) {
-                                this.$toast.open({
-                                    message: response.data.message,
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'success'
-                                });
-                                this.$router.push('/settings/user_management/user_roles');
-                                this.showLoader = false;
-                            }
-                        })
-                        .catch(error => {
+                    .then(response => {
+                        if (response.data.success) {
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                            this.$router.push('/settings/user_management/user_roles');
+                            this.showLoader = false;
+                        }else {
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                            this.showLoader = false;
+                        }
+                    })
+                    .catch(error => {
+                        if(error.response.data.message) {
                             this.$toast.open({
                                 message: error.response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
                                 type: 'error'
                             });
-                            this.showLoader = false;
-                            console.log(error)
-                        });
+                        }
+                        if(error.response.data.error) {
+                            this.$toast.open({
+                                message: error.response.data.error,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                        if(error.response.data.errors) {
+                            if(error.response.data.errors.length == 1) {
+                                this.$toast.open({
+                                    message: error.response.data.errors[0],
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            }else if(error.response.data.errors.length == 0){
+                                this.backendErrorMessage = '';
+                            }else {
+                                this.$toast.open({
+                                    message: error.response.data.errors[0],
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            }
+                        }
+                        this.showLoader = false;
+                    });
                 }
             }
             // create user role
@@ -226,30 +339,66 @@ export default {
                             Authorization: `Bearer ${sessionStorage.getItem('Token')}`
                         }
                     })
-                        .then(response => {
-                            if (response.data.success) {
-                                this.menuItem = response.data;
-                                console.log(this.menuItem);
-                                this.$toast.open({
-                                    message: 'New role created',
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'success'
-                                });
-                                this.$router.push('/settings/user_management/user_roles');
-                                this.showLoader = false;
-                            }
-                        })
-                        .catch(error => {
+                    .then(response => {
+                        if (response.data.success) {
+                            this.menuItem = response.data;
+                            console.log(this.menuItem);
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                            this.$router.push('/settings/user_management/user_roles');
+                            this.showLoader = false;
+                        }else {
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                            this.showLoader = false;
+                        }
+                    })
+                    .catch(error => {
+                        if(error.response.data.message) {
                             this.$toast.open({
                                 message: error.response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
                                 type: 'error'
                             });
-                            console.log(error)
-                            this.showLoader = false;
-                        });
+                        }
+                        if(error.response.data.error) {
+                            this.$toast.open({
+                                message: error.response.data.error,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                        if(error.response.data.errors) {
+                            if(error.response.data.errors.length == 1) {
+                                this.$toast.open({
+                                    message: error.response.data.errors[0],
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            }else if(error.response.data.errors.length == 0){
+                                this.backendErrorMessage = '';
+                            }else {
+                                this.$toast.open({
+                                    message: error.response.data.errors[0],
+                                    position: 'top-right',
+                                    duration: '5000',
+                                    type: 'error'
+                                });
+                            }
+                        }
+                        this.showLoader = false;
+                    });
                 }
             }
         },
@@ -303,6 +452,7 @@ export default {
         if (this.$route.params.id) {
             this.getUserRole();
             this.toggleButton = true;
+            this.breadCrumbMessage = 'Edit';
         }
     }
 }

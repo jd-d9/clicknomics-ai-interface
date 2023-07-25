@@ -46,15 +46,15 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.date`]="{ item }">
-                                {{item.selectable.date}}
+                                {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
                             <template v-slot:[`item.network`]="{ item }">
                                 <div class="text-ellipsis">
-                                    {{item.selectable.manual_network.network}}
+                                    {{item.selectable.manual_network.network ? item.selectable.manual_network.network : '-'}}
                                 </div>
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">
-                                {{item.selectable.amount}}
+                                {{$filters.toCurrency(item.selectable.amount)}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
                                 <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/networks/manualNetworks/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'">
@@ -76,7 +76,7 @@
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
-                                    <td class="text-center">${{sumField}}</td>
+                                    <td class="text-center">{{$filters.toCurrency(sumField)}}</td>
                                     <td></td>
                                 </tr>
                             </template>
@@ -248,7 +248,41 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
                 this.showLoader = false;
             });
         },
@@ -426,43 +460,43 @@ export default {
                 }
             })
             .catch(error => {
-                    if(error.response.data.message) {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
                         this.$toast.open({
-                            message: error.response.data.message,
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
                             position: 'top-right',
                             duration: '5000',
                             type: 'error'
                         });
                     }
-                    if(error.response.data.error) {
-                        this.$toast.open({
-                            message: error.response.data.error,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }else if(error.response.data.errors.length == 0){
-                            this.backendErrorMessage = '';
-                        }else {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
         // select csv file
         chooseFile(e) {

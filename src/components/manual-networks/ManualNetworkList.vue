@@ -39,10 +39,10 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search"  @current-items="currentItems" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id}}
+                                {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
                             <template v-slot:[`item.network`]="{ item }">
-                                {{item.selectable.network}}
+                                {{item.selectable.network ? item.selectable.network : '-'}}
                             </template>
                             <template v-slot:[`item.email`]="{ item }">
                                 {{item.selectable.email ? item.selectable.email : '-'}}
@@ -159,6 +159,14 @@
                                     <label class="form-control-label" for="input-username">Notes</label>
                                     <textarea :class="{'form-control': true}" name="Notes" rows="5" v-model="list.notes"></textarea>
                                 </v-col>
+
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                                </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer">
@@ -216,9 +224,9 @@ export default {
             accountIdToEdit: '',
             permissions: {},
             searchInput: '',
+            restrictUser: true,
             backendErrorMessage: '',
             multipleErrors: [],
-            restrictUser: true
         }
     },
     computed: {
@@ -256,7 +264,9 @@ export default {
         // formate date
         format_date(value){
             if (value) {
-                return moment(String(value)).format('YYYY-MM-DD')
+                return moment(String(value)).format('YYYY-MM-DD');
+            }else {
+                return '-';
             }
         },
         // open and close modal
@@ -359,6 +369,8 @@ export default {
                         duration: '5000',
                         type: 'success'
                     });
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
                     this.getManualNetworkListing();
                     this.closeModal();
                     this.showLoader = false;
@@ -371,40 +383,21 @@ export default {
                     });
                     this.showLoader = false;
                 }
-            }).catch(error => {
+            })
+            .catch(error => {
                 if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.backendErrorMessage = error.response.data.message;
                 }
                 if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.backendErrorMessage = error.response.data.error;
                 }
                 if(error.response.data.errors) {
                     if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.backendErrorMessage = error.response.data.errors[0];
                     }else if(error.response.data.errors.length == 0){
                         this.backendErrorMessage = '';
                     }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.multipleErrors = error.response.data.errors;
                     }
                 }
                 this.showLoader = false;
