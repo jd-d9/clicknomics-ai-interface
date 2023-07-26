@@ -141,7 +141,7 @@ export default {
                 this.axios.post(this.$api + '/network/manualNetworksMetrics/' + this.$route.params.id, formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -196,7 +196,7 @@ export default {
                 this.axios.post(this.$api + '/network/manualNetworksMetrics', formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -247,7 +247,7 @@ export default {
             this.axios.get(this.$api + '/network/manualNetworksMetrics', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -315,7 +315,7 @@ export default {
             this.axios.get(this.$api + '/network/getAllNetwork', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {

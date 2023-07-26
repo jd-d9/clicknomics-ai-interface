@@ -115,8 +115,9 @@
 
                                         <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                             <label>New Password</label>
-                                            <Field type="password" id="input-username" name="Password" :class="{'form-control': true, 'border-red-600': errors.Password}" placeholder="New Password" v-model="password"/>
-                                            <ErrorMessage class="text-red-600" name="Password"/>
+                                            <Field type="password" id="input-username" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password || passwordValidation}" placeholder="New Password" v-model="password" @keyup="validatePassword"/>
+                                            <ErrorMessage class="text-red-600" name="Password" v-if="!passwordValidation"/>
+                                            <span class="text-red-600" v-if="passwordValidation">{{passwordValidation}}</span>
                                         </v-col>
 
                                         <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -127,7 +128,7 @@
 
                                         <v-col cols="12" sm="12" md="12" lg="12">
                                             <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-autorenew">Update</v-btn>        
-                                            <v-btn type="reset" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="passwordToggle = !passwordToggle">Close</v-btn>
+                                            <v-btn type="reset" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"  @click="passwordFormToggle">Close</v-btn>
                                         </v-col>
                                     </v-row>
                                 </Form>                                
@@ -308,6 +309,7 @@
                 showLoader: false,
                 countryDetails: [],
                 roleId: sessionStorage.getItem('roleId'),
+                passwordValidation: '',
             }
         },
         computed: {
@@ -328,7 +330,7 @@
             passSchema() {
                 return yup.object({
                     currentPass: yup.string().required(),
-                    Password: yup.string().required().min(6),
+                    Password: yup.string().required(),
                     repeatPass: yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
                 });
             },
@@ -340,13 +342,22 @@
             },
         },
         methods: {
+            // password validation
+            validatePassword() {
+                const validPassword = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
+                if(!this.password.match(validPassword)) {
+                    this.passwordValidation = 'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
+                }else {
+                    this.passwordValidation = '';
+                }
+            },
             // get current loged in user data
             getCurrentUserData() {
                 this.showLoader = true;
                 this.axios.get(this.$api + '/settings/getprofileuser', {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -425,7 +436,7 @@
             //     this.axios.get(this.$api + '/settings/countries', {
             //         headers: {
             //             "Content-Type": "application/json",
-            //             Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+            //             Authorization: this.getAccessToken(),
             //         }
             //     })
             //     .then(response => {
@@ -461,7 +472,7 @@
                     }, {
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                            Authorization: this.getAccessToken(),
                         }
                     })
                     .then(response => {
@@ -534,7 +545,7 @@
                 }, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {
@@ -612,7 +623,7 @@
                 }, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {
@@ -685,81 +696,91 @@
                     this.companyName = this.cName;
                 }, 50);
             },
+            // password form toggle
+            passwordFormToggle() {
+                this.passwordToggle = !this.passwordToggle; 
+                this.passwordValidation = '';
+            },
             // updating user password
             updateUserPassword() {
-                this.showLoader = true;
-                this.axios.post(this.$api + '/userprofiles/updateUserPassword', {
-                    currentPassword: this.currentPassword,
-                    password : this.password,
-                    password_confirmation : this.passwordConfirmation
-                }, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
-                    }
-                })
-                .then(response => {
-                    if(response.data.success) {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
-                        this.showLoader = false;
-                        this.getCurrentUserData();
-                        this.passwordToggle = false;
-                        this.currentPassword = '';
-                        this.password = '';
-                        this.passwordConfirmation = '';
-                    }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if(error.response.data.message) {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }
-                    if(error.response.data.error) {
-                        this.$toast.open({
-                            message: error.response.data.error,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
+                if(this.passwordValidation) {
+                    return false;
+                }
+                else {
+                    this.showLoader = true;
+                    this.axios.post(this.$api + '/userprofiles/updateUserPassword', {
+                        currentPassword: this.currentPassword,
+                        password : this.password,
+                        password_confirmation : this.passwordConfirmation
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: this.getAccessToken(),
+                        }
+                    })
+                    .then(response => {
+                        if(response.data.success) {
                             this.$toast.open({
-                                message: error.response.data.errors[0],
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'success'
+                            });
+                            this.showLoader = false;
+                            this.getCurrentUserData();
+                            this.passwordToggle = false;
+                            this.currentPassword = '';
+                            this.password = '';
+                            this.passwordConfirmation = '';
+                        }else {
+                            this.$toast.open({
+                                message: response.data.message,
                                 position: 'top-right',
                                 duration: '5000',
                                 type: 'error'
                             });
-                        }else {
-                            error.response.data.errors.map((error) => {
+                            this.showLoader = false;
+                        }
+                    })
+                    .catch(error => {
+                        if(error.response.data.message) {
+                            this.$toast.open({
+                                message: error.response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                        if(error.response.data.error) {
+                            this.$toast.open({
+                                message: error.response.data.error,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                        }
+                        if(error.response.data.errors) {
+                            if(error.response.data.errors.length == 1) {
                                 this.$toast.open({
-                                    message: error,
+                                    message: error.response.data.errors[0],
                                     position: 'top-right',
                                     duration: '5000',
                                     type: 'error'
                                 });
-                            })
+                            }else {
+                                error.response.data.errors.map((error) => {
+                                    this.$toast.open({
+                                        message: error,
+                                        position: 'top-right',
+                                        duration: '5000',
+                                        type: 'error'
+                                    });
+                                })
+                            }
                         }
-                    }
-                    this.showLoader = false;
-                });
+                        this.showLoader = false;
+                    });
+                }
             },
             // updating user 2Fa verification
             update2FaVerify() {
@@ -770,7 +791,7 @@
                 }, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {

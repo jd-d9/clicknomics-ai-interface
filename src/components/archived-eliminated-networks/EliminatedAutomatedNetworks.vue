@@ -122,7 +122,7 @@ export default {
             this.axios.get(this.$api + '/network/eliminated-automated-networks', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -189,7 +189,7 @@ export default {
                 this.axios.post(this.$api + '/network/eliminated-automated-network/restoreAutomatedNetwork', formData,{
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                            Authorization: this.getAccessToken()
                         }
                     })
                 .then(response => {

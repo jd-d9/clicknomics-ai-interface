@@ -158,12 +158,10 @@
 <script>
     import introJs from 'intro.js';
     import 'intro.js/minified/introjs.min.css';
-    import mixin from '../../mixin.js';
     
     export default {
         emits: ['move-containts'],
         props: ['updatingUserDetails'],
-        mixins:[mixin],
         data() {
             return {
                 hideShowSidebar: false,

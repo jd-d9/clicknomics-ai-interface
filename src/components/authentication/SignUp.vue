@@ -62,8 +62,9 @@
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-lock-outline" size="30" color="#00cd00" class="form_icon"></v-icon>
-                                    <Field id="password" type="password" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password}" placeholder="Password" v-model="userPassword"/>
-                                    <ErrorMessage class="text-red-600" name="Password"/>
+                                    <Field id="password" type="password" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password || passwordValidation}" placeholder="Password" v-model="userPassword" @keyup="validatePassword"/>
+                                    <ErrorMessage class="text-red-600" name="Password" v-if="!passwordValidation"/>
+                                    <span class="text-red-600" v-if="passwordValidation">{{passwordValidation}}</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
@@ -136,6 +137,7 @@
                 // mobileNumber: '',
                 backendErrorMessage: '',
                 multipleErrors: [],
+                passwordValidation: '',
             }
         },
         computed: {
@@ -145,7 +147,7 @@
                     lastName: yup.string().required(),
                     Email: yup.string().required().email(),
                     companyName: yup.string().required(),
-                    Password: yup.string().required().min(6),
+                    Password: yup.string().required(),
                     passwordConfirmation: yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
                     // Mobile: yup.string().required().min(10).max(10)
                 });
@@ -155,102 +157,116 @@
         //     this.getAndSetCountryCode();
         // },
         methods: {
+            // password validation
+            validatePassword() {
+                const validPassword = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
+                if(!this.userPassword.match(validPassword)) {
+                    this.passwordValidation = 'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
+                }else {
+                    this.passwordValidation = '';
+                }
+            },
             // submit data and signup user
             signUpUser() {
-                this.showLoader = true;
-                this.axios.post(this.$api + '/registration', {
-                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
-                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
-                    email: this.userEmail,
-                    company_name: this.companyName,
-                    password: this.userPassword,
-                    password_confirmation: this.confirmPassword,
-                    plan_id: 1,
-                    // plan_id: sessionStorage.getItem('subscriptionPlanId'),
-                    // country_code: this.countryCode,
-                    // phone_number: this.mobileNumber,
-                    // profile_image: this.profileImage,
-                })
-                .then(response => {
-                    // let planId = sessionStorage.getItem('subscriptionPlanId');
-                    let planId = 1;
-                    if(response.data.success) {
-                        this.backendErrorMessage = '';
-                        this.multipleErrors = [],
-                        // set plan id
-                        this.showLoader = true;
-                        this.axios.get(this.$api + '/subscription/' + planId, {
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: `Bearer ${response.data.data}`
-                            }
-                        })
-                        .then(response => {
-                            if(response.data.success) {
-                                this.$toast.open({
-                                    message: 'User registration successfully!',
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'success'
-                                });
-                                this.showLoader = false;
-                                this.$router.push('/login');
-                            }else {
-                                this.$toast.open({
-                                    message: response.data.message,
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'error'
-                                });
-                                this.showLoader = false;
-                            }
-                        })
-                        .catch(error => {
-                            if(error.response.data.message) {
-                                this.backendErrorMessage = error.response.data.message;
-                            }
-                            if(error.response.data.error) {
-                                this.backendErrorMessage = error.response.data.error;
-                            }
-                            if(error.response.data.errors) {
-                                if(error.response.data.errors.length == 1) {
-                                    this.backendErrorMessage = error.response.data.errors[0];
-                                }else if(error.response.data.errors.length == 0){
-                                    this.backendErrorMessage = '';
-                                }else {
-                                    this.multipleErrors = error.response.data.errors;
-                                }
-                            }
-                            this.showLoader = false;
-                        });
-                    }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if(error.response.data.message) {
-                        this.backendErrorMessage = error.response.data.message;
-                    }
-                    if(error.response.data.error) {
-                        this.backendErrorMessage = error.response.data.error;
-                    }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.backendErrorMessage = error.response.data.errors[0];
-                        }else if(error.response.data.errors.length == 0){
+                if(this.passwordValidation) {
+                    return false;
+                }
+                else {
+                    this.showLoader = true;
+                    this.axios.post(this.$api + '/registration', {
+                        first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                        last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
+                        email: this.userEmail,
+                        company_name: this.companyName,
+                        password: this.userPassword,
+                        password_confirmation: this.confirmPassword,
+                        plan_id: 1,
+                        // plan_id: sessionStorage.getItem('subscriptionPlanId'),
+                        // country_code: this.countryCode,
+                        // phone_number: this.mobileNumber,
+                        // profile_image: this.profileImage,
+                    })
+                    .then(response => {
+                        // let planId = sessionStorage.getItem('subscriptionPlanId');
+                        let planId = 1;
+                        if(response.data.success) {
                             this.backendErrorMessage = '';
+                            this.multipleErrors = [],
+                            // set plan id
+                            this.showLoader = true;
+                            this.axios.get(this.$api + '/subscription/' + planId, {
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${response.data.data}`
+                                }
+                            })
+                            .then(response => {
+                                if(response.data.success) {
+                                    this.$toast.open({
+                                        message: 'User registration successfully!',
+                                        position: 'top-right',
+                                        duration: '5000',
+                                        type: 'success'
+                                    });
+                                    this.showLoader = false;
+                                    this.$router.push('/login');
+                                }else {
+                                    this.$toast.open({
+                                        message: response.data.message,
+                                        position: 'top-right',
+                                        duration: '5000',
+                                        type: 'error'
+                                    });
+                                    this.showLoader = false;
+                                }
+                            })
+                            .catch(error => {
+                                if(error.response.data.message) {
+                                    this.backendErrorMessage = error.response.data.message;
+                                }
+                                if(error.response.data.error) {
+                                    this.backendErrorMessage = error.response.data.error;
+                                }
+                                if(error.response.data.errors) {
+                                    if(error.response.data.errors.length == 1) {
+                                        this.backendErrorMessage = error.response.data.errors[0];
+                                    }else if(error.response.data.errors.length == 0){
+                                        this.backendErrorMessage = '';
+                                    }else {
+                                        this.multipleErrors = error.response.data.errors;
+                                    }
+                                }
+                                this.showLoader = false;
+                            });
                         }else {
-                            this.multipleErrors = error.response.data.errors;
+                            this.$toast.open({
+                                message: response.data.message,
+                                position: 'top-right',
+                                duration: '5000',
+                                type: 'error'
+                            });
+                            this.showLoader = false;
                         }
-                    }
-                    this.showLoader = false;
-                }); 
+                    })
+                    .catch(error => {
+                        if(error.response.data.message) {
+                            this.backendErrorMessage = error.response.data.message;
+                        }
+                        if(error.response.data.error) {
+                            this.backendErrorMessage = error.response.data.error;
+                        }
+                        if(error.response.data.errors) {
+                            if(error.response.data.errors.length == 1) {
+                                this.backendErrorMessage = error.response.data.errors[0];
+                            }else if(error.response.data.errors.length == 0){
+                                this.backendErrorMessage = '';
+                            }else {
+                                this.multipleErrors = error.response.data.errors;
+                            }
+                        }
+                        this.showLoader = false;
+                    }); 
+                }
             },
             // email is available or not
             emailIsAvail() {

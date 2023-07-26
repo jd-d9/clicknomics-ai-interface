@@ -88,7 +88,7 @@ export default {
             this.axios.get(this.$api + '/settings/archivedgoogleads', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -155,7 +155,7 @@ export default {
                 this.axios.post(this.$api + '/settings/archivedgoogleads/restoreGoogleAdsAccount', formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {

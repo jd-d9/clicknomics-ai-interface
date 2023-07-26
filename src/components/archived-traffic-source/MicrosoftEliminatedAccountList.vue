@@ -92,7 +92,7 @@ export default {
             this.axios.get(this.$api + '/settings/archivedmicrosoftads', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                    Authorization: this.getAccessToken(),
                 }
             })
             .then(response => {
@@ -125,7 +125,7 @@ export default {
                 this.axios.post(this.$api + '/settings/archivedmicrosoftads/restoreMicrosftAdsAccount', formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`,
+                        Authorization: this.getAccessToken(),
                     }
                 })
                 .then(response => {

@@ -324,7 +324,7 @@ export default {
             this.axios.get(this.$api + '/settings/emailNotification', {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
@@ -429,7 +429,7 @@ export default {
                 this.axios.delete(this.$api + '/settings/emailNotification/' + id, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -505,7 +505,7 @@ export default {
                 this.axios.post(this.$api + '/settings/emailNotification/deleteMutipleRows', formData, {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                        Authorization: this.getAccessToken()
                     }
                 })
                 .then(response => {
@@ -593,7 +593,7 @@ export default {
             this.axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${sessionStorage.getItem('Token')}`
+                    Authorization: this.getAccessToken()
                 }
             })
             .then(response => {
