@@ -132,7 +132,7 @@
                                 </v-list-subheader>
 
                                 <v-list-item class="pa-0">
-                                    <router-link to="/my_profile" class="dropdown-item py-2 px-4">
+                                    <router-link to="/my-profile" class="dropdown-item py-2 px-4">
                                         <i class="fa-solid fa-user"></i>
                                         <span class="profile-name ms-4">My Profile</span>
                                     </router-link>
