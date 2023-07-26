@@ -97,6 +97,7 @@
 </template>
 
 <script>
+    import axios from '@axios';
     export default {
         data() {
             return {
@@ -144,7 +145,7 @@
             // get plans listing
             getPlans() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/subscription/list')
+                axios.get(this.$api + '/subscription/list')
                 .then(response => {
                     if(response.data.success) {
                         this.allPlans = response.data.data;

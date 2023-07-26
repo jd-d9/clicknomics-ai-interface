@@ -118,6 +118,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 export default {
     // props: ['googleCampaignList', 'microsoftCampaignList'],
     components: {
@@ -165,7 +166,7 @@ export default {
         // get campains listing data
         getAllData() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/campaigns', {
+            axios.get(this.$api + '/campaigns', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),

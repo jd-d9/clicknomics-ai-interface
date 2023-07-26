@@ -231,7 +231,7 @@
 
 <script>
 import _ from 'lodash';
-
+import axios from '@axios';
 export default {
     data() {
         return {
@@ -286,7 +286,7 @@ export default {
                 itemsPerPage = this.itemsPerPage
             }
 
-            this.axios.get(this.$api + `/realTimeReports/networkAdsReport?size=${itemsPerPage}&page=${page}`,{
+            axios.get(this.$api + `/realTimeReports/networkAdsReport?size=${itemsPerPage}&page=${page}`,{
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

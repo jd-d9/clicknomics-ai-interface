@@ -88,6 +88,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field,ErrorMessage } from 'vee-validate';
 export default {
@@ -128,7 +129,7 @@ export default {
         // integrate new domain
         integrateDomain() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/settings/domain', {
+            axios.post(this.$api + '/settings/domain', {
                 email: this.email,
                 domain_selected: this.domain_selected,
                 api_secret: this.api_secret,

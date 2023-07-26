@@ -81,6 +81,7 @@
 </template>
 
 <script>
+    import axios from '@axios';
     import moment from 'moment';
     export default {
         data() {
@@ -116,7 +117,7 @@
             // get subscribe user data
             getUsersData() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/settings/subscribeUser', {
+                axios.get(this.$api + '/settings/subscribeUser', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -164,7 +165,7 @@
             // delete regestered user
             deleteUser(id) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/settings/subscribeUser/' + id, {
+                axios.delete(this.$api + '/settings/subscribeUser/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -232,7 +233,7 @@
             // update status
             updateStatus(id) {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/settings/subscribeUser/changeStatus/' + id, {
+                axios.get(this.$api + '/settings/subscribeUser/changeStatus/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()

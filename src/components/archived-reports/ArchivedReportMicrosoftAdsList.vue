@@ -185,6 +185,7 @@ import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 import * as yup from 'yup';
 import { Field, Form } from 'vee-validate';
+import axios from '@axios';
 // Charts
 import * as chartConfigs from '../common/Charts/config';
 // import LineChart from '../common/Charts/LineChart';
@@ -352,7 +353,7 @@ export default {
                     queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
                 }
                 const url = `${ajaxUrl}?${queryString.toString()}`;
-                this.axios.get(url, {
+                axios.get(url, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -470,7 +471,7 @@ export default {
             formData.append('id', this.managementModal.id);
             formData.append('type', this.managementModal.type);
             formData.append('management_system', this.managementModal.management_system);
-            this.axios.post(this.$api + '/archivedReports/addManagementTypeToMicrosoftAccount', formData, {
+            axios.post(this.$api + '/archivedReports/addManagementTypeToMicrosoftAccount', formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -545,7 +546,7 @@ export default {
                     }
                 }
                 const url = `${ajaxUrl}?${queryString.toString()}`;
-                this.axios.get(url, {
+                axios.get(url, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()

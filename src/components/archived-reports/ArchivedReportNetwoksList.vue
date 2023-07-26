@@ -50,6 +50,7 @@
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 import _ from 'lodash';
+import axios from '@axios';
 export default {
     props: ['reports', 'type'],
     components: {
@@ -140,7 +141,7 @@ export default {
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

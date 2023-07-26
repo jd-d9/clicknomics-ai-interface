@@ -83,6 +83,7 @@
 <script>
     import * as yup from 'yup';
     import { Form, Field } from 'vee-validate';
+    import axios from '@axios';
     export default {
         components: {
             Form, Field
@@ -94,6 +95,8 @@
                 // },
                 authCode: '',
                 key: '',
+                email: '',
+                sessionData: '',
                 verifiedBy: '',
                 rememberVerification: 1,
                 toggleComponent: true,
@@ -103,14 +106,14 @@
             }
         },
         mounted() {
-            const isAuthenticated = sessionStorage.getItem('Token');
-            const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
+            // const isAuthenticated = sessionStorage.getItem('Token');
+            // const isVerified = JSON.parse(sessionStorage.getItem('isTwoFactorVerified'));
 
-            if(isAuthenticated && isVerified) {
-                this.$router.push('/dashboard');
-            } else if(!isAuthenticated && !isVerified) {
-                this.$router.push('/login');
-            }
+            // if(isAuthenticated && isVerified) {
+            //     this.$router.push('/dashboard');
+            // } else if(!isAuthenticated && !isVerified) {
+            //     this.$router.push('/login');
+            // }
         }, 
         computed: {
             schema() {
@@ -123,7 +126,7 @@
             // send validation code in email(try another way method)
             sendCodeInEmail() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/authenticator/sendVerifyEmail', {
+                axios.get(this.$api + '/authenticator/sendVerifyEmail', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -170,11 +173,17 @@
             },
             // check authentication code and allow user to logged in
             checkCodeAndAuthUser() {
+                let userSession = localStorage.getItem('user-session')
+                if(userSession){
+                    const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
+                    this.sessionData = JSON.parse(decryptedObject)
+                    this.email = this.sessionData.Email
+                }
                 this.showLoader = true;
-                this.axios.post(this.$api + '/authenticator/validateTwoFactorCode', {
+                axios.post(this.$api + '/authenticator/validateTwoFactorCode', {
                     two_factor_code: this.authCode,
                     remember_2fa: this.rememberVerification,
-                    email: sessionStorage.getItem('Email'),
+                    email: this.email,
                 }, {
                     headers: {
                         "Content-Type": "application/json",
@@ -190,7 +199,10 @@
                             duration: '5000',
                             type: 'success'
                         });
-                        sessionStorage.setItem('isTwoFactorVerified', true);
+                        this.sessionData.isTwoFactorVerified = true;
+                        const encryptedData = this.$CryptoJS.AES.encrypt(JSON.stringify(this.sessionData), "Clicknomics-AI").toString()
+                        localStorage.setItem('user-session',encryptedData)
+
                         this.showLoader = false;
                         this.$router.push('/dashboard');
                         this.backendErrorMessage = '';

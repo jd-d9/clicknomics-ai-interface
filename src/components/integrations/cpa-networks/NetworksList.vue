@@ -174,6 +174,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import moment from 'moment';
@@ -256,7 +257,7 @@ export default {
         // get cpa network list
         getCpaNetworkist() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/networks', {
+            axios.get(this.$api + '/settings/networks', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -321,7 +322,7 @@ export default {
         // delete network list
         deleteCpaNetworkist() {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/settings/networks/' + this.accountIdToDelete, {
+            axios.delete(this.$api + '/settings/networks/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -404,7 +405,7 @@ export default {
         // update network list
         updateCpaNetworkist() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/settings/networks/' + this.accountIdEdit, {
+            axios.post(this.$api + '/settings/networks/' + this.accountIdEdit, {
                 _method: 'PUT',
                 name: this.network_name,
                 email: this.email,

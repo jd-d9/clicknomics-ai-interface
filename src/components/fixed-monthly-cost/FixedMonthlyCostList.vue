@@ -259,6 +259,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Field, Form, ErrorMessage } from 'vee-validate';
 // import * as yup from 'yup';
@@ -394,7 +395,7 @@ export default {
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -462,7 +463,7 @@ export default {
             const confirmDelete = window.confirm('Do you really want to delete?');
             if(confirmDelete) {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/fixedMonthlyCost/deleteMutipleRows', {
+                axios.post(this.$api + '/accounting/fixedMonthlyCost/deleteMutipleRows', {
                     selectedRow: JSON.stringify(this.selectedId)
                 }, {
                     headers: {
@@ -533,7 +534,7 @@ export default {
         // edit bult selected items
         editSelected() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/fixedMonthlyCost/saveBulkEditOpsCost', {
+            axios.post(this.$api + '/accounting/fixedMonthlyCost/saveBulkEditOpsCost', {
                 rowdata: JSON.stringify(this.seletedForEdit)
             }, {
                 headers: {
@@ -586,7 +587,7 @@ export default {
         // delete from table
         deleteData(id) {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/accounting/fixedMonthlyCost/' + id, {
+            axios.delete(this.$api + '/accounting/fixedMonthlyCost/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -653,7 +654,7 @@ export default {
         },
         // downloading csv
         downloadCsv() {
-            this.axios.post(this.$api + '/settings/downloadfile', {
+            axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'fixedMonthlyCost'
             }, {
                 headers: {
@@ -719,7 +720,7 @@ export default {
         // choose file and import csv
         importCsv() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/fixedMonthlyCost/importOpsCostCSV', {
+            axios.post(this.$api + '/accounting/fixedMonthlyCost/importOpsCostCSV', {
                 file: this.selectedFile
             }, {
                 headers: {

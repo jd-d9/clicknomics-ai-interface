@@ -227,6 +227,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 export default {
@@ -245,13 +246,6 @@ export default {
     },
     data() {
         return {
-            // images: {
-            //     logo: require('/assets/img/brand/logo.png'),
-            //     edit: require('/assets/img/icons/edit.svg'),
-            //     bin: require('/assets/img/icons/bin.svg'),
-            //     download: require('/assets/img/icons/download.svg'),
-            //     share: require('/assets/img/icons/share.svg'),
-            // },
             headers: [
                 { title: 'ID', key: 'id', sortable: this.isSortable},
                 { title: 'Invoice Number', key: 'invoice_number', sortable: this.isSortable },
@@ -337,7 +331,7 @@ export default {
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -391,7 +385,7 @@ export default {
         // get invoices list
         getInvoicesList() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/invoice', {
+            axios.get(this.$api + '/accounting/invoice', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -455,7 +449,7 @@ export default {
         // delete invoice
         deleteInvoice(id) {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/accounting/invoice/' + id, {
+            axios.delete(this.$api + '/accounting/invoice/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -526,7 +520,7 @@ export default {
         },
         // downloading invoice/pdf
         downloadInvoice(id) {
-            this.axios.get(this.$api + '/accounting/invoices/exportPDF/' + id, {
+            axios.get(this.$api + '/accounting/invoices/exportPDF/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -549,6 +543,7 @@ export default {
                 });
             })
             .catch(error => {
+                console.log(error, 'error ---')
                 if(error.response.data.message) {
                     this.$toast.open({
                         message: error.response.data.message,
@@ -600,7 +595,7 @@ export default {
         // share invoice in mail
         shareInvoice() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/invoices/sendEmailInvoice', {
+            axios.post(this.$api + '/accounting/invoices/sendEmailInvoice', {
                 id: this.selectedInvoiceId,
                 emailList: JSON.stringify(this.emailList)
             }, {
@@ -683,7 +678,7 @@ export default {
         // update invoice numbered is edited
         isInvoiceEdited() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/invoices/updateInvoiceEditedData', {
+            axios.post(this.$api + '/accounting/invoices/updateInvoiceEditedData', {
                 id: this.editedModal.id,
                 is_invoice_edited: this.editedModal.is_invoice_edited
             }, {
@@ -771,7 +766,7 @@ export default {
         // adding cpa network
         addCpaNetwork() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/invoices/addNetworkCompanyToInvoice', {
+            axios.post(this.$api + '/accounting/invoices/addNetworkCompanyToInvoice', {
                 id: this.networkModal.id,
                 network_name: this.networkModal.networkName,
                 network_add_type: this.networkModal.networkAddType === 0 ?  'live' : 'manual'

@@ -110,6 +110,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -185,7 +186,7 @@ export default {
         // check url
         checkUrl() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/settings/networks/checkNetworkUrl', {
+            axios.post(this.$api + '/settings/networks/checkNetworkUrl', {
                 url: this.login_url,
             }, {
                 headers: {
@@ -249,7 +250,7 @@ export default {
         // integrate cpa network
         integrateCpaNetwork() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/settings/networks', {
+            axios.post(this.$api + '/settings/networks', {
                 name: this.network_name,
                 email: this.email,
                 network: this.network_selected,

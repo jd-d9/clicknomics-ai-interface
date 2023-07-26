@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -119,7 +120,7 @@ export default {
             // update fixed monthly cost
             if(this.$route.params.id) {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/fixedMonthlyCost/' + this.$route.params.id, {
+                axios.post(this.$api + '/accounting/fixedMonthlyCost/' + this.$route.params.id, {
                     _method: 'PUT',
                     date: moment(this.date).format('YYYY-MM-DD'),
                     amount: this.amount,
@@ -174,7 +175,7 @@ export default {
             else {
                 this.showLoader = true;
                 const dateRange = this.date[0].concat(",", this.date[1]);
-                this.axios.post(this.$api + '/accounting/fixedMonthlyCost', {
+                axios.post(this.$api + '/accounting/fixedMonthlyCost', {
                     date: dateRange,
                     amount: this.amount
     
@@ -229,7 +230,7 @@ export default {
         // get data for edit details
         getDataForEdit() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/fixedMonthlyCost/' + this.$route.params.id, {
+            axios.get(this.$api + '/accounting/fixedMonthlyCost/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

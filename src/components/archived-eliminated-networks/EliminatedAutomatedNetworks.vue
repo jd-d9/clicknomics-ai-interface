@@ -71,6 +71,7 @@
 
 <script>
 import moment from 'moment';
+import axios from '@axios';
 export default {
     data() {
         return {
@@ -119,7 +120,7 @@ export default {
         // get manual network listing
         getEliminatedAutomatedNetwork() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/network/eliminated-automated-networks', {
+            axios.get(this.$api + '/network/eliminated-automated-networks', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -186,7 +187,7 @@ export default {
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('id', id);
-                this.axios.post(this.$api + '/network/eliminated-automated-network/restoreAutomatedNetwork', formData,{
+                axios.post(this.$api + '/network/eliminated-automated-network/restoreAutomatedNetwork', formData,{
                         headers: {
                             "Content-Type": "application/json",
                             Authorization: this.getAccessToken()

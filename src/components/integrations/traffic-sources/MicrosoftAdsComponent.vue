@@ -13,7 +13,7 @@
                         <span>Microsoft Ads Integration</span>
 
                         <v-spacer />
-                        <v-btn @click.prevent="getAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="!restrictUser">
+                        <v-btn @click.prevent="fetchAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="!restrictUser">
                             <img src="/assets/img/icons/microsoft.svg" class="add-width mr-2">
                             <span class="btn-inner--text">Sync Microsoft Accounts</span>
                         </v-btn>
@@ -113,6 +113,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Field, Form } from 'vee-validate';
 export default {
@@ -173,9 +174,9 @@ export default {
             window.$('#updateEditedData').modal('hide');
         },
         // get access token
-        getAccessToken() {
+        fetchAccessToken() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/microsoftAd/getAccessToken', {
+            axios.get(this.$api + '/settings/microsoftAd/getAccessToken', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -243,7 +244,7 @@ export default {
         // get bing customer account
         getBingCustomerAccounts() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/microsoftAds', {
+            axios.get(this.$api + '/settings/microsoftAds', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -310,7 +311,7 @@ export default {
         deleteCustomerAccount(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/settings/microsoftAds/' + id, {
+                axios.delete(this.$api + '/settings/microsoftAds/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken(),
@@ -388,7 +389,7 @@ export default {
             let formData = new FormData();
             formData.append('id', this.editedModal.id);
             formData.append('currency_conversion_check', this.editedModal.currency_conversion_check);
-            this.axios.post(this.$api + '/settings/microsoftAd/microsoftCurrencyConverstionCheck', formData, {
+            axios.post(this.$api + '/settings/microsoftAd/microsoftCurrencyConverstionCheck', formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),

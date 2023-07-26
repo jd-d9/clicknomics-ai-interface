@@ -271,6 +271,7 @@
 </template>
 
 <script>
+    import axios from '@axios';
     import * as yup from 'yup';
     import { Form, Field, ErrorMessage } from 'vee-validate';
     import moment from 'moment';
@@ -354,7 +355,7 @@
             // get current loged in user data
             getCurrentUserData() {
                 this.showLoader = true;
-                this.axios.get(this.$api + '/settings/getprofileuser', {
+                axios.get(this.$api + '/settings/getprofileuser', {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -433,7 +434,7 @@
             // get and set country code
             // getAndSetCountry() {
             //     this.showLoader = true;
-            //     this.axios.get(this.$api + '/settings/countries', {
+            //     axios.get(this.$api + '/settings/countries', {
             //         headers: {
             //             "Content-Type": "application/json",
             //             Authorization: this.getAccessToken(),
@@ -467,7 +468,7 @@
                 reader.onloadend = () => {
                     let profileImage64 = reader.result;
                     this.profileImage = profileImage64;
-                    this.axios.post(this.$api + '/userprofiles/updateProfileImage', {
+                    axios.post(this.$api + '/userprofiles/updateProfileImage', {
                         profile_image: profileImage64
                     }, {
                         headers: {
@@ -540,7 +541,7 @@
             // updating user email
             updateUserEmail() {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/userprofiles/updateUserEmail', {
+                axios.post(this.$api + '/userprofiles/updateUserEmail', {
                     email: this.email
                 }, {
                     headers: {
@@ -614,7 +615,7 @@
             // updating profile details
             updateUserDetails() {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/userprofiles/updateUserDetail', {
+                axios.post(this.$api + '/userprofiles/updateUserDetail', {
                     first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
                     last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     company_name : this.companyName,
@@ -708,7 +709,7 @@
                 }
                 else {
                     this.showLoader = true;
-                    this.axios.post(this.$api + '/userprofiles/updateUserPassword', {
+                    axios.post(this.$api + '/userprofiles/updateUserPassword', {
                         currentPassword: this.currentPassword,
                         password : this.password,
                         password_confirmation : this.passwordConfirmation
@@ -785,7 +786,7 @@
             // updating user 2Fa verification
             update2FaVerify() {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/userprofiles/update2FAVerificationStatus', {
+                axios.post(this.$api + '/userprofiles/update2FAVerificationStatus', {
                     verification_status: this.verificationStatus,
                     remember_2fa: this.remember2Fa
                 }, {

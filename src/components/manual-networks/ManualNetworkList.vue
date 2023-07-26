@@ -184,6 +184,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import moment from 'moment';
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
@@ -279,7 +280,7 @@ export default {
         // get manual network listing
         getManualNetworkListing() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/network/manualNetworks', {
+            axios.get(this.$api + '/network/manualNetworks', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -355,7 +356,7 @@ export default {
             formData.append('company', this.list.company);
             this.activityType == 'Update' && formData.append('_method', 'PUT');
             const postUrl = this.activityType == 'Create' ? 'network/manualNetworks' : `network/manualNetworks/${this.accountIdToEdit}`;
-            this.axios.post(`${this.$api}/${postUrl}`, formData, {
+            axios.post(`${this.$api}/${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -444,7 +445,7 @@ export default {
         // delete network
         deleteAccount() {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/network/manualNetworks/' + this.accountIdToDelete, {
+            axios.delete(this.$api + '/network/manualNetworks/' + this.accountIdToDelete, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

@@ -76,6 +76,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import Datepicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 import moment from 'moment';
@@ -125,7 +126,7 @@ export default {
             // update variable monthly cost
             if(this.$route.params.id) {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/variableCost/' + this.$route.params.id, {
+                axios.post(this.$api + '/accounting/variableCost/' + this.$route.params.id, {
                     _method: 'PUT',
                     date: moment(this.date).format('YYYY-MM-DD'),
                     amount: this.amount,
@@ -181,7 +182,7 @@ export default {
             else {
                 this.showLoader = true;
                 const dateRange = this.date[0].concat(",", this.date[1]);
-                this.axios.post(this.$api + '/accounting/variableCost', {
+                axios.post(this.$api + '/accounting/variableCost', {
                     date: dateRange,
                     amount: this.amount,
                     notes: this.notes,
@@ -236,7 +237,7 @@ export default {
         // get data for edit
         getDataForEdit() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/variableCost/' + this.$route.params.id, {
+            axios.get(this.$api + '/accounting/variableCost/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

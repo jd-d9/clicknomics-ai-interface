@@ -126,6 +126,7 @@
 import _ from 'lodash';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
+import axios from '@axios';
 export default {
     components: {
         DateRangePicker,
@@ -246,7 +247,7 @@ export default {
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

@@ -115,7 +115,7 @@
 <script>
 import moment from 'moment';
 import _ from 'lodash';
-
+import axios from '@axios';
 export default {
     data() {
         return {
@@ -208,7 +208,7 @@ export default {
             }
             let formData = new FormData();
             formData.append('reportRange','TODAY')
-            this.axios.get(this.$api + `/realTimeReports/googleAdsReport?size=${itemsPerPage}&page=${pageNumber}&reportRange=Today` ,{
+            axios.get(this.$api + `/realTimeReports/googleAdsReport?size=${itemsPerPage}&page=${pageNumber}&reportRange=Today` ,{
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

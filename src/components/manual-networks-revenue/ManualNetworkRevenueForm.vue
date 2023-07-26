@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -138,7 +139,7 @@ export default {
                 formData.append('network_id', this.networkSelected);
                 formData.append('conversions', this.conversions);
                 formData.append('_method', 'PUT');
-                this.axios.post(this.$api + '/network/manualNetworksMetrics/' + this.$route.params.id, formData, {
+                axios.post(this.$api + '/network/manualNetworksMetrics/' + this.$route.params.id, formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -193,7 +194,7 @@ export default {
                 formData.append('amount', this.amount);
                 formData.append('network_id', this.networkSelected);
                 formData.append('conversions', this.conversions);
-                this.axios.post(this.$api + '/network/manualNetworksMetrics', formData, {
+                axios.post(this.$api + '/network/manualNetworksMetrics', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -244,7 +245,7 @@ export default {
         // get data for edit
         getDataForEdit() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/network/manualNetworksMetrics', {
+            axios.get(this.$api + '/network/manualNetworksMetrics', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -312,7 +313,7 @@ export default {
         // get all networks and set it in select network
         getAllNetworks() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/network/getAllNetwork', {
+            axios.get(this.$api + '/network/getAllNetwork', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

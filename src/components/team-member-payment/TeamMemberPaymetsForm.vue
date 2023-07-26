@@ -97,6 +97,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -161,7 +162,7 @@ export default {
         // get data for edit
         getDataForEdit() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
+            axios.get(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -230,7 +231,7 @@ export default {
             // update team member payment
             if(this.$route.params.id) {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
+                axios.post(this.$api + '/accounting/teamMemberPayment/' + this.$route.params.id, {
                     _method: 'PUT',
                     payment_date: moment(this.date).format('YYYY-MM-DD'),
                     amount: this.amount,
@@ -287,7 +288,7 @@ export default {
             // create team member payment
             else {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/teamMemberPayment', {
+                axios.post(this.$api + '/accounting/teamMemberPayment', {
                     payment_date: moment(this.date).format('YYYY-MM-DD'),
                     amount: this.amount,
                     from_account: this.fromAccount,
@@ -344,7 +345,7 @@ export default {
         // get fromaccount and toaccount dropdown data
         getFromToAccountDropdownData() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/teamMemberPayments/teammemberlist', {
+            axios.get(this.$api + '/accounting/teamMemberPayments/teammemberlist', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

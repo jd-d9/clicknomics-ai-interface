@@ -127,6 +127,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 export default {
@@ -214,7 +215,7 @@ export default {
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -295,7 +296,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/network/manualNetworksMetrics/' + id, {
+                axios.delete(this.$api + '/network/manualNetworksMetrics/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -363,7 +364,7 @@ export default {
         },
         // download csv file
         downloadCsv() {
-            this.axios.post(this.$api + '/settings/downloadfile', {
+            axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'manualnetworksmetrics'
             }, {
                 headers: {
@@ -429,7 +430,7 @@ export default {
         // choose file and import csv
         importCsv() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/network/manualNetworksMetrics/importManualNetworksMetrics', {
+            axios.post(this.$api + '/network/manualNetworksMetrics/importManualNetworksMetrics', {
                 file: this.selectedFile
             }, {
                 headers: {

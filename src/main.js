@@ -7,11 +7,11 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router.js';
 import { loadFonts } from './plugins/webfontloader';
-import axios from 'axios';
+// import axios from 'axios';
 import VueCryptojs from 'vue-cryptojs'
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 
-import VueAxios from 'vue-axios';
+// import VueAxios from 'vue-axios';
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
 import '@mdi/font/css/materialdesignicons.css';
@@ -54,41 +54,6 @@ const vuetify = createVuetify({
   },
 })
 
-axios.interceptors.request.use(
-  config => {
-    console.log(config, 'config ----')
-    const userSession = localStorage.getItem('user-session');
-    // to do
-    if(userSession) {
-      // const decryptedObject = this.$CryptoJS.AES.decrypt(userSession, "Clicknomics-AI").toString(this.$CryptoJS.enc.Utf8)
-      // let sessionData = JSON.parse(decryptedObject)
-      console.log('---- decryptedObject ----')
-      // const isAuthenticated = sessionData.Token;
-      // const isVerified = sessionData.isTwoFactorVerified;
-      // const verifiedBy = sessionData.verifiedBy;
-    }
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  },
-);
-
-// Response interceptor
-axios.interceptors.response.use(
-  response => {
-    return response;
-  },
-  error => {
-    if (error.response && error.response.status === 401) {
-      // Handle 401 Unauthorized error
-      sessionStorage.clear();
-      // Redirect to login page or any other handling for 401 error
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  },
-);
 
 const app = createApp(App);
 app.config.globalProperties.$api = process.env.VUE_APP_API;
@@ -145,9 +110,10 @@ app.config.globalProperties.$filters = {
   },
 }
 app.use(router);
-app.use(VueAxios, axios);
+// app.use(VueAxios, axios);
 app.use(ToastPlugin);
 app.use(VueCryptojs);
+
 app.use(vuetify);
 app.use(JoditVue);
 app.mixin(mixin);

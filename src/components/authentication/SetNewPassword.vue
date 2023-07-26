@@ -55,6 +55,7 @@
 
 <script>
     import { useRoute } from 'vue-router';
+    import axios from '@axios';
     import * as yup from 'yup';
     import { Form, Field, ErrorMessage } from 'vee-validate';
     export default {
@@ -85,7 +86,7 @@
             // check validation and signin user
             setNewPassword() {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/resetpassword', {
+                axios.post(this.$api + '/resetpassword', {
                     token: this.route.query.token,
                     email: this.route.query.email,
                     password: this.newPassword,

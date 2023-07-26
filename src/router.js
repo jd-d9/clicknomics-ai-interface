@@ -208,6 +208,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     if(to.meta.auth) {
         const registeredUserId = localStorage.getItem('user-session')
+        console.log(registeredUserId, 'registeredUserId');
         if(registeredUserId) {
             next();
         }

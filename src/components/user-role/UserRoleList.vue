@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 export default {
     data() {
         return {
@@ -82,7 +83,7 @@ export default {
         // get all user role
         getUserRole() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/role', {
+            axios.get(this.$api + '/settings/role', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -154,7 +155,7 @@ export default {
         // delete user role
         deleteRole(id) {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/settings/role/' + id, {
+            axios.delete(this.$api + '/settings/role/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

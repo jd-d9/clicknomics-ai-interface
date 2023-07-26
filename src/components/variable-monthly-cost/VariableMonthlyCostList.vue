@@ -111,6 +111,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 export default {
@@ -174,7 +175,7 @@ export default {
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
-            this.axios.get(url, {
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -239,7 +240,7 @@ export default {
         // delete variable monthly cost
         deleteData(id) {
             this.showLoader = true;
-            this.axios.delete(this.$api + '/accounting/variableCost/' + id, {
+            axios.delete(this.$api + '/accounting/variableCost/' + id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()

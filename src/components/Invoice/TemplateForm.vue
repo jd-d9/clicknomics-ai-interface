@@ -224,6 +224,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import Datepicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 import moment from 'moment';
@@ -376,7 +377,7 @@ export default {
             }
             else {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/invoice', {
+                axios.post(this.$api + '/accounting/invoice', {
                     invoice_number: this.invoiceData.invoiceData.invoiceNumber,
                     invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
                     invoice_due_date: moment(this.invoiceData.invoiceData.dueDate).format('YYYY-MM-DD'),
@@ -450,7 +451,7 @@ export default {
         // get invoice data for edit
         getInvoiceData() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/accounting/invoices/invoicetemplateShow/' + this.$route.params.id, {
+            axios.get(this.$api + '/accounting/invoices/invoicetemplateShow/' + this.$route.params.id, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -513,7 +514,7 @@ export default {
         // update template
         updateTemplate() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/accounting/invoices/updateTemplate/' + this.$route.params.id, {
+            axios.post(this.$api + '/accounting/invoices/updateTemplate/' + this.$route.params.id, {
                 template_name: this.CurrentTemplateName,
                 invoice_number: this.invoiceData.invoiceData.invoiceNumber,
                 invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),
@@ -603,7 +604,7 @@ export default {
             }
             else {
                 this.showLoader = true;
-                this.axios.post(this.$api + '/accounting/invoices/saveTemplate', {
+                axios.post(this.$api + '/accounting/invoices/saveTemplate', {
                     template_name: this.templateName,
                     invoice_number: this.invoiceData.invoiceData.invoiceNumber,
                     invoice_issue_date: moment(this.invoiceData.invoiceData.issuedDate).format('YYYY-MM-DD'),

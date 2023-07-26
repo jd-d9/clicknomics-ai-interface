@@ -196,6 +196,7 @@
 <script>
 import * as yup from 'yup';
 import { Field, Form } from 'vee-validate';
+import axios from '@axios';
 export default {
     // props: ['list', 'datacenter', 'residential', 'multilogin', 'localsystem'],
     components: {
@@ -330,7 +331,7 @@ export default {
         // get data for listing
         getAdAccountListing() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/adsaccount', {
+            axios.get(this.$api + '/adsaccount', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -460,7 +461,7 @@ export default {
             formData.append('management_type', this.item.management_type);
             formData.append('management_system', this.item.management_system);
             formData.append('_method', 'PUT');
-            this.axios.post(this.$api + '/adsaccount/' + this.item.id,  formData,{
+            axios.post(this.$api + '/adsaccount/' + this.item.id,  formData,{
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),

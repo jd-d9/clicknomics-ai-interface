@@ -369,6 +369,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 // import * as yup from 'yup';
 // import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
@@ -404,7 +405,7 @@ export default {
         // get all user roles
         getAllUserRole() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/rolemenulist', {
+            axios.get(this.$api + '/settings/rolemenulist', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -468,7 +469,7 @@ export default {
         // get user role data for edit user role
         getUserRole() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/role/' + this.$route.params.id + '/edit', {
+            axios.get(this.$api + '/settings/role/' + this.$route.params.id + '/edit', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -539,7 +540,7 @@ export default {
                 }
                 else {
                     this.showLoader = true;
-                    this.axios.post(this.$api + '/settings/role/' + this.$route.params.id, {
+                    axios.post(this.$api + '/settings/role/' + this.$route.params.id, {
                         role_name: this.roleName,
                         role_permission: JSON.stringify(this.menuItem),
                         _method: 'PUT'
@@ -617,7 +618,7 @@ export default {
                 }
                 else {
                     this.showLoader = true;
-                    this.axios.post(this.$api + '/settings/role', {
+                    axios.post(this.$api + '/settings/role', {
                         role_name: this.roleName,
                         role_permission: JSON.stringify(this.menuItem)
                     }, {

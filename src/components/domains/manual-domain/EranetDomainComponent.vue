@@ -234,6 +234,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import * as yup from 'yup';
 import { Field, Form, ErrorMessage } from 'vee-validate';
 import Datepicker from 'vue-datepicker-next';
@@ -357,7 +358,7 @@ export default {
         // get domain listing
         getDomainList() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/domains/eranetDomains', {
+            axios.get(this.$api + '/domains/eranetDomains', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -453,7 +454,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                this.axios.delete(this.$api + '/domains/eranetDomains/' + id, {
+                axios.delete(this.$api + '/domains/eranetDomains/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken()
@@ -543,7 +544,7 @@ export default {
             formData.append('creation_date', moment(this.activity.creation_date).format('YYYY-MM-DD'));
             this.activityType != 'Create' && formData.append('_method', 'PUT');
             const postUrl = this.activityType == 'Create' ? '/domains/eranetDomains' : `/domains/eranetDomains/${this.activity.id}`
-            this.axios.post(`${this.$api}${postUrl}`, formData, {
+            axios.post(`${this.$api}${postUrl}`, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -613,7 +614,7 @@ export default {
         },
         // downloading csv
         downloadCsv() {
-            this.axios.post(this.$api + '/settings/downloadfile', {
+            axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'eranet'
             }, {
                 headers: {
@@ -679,7 +680,7 @@ export default {
         // choose file and import csv
         uploadCsv() {
             this.showLoader = true;
-            this.axios.post(this.$api + '/domains/eranetDomains/importEranetDomainCSV', {
+            axios.post(this.$api + '/domains/eranetDomains/importEranetDomainCSV', {
                 file: this.selectedFile
             }, {
                 headers: {

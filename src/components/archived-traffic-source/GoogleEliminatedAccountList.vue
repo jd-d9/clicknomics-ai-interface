@@ -55,6 +55,7 @@
 
 <script>
 import moment from 'moment';
+import axios from '@axios';
 export default {
     // props: ['list'],
     components: {
@@ -85,7 +86,7 @@ export default {
         // get listing of all data
         getAllData() {
             this.showLoader = true;
-            this.axios.get(this.$api + '/settings/archivedgoogleads', {
+            axios.get(this.$api + '/settings/archivedgoogleads', {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken(),
@@ -152,7 +153,7 @@ export default {
                 this.showLoader = true;
                 let formData = new FormData();
                 formData.append('id', id);
-                this.axios.post(this.$api + '/settings/archivedgoogleads/restoreGoogleAdsAccount', formData, {
+                axios.post(this.$api + '/settings/archivedgoogleads/restoreGoogleAdsAccount', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken(),
