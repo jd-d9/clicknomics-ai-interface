@@ -73,6 +73,9 @@ import NotFoundPage from './components/common/NotFoundPage.vue';
 import RealTimeReportGoogle from './components/real-time-reports/RealTimeReportGoogle';
 import RealTimeReportMicrosoft from './components/real-time-reports/RealTimeReportMicrosoft';
 import ReportsComponent from './components/real-time-reports/ReportsComponent';
+import CreditCardPaymentReport from './components/payments-reports/CreditCardPaymentReport';
+import BankAccountsPaymentReport from './components/payments-reports/BankAccountsPaymentReport';
+import TeamMemberPaymentsReport from './components/payments-reports/TeamMemberPaymentsReport';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -182,6 +185,9 @@ const router = createRouter({
         {path: '/reporting/realTimeReports/google', component: RealTimeReportGoogle, meta: {auth: true}},
         {path: '/reporting/realTimeReports/microsoft', component: RealTimeReportMicrosoft, meta: {auth: true}},
         {path: '/reporting/realTimeReports/networks', component: ReportsComponent, meta: {auth: true}},
+        {path: '/reporting/payments/credit-card', component: CreditCardPaymentReport, meta: {auth: true}},
+        {path: '/reporting/payments/bank-accounts', component: BankAccountsPaymentReport, meta: {auth: true}},
+        {path: '/reporting/payments/team-members', component: TeamMemberPaymentsReport, meta: {auth: true}},
 
         // archived reports module
         {path: '/reporting/archivedReports/microsoft', component: ArchivedReportMicrosoftAdsList, meta: {auth: true}},
@@ -191,6 +197,7 @@ const router = createRouter({
         {path: '/reporting/archivedReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
+        {path: '/reporting/realTimeReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
 
 
         // not found page

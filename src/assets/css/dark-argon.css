@@ -71,7 +71,7 @@ body.dark-mode , .dark-mode .bg-default{background-color:#121e2d !important;}
 
 
 /* -------------------- date range picker css ----- */
-.dark-mode .mx-icon-calendar, .dark-mode .mx-icon-clear{color: #fff;}
+.dark-mode .mx-icon-calendar, .dark-mode .mx-icon-clear{color: #00cd00;}
 .dark-mode .daterangepicker{background-color: #121e2d;border: 1px solid #9da9bb;}
 .dark-mode .daterangepicker .calendar-table th, .dark-mode .daterangepicker .calendar-table td{background-color: #121e2d;}
 .dark-mode .daterangepicker .calendar-table{border: 1px solid #121e2d;background-color: #121e2d;}
@@ -88,6 +88,7 @@ body.dark-mode , .dark-mode .bg-default{background-color:#121e2d !important;}
 .dark-mode .bg-blue-darken-2{background-color: #063767 !important;color: #9da9bb;}
 .dark-mode .bg-red-lighten-4{background-color: #421923 !important;color: #9da9bb;}
 .dark-mode .bg-deep-purple-lighten-4{background-color: #252153 !important;color: #9da9bb;}
+.dark-mode .exapanded.bg-light-green-lighten-5{background-color: #121e2d !important;color: #9da9bb !important;}
 .dark-mode .v-card.card_design {background: #0b1727 !important;}
 .dark-mode .card_design .v-card-title{color: #9da9bb;}
 .dark-mode .v-breadcrumbs span{color: #9da9bb;}
@@ -106,7 +107,10 @@ body.dark-mode , .dark-mode .bg-default{background-color:#121e2d !important;}
 .dark-mode .v-table__wrapper {border-bottom: 1px solid #5c636c;}
 .dark-mode .table-hover-class .v-table__wrapper tbody tr:hover,
 .dark-mode .table-hover-class .v-table__wrapper tbody tr:hover th {background: #121e2d !important;}
-
+.dark-mode .exapanded .table tr{border: 1px solid #2f3b49;border-left: none;border-right: none;}
+.dark-mode .exapanded .table .v-data-table__td{color: #9da9bb !important;}
+.dark-mode .exapanded .table .thead-light .v-data-table__td{background: #094fa7 !important;}
+.dark-mode .exapanded .table .thead-light .v-data-table__td .v-data-table-header__content{color: #fff !important;}
 
 
 

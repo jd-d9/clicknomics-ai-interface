@@ -16,6 +16,302 @@
                             v-model.trim="roleName" @blur="roleNameIsValid" />
                         <span class="text-red-600" v-if="roleNameInvalid">Role name can not be empty</span>
                     </v-col>
+
+                    <!-- tree menu structure design -->
+
+                    <!-- <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal exapanded">
+                        <v-table fixed-header height="500px" class="table align-items-center table-hover-class ma-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="v-data-table__td">
+                                        <div class="v-data-table-header__content">Menu Name</div>
+                                    </th>
+                                    <th class="v-data-table__td">
+                                        <div class="v-data-table-header__content">View</div>
+                                    </th>
+                                    <th class="v-data-table__td">
+                                        <div class="v-data-table-header__content">Create</div>
+                                    </th>
+                                    <th class="v-data-table__td">
+                                        <div class="v-data-table-header__content">Edit</div>
+                                    </th>
+                                    <th class="v-data-table__td">
+                                        <div class="v-data-table-header__content">Delete</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="v-data-table__td pa-2">
+                                        <ul class="userrole_menu_tree">
+                                            <li>
+                                                <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>
+                                                Dashbaord
+                                            </li>
+                                        </ul>                                       
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="v-data-table__td pa-2">
+                                        <ul class="userrole_menu_tree">
+                                            <li>
+                                                <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00"></v-icon>
+                                                Settings
+                                            </li>
+                                        </ul>                                       
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="v-data-table__td pa-2">
+                                        <ul class="userrole_menu_tree">
+                                            <li>
+                                                <ul>
+                                                    <li>
+                                                        <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00"></v-icon>
+                                                        User Management
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>                                       
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="v-data-table__td pa-2">
+                                        <ul class="userrole_menu_tree">
+                                            <li>
+                                                <ul>
+                                                    <li>
+                                                        <ul>
+                                                            <li>
+                                                            <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>Users
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>                                       
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="v-data-table__td pa-2">
+                                        <ul class="userrole_menu_tree">
+                                            <li>
+                                                <ul>
+                                                    <li>
+                                                        <ul>
+                                                            <li>
+                                                            <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>User Roles
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>                                       
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                </tr>    
+                                
+                                <tr>
+                                    <td class="v-data-table__td pa-2">
+                                        <ul class="userrole_menu_tree">
+                                            <li>
+                                                <ul>
+                                                    <li>
+                                                        <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>
+                                                        Plan
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>                                       
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="v-data-table__td pa-2">
+                                        <ul class="userrole_menu_tree">
+                                            <li>
+                                                <ul>
+                                                    <li>
+                                                        <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>
+                                                        Email Notifications
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>                                       
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                    <td class="v-data-table__td">
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" class="form-control">
+                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </v-table>
+                    </v-col> -->
+
+                    <!-- tree menu structure design -->
                 </v-row>
 
                 <!-- data table component -->
@@ -104,13 +400,6 @@ export default {
             breadCrumbMessage: 'Create',
         }
     },
-    // computed: {
-    //     schema() {
-    //         return yup.object({
-    //             Rolename: yup.string().required(),
-    //         });
-    //     },
-    // },
     methods: {
         // get all user roles
         getAllUserRole() {
@@ -124,7 +413,7 @@ export default {
             .then(response => {
                 if (response.data.success) {
                     this.menuItem = response.data.data;
-                    console.log(this.menuItem);
+                    // console.log(this.menuItem);
                     this.showLoader = false;
                 }
             })
@@ -340,7 +629,7 @@ export default {
                     .then(response => {
                         if (response.data.success) {
                             this.menuItem = response.data;
-                            console.log(this.menuItem);
+                            // console.log(this.menuItem);
                             this.$toast.open({
                                 message: response.data.message,
                                 position: 'top-right',
@@ -405,7 +694,7 @@ export default {
             window.location.reload();
         },
         isDisabled(value, type) {
-            console.log(value, type)
+            // console.log(value, type)
             if (value.menu == 'Dashboard') {
                 if (type != 'view') {
                     return true;
@@ -414,7 +703,7 @@ export default {
                 value.create_auth = false;
                 value.update_auth = false;
                 value.delete_auth = false;
-                console.log(value.view)
+                // console.log(value.view)
                 if (type == 'view') {
                     return false;
                 } else {

@@ -393,3 +393,20 @@ td.v-data-table__td {
 }
 
 .height_spacing {height: 65px;}
+.userrole_menu_tree{
+    margin: 0px;
+    list-style-type: none;
+    padding: 0px;
+}
+.userrole_menu_tree li {list-style: none;}
+.userrole_menu_tree li .custom-control-label{
+    height: 22px !important;
+    font-size: 14px !important;
+    margin-bottom: 10px;
+}
+.userrole_menu_tree li ul, 
+.userrole_menu_tree li ul li ul, 
+.userrole_menu_tree li ul li ul li ul,
+.userrole_menu_tree li ul li ul li ul li ul, 
+.userrole_menu_tree li ul li ul li ul li ul li ul,
+.userrole_menu_tree li ul li ul li ul li ul li ul li ul{padding-left: 30px;}
