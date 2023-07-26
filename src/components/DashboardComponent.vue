@@ -1,6 +1,7 @@
 <template>
     <div class="bg-default main-content-height">
         <loader-component v-if="showLoader"></loader-component>
+        <flash-message></flash-message>
         <v-container>
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">

@@ -632,7 +632,7 @@
                         this.$toast.open({
                             message: response.data.message,
                             position: 'top-right',
-                            duration: '5000',
+                            duration: '5555555000',
                             type: 'success'
                         });
                         this.showLoader = false;
