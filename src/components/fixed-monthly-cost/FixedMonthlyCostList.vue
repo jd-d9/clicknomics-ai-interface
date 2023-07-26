@@ -26,7 +26,7 @@
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1'">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             Fixed Monthly Cost List
@@ -41,12 +41,12 @@
                             </div>
                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchCosts"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="options.search" />
                             </v-col>                            
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-3" :headers="headers" :items="dataMetrics" :itemsPerPage="itemsPerPage" show-select v-model="selected">
+                        <v-data-table-server class="table-hover-class mt-3" :headers="headers" :items="dataMetrics.data" v-model:items-per-page="itemsPerPage" v-model:options="options" :items-length="dataMetrics.total" show-select v-model="selected">
                             <template v-slot:[`item.date`]="{ item }">
                                 {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
@@ -86,7 +86,7 @@
                                     <td class="text-center"></td>
                                 </tr>
                             </template>
-                        </v-data-table>
+                        </v-data-table-server>
                     </v-card>
                 </v-col>
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
@@ -289,18 +289,21 @@ export default {
             ],
             file: '',
             currentItemsTable: [],
-            itemsPerPage: -1,
+            itemsPerPage: 10,
             selected: [],
             selectedId: [],
             seletedForEdit: [],
             selectedFile: '',
-            permissions: {},
+            permissions: {
+                view:'1'
+            },
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
             initialData: {
                 seletedForEdit: [],
             },
             backendErrorMessage: '',
             multipleErrors: [],
+            options:{},
             // schema: yup.object().shape({
             //     users: yup
             //     .array()
@@ -332,10 +335,16 @@ export default {
             val.forEach((data) => {
                 this.selectedId.push({id: data});
             })
-        }
+        },
+        options: {
+            handler() {
+                this.getFixedMonthlyCostList();
+            },
+            deep: true,
+        },
     },
     mounted() {
-        this.getFixedMonthlyCostList();
+        // this.getFixedMonthlyCostList();
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
@@ -356,7 +365,7 @@ export default {
         openCreateUpdateData() {
             window.$('#createUpdateData').modal('show');
             this.seletedForEdit = [];
-            this.dataMetrics.forEach((val) => {
+            this.dataMetrics.data.forEach((val) => {
                 this.selectedId.forEach((data) => {
                     if(data.id == val.id) {
                         this.seletedForEdit.push({
@@ -389,10 +398,17 @@ export default {
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/accounting/fixedMonthlyCost';
+            const { page,itemsPerPage,search } = this.options;
+
             if(this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
+
+            queryString.set('perPage',itemsPerPage)
+            queryString.set('page',page)
+            queryString.set('search',search)
+            
             const url = `${ajaxUrl}?${queryString.toString()}`;
             this.axios.get(url, {
                 headers: {
@@ -403,7 +419,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data;
-                    this.dataMetrics = getData.data.data;
+                    this.dataMetrics = getData.data;
                     this.dataMetricsFilter = getData.data.data;
                     this.permissions = getData.permission;
                     console.log(getData, 'getData');
