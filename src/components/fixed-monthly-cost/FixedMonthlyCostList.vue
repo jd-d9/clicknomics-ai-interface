@@ -26,7 +26,7 @@
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1'">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             Fixed Monthly Cost List
@@ -41,12 +41,12 @@
                             </div>
                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="options.search" />
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                             </v-col>                            
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table-server class="table-hover-class mt-3" :headers="headers" :items="dataMetrics.data" v-model:items-per-page="itemsPerPage" v-model:options="options" :items-length="dataMetrics.total" show-select v-model="selected">
+                        <v-data-table class="table-hover-class mt-3" :headers="headers" :items="dataMetrics" :items-per-page="itemsPerPage" show-select v-model="selected" :search="search">
                             <template v-slot:[`item.date`]="{ item }">
                                 {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
@@ -83,10 +83,10 @@
                                     <td></td>
                                     <td>Totals</td>
                                     <td class="text-center">{{ $filters.toCurrency(sumField) }}</td>
-                                    <td class="text-center"></td>
+                                    <td></td>
                                 </tr>
                             </template>
-                        </v-data-table-server>
+                        </v-data-table>
                     </v-card>
                 </v-col>
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
@@ -282,7 +282,7 @@ export default {
             showLoader: false,
             dataMetrics: [],
             dataMetricsFilter: [],
-            searchInput: '',
+            search: '',
             headers: [
                 { title: 'Date', align: 'start', sortable: false, key: 'date' },
                 { title: 'Amount', key: 'amount', align: 'center' },
@@ -290,7 +290,7 @@ export default {
             ],
             file: '',
             currentItemsTable: [],
-            itemsPerPage: 10,
+            itemsPerPage: -1,
             selected: [],
             selectedId: [],
             seletedForEdit: [],
@@ -304,7 +304,6 @@ export default {
             },
             backendErrorMessage: '',
             multipleErrors: [],
-            options:{},
             // schema: yup.object().shape({
             //     users: yup
             //     .array()
@@ -337,24 +336,15 @@ export default {
                 this.selectedId.push({id: data});
             })
         },
-        options: {
-            handler() {
-                this.getFixedMonthlyCostList();
-            },
-            deep: true,
-        },
     },
     mounted() {
-        // this.getFixedMonthlyCostList();
+        this.getFixedMonthlyCostList();
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
         });
     },
     methods: {
-        onSubmit(values) {
-            console.log(values, null, 2);
-        },
         // open/close import csv modal
         openImportCsvModal() {
             window.$('#importCsvModal').modal('show');
@@ -366,7 +356,7 @@ export default {
         openCreateUpdateData() {
             window.$('#createUpdateData').modal('show');
             this.seletedForEdit = [];
-            this.dataMetrics.data.forEach((val) => {
+            this.dataMetrics.forEach((val) => {
                 this.selectedId.forEach((data) => {
                     if(data.id == val.id) {
                         this.seletedForEdit.push({
@@ -387,29 +377,17 @@ export default {
             this.selectedRange = range;
             this.getFixedMonthlyCostList();
         },
-        // search costs from table
-        searchCosts() {
-            this.dataMetrics = this.dataMetricsFilter.filter((val) => {
-                return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                       val.date.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
-        },
         // get all data of fixed monthly cost list
         getFixedMonthlyCostList() {
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/accounting/fixedMonthlyCost';
-            const { page,itemsPerPage,search } = this.options;
 
             if(this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
 
-            queryString.set('perPage',itemsPerPage)
-            queryString.set('page',page)
-            queryString.set('search',search)
-            
             const url = `${ajaxUrl}?${queryString.toString()}`;
             axios.get(url, {
                 headers: {
@@ -420,7 +398,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data;
-                    this.dataMetrics = getData.data;
+                    this.dataMetrics = getData.data.data;
                     this.dataMetricsFilter = getData.data.data;
                     this.permissions = getData.permission;
                     console.log(getData, 'getData');

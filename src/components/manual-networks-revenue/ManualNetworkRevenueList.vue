@@ -39,7 +39,7 @@
                                 <v-select clearable variant="outlined" placeholder="Network Name Filter" :items="networkNameFilter" item-value="key" v-model="networkName" @update:modelValue="getManualNetworksEntry" ></v-select>
                             </v-col>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments" />
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                             </v-col>
                         </v-card-title>
 
@@ -153,7 +153,6 @@ export default {
             networkName: null,
             selectedFile: '',
             isSortable: true,
-            searchInput: '',
             permissions: {},
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
@@ -192,15 +191,6 @@ export default {
         updateRange(range) {
             this.selectedRange = range;
             this.getManualNetworksEntry();
-        },
-        // search payment from table
-        searchPayments() {
-            this.dataMetrics = this.dataMetricsFilter.filter((val) => {
-                return  val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.date.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.manual_network.network.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
         },
         // get manual network metrics listing
         getManualNetworksEntry() {

@@ -57,14 +57,14 @@
                                     <v-select clearable variant="outlined" placeholder="To Account Filter"  :items="toAccountFilter" v-model="toAccount" @update:modelValue="filterToAccount"></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal ">
-                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
-                                </v-col>
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
+                                 </v-col>
                             </v-row>                          
                         </v-card-title>
 
                         <v-divider class="border-opacity-100 my-4" color="success" />
 
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="creditCardPaymentList" :itemsPerPage="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="creditCardPaymentList" :search="search" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
                                 {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
@@ -193,7 +193,6 @@ export default {
             fromAccount: null,
             toAccountFilter: [],
             toAccount: null,
-            searchInput: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
     },
@@ -233,17 +232,6 @@ export default {
         updateRange(range) {
             this.selectedRange = range;
             this.getCreditCardPaymentList();
-        },
-        // search payment from table
-        searchPayments() {
-            this.creditCardPaymentList = this.creditCardPaymentFilter.filter((val) => {
-                return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.from_account.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.to_account.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.status.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.payment_date.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
         },
         // from account list filtering
         filterFromAccount() {

@@ -30,16 +30,10 @@
                                 <v-spacer></v-spacer>
                                 <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
-                                    <!-- <select v-model="networkSelected" class="form-control serch_table">
-                                        <option disabled selected>Network Filter</option>
-                                        <option :value="val.title" v-for="(val, index) of networkFilter" :key="index">
-                                            {{ val.title }}
-                                        </option>
-                                    </select> -->
                                     <v-select clearable variant="outlined" placeholder="Network Filter" :items="networkFilter" v-model="networkSelected"></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchInvoice"/>
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                                 </v-col>
                             </v-row>
                         </v-card-title>
@@ -283,7 +277,6 @@ export default {
             isSortable: true,
             dialog: false,
             selectedInvoiceId: '',
-            searchInput: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
     },
@@ -365,16 +358,6 @@ export default {
         // invoice list filter using selected network
         filterUsingNetwork() {
            console.log(this.invoiceList, this.networkSelected, 'oifihfg')
-        },
-        // search user from table
-        searchInvoice() {
-            this.invoiceList = this.invoiceFilter.filter((val) => {
-                return val.invoice_number.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.network_name && val.network_name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.invoice_issue_date.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.invoice_due_date.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
         },
         // add multiple email address field
         addNewItem() {

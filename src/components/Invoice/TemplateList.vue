@@ -25,7 +25,7 @@
                             Invoice Template List
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal pa-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchInvoice"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                             </v-col>
                         </v-card-title>
 
@@ -132,7 +132,6 @@ export default {
                 { title: 'Invoice Due Date', key: 'invoice_due_date' },
                 { title: 'Action', key: 'actions', },
             ],
-            searchInput: '',
             templateList: [],
             templateFilter: [],
             singleExpand: true,
@@ -163,16 +162,6 @@ export default {
         // closing modal
         closeModal() {
             window.$('#editTemplateNameModal').modal('hide');
-        },
-        // search user from table
-        searchInvoice() {
-            this.templateList = this.templateFilter.filter((val) => {
-                return val.invoice_number.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.template_name.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.invoice_issue_date.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.invoice_due_date.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
         },
         // get templates
         getTemplateData() {

@@ -231,18 +231,11 @@
             });       
             this.toggleComponents();
             this.getSidebarMenues();
-            console.log('static');
             this.getCurrentUserData();
             this.addDarkThemeClass();
+            this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? JSON.parse(localStorage.getItem('sidebar-toggler')) : true;
+            this.$emit('move-contents', this.hideShowSidebar);
         },
-        // updated() {
-        //     this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
-        //     console.log(this.hideShowSidebar, 'this.hideShowSidebar')
-        //     // setTimeout(() => {
-        //     //     this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
-        //     //     console.log(this.hideShowSidebar, 'this.hideShowSidebar')
-        //     // }, 100)
-        // },
         methods: {
             // added css active class for current tab
             addActiveClass(route) {
@@ -366,16 +359,6 @@
             },
             // hide/show components
             toggleComponents() {
-                // if(screen.width > 1199) {
-                    // if(window.location.pathname === '/dashboard' || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers' || this.$route.params.notFound) {   //  || window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers'
-                    //     this.hideShowSidebar = true;
-                    // } 
-                    // if(window.location.pathname === '/dashboard') {
-                    //     this.hideShowSidebar = true;
-                    // } 
-                    // else {
-                    //     this.hideShowSidebar = false;
-                    // }
                     this.hideShowSidebar = false;
                     this.$emit('move-contents', this.hideShowSidebar);
                 // }
@@ -413,17 +396,17 @@
                 localStorage.setItem('sidebar-toggler', this.hideShowSidebar);
             },
             // change default sidebar to small(hover) sidebar
-            changeSidebar(data) {
-                if(data.child) {
-                    this.showOnClick = true;
-                    this.hideShowSidebar = !this.hideShowSidebar;
-                }
-                else {
-                    this.showOnClick = false;
-                }
-                this.selectedMenu = [];
-                this.selectedMenu.push(data);
-            },
+            // changeSidebar(data) {
+            //     if(data.child) {
+            //         this.showOnClick = true;
+            //         this.hideShowSidebar = !this.hideShowSidebar;
+            //     }
+            //     else {
+            //         this.showOnClick = false;
+            //     }
+            //     this.selectedMenu = [];
+            //     this.selectedMenu.push(data);
+            // },
             // sidebar show dropdown on hover
             showHoveredDropdown(data) {
                 this.selectedMenu = [];
@@ -535,12 +518,17 @@
                 }
             },
             $route() {
-                this.toggleComponents();
+                // this.toggleComponents();
+                // setTimeout(() => {
+                //     this.$emit('move-contents', localStorage.getItem('sidebar-toggler'));
+                //     this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
+                //     console.log(this.hideShowSidebar, localStorage.getItem('sidebar-toggler'), 'this.hideShowSidebar -- 100')
+                // }, 100)
             },
-            hideShowSidebar(val) {
-                console.log(val), '======== val =========';
-                this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
-            }
+            // hideShowSidebar(val) {
+            //     console.log(val), '======== val =========';
+            //     this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
+            // }
         }
     } 
 </script>

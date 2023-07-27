@@ -25,7 +25,7 @@
                             Subscribed Users
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchUser"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                             </v-col>
                         </v-card-title>
 
@@ -102,7 +102,6 @@
                 items: [],
                 userFilter: [],
                 permissions: {},
-                searchInput: '',
             }
         },
         methods: {
@@ -144,15 +143,6 @@
                     this.showLoader = false;
                     console.log(error)
                 }); 
-            },
-            // search user from table
-            searchUser() {
-                this.items = this.userFilter.filter((val) => {
-                    return val.name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                           val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                           val.email.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                           val.company_name.toLowerCase().includes(this.searchInput.toLowerCase())
-                })
             },
             // add new user
             addNewUser() {
