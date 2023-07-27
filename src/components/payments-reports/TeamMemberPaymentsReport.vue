@@ -20,64 +20,21 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Team Member Payments Report
                             <v-spacer></v-spacer>
-                            <date-range-picker class="date_picker" :value="selectedRange" @update="checkOpenPicker"></date-range-picker>
-                            <!-- <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0 v_select_design">
-                                <v-select clearable variant="outlined" placeholder="Custom Filter" v-model="selectedtTransactionType" :items="items" chips multiple @change="genrateArchivedReportsPayments"></v-select>
-                            </v-col> -->
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                         </v-card-title>
 
                         <v-divider class="border-opacity-100 my-4" color="success" />
 
                         <v-row class="mt-4">
-                            <v-col cols="6" sm="6" md="4" lg="3">
-                                <v-card class="card_design bg-green-lighten-4">
+                            <v-col cols="6" sm="6" md="4" lg="3" v-for="(data,index) in cardMemberList" :key="index">
+                                <v-card class="card_design" :class="data.totalAmount == '0' ? 'bg-blue-lighten-4' : 'bg-green-lighten-4'"> 
                                     <v-card-title>
-                                        <p class="text-subtitle-2 font-weight-bold mb-0">From: OneSource AMEX Payment</p>
-                                        <p class="text-subtitle-2 font-weight-bold">TO: AMEX Plum Payment - Wire Transfer</p>
+                                        <p class="text-subtitle-2 font-weight-bold mb-0">From: {{ data.from_account }}</p>
+                                        <p class="text-subtitle-2 font-weight-bold">TO: {{ data.to_account }}</p>
                                     </v-card-title>
                                     <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
                                         <div class="text-green-darken-1">
-                                            $15,500.00
-                                        </div>
-                                    </v-card-text>
-                                </v-card>
-                            </v-col>
-
-                            <v-col cols="6" sm="6" md="4" lg="3">
-                                <v-card class="card_design bg-blue-lighten-4">
-                                    <v-card-title>
-                                        <p class="text-subtitle-2 font-weight-bold mb-0">From: OneSource AMEX Payment</p>
-                                        <p class="text-subtitle-2 font-weight-bold">TO: Fernando</p>
-                                    </v-card-title>
-                                    <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        $0.00
-                                    </v-card-text>
-                                </v-card>
-                            </v-col>
-
-                            <v-col cols="6" sm="6" md="4" lg="3">
-                                <v-card class="card_design bg-green-lighten-4">
-                                    <v-card-title>
-                                        <p class="text-subtitle-2 font-weight-bold mb-0">From: OneSource AMEX Payment</p>
-                                        <p class="text-subtitle-2 font-weight-bold">TO: Samuel</p>
-                                    </v-card-title>
-                                    <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        <div class="text-green-darken-1">
-                                            $15,500.00
-                                        </div>
-                                    </v-card-text>
-                                </v-card>
-                            </v-col>
-
-                            <v-col cols="6" sm="6" md="4" lg="3">
-                                <v-card class="card_design bg-green-lighten-4">
-                                    <v-card-title>
-                                        <p class="text-subtitle-2 font-weight-bold mb-0">From: SX Media Imran</p>
-                                        <p class="text-subtitle-2 font-weight-bold">TO: Rahman Media</p>
-                                    </v-card-title>
-                                    <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        <div class="text-green-darken-1">
-                                            $15,500.00
+                                            {{ $filters.toCurrency(data.total_amount) }}
                                         </div>
                                     </v-card-text>
                                 </v-card>
@@ -99,6 +56,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 export default {
@@ -112,19 +70,88 @@ export default {
         let endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 11, 59, 59, 999);
         return {
             showLoader: false,
-            items: [ 'CREDIT','DEBIT'],
-            selectedtTransactionType: [ 'CREDIT','DEBIT'],
             cardMemberList: [],
-
             dateRange: {startDate, endDate},
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
     },
     mounted() {
+        this.pull();
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
         });
+    },
+    methods: {
+        pull() {
+            this.showLoader = true;
+            let data ={
+                startDate: moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'),
+                endDate: moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'),
+            }
+            axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport',data, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: this.getAccessToken()
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.cardMemberList = response.data.data
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
+                this.showLoader = false;
+            });
+        },
+        updateRange(range) {
+            this.selectedRange = range;
+            this.pull();
+        },
     },
 }
 </script>
