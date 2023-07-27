@@ -234,17 +234,15 @@
             console.log('static');
             this.getCurrentUserData();
             this.addDarkThemeClass();
-            // window.addEventListener('resize', () => {
-            //     this.toggleComponents();
-            //     if(screen.width < 1200) {
-            //         this.hideShowSidebar = false;
-            //     }
-            //     else {
-            //         this.hideShowSidebar = true;
-            //     }
-            //     this.$emit('move-contents', this.hideShowSidebar);
-            // });
         },
+        // updated() {
+        //     this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
+        //     console.log(this.hideShowSidebar, 'this.hideShowSidebar')
+        //     // setTimeout(() => {
+        //     //     this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
+        //     //     console.log(this.hideShowSidebar, 'this.hideShowSidebar')
+        //     // }, 100)
+        // },
         methods: {
             // added css active class for current tab
             addActiveClass(route) {
@@ -384,34 +382,35 @@
             },
             // toggle sidebar and dropdown
             toggleSidebar() {
-                if(window.location.pathname === '/dashboard') {   //  && screen.width > 1199
-                    this.hideShowSidebar = !this.hideShowSidebar;
-                    this.$emit('move-contents', this.hideShowSidebar);
-                }
-                // if(window.location.pathname === '/add-accounts' || window.location.pathname === '/campaigns' || window.location.pathname === '/servers' && screen.width > 1199) {  
+                this.hideShowSidebar = !this.hideShowSidebar;
+                // if(window.location.pathname === '/dashboard') {   //  && screen.width > 1199
                 //     this.hideShowSidebar = !this.hideShowSidebar;
-                //     this.$emit('move-contents', this.hideShowSidebar);
+                //     // this.$emit('move-contents', this.hideShowSidebar);
+                //     // localStorage.setItem('sidebar-toggler', this.hideShowSidebar);
                 // }
-                else {
-                    // get active menu dropdown data
-                    this.allMenues.filter((elem) => {
-                        if(elem.routes == '#') {
-                            elem.child.map((val) => {
-                                if(val.routes == '#') {
-                                    val.child.filter((data) => {
-                                        data.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
-                                    })
-                                }
-                                else {
-                                    val.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
-                                }
-                            })
-                        }
-                    })
-                    this.showOnClick = !this.showOnClick;
-                    this.hideShowSidebar = !this.hideShowSidebar;
-                    this.$emit('move-contents', this.showOnClick);
-                }
+                // else {
+                //     // get active menu dropdown data
+                //     this.allMenues.filter((elem) => {
+                //         if(elem.routes == '#') {
+                //             elem.child.map((val) => {
+                //                 if(val.routes == '#') {
+                //                     val.child.filter((data) => {
+                //                         data.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
+                //                     })
+                //                 }
+                //                 else {
+                //                     val.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
+                //                 }
+                //             })
+                //         }
+                //     })
+                //     this.showOnClick = !this.showOnClick;
+                //     this.hideShowSidebar = !this.hideShowSidebar;
+                //     // this.$emit('move-contents', this.showOnClick);
+                //     // localStorage.setItem('sidebar-toggler', !this.hideShowSidebar);
+                // }
+                this.$emit('move-contents', this.hideShowSidebar);
+                localStorage.setItem('sidebar-toggler', this.hideShowSidebar);
             },
             // change default sidebar to small(hover) sidebar
             changeSidebar(data) {
@@ -537,6 +536,10 @@
             },
             $route() {
                 this.toggleComponents();
+            },
+            hideShowSidebar(val) {
+                console.log(val), '======== val =========';
+                this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
             }
         }
     } 
