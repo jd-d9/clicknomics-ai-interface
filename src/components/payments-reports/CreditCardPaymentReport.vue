@@ -35,9 +35,9 @@
                                         <p class="text-subtitle-2 font-weight-bold">RM AMEX Plum Card</p>
                                     </v-card-title>
                                     <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        <a href="javascript:void(0);" class="text-green-darken-1">
+                                        <router-link to="" class="text-green-darken-1">
                                             $3000
-                                        </a>
+                                        </router-link>
                                     </v-card-text>
                                 </v-card>
                             </v-col>
@@ -59,9 +59,9 @@
                                         <p class="text-subtitle-2 font-weight-bold">IPM AMEX Plum Card</p>
                                     </v-card-title>
                                     <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        <a href="javascript:void(0);" class="text-green-darken-1">
+                                        <router-link to="" class="text-green-darken-1">
                                             $3000
-                                        </a>
+                                        </router-link>
                                     </v-card-text>
                                 </v-card>
                             </v-col>

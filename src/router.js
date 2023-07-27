@@ -93,7 +93,7 @@ const router = createRouter({
         // dashboard
         {path: '/dashboard', component: DashboardComponent, meta: {auth: true}},
         // user profile / user / user role
-        {path: '/my_profile', component: UserProfile, meta: {auth: true}},
+        {path: '/my-profile', component: UserProfile, meta: {auth: true}},
         {path: '/settings/user', component: DisplayUsers, meta: {auth: true}},
         {path: '/settings/user_management/users/create', component: CreateUser, meta: {auth: true}},
         {path: '/settings/user_management/users/:id/edit', component: UpdateUser, meta: {auth: true}},
