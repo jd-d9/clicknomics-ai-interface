@@ -18,14 +18,14 @@
                     </v-breadcrumbs>
                 </v-col>
                 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1'">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             CPA Networks List
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networkHeaders" :items="linkedNewtworks" :single-expand="singleExpand" item-key="customer_id" :itemsPerPage="itemsPerPage">
+                        <v-data-table-server class="table-hover-class mt-4"  :headers="networkHeaders" :items="linkedNewtworks.data" :single-expand="singleExpand" :items-length="linkedNewtworks.total" v-model:options="options" item-key="customer_id">
                             <template v-slot:[`item.id`]="{ item }">
                                 {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
@@ -72,7 +72,7 @@
                                     <v-tooltip activator="parent" location="top">View</v-tooltip>
                                 </v-btn>  -->
                             </template>
-                        </v-data-table>
+                        </v-data-table-server>
                     </v-card>
                 </v-col>
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
@@ -208,15 +208,17 @@ export default {
                 { title: 'Action',  key: 'action', align: 'center', sortable: false},
             ],
             linkedNewtworks: [],
-            permissions: {},
-            itemsPerPage: -1,
+            permissions: {
+                view:'1'
+            },
             backendErrorMessage: '',
             multipleErrors: [],
-            restrictUser: true
+            restrictUser: true,
+            options:{},
         }
     },
     mounted() {
-        this.getCpaNetworkist();
+        // this.getCpaNetworkist();
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
@@ -228,6 +230,15 @@ export default {
                 NetworkName: yup.string().required(),
                 Email: yup.string().required().email(),
             });
+        },
+    },
+    watch:{
+        options: {
+            handler(val) {
+                console.log(val,'sdfsf')
+                this.getCpaNetworkist();
+            },
+            deep: true,
         },
     },
     methods: {
@@ -257,7 +268,9 @@ export default {
         // get cpa network list
         getCpaNetworkist() {
             this.showLoader = true;
-            axios.get(this.$api + '/settings/networks', {
+            const { sortBy, page,itemsPerPage } = this.options;
+
+            axios.get(this.$api + `/settings/networks?perPage=${itemsPerPage}&page=${page}&sortBy=${JSON.stringify(sortBy)}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -266,7 +279,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const allData = response.data;
-                    this.linkedNewtworks = allData.data.data;
+                    this.linkedNewtworks = allData.data;
                     this.permissions = allData.permission;
                     this.restrictUser = allData.restrict_user;
                     this.showLoader = false;
@@ -393,7 +406,7 @@ export default {
             console.log(id)
             this.accountIdEdit = id;
             this.showEditForm = true;
-            const data = this.linkedNewtworks.find((val) => {
+            const data = this.linkedNewtworks.data.find((val) => {
                 return val.id == id
             });
             console.log(data)
