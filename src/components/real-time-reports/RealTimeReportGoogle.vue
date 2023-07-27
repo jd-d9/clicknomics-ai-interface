@@ -190,8 +190,8 @@ export default {
             handler() {
                 this.getGoogleAdsMetrics();
             },
+            deep: true,
         },
-        deep: true,
     },
     methods: {
         // get google analytics data
