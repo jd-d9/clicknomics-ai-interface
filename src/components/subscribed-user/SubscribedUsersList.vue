@@ -45,7 +45,7 @@
                                 {{item.selectable.company_name ? item.selectable.company_name : '-'}}
                             </template>
                             <template v-slot:[`item.status`]="{ item }">
-                                <v-switch color="#0d47a1" v-model="item.selectable.status" hide-details true-value="1" false-value="0" class="ms-auto d-inline-flex justify-content-end mr-2" @click="updateStatus(item.selectable.id)"></v-switch>
+                                <v-switch color="primary" v-model="item.selectable.status" hide-details true-value="1" false-value="0" class="ms-auto d-inline-flex justify-content-end mr-2" @click="updateStatus(item.selectable.id)"></v-switch>
                             </template>
                             <template v-slot:[`item.trial_ends_at`]="{ item }">
                                 {{format_date(item.selectable.trial_ends_at)}}

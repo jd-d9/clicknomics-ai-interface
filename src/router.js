@@ -54,8 +54,17 @@ import DatacenterVpsManagementSystem from './components/management-system/Datace
 import ResidentialVpsManagementSystem from './components/management-system/ResidentialVpsManagementSystem.vue';
 import MultiLoginManagementSystem from './components/management-system/MultiLoginManagementSystem.vue';
 import ServerListComponent from './components/server/ServerListComponent.vue';
+
+// Domains Section
 import EranetDomainComponent from './components/domains/manual-domain/EranetDomainComponent.vue';
 import FlokinetDomainComponent from './components/domains/manual-domain/FlokinetDomainComponent.vue';
+import NamecheapDomain from './components/domains/automated-domain/NamecheapDomain';
+import GodaddyDomain from './components/domains/automated-domain/GodaddyDomain';
+import NamesiloDomain from './components/domains/automated-domain/NamesiloDomain';
+import NjalDomains from './components/domains/automated-domain/NjalDomains';
+import EasydnsDomains from './components/domains/automated-domain/EasydnsDomains';
+
+
 import AdAccountComponent from './components/ad-accounts/AdAccountComponent.vue';
 import CampaignsList from './components/campaigns/CampaignsList.vue';
 import IpmChaseList from './components/bank-accounts/ipm-chase/IpmChaseList.vue';
@@ -76,6 +85,18 @@ import ReportsComponent from './components/real-time-reports/ReportsComponent';
 import CreditCardPaymentReport from './components/payments-reports/CreditCardPaymentReport';
 import BankAccountsPaymentReport from './components/payments-reports/BankAccountsPaymentReport';
 import TeamMemberPaymentsReport from './components/payments-reports/TeamMemberPaymentsReport';
+
+// Payment Methods Section
+import RM_AMEX_PlumCardPayments from './components/payment-organization/rm-amex-plum/RM-AMEX-PlumCardPayments';
+import RM_AMEX_PlumCardPaymentsForm from './components/payment-organization/rm-amex-plum/RM-AMEX-PlumCardPaymentsForm';
+import IPM_AMEX_PlumCardPayments from './components/payment-organization/ipm-amex-plum/IPM-AMEX-PlumCardPayments';
+import IPM_AMEX_PlumCardPaymentsForm from './components/payment-organization/ipm-amex-plum/IPM-AMEX-PlumCardPaymentsForm';
+import IPM_Divvy_CardPayments from './components/payment-organization/ipm-divvy-card/IPM-Divvy-CardPayments';
+import IPM_Divvy_CardPaymentsForm from './components/payment-organization/ipm-divvy-card/IPM-Divvy-CardPaymentsForm';
+import IPM_ChaseInkCardPayments from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPayments';
+import IPM_ChaseInkCardPaymentsForm from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPaymentsForm';
+
+
 
 const router = createRouter({
     history: createWebHistory(),
@@ -164,37 +185,59 @@ const router = createRouter({
         {path: '/management_system/datavps', component: DatacenterVpsManagementSystem, meta: {auth: true}},
         {path: '/management_system/residentialvps', component: ResidentialVpsManagementSystem, meta: {auth: true}},
         {path: '/management_system/multilogin', component: MultiLoginManagementSystem, meta: {auth: true}},
-        // domains module
+
+        // domains/manual module
         {path: '/domains/eranet', component: EranetDomainComponent, meta: {auth: true}},
         {path: '/domains/flokinet', component: FlokinetDomainComponent, meta: {auth: true}},
+        // domains/automated module
+        {path: '/domains/namecheap', component: NamecheapDomain, meta: {auth: true}},
+        {path: '/domains/godaddy', component: GodaddyDomain, meta: {auth: true}},
+        {path: '/domains/namesilo', component: NamesiloDomain, meta: {auth: true}},
+        {path: '/domains/njal', component: NjalDomains, meta: {auth: true}},
+        {path: '/domains/easydns', component: EasydnsDomains, meta: {auth: true}},
+
         // server module
         {path: '/servers', component: ServerListComponent, meta: {auth: true}},
         // ad accounts module
         {path: '/ad-accounts', component: AdAccountComponent, meta: {auth: true}},
         // campaigns module
         {path: '/campaigns', component: CampaignsList, meta: {auth: true}},
-        // ipm chase(bank accounts) module
+
+        // bank-accounts/ipm-chase module
         {path: '/bank_accounts/ipmchase/list', component: IpmChaseList, meta: {auth: true}},
         {path: '/bank_accounts/ipmchase/create', component: IpmChaseForm, meta: {auth: true}},
         {path: '/bank_accounts/ipmchase/:id/edit', component: IpmChaseForm, meta: {auth: true}},
-        // ipm ossc(bank accounts) module
+        // bank-accounts/ipm-ossc module
         {path: '/bank_accounts/onesscorp/list', component: IpmOsscList, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/create', component: IpmOsscForm, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/:id/edit', component: IpmOsscForm, meta: {auth: true}},
-        // report section
+
+        // report/realtime-report module
         {path: '/reporting/realTimeReports/google', component: RealTimeReportGoogle, meta: {auth: true}},
         {path: '/reporting/realTimeReports/microsoft', component: RealTimeReportMicrosoft, meta: {auth: true}},
         {path: '/reporting/realTimeReports/networks', component: ReportsComponent, meta: {auth: true}},
+        // report/payments-report module
         {path: '/reporting/payments/credit-card', component: CreditCardPaymentReport, meta: {auth: true}},
         {path: '/reporting/payments/bank-accounts', component: BankAccountsPaymentReport, meta: {auth: true}},
         {path: '/reporting/payments/team-members', component: TeamMemberPaymentsReport, meta: {auth: true}},
-
-        // archived reports module
+        // report/archived-report module
         {path: '/reporting/archivedReports/microsoft', component: ArchivedReportMicrosoftAdsList, meta: {auth: true}},
         {path: '/reporting/archivedReports/google', component: ArchivedReportGoogleAdsList, meta: {auth: true}},
         {path: '/reporting/archivedReports/networks', component: ArchivedReportNetwoksList, meta: {auth: true}},
         {path: '/reporting/archivedReports/manualNetworks', component: ArchivedReportManualNetworksList, meta: {auth: true}},
         {path: '/reporting/archivedReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
+
+        // Payment Methods Module
+        {path: '/payment_methods/rm-amex-plum-card', component: RM_AMEX_PlumCardPayments, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card/create', component: RM_AMEX_PlumCardPaymentsForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-amex-plum-card', component: IPM_AMEX_PlumCardPayments, meta: {auth: true}},
+        {path: '/payment_methods/ipm-amex-plum-card/create', component: IPM_AMEX_PlumCardPaymentsForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-divvy-card', component: IPM_Divvy_CardPayments, meta: {auth: true}},
+        {path: '/payment_methods/ipm-divvy-card/create', component: IPM_Divvy_CardPaymentsForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-chase-ink-card', component: IPM_ChaseInkCardPayments, meta: {auth: true}},
+        {path: '/payment_methods/ipm-chase-ink-card/create', component: IPM_ChaseInkCardPaymentsForm, meta: {auth: true}},
+        
+
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         {path: '/reporting/realTimeReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
