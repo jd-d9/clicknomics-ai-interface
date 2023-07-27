@@ -2,7 +2,7 @@
     <div>
         <v-layout>
             <!-- sidebar default start here -->
-            <!-- <v-navigation-drawer class="sidebar navbar-vertical navbar-light full_menu" v-if="hideShowSidebar">
+            <v-navigation-drawer class="sidebar navbar-vertical navbar-light full_menu" v-if="hideShowSidebar">
                 <v-list-item class="pa-0">
                     <div class="text-center bg-white py-3 px-2 sticky-top" data-step="1" data-title="Welcome to the clicknomics world!" data-intro='Please walk through our step-by-step guide to understand our app better.' data-position="bottom-middle-aligned">
                         <router-link to="/dashboard" class="sidebar-logo">
@@ -22,22 +22,18 @@
                         </div>
                     </v-list-item>
                 </v-list>
-            </v-navigation-drawer> -->
+            </v-navigation-drawer>
             <!-- sidebar default end here -->
 
             <!-- sidebar small start here -->
-            <!-- <v-navigation-drawer class="sidebar navbar-vertical navbar-light hide-show-sidebar small_mini" v-else> -->
-            <v-navigation-drawer class="sidebar navbar-vertical navbar-light hide-show-sidebar small_mini">
+            <v-navigation-drawer class="sidebar navbar-vertical navbar-light hide-show-sidebar small_mini" v-else>
                 <div class="sidebar-inner-wrapper">
                     <v-list-item class="pa-0">
                         <div class="text-center py-3">
                             <router-link to="/dashboard" class="sidebar-logo">
-                                <img src="/assets/img/brand/favicon.png" class="d-half" alt="logo">
-                            </router-link>
-                            <!-- <router-link to="/dashboard" class="sidebar-logo">
                                 <img src="/assets/img/brand/logo.png" class="d-full" :class="{'d-none': !hideShowSidebar}" alt="logo">
                                 <img src="/assets/img/brand/favicon.png" class="d-half" :class="{'d-none': hideShowSidebar}" alt="logo">
-                            </router-link> -->
+                            </router-link>
                         </div>                  
                     </v-list-item>
                     <v-list nav class="pa-0">
@@ -45,14 +41,13 @@
                             <div class="sidebar-contents">
                                 <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" :class="{'active-tab': addActiveClass(data)}" @mouseenter="showHoveredDropdown(data)" :id="ind + 'tab'" v-for="(data, ind) in allMenues" :key="data.id">
                                     <img :src="'/assets/img/icons/' + data.icon" alt="icon">
-                                    <!-- <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span> -->
+                                    <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                                     <i class="fa-solid fa-angle-right ms-auto" v-if="data.child.length > 0"></i>
                                     <!-- add tooltip -->
                                     <v-tooltip activator="parent" location="bottom" v-if="data.child.length == 0">{{data.menu}}</v-tooltip>
                                 </router-link>
 
                                 <!-- sidebar dropdown start here -->
-                                <!-- <div v-for="data in selectedMenu" :key="data" @mouseleave="hideHoveredDropdown"> -->
                                 <div v-for="data in selectedMenu" :key="data" @mouseleave="hideHoveredDropdown">
                                     <div class="sidebar-dropdown-menu side_submenuitem">                                        
                                         <div class="sidebar-dropdown-head px-3 py-2">
@@ -140,7 +135,6 @@
                             <v-tooltip activator="parent" location="left">Switch to Light Theme</v-tooltip>
                         </div>
                     </v-btn>
-                    <!-- <v-switch color="black" hide-details inset true-value="Dark" false-value="Light" class="ms-auto d-inline-flex justify-content-end mr-2" @change="changeTheme"></v-switch> -->
                     <!-- <v-menu>
                         <template v-slot:activator="{ props }">
                             <v-btn class="text-none" stacked v-bind="props">
@@ -192,7 +186,6 @@
                             </v-list>
                         </v-card>
                     </v-menu> -->
-
                     <v-menu>
                         <template v-slot:activator="{ props }">
                             <v-btn class="text-none" stacked v-bind="props">
@@ -237,6 +230,7 @@
 </template>
 
 <script>
+    import axios from '@axios';
     import introJs from 'intro.js';
     import 'intro.js/minified/introjs.min.css';
     export default {

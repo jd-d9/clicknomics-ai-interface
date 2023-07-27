@@ -32,6 +32,7 @@ import 'jodit/build/jodit.min.css';
 import JoditVue from 'jodit-vue';
 // components
 import LoaderComponent from './components/common/LoaderComponent.vue';
+import FlashMessage from './components/common/FlashMessage.vue';
 import NavAndSideBar from './components/navbar-and-sidebar/NavAndSideBar.vue';
 
 loadFonts();
@@ -125,4 +126,5 @@ require('@/assets/css/dark-argon.css');
 // components
 app.component('loader-component', LoaderComponent);
 app.component('nav-and-side-bar', NavAndSideBar);
+app.component('flash-message', FlashMessage);
 app.mount('#app');
