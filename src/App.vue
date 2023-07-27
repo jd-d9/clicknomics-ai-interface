@@ -2,8 +2,8 @@
     <div>
         <!-- navbar & sidebar component -->
         <nav-and-side-bar :updatingUserDetails="profileImageUpdate" @move-contents="moveRouteContents" v-if="toggleClass" ></nav-and-side-bar>
-        <!-- <router-view :class="{'padding-left': true, 'toggle-padding': !toggleContents, 'all-contents': toggleClass}" @updating-profile-details="updatingUserProfileDetails">
-        </router-view>   -->
+        <router-view :class="{'padding-left': true, 'toggle-padding': !toggleContents, 'all-contents': toggleClass}" @updating-profile-details="updatingUserProfileDetails">
+        </router-view>  
     </div>
 </template>
 
@@ -13,7 +13,7 @@
             return {
                 toggleContents: true,
                 toggleClass: false,
-                // profileImageUpdate: '',
+                profileImageUpdate: '',
             }
         },
         mounted() {
@@ -42,25 +42,25 @@
                 }
             },
             // updating user profile detail which stay in navbar
-            // updatingUserProfileDetails(data) {
-            //     console.log(data, '---data---');
-            //     this.profileImageUpdate = data;
-            //     console.log(this.profileImageUpdate, '---this.profileImageUpdate---');
-            // }
+            updatingUserProfileDetails(data) {
+                console.log(data, '---data---');
+                this.profileImageUpdate = data;
+                console.log(this.profileImageUpdate, '---this.profileImageUpdate---');
+            }
         },
-        // watch: {
-        //     $route(val) {
-        //         this.addDynamicClass();
-        //         if(val.fullPath === '/login') {
-        //             this.toggleContents = true;
-        //         }
-        //         // if(val.fullPath === '/dashboard') {
-        //         //     if(screen.width < 1200) {
-        //         //         this.toggleContents = false;
-        //         //     }
-        //         // }
-        //     }
-        // }
+        watch: {
+            $route(val) {
+                this.addDynamicClass();
+                if(val.fullPath === '/login') {
+                    this.toggleContents = true;
+                }
+                // if(val.fullPath === '/dashboard') {
+                //     if(screen.width < 1200) {
+                //         this.toggleContents = false;
+                //     }
+                // }
+            }
+        }
     }
 </script>
 

@@ -193,8 +193,6 @@
                         </v-card>
                     </v-menu>
                 </v-app-bar>
-                <router-view @updating-profile-details="updatingUserProfileDetails">
-                </router-view>  
             </v-main>
             <!-- navbar component end here -->
                         
@@ -224,7 +222,6 @@
                 toggleIcon: false,
                 trialDays: null,
                 lastLogin: true,
-                profileImageUpdate: '',
             }
         },
         mounted() { 
@@ -249,11 +246,6 @@
             // });
         },
         methods: {
-            updatingUserProfileDetails(data) {
-                console.log(data, '---data---');
-                this.profileImageUpdate = data;
-                console.log(this.profileImageUpdate, '---this.profileImageUpdate---');
-            },
             // added css active class for current tab
             addActiveClass(route) {
                 if(route.routes == '#') {
