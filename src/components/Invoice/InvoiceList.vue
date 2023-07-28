@@ -12,11 +12,13 @@
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>Invoice</span>
                         <v-spacer />
-                        <v-btn @click.prevent="this.$router.push('/accounting/invoice/template')" href="" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-layers">
+                        <v-btn @click.prevent="this.$router.push('/accounting/invoice/template')" href=""
+                            class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-layers">
                             Templates
                         </v-btn>
 
-                        <v-btn @click.prevent="this.$router.push('/accounting/invoice/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="this.$router.push('/accounting/invoice/create')"
+                            class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -28,61 +30,74 @@
                             Invoice List
                             <v-row class="d-flex justify-space-between align-center">
                                 <v-spacer></v-spacer>
-                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select clearable variant="outlined" placeholder="Network Filter" :items="networkFilter" v-model="networkSelected"></v-select>
+                                <date-range-picker class="date_picker" :value="selectedRange"
+                                    @update:value="updateRange"></date-range-picker>
+                                <v-col cols="12" sm="12" md="3" lg="3"
+                                    class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select clearable variant="outlined" placeholder="Network Filter"
+                                        :items="networkFilter" v-model="networkSelected"></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
+                                    <input type="search" class="form-control serch_table" placeholder="Search"
+                                        v-model="search" />
                                 </v-col>
                             </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="invoiceList" :search="search" :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                        <v-data-table :footer-props="{ 'items-per-page-options': [5, 10, 15, 25, 50, 100, -1] }"
+                            :headers="headers" :items="invoiceList" :search="search" :single-expand="singleExpand"
+                            class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id ? item.selectable.id : '-'}}
+                                {{ item.selectable.id ? item.selectable.id : '-' }}
                             </template>
                             <template v-slot:[`item.invoice_number`]="{ item }">
-                                {{item.selectable.invoice_number ? item.selectable.invoice_number : '-'}}
+                                {{ item.selectable.invoice_number ? item.selectable.invoice_number : '-' }}
                             </template>
                             <template v-slot:[`item.network_name`]="{ item }">
-                                <router-link to="" @click="openCreateNetworkModal(item.selectable.id, item.selectable.network_add_type, item.selectable.network_name)">
-                                    {{item.selectable.network_name ? item.selectable.network_name : '-'}}
+                                <router-link to=""
+                                    @click="openCreateNetworkModal(item.selectable.id, item.selectable.network_add_type, item.selectable.network_name)">
+                                    {{ item.selectable.network_name ? item.selectable.network_name : '-' }}
                                 </router-link>
                             </template>
                             <template v-slot:[`item.invoice_issue_date`]="{ item }">
-                                {{item.selectable.invoice_issue_date ? item.selectable.invoice_issue_date : '-'}}
+                                {{ item.selectable.invoice_issue_date ? item.selectable.invoice_issue_date : '-' }}
                             </template>
                             <template v-slot:[`item.invoice_due_date`]="{ item }">
-                                {{item.selectable.invoice_due_date ? item.selectable.invoice_due_date : '-'}}
+                                {{ item.selectable.invoice_due_date ? item.selectable.invoice_due_date : '-' }}
                             </template>
                             <template v-slot:[`item.is_invoice_edited`]="{ item }">
-                                <router-link to="" @click="openNumberEditedModal(item.selectable.id, item.selectable.is_invoice_edited)">{{item.selectable.is_invoice_edited == '1' ? 'Yes' : 'No'}}</router-link>
+                                <router-link to=""
+                                    @click="openNumberEditedModal(item.selectable.id, item.selectable.is_invoice_edited)">{{ item.selectable.is_invoice_edited
+                                        == '1' ? 'Yes' : 'No' }}</router-link>
                             </template>
-                            <template v-slot:[`item.actions`]="{ item }">    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editInvoice(item.selectable.id)">
+                            <template v-slot:[`item.actions`]="{ item }">
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon
+                                    @click.prevent="editInvoice(item.selectable.id)">
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click.prevent="downloadInvoice(item.selectable.id)">
+                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon
+                                    @click.prevent="downloadInvoice(item.selectable.id)">
                                     <v-icon color="deep-purple-darken-1">
                                         mdi-download
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Download</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-blue-lighten-4" variant="text" icon @click.prevent="openShareInvoice(item.selectable.id)">
+                                <v-btn class="ma-2 bg-blue-lighten-4" variant="text" icon
+                                    @click.prevent="openShareInvoice(item.selectable.id)">
                                     <v-icon color="blue-darken-2">
                                         mdi-share-variant
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Share invoice in email</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteInvoice(item.selectable.id)">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon
+                                    @click.prevent="deleteInvoice(item.selectable.id)">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
@@ -110,34 +125,28 @@
                                 <div v-for="(item, index) in emailList" :key="index">
                                     <v-row class="align-center">
                                         <v-col cols="10">
-                                            <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Email" v-model="item.email">
+                                            <input type="text" id="input-username" :class="{ 'form-control': true }"
+                                                placeholder="Email" v-model="item.email">
                                         </v-col>
                                         <v-col cols="2" v-if="index > 0">
-                                            <v-btn
-                                                class="bg-red-lighten-4"
-                                                variant="text" width="40px" height="40px"
-                                                icon="mdi-close"
-                                                color="red-darken-4"
-                                                @click="emailList.splice(index, 1)"
-                                            ></v-btn>
+                                            <v-btn class="bg-red-lighten-4" variant="text" width="40px" height="40px"
+                                                icon="mdi-close" color="red-darken-4"
+                                                @click="emailList.splice(index, 1)"></v-btn>
                                         </v-col>
                                         <v-col cols="2" v-else>
-                                            <v-btn
-                                                class="bg-green-lighten-4"
-                                                variant="text" width="40px" height="40px"
-                                                icon="mdi-plus"
-                                                color="green-darken-2"
-                                                @click="addNewItem"
-                                            ></v-btn>
+                                            <v-btn class="bg-green-lighten-4" variant="text" width="40px" height="40px"
+                                                icon="mdi-plus" color="green-darken-2" @click="addNewItem"></v-btn>
                                         </v-col>
                                     </v-row>
                                 </div>
                             </div>
-                            
+
                             <div class="modal-footer pt-0">
                                 <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-send" @click.prevent="shareInvoice">Send</v-btn>    
-                                    <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click="closeShareInvoice">Cancel</v-btn>
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3"
+                                        append-icon="mdi-send" @click.prevent="shareInvoice">Send</v-btn>
+                                    <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"
+                                        @click="closeShareInvoice">Cancel</v-btn>
                                 </v-col>
                             </div>
                         </form>
@@ -145,8 +154,9 @@
                 </v-dialog>
             </v-row>
         </template>
-         <!-- Modal Network Add -->
-        <div class="modal fade" id="createNetworkModal" tabindex="-1" role="dialog" aria-labelledby="createNetworkModalTitle" aria-hidden="true">
+        <!-- Modal Network Add -->
+        <div class="modal fade" id="createNetworkModal" tabindex="-1" role="dialog"
+            aria-labelledby="createNetworkModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -167,18 +177,21 @@
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12" lg="12" v-if="networkModal.networkAddType">
                                     <label class="form-control-label" for="input-username">CPA Network Name</label>
-                                    <input type="text" :class="{'form-control': true}" v-model="networkModal.networkName">
+                                    <input type="text" :class="{ 'form-control': true }" v-model="networkModal.networkName">
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12" lg="12" v-else>
                                     <label class="form-control-label" for="input-username">Select CPA Network</label>
-                                    <v-autocomplete :class="{'form-control': true}" variant="outlined" :items="networkList" v-model="networkModal.networkName"></v-autocomplete>
+                                    <v-autocomplete :class="{ 'form-control': true }" variant="outlined" :items="networkList"
+                                        v-model="networkModal.networkName"></v-autocomplete>
                                 </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer pt-0">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="addCpaNetwork">Save</v-btn>    
-                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeImportCsvModal">Close</v-btn>
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3"
+                                    append-icon="mdi-content-save" @click.prevent="addCpaNetwork">Save</v-btn>
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"
+                                    @click.prevent="closeImportCsvModal">Close</v-btn>
                             </v-col>
                         </div>
                     </form>
@@ -186,7 +199,8 @@
             </div>
         </div>
         <!-- edited modal  -->
-        <div class="modal fade" id="numberEditedModal" tabindex="-1" role="dialog" aria-labelledby="numberEditedModalTitle" aria-hidden="true">
+        <div class="modal fade" id="numberEditedModal" tabindex="-1" role="dialog" aria-labelledby="numberEditedModalTitle"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -198,7 +212,7 @@
                     <form>
                         <div class="modal-body">
                             <v-row>
-                                <v-col cols="12" sm="12" md="12" lg="12" >
+                                <v-col cols="12" sm="12" md="12" lg="12">
                                     <label class="form-control-label" for="input-username">Is Invoice Edited?</label>
                                     <v-radio-group inline v-model="editedModal.is_invoice_edited">
                                         <v-radio class="monitor me-3" label="YES" value="1"></v-radio>
@@ -209,8 +223,10 @@
                         </div>
                         <div class="modal-footer pt-0">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="isInvoiceEdited">Save</v-btn>    
-                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeNumberEditedModal">Close</v-btn>
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3"
+                                    append-icon="mdi-content-save" @click.prevent="isInvoiceEdited">Save</v-btn>
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"
+                                    @click.prevent="closeNumberEditedModal">Close</v-btn>
                             </v-col>
                         </div>
                     </form>
@@ -230,18 +246,19 @@ export default {
         DateRangePicker,
     },
     filters: {
-        dateCell (value) {
+        dateCell(value) {
             let dt = new Date(value)
             return dt.getDate()
         },
-        date (val) {
+        date(val) {
             return val ? val.toLocaleString() : ''
         }
     },
     data() {
         return {
+            message: {},
             headers: [
-                { title: 'ID', key: 'id', sortable: this.isSortable},
+                { title: 'ID', key: 'id', sortable: this.isSortable },
                 { title: 'Invoice Number', key: 'invoice_number', sortable: this.isSortable },
                 { title: 'Network', key: 'network_name', sortable: this.isSortable },
                 { title: 'Invoice Issue Date', key: 'invoice_issue_date', align: 'center', sortable: this.isSortable },
@@ -291,7 +308,7 @@ export default {
     },
     watch: {
         networkSelected(val) {
-            if(val) {
+            if (val) {
                 this.invoiceList = this.invoiceFilter.filter((data) => {
                     return data.network_name == this.networkSelected;
                 })
@@ -303,7 +320,7 @@ export default {
     },
     methods: {
         // setting date formate
-        dateFormat (classes, date) {
+        dateFormat(classes, date) {
             if (!classes.disabled) {
                 classes.disabled = date.getTime() < new Date()
             }
@@ -319,7 +336,7 @@ export default {
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/accounting/invoices/fetchInvoiceList';
-            if(this.selectedRange) {
+            if (this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
@@ -330,34 +347,33 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.networkFilter = [];
-                    console.log(response.data.networksList)
-                    response.data.networksList.forEach((val) => {
-                        if(val.network_name && val.network_name !== null) {
-                            this.networkFilter.push(val.network_name);
+                .then(response => {
+                    if (response.data.success) {
+                        this.networkFilter = [];
+                        console.log(response.data.networksList)
+                        response.data.networksList.forEach((val) => {
+                            if (val.network_name && val.network_name !== null) {
+                                this.networkFilter.push(val.network_name);
+                            }
+                        })
+                        this.showLoader = false;
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
                         }
-                    })
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
                     this.showLoader = false;
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.showLoader = false;
-            });
+                });
         },
         // invoice list filter using selected network
         filterUsingNetwork() {
-           console.log(this.invoiceList, this.networkSelected, 'oifihfg')
+            console.log(this.invoiceList, this.networkSelected, 'oifihfg')
         },
         // add multiple email address field
         addNewItem() {
@@ -374,60 +390,55 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.invoiceList = response.data.data.invoiceList;
-                    this.invoiceFilter = response.data.data.invoiceList;
-                    console.log(response.data.data.invoiceList, 'this.invoiceList')
-                    this.showLoader = false;
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    if (response.data.success) {
+                        this.invoiceList = response.data.data.invoiceList;
+                        this.invoiceFilter = response.data.data.invoiceList;
+                        console.log(response.data.data.invoiceList, 'this.invoiceList')
+                        this.showLoader = false;
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // delete invoice
         deleteInvoice(id) {
@@ -438,64 +449,58 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.getInvoicesList();
-                    this.showLoader = false;
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    if (response.data.success) {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.getInvoicesList();
+                        this.showLoader = false;
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // edit invoice
         editInvoice(id) {
@@ -510,60 +515,54 @@ export default {
                 },
                 responseType: 'blob',
             })
-            .then(response => {
-                let blob = new Blob([response.data], { type:'application/pdf' } );
-                const _url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = _url;
-                link.setAttribute('download', 'invoice_' + id +'.pdf');
-                document.body.appendChild(link);
-                link.click();
-                this.$toast.open({
-                    message: response.data.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'success'
-                });
-            })
-            .catch(error => {
-                console.log(error, 'error ---')
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    let blob = new Blob([response.data], { type: 'application/pdf' });
+                    const _url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = _url;
+                    link.setAttribute('download', 'invoice_' + id + '.pdf');
+                    document.body.appendChild(link);
+                    link.click();
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
                     }
-                }
-                this.showLoader = false;
-            });
+                    this.$eventBus.emit('flash-message', this.message, '');
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // open share invoice modal
         openShareInvoice(id) {
@@ -573,7 +572,7 @@ export default {
         // close share invoice modal
         closeShareInvoice() {
             this.dialog = false;
-            this.emailList = [{email: ''}];
+            this.emailList = [{ email: '' }];
         },
         // share invoice in mail
         shareInvoice() {
@@ -587,65 +586,59 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.showLoader = false;
-                    this.dialog = false;
-                    this.emailList = [{email: ''}];
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    if (response.data.success) {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                        this.dialog = false;
+                        this.emailList = [{ email: '' }];
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // open/close modals is invoice edited modal
         openNumberEditedModal(id, edited) {
@@ -670,59 +663,54 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.showLoader = false;
-                    this.closeNumberEditedModal();
-                    this.getInvoicesList();
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    if (response.data.success) {
+                        this.showLoader = false;
+                        this.closeNumberEditedModal();
+                        this.getInvoicesList();
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // open/close create network modals
         openCreateNetworkModal(id, type, name) {
@@ -737,7 +725,7 @@ export default {
         },
         // reset network name
         resetNetworkName() {
-           this.networkModal.networkName = '';
+            this.networkModal.networkName = '';
         },
         resetNetworkModal() {
             this.networkModal = {
@@ -752,72 +740,67 @@ export default {
             axios.post(this.$api + '/accounting/invoices/addNetworkCompanyToInvoice', {
                 id: this.networkModal.id,
                 network_name: this.networkModal.networkName,
-                network_add_type: this.networkModal.networkAddType === 0 ?  'live' : 'manual'
+                network_add_type: this.networkModal.networkAddType === 0 ? 'live' : 'manual'
             }, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.showLoader = false;
-                    this.closeCreateNetworkModal();
-                    this.getInvoicesList();
-                    this.fetchNetworkList();
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    if (response.data.success) {
+                        this.showLoader = false;
+                        this.closeCreateNetworkModal();
+                        this.getInvoicesList();
+                        this.fetchNetworkList();
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         }
     }
 }
 </script>
  
-<style>
-.v-radio-group .v-input__details{display: none;}
-</style>
+<style>.v-radio-group .v-input__details {
+    display: none;
+}</style>

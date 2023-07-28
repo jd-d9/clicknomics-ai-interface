@@ -66,6 +66,7 @@
         },
         data() {
             return {
+                message: {},
                 showLoader: false,
                 newPassword: '',
                 confirmNewPassword: '',
@@ -98,20 +99,18 @@
                         this.backendErrorMessage = '';
                         this.multipleErrors = [];
                         this.showLoader = false;
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                     }else {
                         this.showLoader = false;
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
                 })
                 .catch(error => {

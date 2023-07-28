@@ -87,6 +87,7 @@ import axios from '@axios';
 export default {
     data() {
         return {
+            message: {},
             showLoader: false,
             serverListRecord: [],
             search: '',
@@ -128,49 +129,44 @@ export default {
                     this.permissions = Data.permission;
                     this.showLoader = false;
                 }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                     this.showLoader = false;
                 }
             })
             .catch(error => {
                 if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                 }
                 if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                 }
                 if(error.response.data.errors) {
                     if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }else if(error.response.data.errors.length == 0){
                         this.backendErrorMessage = '';
                     }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
                 }
                 this.showLoader = false;

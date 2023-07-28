@@ -62,6 +62,7 @@
         },
         data() {
             return {
+                message: {},
                 userEmail: '',
                 invalidEmail: '',
                 backendErrorMessage: '',
@@ -86,23 +87,21 @@
                 .then(response => {
                     if(response.data.success) {
                         this.userEmail = '';
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                         this.$router.push('/login');
                         this.backendErrorMessage = '';
                         this.multipleErrors = [];
                         this.showLoader = false;
                     }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }
                 })

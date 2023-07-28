@@ -33,6 +33,7 @@
     "vue-datepicker-next": "^1.0.3",
     "vue-router": "^4.2.2",
     "vue-toast-notification": "^3.1.1",
+    "vue3-eventbus": "^2.0.0",
     "vuetify": "^3.3.2",
     "vuex": "^4.1.0",
     "webfontloader": "^1.0.0",

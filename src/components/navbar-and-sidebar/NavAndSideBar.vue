@@ -209,6 +209,7 @@
         props: ['updatingUserDetails'],
         data() {
             return {
+                message: {},
                 hideShowSidebar: false,
                 showLoader: false,
                 showOnClick: false,
@@ -366,47 +367,9 @@
             // toggle sidebar and dropdown
             toggleSidebar() {
                 this.hideShowSidebar = !this.hideShowSidebar;
-                // if(window.location.pathname === '/dashboard') {   //  && screen.width > 1199
-                //     this.hideShowSidebar = !this.hideShowSidebar;
-                //     // this.$emit('move-contents', this.hideShowSidebar);
-                //     // localStorage.setItem('sidebar-toggler', this.hideShowSidebar);
-                // }
-                // else {
-                //     // get active menu dropdown data
-                //     this.allMenues.filter((elem) => {
-                //         if(elem.routes == '#') {
-                //             elem.child.map((val) => {
-                //                 if(val.routes == '#') {
-                //                     val.child.filter((data) => {
-                //                         data.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
-                //                     })
-                //                 }
-                //                 else {
-                //                     val.routes == window.location.pathname.slice(1) && this.selectedMenu.push(elem);
-                //                 }
-                //             })
-                //         }
-                //     })
-                //     this.showOnClick = !this.showOnClick;
-                //     this.hideShowSidebar = !this.hideShowSidebar;
-                //     // this.$emit('move-contents', this.showOnClick);
-                //     // localStorage.setItem('sidebar-toggler', !this.hideShowSidebar);
-                // }
-                this.$emit('move-contents', this.hideShowSidebar);
                 localStorage.setItem('sidebar-toggler', this.hideShowSidebar);
+                this.$emit('move-contents', this.hideShowSidebar);
             },
-            // change default sidebar to small(hover) sidebar
-            // changeSidebar(data) {
-            //     if(data.child) {
-            //         this.showOnClick = true;
-            //         this.hideShowSidebar = !this.hideShowSidebar;
-            //     }
-            //     else {
-            //         this.showOnClick = false;
-            //     }
-            //     this.selectedMenu = [];
-            //     this.selectedMenu.push(data);
-            // },
             // sidebar show dropdown on hover
             showHoveredDropdown(data) {
                 this.selectedMenu = [];
@@ -434,28 +397,51 @@
                 .then(response => {
                     if(response.data.success) {
                         this.showLoader = false;
-                        sessionStorage.clear();
+                        localStorage.clear();
                         this.$router.push('/login');
                     }else {
                         this.showLoader = false;
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.$toast.open({
-                        message: error.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
                     this.showLoader = false;
-                }); 
+                });
             },
             // get current loged in user data
             getCurrentUserData() {
@@ -518,17 +504,9 @@
                 }
             },
             $route() {
+                this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? JSON.parse(localStorage.getItem('sidebar-toggler')) : true;
                 // this.toggleComponents();
-                // setTimeout(() => {
-                //     this.$emit('move-contents', localStorage.getItem('sidebar-toggler'));
-                //     this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
-                //     console.log(this.hideShowSidebar, localStorage.getItem('sidebar-toggler'), 'this.hideShowSidebar -- 100')
-                // }, 100)
             },
-            // hideShowSidebar(val) {
-            //     console.log(val), '======== val =========';
-            //     this.hideShowSidebar = localStorage.getItem('sidebar-toggler') ? localStorage.getItem('sidebar-toggler') : false;
-            // }
         }
     } 
 </script>

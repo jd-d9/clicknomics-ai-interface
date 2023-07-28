@@ -81,6 +81,7 @@
         },
         data() {
             return {
+                message: {},
                 showLoader: false,
                 userEmail: '',
                 userPassword: '',
@@ -148,13 +149,11 @@
                             localStorage.setItem('user-session',encryptedData)
 
                             if(responseData.isTwoFactorVerified) {
-                                this.$toast.open({
-                                    message: 'Logged in successfully!',
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'success'
-                                });
-                                console.log('if')
+                                this.message = {
+                                    text: 'Logged in successfully!',
+                                    type: 'success',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
                                 this.$router.push('/dashboard');
                             } else {
                                 console.log('else')

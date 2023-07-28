@@ -2,6 +2,9 @@
     <div>
         <!-- navbar & sidebar component -->
         <nav-and-side-bar :updatingUserDetails="profileImageUpdate" @move-contents="moveRouteContents" v-if="toggleClass" ></nav-and-side-bar>
+        <!-- toast message -->
+        <flash-message></flash-message>
+        <!-- router-view component -->
         <router-view :class="{'padding-left': true, 'toggle-padding': !toggleContents, 'all-contents': toggleClass}" @updating-profile-details="updatingUserProfileDetails">
         </router-view>  
     </div>

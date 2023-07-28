@@ -20,7 +20,8 @@
                             Import CSV
                         </v-btn> -->
 
-                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0' || !restrictUser" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated"
+                            :disabled="permissions.create_auth == '0' || !restrictUser" prepend-icon="mdi-plus">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -32,47 +33,54 @@
                             Manual Network List
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search"
+                                    v-model="search" />
                             </v-col>
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search"  @current-items="currentItems" :itemsPerPage="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4"
+                            :footer-props="{ 'items-per-page-options': [5, 10, 15, 25, 50, 100, -1] }" :headers="headers"
+                            :items="dataMetrics" :search="search" @current-items="currentItems"
+                            :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
-                                {{item.selectable.id ? item.selectable.id : '-'}}
+                                {{ item.selectable.id ? item.selectable.id : '-' }}
                             </template>
                             <template v-slot:[`item.network`]="{ item }">
-                                {{item.selectable.network ? item.selectable.network : '-'}}
+                                {{ item.selectable.network ? item.selectable.network : '-' }}
                             </template>
                             <template v-slot:[`item.email`]="{ item }">
-                                {{item.selectable.email ? item.selectable.email : '-'}}
+                                {{ item.selectable.email ? item.selectable.email : '-' }}
                             </template>
                             <template v-slot:[`item.platform_type`]="{ item }">
-                                {{item.selectable.platform_type ? item.selectable.platform_type : '-'}}
+                                {{ item.selectable.platform_type ? item.selectable.platform_type : '-' }}
                             </template>
                             <template v-slot:[`item.company`]="{ item }">
-                                {{item.selectable.company ? item.selectable.company : '-'}}
+                                {{ item.selectable.company ? item.selectable.company : '-' }}
                             </template>
                             <template v-slot:[`item.notes`]="{ item }">
-                                {{item.selectable.notes ? item.selectable.notes : '-'}}
+                                {{ item.selectable.notes ? item.selectable.notes : '-' }}
                             </template>
                             <template v-slot:[`item.created_at`]="{ item }">
-                                {{format_date(item.selectable.created_at)}}
+                                {{ format_date(item.selectable.created_at) }}
                             </template>
-                            <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'">
+                            <template v-slot:[`item.action`]="{ item }">
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon
+                                    @click.prevent="edit(item.selectable.id)" :disabled="permissions.update_auth == '0'">
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="showConfirmation(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon
+                                    @click.prevent="showConfirmation(item.selectable.id)"
+                                    :disabled="permissions.delete_auth == '0'">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
-                                </v-btn>                                                            
+                                </v-btn>
                             </template>
                         </v-data-table>
                     </v-card>
@@ -100,7 +108,7 @@
                         </div>
                         <div class="modal-body">
                             <v-row>
-                                <v-col cols="12" sm="12" md="12" lg="12" >
+                                <v-col cols="12" sm="12" md="12" lg="12">
                                     <label class="font-weight-medium">
                                         Are you sure you want to delete your affiliate?.
                                     </label>
@@ -109,8 +117,10 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-delete-empty" @click="deleteAccount()">Delete</v-btn>    
-                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click="cancel()">Cancel</v-btn>
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3"
+                                    append-icon="mdi-delete-empty" @click="deleteAccount()">Delete</v-btn>
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"
+                                    @click="cancel()">Cancel</v-btn>
                             </v-col>
                         </div>
                     </div>
@@ -118,13 +128,14 @@
             </v-row>
         </template>
         <!--End confirmation alert box -->
-        
+
         <!-- Create & Update Manual Network List-->
-        <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle" aria-hidden="true">
+        <div class="modal fade" id="createUpdateData" tabindex="-1" role="dialog" aria-labelledby="createUpdateDataTitle"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">{{activityType}} Manual Network</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{ activityType }} Manual Network</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeModal">
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
@@ -134,46 +145,60 @@
                             <v-row class="align-center">
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">Network Name</label>
-                                    <Field type="text" name="Name" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Name}" placeholder="Add Name" v-model="list.name"/>
+                                    <Field type="text" name="Name" id="input-username"
+                                        :class="{ 'form-control': true, 'border-red-600': errors.Name }" placeholder="Add Name"
+                                        v-model="list.name" />
                                     <span class="text-red-600" v-if="errors.Name">Network name is required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">Email</label>
-                                    <Field type="text" name="Email" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Email}" placeholder="Email" v-model="list.email"/>
-                                    <ErrorMessage class="text-red-600" name="Email"/>
+                                    <Field type="text" name="Email" id="input-username"
+                                        :class="{ 'form-control': true, 'border-red-600': errors.Email }" placeholder="Email"
+                                        v-model="list.email" />
+                                    <ErrorMessage class="text-red-600" name="Email" />
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">Platform Type</label>
-                                    <Field type="text" name="Platform" id="input-username" :class="{'form-control': true, 'border-red-600':errors.Platform}" placeholder="Type" v-model="list.platform_type"/>
+                                    <Field type="text" name="Platform" id="input-username"
+                                        :class="{ 'form-control': true, 'border-red-600': errors.Platform }" placeholder="Type"
+                                        v-model="list.platform_type" />
                                     <span class="text-red-600" v-if="errors.Name">Platform type is required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">Company</label>
-                                    <input type="text" id="input-username" :class="{'form-control': true}" placeholder="Company" v-model="list.company">
+                                    <input type="text" id="input-username" :class="{ 'form-control': true }"
+                                        placeholder="Company" v-model="list.company">
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Notes</label>
-                                    <textarea :class="{'form-control': true}" name="Notes" rows="5" v-model="list.notes"></textarea>
+                                    <textarea :class="{ 'form-control': true }" name="Notes" rows="5"
+                                        v-model="list.notes"></textarea>
                                 </v-col>
 
-                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12"
+                                    class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
                                     <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
                                 </v-col>
 
-                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
-                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12"
+                                    class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ ind + 1
+                                        + '.' }} {{ error }}</small>
                                 </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="reset" id="reset_button" class="text-none" append-icon="mdi-content-save">Reset</v-btn>    
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
-                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                                <v-btn type="reset" id="reset_button" class="text-none"
+                                    append-icon="mdi-content-save">Reset</v-btn>
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3"
+                                    append-icon="mdi-content-save">Save</v-btn>
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"
+                                    @click.prevent="closeModal">Close</v-btn>
                             </v-col>
                         </div>
                     </Form>
@@ -195,6 +220,7 @@ export default {
     },
     data() {
         return {
+            message: {},
             showLoader: false,
             dataMetrics: [],
             dataMetricsFilter: [],
@@ -207,7 +233,7 @@ export default {
                 { title: 'Company', key: 'company' },
                 { title: 'Notes', key: 'notes' },
                 { title: 'Date Added', key: 'created_at' },
-                { title: 'Action',  key: 'action', sortable: false},
+                { title: 'Action', key: 'action', sortable: false },
             ],
             currentItemsTable: [],
             itemsPerPage: -1,
@@ -250,10 +276,10 @@ export default {
             this.currentItemsTable = currentItems;
         },
         // formate date
-        format_date(value){
+        format_date(value) {
             if (value) {
                 return moment(String(value)).format('YYYY-MM-DD');
-            }else {
+            } else {
                 return '-';
             }
         },
@@ -273,63 +299,58 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    const data = response.data;
-                    console.log(data);
-                    this.dataMetrics = data.data.data;
-                    this.dataMetricsFilter = data.data.data;
-                    this.permissions = data.permission;
-                    this.restrictUser = data.restrict_user;
-                    this.showLoader = false;
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    if (response.data.success) {
+                        const data = response.data;
+                        console.log(data);
+                        this.dataMetrics = data.data.data;
+                        this.dataMetricsFilter = data.data.data;
+                        this.permissions = data.permission;
+                        this.restrictUser = data.restrict_user;
+                        this.showLoader = false;
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // create and update network
         saveManualNetwork() {
@@ -349,47 +370,45 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.backendErrorMessage = '';
-                    this.multipleErrors = [];
-                    this.getManualNetworkListing();
-                    this.closeModal();
-                    this.showLoader = false;
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.backendErrorMessage = error.response.data.message;
-                }
-                if(error.response.data.error) {
-                    this.backendErrorMessage = error.response.data.error;
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.backendErrorMessage = error.response.data.errors[0];
-                    }else if(error.response.data.errors.length == 0){
+                .then(response => {
+                    if (response.data.success) {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.backendErrorMessage = '';
-                    }else {
-                        this.multipleErrors = error.response.data.errors;
+                        this.multipleErrors = [];
+                        this.getManualNetworkListing();
+                        this.closeModal();
+                        this.showLoader = false;
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if (error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // open modal for create new network
         createActivity() {
@@ -438,75 +457,68 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                    this.getManualNetworkListing();
-                    this.cancel();
-                    this.showLoader = false;
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            }).catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    if (response.data.success) {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.getManualNetworkListing();
+                        this.cancel();
+                        this.showLoader = false;
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                }).catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
     }
 }
 </script>
 
-<style scoped>
-    .add-height {
-        height: 50px;
-    }
-    #reset_button {
-        opacity: 0 !important;
-        cursor: default !important;
-    }
-</style>
+<style scoped>.add-height {
+    height: 50px;
+}
+
+#reset_button {
+    opacity: 0 !important;
+    cursor: default !important;
+}</style>

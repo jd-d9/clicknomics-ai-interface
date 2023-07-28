@@ -30,6 +30,7 @@ import DisplayVariableMonthlyCost from './components/variable-monthly-cost/Varia
 import VariableMonthlyCostForm from './components/variable-monthly-cost/VariableMonthlyCostForm.vue';
 import DisplayFixedMonthlyCost from './components/fixed-monthly-cost/FixedMonthlyCostList.vue';
 import FixedMonthlyCostForm from './components/fixed-monthly-cost/FixedMonthlyCostForm.vue';
+import MasterAccountingComponent from './components/master-accounting/MasterAccountingComponent.vue';
 import NetworksList from './components/integrations/cpa-networks/NetworksList.vue';
 import IntegrateNetwork from './components/integrations/cpa-networks/IntegrateNetworkForm.vue';
 import DomainList from './components/integrations/domain/DomainList.vue';
@@ -148,6 +149,8 @@ const router = createRouter({
         {path: '/accounting/fixedMonthlyCost', component: DisplayFixedMonthlyCost, meta: {auth: true}},
         {path: '/accounting/fixedMonthlyCost/create', component: FixedMonthlyCostForm, meta: {auth: true}},
         {path: '/accounting/fixedMonthlyCost/:id/edit', component: FixedMonthlyCostForm, meta: {auth: true}},
+        // master accounting
+        {path: '/accounting/master-accounting', component: MasterAccountingComponent, meta: {auth: true}},
         // settings/integration/traffic-sources
         {path: '/settings/googleAds', component: GoogleAdsComponent, meta: {auth: true}},
         {path: '/settings/microsoftAds', component: MicrosoftAdsComponent, meta: {auth: true}},
