@@ -35,7 +35,7 @@
                                         <p class="text-subtitle-2 font-weight-bold">{{ data.name }}</p>
                                     </v-card-title>
                                     <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        <router-link :to="data.url" class="text-green-darken-1">
+                                        <router-link :to="data.url" :class="data.totalAmount == '0' ? 'text-blue-darken-2' : 'text-green-darken-1'">
                                             {{ $filters.toCurrency(data.totalAmount) }}
                                         </router-link>
                                     </v-card-text>

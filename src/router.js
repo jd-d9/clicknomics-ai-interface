@@ -98,6 +98,10 @@ import IPM_ChaseInkCardPayments from './components/payment-organization/ipm-chas
 import IPM_ChaseInkCardPaymentsForm from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPaymentsForm';
 
 
+// Account Activity Router
+import LoginHistoryComponent from './components/LoginHistoryComponent';
+
+
 
 const router = createRouter({
     history: createWebHistory(),
@@ -239,8 +243,11 @@ const router = createRouter({
         {path: '/payment_methods/ipm-divvy-card/create', component: IPM_Divvy_CardPaymentsForm, meta: {auth: true}},
         {path: '/payment_methods/ipm-chase-ink-card', component: IPM_ChaseInkCardPayments, meta: {auth: true}},
         {path: '/payment_methods/ipm-chase-ink-card/create', component: IPM_ChaseInkCardPaymentsForm, meta: {auth: true}},
-        
 
+
+        // Account Activity
+        {path: '/login-history', component: LoginHistoryComponent, meta: {auth: true}},
+        
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         {path: '/reporting/realTimeReports/facebook', component: CommingSoonComponent, meta: {auth: true}},

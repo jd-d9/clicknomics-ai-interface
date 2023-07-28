@@ -32,8 +32,8 @@
                                         <p class="text-subtitle-2 font-weight-bold mb-0">From: {{ data.from_account }}</p>
                                         <p class="text-subtitle-2 font-weight-bold">TO: {{ data.to_account }}</p>
                                     </v-card-title>
-                                    <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        <div class="text-green-darken-1">
+                                    <v-card-text class="font-weight-medium text-h4 pa-0 mt-2">
+                                        <div :class="data.totalAmount == '0' ? 'text-blue-darken-2' : 'text-green-darken-1'">
                                             {{ $filters.toCurrency(data.total_amount) }}
                                         </div>
                                     </v-card-text>
