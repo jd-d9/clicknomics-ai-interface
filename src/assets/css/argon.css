@@ -6509,7 +6509,7 @@ select{
 .mx-icon-calendar, .mx-icon-clear {
     right: 15px;
 }
-.mx-datepicker.border-red-600 .mx-input{--border-opacity:1;border-color:#e53e3e;border-color:rgba(229,62,62,var(--border-opacity));}
+.mx-datepicker.border-red-600 .mx-input{border:1px solid #e53e3e !important;}
 .invoice-date-picker.mx-datepicker .mx-input {
     height: 40px !important;
     width: 122px !important;

@@ -61,7 +61,7 @@
                                 </div>
                             </template>
                             <template v-slot:[`item.auto_renewals`]="{ item }">
-                                <v-switch disabled :model-value="item.selectable.auto_renewals == 'Active' ? true : false"></v-switch>
+                                <v-switch color="primary" disabled :model-value="item.selectable.auto_renewals == 'Active' ? true : false"></v-switch>
                             </template>
                             <template v-slot:[`item.expire_date`]="{ item }">
                                 <div class="text-ellipsis w-150">
