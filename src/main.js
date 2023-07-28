@@ -15,6 +15,8 @@ import VueCryptojs from 'vue-cryptojs'
 import ToastPlugin from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-bootstrap.css';
 import '@mdi/font/css/materialdesignicons.css';
+// vue event bus
+import eventBus from 'vue3-eventbus';
 // vuetify
 import 'vuetify/dist/vuetify.css';
 import { createVuetify } from 'vuetify';
@@ -114,7 +116,7 @@ app.use(router);
 // app.use(VueAxios, axios);
 app.use(ToastPlugin);
 app.use(VueCryptojs);
-
+app.use(eventBus);
 app.use(vuetify);
 app.use(JoditVue);
 app.mixin(mixin);

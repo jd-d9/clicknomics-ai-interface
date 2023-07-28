@@ -14,18 +14,23 @@
                         <v-spacer />
 
                         <div>
-                            <v-btn @click.prevent="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                            <v-btn @click.prevent="downloadCsv"
+                                class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated"
+                                prepend-icon="mdi-download">
                                 Demo.csv
                             </v-btn>
 
-                            <v-btn @click.prevent="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                            <v-btn @click.prevent="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated"
+                                prepend-icon="mdi-import">
                                 Import CSV
                             </v-btn>
 
-                            <v-btn @click.prevent="this.$router.push('/networks/manualNetworks/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                            <v-btn @click.prevent="this.$router.push('/networks/manualNetworks/create')"
+                                class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated"
+                                :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
                                 Add New
                             </v-btn>
-                        </div>                        
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -34,49 +39,61 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Archived Reports Manual Network List
                             <v-spacer></v-spacer>
-                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
-                                <v-select clearable variant="outlined" placeholder="Network Name Filter" :items="networkNameFilter" item-value="key" v-model="networkName" @update:modelValue="getManualNetworksEntry" ></v-select>
+                            <date-range-picker class="date_picker" :value="selectedRange"
+                                @update:value="updateRange"></date-range-picker>
+                            <v-col cols="12" sm="12" md="3" lg="3"
+                                class="font-medium font-weight-normal v_select_design py-0 pr-0">
+                                <v-select clearable variant="outlined" placeholder="Network Name Filter"
+                                    :items="networkNameFilter" item-value="key" v-model="networkName"
+                                    @update:modelValue="getManualNetworksEntry"></v-select>
                             </v-col>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search"
+                                    v-model="search" />
                             </v-col>
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4"
+                            :footer-props="{ 'items-per-page-options': [5, 10, 15, 25, 50, 100, -1] }" :headers="headers"
+                            :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.date`]="{ item }">
-                                {{item.selectable.date ? item.selectable.date : '-'}}
+                                {{ item.selectable.date ? item.selectable.date : '-' }}
                             </template>
                             <template v-slot:[`item.network`]="{ item }">
                                 <div class="text-ellipsis">
-                                    {{item.selectable.manual_network.network ? item.selectable.manual_network.network : '-'}}
+                                    {{ item.selectable.manual_network.network ? item.selectable.manual_network.network :
+                                        '-' }}
                                 </div>
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">
-                                {{$filters.toCurrency(item.selectable.amount)}}
+                                {{ $filters.toCurrency(item.selectable.amount) }}
                             </template>
-                            <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/networks/manualNetworks/'+ item.selectable.id +'/edit')" :disabled="permissions.update_auth == '0'">
+                            <template v-slot:[`item.action`]="{ item }">
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon
+                                    @click.prevent="this.$router.push('/networks/manualNetworks/' + item.selectable.id + '/edit')"
+                                    :disabled="permissions.update_auth == '0'">
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon
+                                    @click.prevent="deleteData(item.selectable.id)"
+                                    :disabled="permissions.delete_auth == '0'">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
-                                </v-btn>                                                            
+                                </v-btn>
                             </template>
 
                             <template v-slot:tbody v-if="dataMetrics.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
-                                    <td class="text-center">{{$filters.toCurrency(sumField)}}</td>
+                                    <td class="text-center">{{ $filters.toCurrency(sumField) }}</td>
                                     <td></td>
                                 </tr>
                             </template>
@@ -93,7 +110,8 @@
             </v-row>
         </v-container>
 
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -107,16 +125,20 @@
                             <div class="file-upload">
                                 <div class="file-select">
                                     <div class="file-select-button" id="fileName">Choose File</div>
-                                    <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
+                                    <div class="file-select-name" id="noFile" v-if="selectedFile">{{ selectedFile.name }}
+                                    </div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input name="Choosecsv" @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file"  required/>
+                                    <input name="Choosecsv" @change="chooseFile" title="Choose CSV"
+                                        class="inputFile form-control-file" type="file" required />
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer pt-0">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-import">Import</v-btn>    
-                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3"
+                                    append-icon="mdi-import">Import</v-btn>
+                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close"
+                                    @click.prevent="closeModal">Close</v-btn>
                             </v-col>
                         </div>
                     </form>
@@ -136,6 +158,7 @@ export default {
     },
     data() {
         return {
+            message: {},
             showLoader: false,
             dataMetrics: [],
             dataMetricsFilter: [],
@@ -162,11 +185,11 @@ export default {
             const key = 'amount';
             return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
-        headers: function() {
+        headers: function () {
             return [
                 { title: 'Date', align: 'start', sortable: this.isSortable, key: 'date' },
                 { title: 'Network Name', key: 'network', sortable: this.isSortable },
-                { title: 'Amount', align: 'center', key: 'amount',sortable: this.isSortable },
+                { title: 'Amount', align: 'center', key: 'amount', sortable: this.isSortable },
                 { title: 'Action', align: 'center', key: 'action' },
             ]
         }
@@ -197,10 +220,10 @@ export default {
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/network/manualNetworksMetrics';
-            if(this.networkName) {
+            if (this.networkName) {
                 queryString.set('networkName', this.networkName)
             }
-            if(this.selectedRange) {
+            if (this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
@@ -211,71 +234,66 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    const getData = response.data;
-                    console.log(getData, 'getData');
-                    this.dataMetrics = getData.data.data;
-                    this.dataMetricsFilter = getData.data.data;
-                    this.networkNameFilter = [];
-                    getData.allNetworks.forEach((val) => {
-                        this.networkNameFilter.push(
-                            {
-                                key: val.manual_network.id,
-                                title: val.manual_network.network
-                            }
-                        )
-                    });
-                    this.permissions = getData.permission;
-                    this.showLoader = false;
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
+                .then(response => {
+                    if (response.data.success) {
+                        const getData = response.data;
+                        console.log(getData, 'getData');
+                        this.dataMetrics = getData.data.data;
+                        this.dataMetricsFilter = getData.data.data;
+                        this.networkNameFilter = [];
+                        getData.allNetworks.forEach((val) => {
+                            this.networkNameFilter.push(
+                                {
+                                    key: val.manual_network.id,
+                                    title: val.manual_network.network
+                                }
+                            )
                         });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.permissions = getData.permission;
+                        this.showLoader = false;
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // checkOpenPicker() {
         //     setTimeout(() => {
@@ -284,7 +302,7 @@ export default {
         // },
         // delete data
         deleteData(id) {
-            if(confirm("Do you really want to delete?")) {
+            if (confirm("Do you really want to delete?")) {
                 this.showLoader = true;
                 axios.delete(this.$api + '/network/manualNetworksMetrics/' + id, {
                     headers: {
@@ -292,64 +310,58 @@ export default {
                         Authorization: this.getAccessToken()
                     }
                 })
-                .then(response => {
-                    if(response.data.success) {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
-                        this.getManualNetworksEntry();
-                        this.showLoader = false;
-                    }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if(error.response.data.message) {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }
-                    if(error.response.data.error) {
-                        this.$toast.open({
-                            message: error.response.data.error,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }else if(error.response.data.errors.length == 0){
-                            this.backendErrorMessage = '';
-                        }else {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                    .then(response => {
+                        if (response.data.success) {
+                            this.message = {
+                                text: response.data.message,
+                                type: 'success',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                            this.getManualNetworksEntry();
+                            this.showLoader = false;
+                        } else {
+                            this.message = {
+                                text: response.data.message,
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                            this.showLoader = false;
                         }
-                    }
-                    this.showLoader = false;
-                });
+                    })
+                    .catch(error => {
+                        if (error.response.data.message) {
+                            this.message = {
+                                text: error.response.data.message,
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                        if (error.response.data.error) {
+                            this.message = {
+                                text: error.response.data.error,
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                        if (error.response.data.errors) {
+                            if (error.response.data.errors.length == 1) {
+                                this.message = {
+                                    text: error.response.data.errors[0],
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                            } else if (error.response.data.errors.length == 0) {
+                                this.backendErrorMessage = '';
+                            } else {
+                                this.message = {
+                                    text: error.response.data.errors[0],
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                            }
+                        }
+                        this.showLoader = false;
+                    });
             }
         },
         // download csv file
@@ -363,55 +375,50 @@ export default {
                 },
                 responseType: 'blob',
             })
-            .then(response => {
-                let blob = new Blob([response.data], { type:'application/csv' } );
-                const _url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = _url;
-                link.setAttribute('download', 'demo.csv');
-                document.body.appendChild(link);
-                link.click();
-                this.$toast.open({
-                    message: response.data.message,
-                    position: 'top-right',
-                    duration: '5000',
-                    type: 'success'
-                });
-            })
-            .catch(error => {
-                    if(error.response.data.message) {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    let blob = new Blob([response.data], { type: 'application/csv' });
+                    const _url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = _url;
+                    link.setAttribute('download', 'demo.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
                     }
-                    if(error.response.data.error) {
-                        this.$toast.open({
-                            message: error.response.data.error,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    this.$eventBus.emit('flash-message', this.message, '');
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }else if(error.response.data.errors.length == 0){
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
                             this.backendErrorMessage = '';
-                        }else {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                         }
                     }
                     this.showLoader = false;
@@ -428,66 +435,60 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if(response.data.success) {
-                    this.closeModal();
-                    this.getManualNetworksEntry();
-                    this.showLoader = false;
-                    this.selectedFile = '';
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
-                }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                .then(response => {
+                    if (response.data.success) {
+                        this.closeModal();
+                        this.getManualNetworksEntry();
+                        this.showLoader = false;
+                        this.selectedFile = '';
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // select csv file
         chooseFile(e) {
@@ -526,6 +527,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

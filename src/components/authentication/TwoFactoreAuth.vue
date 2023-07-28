@@ -116,6 +116,7 @@
         },
         data() {
             return {
+                message: {},
                 showLoader: false,
                 displayQrCode: '',
                 authCode: '',
@@ -182,12 +183,11 @@
                         this.multipleErrors = [];
                         this.showLoader = false;
                     }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }
                 })
@@ -232,12 +232,11 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.$toast.open({
-                            message: 'Logged in successfully!',
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
+                        this.message = {
+                            text: 'Logged in successfully!',
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.sessionData.isTwoFactorVerified = true;
                         const encryptedData = this.$CryptoJS.AES.encrypt(JSON.stringify(this.sessionData), "Clicknomics-AI").toString()
                         localStorage.setItem('user-session',encryptedData)
@@ -247,12 +246,11 @@
                         this.backendErrorMessage = '';
                         this.multipleErrors = [];
                     }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }
                 })

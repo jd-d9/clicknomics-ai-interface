@@ -15,7 +15,7 @@
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0"> <!--  v-if="permissions.view == '1' && !showLoader" -->
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             Team Member Payments Report
@@ -42,14 +42,6 @@
                         </v-row>
                     </v-card>
                 </v-col>
-                <!--  v-if="permissions.view != '1' && !showLoader" -->
-                <!-- <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
-                    <v-card class="card_design mb-4">
-                        <v-card-title class="d-flex justify-content-center align-center">
-                            You have no access for this page
-                        </v-card-title>
-                    </v-card>
-                </v-col> -->
             </v-row>
         </v-container>
     </div>
@@ -69,6 +61,7 @@ export default {
         let startDate = new Date(today.getFullYear(), today.getMonth(), 1);
         let endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 11, 59, 59, 999);
         return {
+            message: {},
             showLoader: false,
             cardMemberList: [],
             dateRange: {startDate, endDate},
@@ -100,58 +93,117 @@ export default {
                     this.cardMemberList = response.data.data
                     this.showLoader = false;
                 }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                     this.showLoader = false;
                 }
             })
             .catch(error => {
                 if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                 }
                 if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                 }
                 if(error.response.data.errors) {
                     if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }else if(error.response.data.errors.length == 0){
                         this.backendErrorMessage = '';
                     }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
                 }
                 this.showLoader = false;
             });
         },
+        // update data using date range
         updateRange(range) {
             this.selectedRange = range;
             this.pull();
         },
+        // pull() {
+        //     this.showLoader = true;
+        //     const queryString = new URLSearchParams();
+        //     const ajaxUrl = this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport';
+        //     if(this.selectedRange) {
+        //         queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+        //         queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+        //     }
+        //     const url = `${ajaxUrl}?${queryString.toString()}`;
+        //     axios.get(url, {
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //             Authorization: this.getAccessToken()
+        //         }
+        //     })
+        //     .then(response => {
+        //         if(response.data.success) {
+        //             this.cardMemberList = response.data.data
+        //             this.showLoader = false;
+        //         }else {
+        //             this.message = {
+        //                 text: response.data.message,
+        //                 type: 'error',
+        //             }
+        //             this.$eventBus.emit('flash-message', this.message, '');
+        //             this.showLoader = false;
+        //         }
+        //     })
+        //     .catch(error => {
+        //         if(error.response.data.message) {
+        //             this.message = {
+        //                 text: error.response.data.message,
+        //                 type: 'error',
+        //             }
+        //             this.$eventBus.emit('flash-message', this.message, '');
+        //         }
+        //         if(error.response.data.error) {
+        //             this.message = {
+        //                 text: error.response.data.error,
+        //                 type: 'error',
+        //             }
+        //             this.$eventBus.emit('flash-message', this.message, '');
+        //         }
+        //         if(error.response.data.errors) {
+        //             if(error.response.data.errors.length == 1) {
+        //                 this.message = {
+        //                     text: error.response.data.errors[0],
+        //                     type: 'error',
+        //                 }
+        //                 this.$eventBus.emit('flash-message', this.message, '');
+        //             }else if(error.response.data.errors.length == 0){
+        //                 this.backendErrorMessage = '';
+        //             }else {
+        //                 this.message = {
+        //                     text: error.response.data.errors[0],
+        //                     type: 'error',
+        //                 }
+        //                 this.$eventBus.emit('flash-message', this.message, '');
+        //             }
+        //         }
+        //         this.showLoader = false;
+        //     });
+        // },
     },
 }
 </script>

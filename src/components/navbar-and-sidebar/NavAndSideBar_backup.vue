@@ -486,12 +486,11 @@
                         this.$router.push('/login');
                     }else {
                         this.showLoader = false;
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
                 })
                 .catch(error => {

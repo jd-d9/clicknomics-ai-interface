@@ -284,6 +284,7 @@
         },
         data() {
             return {
+                message: {},
                 userEmailToggle: false,
                 profileDetailsToggle: false,
                 passwordToggle: false,
@@ -382,50 +383,44 @@
                         }
                         this.showLoader = false;
                     }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    if(error.response.data.message) {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.error) {
-                        this.$toast.open({
-                            message: error.response.data.error,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }else if(error.response.data.errors.length == 0){
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
                             this.backendErrorMessage = '';
-                        }else {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                         }
                     }
                     this.showLoader = false;
@@ -446,12 +441,11 @@
             //             this.countryDetails.sort((a, b) => a.name - b.name);
             //             this.showLoader = false;
             //         }else {
-            //             this.$toast.open({
-            //                 message: response.data.message,
-            //                 position: 'top-right',
-            //                 duration: '5000',
-            //                 type: 'error'
-            //             });
+                // this.message = {
+                //                 text: response.data.message,
+                //                 type: 'erroe',
+                //             }
+                //             this.$eventBus.emit('flash-message', this.message, '');
             //             this.showLoader = false;
             //         }
             //     })
@@ -478,59 +472,53 @@
                     })
                     .then(response => {
                         if(response.data.success) {
-                            this.$toast.open({
-                                message: response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
+                            this.message = {
+                                text: response.data.message,
+                                type: 'success',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                             this.showLoader = false;
                             this.getCurrentUserData();
                             this.$emit('updating-profile-details', Date.now());
                         }else {
-                            this.$toast.open({
-                                message: response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                            this.message = {
+                                text: response.data.message,
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                             this.showLoader = false;
                     }
                     })
                     .catch(error => {
-                        if(error.response.data.message) {
-                            this.$toast.open({
-                                message: error.response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                        if (error.response.data.message) {
+                            this.message = {
+                                text: error.response.data.message,
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                         }
-                        if(error.response.data.error) {
-                            this.$toast.open({
-                                message: error.response.data.error,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                        if (error.response.data.error) {
+                            this.message = {
+                                text: error.response.data.error,
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                         }
-                        if(error.response.data.errors) {
-                            if(error.response.data.errors.length == 1) {
-                                this.$toast.open({
-                                    message: error.response.data.errors[0],
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'error'
-                                });
-                            }else {
-                                error.response.data.errors.map((error) => {
-                                    this.$toast.open({
-                                        message: error,
-                                        position: 'top-right',
-                                        duration: '5000',
-                                        type: 'error'
-                                    });
-                                })
+                        if (error.response.data.errors) {
+                            if (error.response.data.errors.length == 1) {
+                                this.message = {
+                                    text: error.response.data.errors[0],
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                            } else if (error.response.data.errors.length == 0) {
+                                this.backendErrorMessage = '';
+                            } else {
+                                this.message = {
+                                    text: error.response.data.errors[0],
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
                             }
                         }
                         this.showLoader = false;
@@ -551,62 +539,55 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                         this.getCurrentUserData();
                         sessionStorage.setItem('Email', this.email);
                         // this.userEmailToggle = false;
                         document.getElementsByClassName('email-close-button-toggle')[0].click();
                     }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    console.log(error, 'error')
-                    if(error.response.data.message) {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.error) {
-                        this.$toast.open({
-                            message: error.response.data.error,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }else {
-                            error.response.data.errors.map((error) => {
-                                this.$toast.open({
-                                    message: error,
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'error'
-                                });
-                            })
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                         }
                     }
                     this.showLoader = false;
@@ -629,60 +610,54 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5555555000',
-                            type: 'success'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                         this.getCurrentUserData();
                         this.profileDetailsToggle = false;
                         this.$emit('updating-profile-details', Date.now());
                     }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    if(error.response.data.message) {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.error) {
-                        this.$toast.open({
-                            message: error.response.data.error,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }else {
-                            error.response.data.errors.map((error) => {
-                                this.$toast.open({
-                                    message: error,
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'error'
-                                });
-                            })
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                         }
                     }
                     this.showLoader = false;
@@ -721,12 +696,11 @@
                     })
                     .then(response => {
                         if(response.data.success) {
-                            this.$toast.open({
-                                message: response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'success'
-                            });
+                            this.message = {
+                                text: response.data.message,
+                                type: 'success',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                             this.showLoader = false;
                             this.getCurrentUserData();
                             this.passwordToggle = false;
@@ -734,53 +708,48 @@
                             this.password = '';
                             this.passwordConfirmation = '';
                         }else {
-                            this.$toast.open({
-                                message: response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                            this.message = {
+                                text: response.data.message,
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                             this.showLoader = false;
                         }
                     })
                     .catch(error => {
-                        if(error.response.data.message) {
-                            this.$toast.open({
-                                message: error.response.data.message,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
                         }
-                        if(error.response.data.error) {
-                            this.$toast.open({
-                                message: error.response.data.error,
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
                         }
-                        if(error.response.data.errors) {
-                            if(error.response.data.errors.length == 1) {
-                                this.$toast.open({
-                                    message: error.response.data.errors[0],
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'error'
-                                });
-                            }else {
-                                error.response.data.errors.map((error) => {
-                                    this.$toast.open({
-                                        message: error,
-                                        position: 'top-right',
-                                        duration: '5000',
-                                        type: 'error'
-                                    });
-                                })
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
                             }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                         }
-                        this.showLoader = false;
-                    });
+                    }
+                    this.showLoader = false;
+                });
                 }
             },
             // updating user 2Fa verification
@@ -797,59 +766,53 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'success'
-                        });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                         this.getCurrentUserData();
                         this.TwoFaVerifyToggle = false;
                     }else {
-                        this.$toast.open({
-                            message: response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }
                 })
                 .catch(error => {
-                    if(error.response.data.message) {
-                        this.$toast.open({
-                            message: error.response.data.message,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.error) {
-                        this.$toast.open({
-                            message: error.response.data.error,
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if(error.response.data.errors) {
-                        if(error.response.data.errors.length == 1) {
-                            this.$toast.open({
-                                message: error.response.data.errors[0],
-                                position: 'top-right',
-                                duration: '5000',
-                                type: 'error'
-                            });
-                        }else {
-                            error.response.data.errors.map((error) => {
-                                this.$toast.open({
-                                    message: error,
-                                    position: 'top-right',
-                                    duration: '5000',
-                                    type: 'error'
-                                });
-                            })
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
                         }
                     }
                     this.showLoader = false;

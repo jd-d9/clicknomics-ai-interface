@@ -26,9 +26,9 @@ axiosIns.interceptors.request.use(
                     }
                 } else if(isAuthenticated && !isVerified) {
                     console.log(window.location.pathname, 'window.location.href')
-                    if(window.location.pathname != '/authenticator/validate' && verifiedBy == '2fa APP') {
+                    if(window.location.pathname != '/authenticator/validate' && verifiedBy == '2fa APP' && window.location.pathname != '/authenticator/validate/email') {
                         window.location.href = '/authenticator/validate';
-                    } else if (window.location.pathname != '/authenticator/validate/email' &&  verifiedBy == 'email') {
+                    } else if (window.location.pathname != '/authenticator/validate/email' &&  verifiedBy == 'email' && window.location.pathname != '/authenticator/validate') {
                         window.location.href = '/authenticator/validate/email';
                     } 
                 }

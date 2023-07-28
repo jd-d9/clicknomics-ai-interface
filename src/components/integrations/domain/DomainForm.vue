@@ -98,6 +98,7 @@ export default {
     },
     data() {
         return {
+            message: {},
             showLoader: false,
             domain_selected: '',
             api_key: '',
@@ -144,22 +145,20 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.$router.push('/settings/domain');
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'success'
-                    });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                     this.backendErrorMessage = '';
                     this.multipleErrors = [];
                     this.showLoader = false;
                 }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                     this.showLoader = false;
                 }
             })
