@@ -25,6 +25,7 @@ td.v-data-table__td {
     font-size: 14px;
     font-weight: 500;
 }
+.v-table__wrapper .v-switch .v-input__details{display: none;}
 .v-data-table-footer {font-size: 14px !important;}
 .v-data-table-footer__pagination button:nth-child(1),
 .v-data-table-footer__pagination button:nth-child(4) {display: none;}
