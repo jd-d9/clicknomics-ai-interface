@@ -373,7 +373,6 @@ export default {
                 .then(response => {
                     if (response.data.success) {
                         const Data = response.data;
-                        console.log(Data, '-- Data --')
                         this.adsAccountsList = Data.data;
                         this.adsAccountsListFilter = Data.data;
                         Data.datacenter.forEach((val) => {

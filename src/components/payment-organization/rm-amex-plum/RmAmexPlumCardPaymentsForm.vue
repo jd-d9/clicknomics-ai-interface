@@ -103,6 +103,20 @@ export default {
     },
     data() {
         return{
+            cardType: [
+                {
+                    title: 'RM AMEX Plum Card'
+                },
+                {
+                    title: 'IPM AMEX Plum Card'
+                },
+                {
+                    title: 'IPM Divvy Card'
+                },
+                {
+                    title: 'IPM Chase Ink Card'
+                }
+            ],
         }
     },
     mounted() {

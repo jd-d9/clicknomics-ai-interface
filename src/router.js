@@ -65,7 +65,6 @@ import NamesiloDomain from './components/domains/automated-domain/NamesiloDomain
 import NjalDomains from './components/domains/automated-domain/NjalDomains';
 import EasydnsDomains from './components/domains/automated-domain/EasydnsDomains';
 
-
 import AdAccountComponent from './components/ad-accounts/AdAccountComponent.vue';
 import CampaignsList from './components/campaigns/CampaignsList.vue';
 import IpmChaseList from './components/bank-accounts/ipm-chase/IpmChaseList.vue';
@@ -88,8 +87,8 @@ import BankAccountsPaymentReport from './components/payments-reports/BankAccount
 import TeamMemberPaymentsReport from './components/payments-reports/TeamMemberPaymentsReport';
 
 // Payment Methods Section
-import RM_AMEX_PlumCardPayments from './components/payment-organization/rm-amex-plum/RM-AMEX-PlumCardPayments';
-import RM_AMEX_PlumCardPaymentsForm from './components/payment-organization/rm-amex-plum/RM-AMEX-PlumCardPaymentsForm';
+import RmAmexPlumCardPayments from './components/payment-organization/rm-amex-plum/RmAmexPlumCardPayments.vue';
+import RmAmexPlumCardPaymentsForm from './components/payment-organization/rm-amex-plum/RmAmexPlumCardPaymentsForm.vue';
 import IPM_AMEX_PlumCardPayments from './components/payment-organization/ipm-amex-plum/IPM-AMEX-PlumCardPayments';
 import IPM_AMEX_PlumCardPaymentsForm from './components/payment-organization/ipm-amex-plum/IPM-AMEX-PlumCardPaymentsForm';
 import IPM_Divvy_CardPayments from './components/payment-organization/ipm-divvy-card/IPM-Divvy-CardPayments';
@@ -97,9 +96,8 @@ import IPM_Divvy_CardPaymentsForm from './components/payment-organization/ipm-di
 import IPM_ChaseInkCardPayments from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPayments';
 import IPM_ChaseInkCardPaymentsForm from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPaymentsForm';
 
-
 // Account Activity Router
-import LoginHistoryComponent from './components/LoginHistoryComponent';
+import LoginActivityComponent from './components/login-activity/LoginActivityComponent.vue';
 
 
 
@@ -235,8 +233,8 @@ const router = createRouter({
         {path: '/reporting/archivedReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
 
         // Payment Methods Module
-        {path: '/payment_methods/rm-amex-plum-card', component: RM_AMEX_PlumCardPayments, meta: {auth: true}},
-        {path: '/payment_methods/rm-amex-plum-card/create', component: RM_AMEX_PlumCardPaymentsForm, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card', component: RmAmexPlumCardPayments, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card/create', component: RmAmexPlumCardPaymentsForm, meta: {auth: true}},
         {path: '/payment_methods/ipm-amex-plum-card', component: IPM_AMEX_PlumCardPayments, meta: {auth: true}},
         {path: '/payment_methods/ipm-amex-plum-card/create', component: IPM_AMEX_PlumCardPaymentsForm, meta: {auth: true}},
         {path: '/payment_methods/ipm-divvy-card', component: IPM_Divvy_CardPayments, meta: {auth: true}},
@@ -246,7 +244,7 @@ const router = createRouter({
 
 
         // Account Activity
-        {path: '/login-history', component: LoginHistoryComponent, meta: {auth: true}},
+        {path: '/login-activity', component: LoginActivityComponent, meta: {auth: true}},
         
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
@@ -261,7 +259,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     if(to.meta.auth) {
         const registeredUserId = localStorage.getItem('user-session')
-        console.log(registeredUserId, 'registeredUserId');
         if(registeredUserId) {
             next();
         }

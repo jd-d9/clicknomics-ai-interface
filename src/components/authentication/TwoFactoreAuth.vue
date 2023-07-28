@@ -155,7 +155,6 @@
                     }
                 })
                 .then(response => {
-                    console.log(response.data, 'qr code url');
                     const getData = response.data;
                     this.displayQrCode = getData.inlineUrl;
                     this.key = getData.key;

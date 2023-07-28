@@ -282,7 +282,6 @@ export default {
             message: {},
             showLoader: false,
             dataMetrics: [],
-            dataMetricsFilter: [],
             search: '',
             headers: [
                 { title: 'Date', align: 'start', sortable: false, key: 'date' },
@@ -399,10 +398,8 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data;
-                    this.dataMetrics = getData.data.data;
-                    this.dataMetricsFilter = getData.data.data;
+                    this.dataMetrics = getData.data;
                     this.permissions = getData.permission;
-                    console.log(getData, 'getData');
                     this.showLoader = false;
                 }else {
                     this.message = {

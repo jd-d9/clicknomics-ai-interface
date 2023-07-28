@@ -41,6 +41,7 @@
                             </v-row>
                             <div class="text-center">
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mt-4 mb-3 btn-block">Reset Password</v-btn>   
+                                <p class="font-weight-medium text-muted text-body-2 mb-0"><router-link to="/login" class="text-blue-darken-2">Back To Login</router-link></p>
                             </div>
                         </Form>
                     </v-card>

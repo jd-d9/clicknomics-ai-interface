@@ -156,7 +156,6 @@
                                 this.$eventBus.emit('flash-message', this.message, '');
                                 this.$router.push('/dashboard');
                             } else {
-                                console.log('else')
                                 if(responseData.verified_by === 'email') {
                                     this.$router.push('/authenticator/validate/email');
                                 } else {
