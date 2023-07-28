@@ -87,7 +87,7 @@ import CreditCardPaymentReport from './components/payments-reports/CreditCardPay
 import BankAccountsPaymentReport from './components/payments-reports/BankAccountsPaymentReport';
 import TeamMemberPaymentsReport from './components/payments-reports/TeamMemberPaymentsReport';
 
-// Payment Methods Section
+// Payment Methods/ Payment Organization  Section
 import RM_AMEX_PlumCardPayments from './components/payment-organization/rm-amex-plum/RM-AMEX-PlumCardPayments';
 import RM_AMEX_PlumCardPaymentsForm from './components/payment-organization/rm-amex-plum/RM-AMEX-PlumCardPaymentsForm';
 import IPM_AMEX_PlumCardPayments from './components/payment-organization/ipm-amex-plum/IPM-AMEX-PlumCardPayments';
@@ -96,6 +96,16 @@ import IPM_Divvy_CardPayments from './components/payment-organization/ipm-divvy-
 import IPM_Divvy_CardPaymentsForm from './components/payment-organization/ipm-divvy-card/IPM-Divvy-CardPaymentsForm';
 import IPM_ChaseInkCardPayments from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPayments';
 import IPM_ChaseInkCardPaymentsForm from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPaymentsForm';
+
+// Payment Methods / Payment Activity Section
+import RM_AMEX_PlumActivity from './components/payment-activity/rm-amex-plum/RM-AMEX-PlumActivity';
+import RM_AMEX_PlumActivityForm from './components/payment-activity/rm-amex-plum/RM-AMEX-PlumActivityForm';
+import IPM_AMEX_PlumActivity from './components/payment-activity/ipm-amex-plum/IPM-AMEX-PlumActivity';
+import IPM_AMEX_PlumActivityForm from './components/payment-activity/ipm-amex-plum/IPM-AMEX-PlumActivityForm';
+import IPM_Divvy_Activity from './components/payment-activity/ipm-divvy-card/IPM-DivvyActivity';
+import IPM_Divvy_ActivityForm from './components/payment-activity/ipm-divvy-card/IPM-DivvyActivityForm';
+import IPM_ChaseInkActivity from './components/payment-activity/ipm-chase-ink-card/IPM-ChaseInkActivity';
+import IPM_ChaseInkActivityForm from './components/payment-activity/ipm-chase-ink-card/IPM-ChaseInkActivityForm';
 
 
 // Account Activity Router
@@ -243,6 +253,16 @@ const router = createRouter({
         {path: '/payment_methods/ipm-divvy-card/create', component: IPM_Divvy_CardPaymentsForm, meta: {auth: true}},
         {path: '/payment_methods/ipm-chase-ink-card', component: IPM_ChaseInkCardPayments, meta: {auth: true}},
         {path: '/payment_methods/ipm-chase-ink-card/create', component: IPM_ChaseInkCardPaymentsForm, meta: {auth: true}},
+        
+        // Payment Methods Module
+        {path: '/payment_methods/rm-amex-plum-card/activity', component: RM_AMEX_PlumActivity, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card/activity/create', component: RM_AMEX_PlumActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-amex-plum-card/activity', component: IPM_AMEX_PlumActivity, meta: {auth: true}},
+        {path: '/payment_methods/ipm-amex-plum-card/activity/create', component: IPM_AMEX_PlumActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-divvy-card/activity', component: IPM_Divvy_Activity, meta: {auth: true}},
+        {path: '/payment_methods/ipm-divvy-card/activity/create', component: IPM_Divvy_ActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-chase-ink-card/activity', component: IPM_ChaseInkActivity, meta: {auth: true}},
+        {path: '/payment_methods/ipm-chase-ink-card/activity/create', component: IPM_ChaseInkActivityForm, meta: {auth: true}},
 
 
         // Account Activity
