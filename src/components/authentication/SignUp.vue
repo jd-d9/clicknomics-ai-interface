@@ -303,7 +303,6 @@
                     }
                 })
                 .catch(error => {
-                    console.log(error)
                     if(error.response.data.message) {
                         this.backendErrorMessage = error.response.data.message;
                     }

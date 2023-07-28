@@ -379,7 +379,6 @@ import moment from 'moment';
             })
             .then(response => {
                 if(response.data.success) {
-                    console.log(response.data.data);
                     const dashboardData = response.data.data;
                     this.subscribedUser = dashboardData.subscriptionUserCount
                     this.facebookAccount = dashboardData.facebook_account

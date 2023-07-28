@@ -2,6 +2,7 @@
 import axios from 'axios';
 // import VueCryptojs from 'vue-cryptojs';
 import CryptoJS from 'crypto-js';
+axios.defaults.withCredentials = true;
 
 const axiosIns = axios.create();
 
@@ -16,7 +17,6 @@ axiosIns.interceptors.request.use(
                 const isAuthenticated = sessionData.Token;
                 const isVerified = sessionData.isTwoFactorVerified;
                 const verifiedBy = sessionData.verifiedBy;
-                console.log(isAuthenticated, 'isAuthenticated')
                 if(isAuthenticated && isVerified) {
                     // if (window.location.pathname != '/dashboard') {
                     //     window.location.href = '/dashboard';
@@ -25,7 +25,6 @@ axiosIns.interceptors.request.use(
                         window.location.href = '/dashboard';
                     }
                 } else if(isAuthenticated && !isVerified) {
-                    console.log(window.location.pathname, 'window.location.href')
                     if(window.location.pathname != '/authenticator/validate' && verifiedBy == '2fa APP' && window.location.pathname != '/authenticator/validate/email') {
                         window.location.href = '/authenticator/validate';
                     } else if (window.location.pathname != '/authenticator/validate/email' &&  verifiedBy == 'email' && window.location.pathname != '/authenticator/validate') {

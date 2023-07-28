@@ -257,7 +257,6 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     let responseData = response.data.data;
-                    console.log(responseData, 'responseData');
                     responseData = _.map(responseData, (res) => {
                         _.map(res.campaign, (t) => {
                             t.absoluteTopImpressionPercentage = _.sumBy(t.metrics, function(o) { return o.absoluteTopImpressionPercentage ? Number(o.absoluteTopImpressionPercentage) : 0})
@@ -275,7 +274,6 @@ export default {
                         });
                         return res;
                     });
-                    console.log(responseData, '212121212')
                     let dataTemp = [];
                     responseData.map((data) => {
                         dataTemp.push({
@@ -294,7 +292,6 @@ export default {
                             currency: data.currency
                         })
                     });
-                    console.log(dataTemp, 'dataTemp');
                     dataTemp.map((row) => {
                         this.googleCampaignMetrics.push({
                             name: row.name,

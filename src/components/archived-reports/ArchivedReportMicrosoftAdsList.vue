@@ -363,10 +363,8 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         let responseData = response.data.data;
-                        console.log(responseData, 'response data - -')
                         responseData = _.map(responseData, (res) => {
                             _.map(res.campaign, (t) => {
-                                console.log(t, 't');
                                 t.clicks = _.sumBy(t.report, function(o) { return o.Clicks ? Number(o.Clicks) : 0})
                                 t.ctr = _.sumBy(t.report, function(o) { return o.Ctr ? parseFloat(o.Ctr) : 0})
                                 t.impressions = _.sumBy(t.report, function(o) { return o.Impressions ? Number(o.Impressions) : 0})
@@ -485,10 +483,8 @@ export default {
                     this.backendErrorMessage = '';
                     this.multipleErrors = [];
                     const index = this.microsoftCampaignMetrics.findIndex(item => item.id === this.managementModal.id)
-                    console.log(index, 'index')
                     this.microsoftCampaignMetrics[index].management_type = this.managementModal.type;
                     this.microsoftCampaignMetrics[index].management_system = this.managementModal.management_system;
-                    console.log(this.microsoftCampaignMetrics[index].management_system, 'this.microsoftCampaignMetrics[index].management_system')
                     this.showLoader = false;
                 }else {
                     this.message = {

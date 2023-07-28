@@ -183,7 +183,7 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>                    
-                    <form @submit="importCsv">
+                    <form @submit.prevent="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
@@ -729,11 +729,11 @@ export default {
                 link.setAttribute('download', 'demo.csv');
                 document.body.appendChild(link);
                 link.click();
-this.message = {
-                            text: response.data.message,
-                            type: 'success',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
+                this.message = {
+                    text: response.data.message,
+                    type: 'success',
+                }
+                this.$eventBus.emit('flash-message', this.message, '');
             })
             .catch(error => {
                 if(error.response.data.message) {

@@ -112,6 +112,10 @@ export default {
         }
     },
     mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
         const d = new Date();
         if(d.getFullYear() === 2022) {
             this.dateFilter.unshift(

@@ -277,7 +277,6 @@ export default {
         if(params.startDate && params.endDate) {
             this.selectedRange = `${moment(new Date(parseInt(params.startDate))).format('ddd MMM DD YYYY')} - ${moment(new Date(parseInt(params.endDate))).format('ddd MMM DD YYYY')}`
             // console.log(this.selectedRange, '---- this.selectedRange -----');
-            console.log(params.transactionType, 'params.transactionType ---');
         }
         this.getOnessCorpReport();
     },
