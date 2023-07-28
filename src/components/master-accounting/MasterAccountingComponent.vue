@@ -21,75 +21,51 @@
                             <v-row>
                                 <v-spacer></v-spacer>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
-                                    <v-select clearable variant="outlined" placeholder="Report Year" v-model="yearRange" :items="dateFilter" @update:modelValue="fetchDashboardData"></v-select>
+                                    <v-select variant="outlined" placeholder="Report Year" v-model="yearRange" :items="dateFilter" @update:modelValue="fetchDashboardData"></v-select>
                                 </v-col>
                             </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table :single-expand="singleExpand" :itemsPerPage="itemsPerPage" :headers="headers" :items="dataMetrics" :search="search" class="table-hover-class mt-4" :footer-props="{ 'items-per-page-options': [5, 10, 15, 25, 50, 100, -1] }">
+                        <v-data-table :single-expand="singleExpand" :itemsPerPage="itemsPerPage" :headers="headers" :items="dataMetrics" class="table-hover-class mt-4" :footer-props="{ 'items-per-page-options': [5, 10, 15, 25, 50, 100, -1] }">
                             <template v-slot:item="{ item }">
                                 <tr :class="{'total_table': item.total_table }">
                                     <td>
-                                        {{ item.date}}
+                                        {{ item.selectable.date}}
                                     </td>
-                                    <td>{{ $filters.toCurrency(item.spendCost) }}</td>
-                                    <td>{{ $filters.toCurrency(item.totalRevenue) }}</td>
-                                    <td @click="fetchMonthlyChasePmts(item.date)" v-if="item.date != `Total ${yearRange}`">
+                                    <td>{{ $filters.toCurrency(item.selectable.spendCost) }}</td>
+                                    <td>{{ $filters.toCurrency(item.selectable.totalRevenue) }}</td>
+                                    <td @click="fetchMonthlyChasePmts(item.selectable.date)" v-if="item.selectable.date != `Total ${yearRange}`">
                                         <router-link to="">
-                                            {{ $filters.toCurrency(item.chasePmts) }}
+                                            {{ $filters.toCurrency(item.selectable.chasePmts) }}
                                         </router-link>
                                     </td>
-                                    <td v-else>{{ $filters.toCurrency(item.chasePmts) }}</td>
-                                    <td @click="fetchMonthlyOsscPmts(item.date)" v-if="item.date != `Total ${yearRange}`">
+                                    <td v-else>{{ $filters.toCurrency(item.selectable.chasePmts) }}</td>
+                                    <td @click="fetchMonthlyOsscPmts(item.selectable.date)" v-if="item.selectable.date != `Total ${yearRange}`">
                                         <router-link to="">
-                                            {{ $filters.toCurrency(item.osscXsmPmts) }}
+                                            {{ $filters.toCurrency(item.selectable.osscXsmPmts) }}
                                         </router-link>
                                     </td>
-                                    <td v-else>{{ $filters.toCurrency(item.osscXsmPmts) }}</td>
-                                    <td @click="fetchMonthlySxmPmts(item.date)" v-if="item.date != `Total ${yearRange}`">
+                                    <td v-else>{{ $filters.toCurrency(item.selectable.osscXsmPmts) }}</td>
+                                    <td @click="fetchMonthlySxmPmts(item.selectable.date)" v-if="item.selectable.date != `Total ${yearRange}`">
                                         <router-link to="">
-                                            {{ $filters.toCurrency(item.sxmPmts) }}
+                                            {{ $filters.toCurrency(item.selectable.sxmPmts) }}
                                         </router-link>
                                     </td>
-                                    <td v-else>{{ $filters.toCurrency(item.sxmPmts) }}</td>
-                                    <td>{{ $filters.toCurrency(item.totalPmts) }}</td>
-                                    <td>{{ $filters.toCurrency(item.grossProfit) }}</td>
-                                    <td @click="fetchMonthlyOperationsCost(item.date)" v-if="item.date != `Total ${yearRange}`">
+                                    <td v-else>{{ $filters.toCurrency(item.selectable.sxmPmts) }}</td>
+                                    <td>{{ $filters.toCurrency(item.selectable.totalPmts) }}</td>
+                                    <td>{{ $filters.toCurrency(item.selectable.grossProfit) }}</td>
+                                    <td @click="fetchMonthlyOperationsCost(item.selectable.date)" v-if="item.selectable.date != `Total ${yearRange}`">
                                         <router-link to="">
-                                            {{ $filters.toCurrency(item.operationsCost) }}
+                                            {{ $filters.toCurrency(item.selectable.operationsCost) }}
                                         </router-link>
                                     </td>
-                                    <td v-else>{{ $filters.toCurrency(item.operationsCost) }}</td>
-                                    <td>{{ formatPercentage(item.roas) + '%'}}</td>
-                                    <td>{{ $filters.toCurrency(item.netProfit) }}</td>
+                                    <td v-else>{{ $filters.toCurrency(item.selectable.operationsCost) }}</td>
+                                    <td>{{ formatPercentage(item.selectable.roas) + '%'}}</td>
+                                    <td>{{ $filters.toCurrency(item.selectable.netProfit) }}</td>
                                 </tr>
                             </template>
                         </v-data-table>
-
-                        <div class="card" v-if="false">
-                            <div class="card-header">
-                                <h3 class="mb-0">Finance</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="finance_data">
-                                    <v-card>
-                                        <v-card-title>
-                                            <v-spacer></v-spacer>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <v-select @change="getFinanceReport" :items="monthFilter" label="Report Month" v-model="monthRange"></v-select>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <v-select @change="getFinanceReport" :items="dateFilter" label="Report Year" v-model="yearRange"></v-select>
-                                                </div>
-                                            </div>
-                                        </v-card-title>
-                                        <v-data-table :headers="headers" :items="dataMetrics" :search="search"></v-data-table>
-                                    </v-card>
-                                </div>
-                            </div>
-                        </div>
                     </v-card>
                 </v-col>
             </v-row>
@@ -120,6 +96,7 @@ export default {
                 { title: 'ROAS', key: 'roas' },
                 { title: 'Net Profit', key: 'netProfit' },
             ],
+            itemsPerPage: -1,
             dateFilter: [
                 {
                     title: '2021',
@@ -135,7 +112,6 @@ export default {
         }
     },
     mounted() {
-        // this.getFinanceReport();
         const d = new Date();
         if(d.getFullYear() === 2022) {
             this.dateFilter.unshift(
@@ -145,71 +121,94 @@ export default {
             )
             this.yearRange = '2022'
         }
-        // this.fetchDashboardData();
+        this.fetchDashboardData();
     },
     methods: {
-        getFinanceReport() {
-            this.showLoader = true;
-            let formData = new FormData();
-            formData.append('reportYear', this.yearRange);
-            formData.append('reportMonth', this.monthRange);
-            const csrf = document.querySelector('meta[name="csrf-token"]').content;
-            axios.defaults.headers.common = {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': csrf
-            };
-            axios.post('/getFinanceReport' , formData)
-            .then(response => {
-                console.log(response);
-                this.dataMetrics = response.data.data;
-                this.showLoader = false;
-
-            }).catch((error) => {
-                console.log(error)
-                this.showLoader = false;
-            })
-        },
+        // get data using year
         fetchDashboardData() {
             this.showLoader = true;
-            let formData = new FormData();
-            formData.append('reportYear', this.yearRange);
-            const csrf = document.querySelector('meta[name="csrf-token"]').content;
-            axios.defaults.headers.common = {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': csrf
-            };
-            axios.post('/getDashboard' , formData)
-            .then(response => {
-                this.showLoader = false;
-                const responseData = response.data.data;
-                this.dataMetrics = responseData;
-                if(responseData.length > 0) {
-                    this.dataMetrics.push({
-                        'date': `Total ${this.yearRange}`,
-                        'spendCost' : _.sumBy(this.dataMetrics, function(o) { return Number(o.spendCost) }),
-                        'totalRevenue' : _.sumBy(this.dataMetrics, function(o) { return Number(o.totalRevenue) }),
-                        'chasePmts' : _.sumBy(this.dataMetrics, function(o) { return Number(o.chasePmts) }),
-                        'osscXsmPmts' : _.sumBy(this.dataMetrics, function(o) { return Number(o.osscXsmPmts) }),
-                        'sxmPmts' : _.sumBy(this.dataMetrics, function(o) { return Number(o.sxmPmts) }),
-                        'totalPmts' : _.sumBy(this.dataMetrics, function(o) { return Number(o.totalPmts) }),
-                        'grossProfit' : _.sumBy(this.dataMetrics, function(o) { return Number(o.grossProfit) }),
-                        'operationsCost' : _.sumBy(this.dataMetrics, function(o) { return Number(o.operationsCost) }),
-                        'roas' : _.sumBy(this.dataMetrics, function(o) { return Number(o.roas) }) / _.filter(this.dataMetrics, function(o) { if (Number(o.roas) > 0) return o }).length,
-                        'netProfit' : _.sumBy(this.dataMetrics, function(o) { return Number(o.netProfit) }),
-                        'total_table': true
-                    })
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/accounting/masterAccouting';
+            if(this.yearRange) {
+                queryString.set('reportYear', this.yearRange);
+            }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            axios.get(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: this.getAccessToken()
                 }
-            }).catch((error) => {
-                console.log(error)
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.showLoader = false;
+                    const responseData = response.data.data;
+                    this.dataMetrics = responseData;
+                    if(responseData.length > 0) {
+                        this.dataMetrics.push({
+                            'date': `Total ${this.yearRange}`,
+                            'spendCost' : _.sumBy(this.dataMetrics, function(o) { return Number(o.spendCost) }),
+                            'totalRevenue' : _.sumBy(this.dataMetrics, function(o) { return Number(o.totalRevenue) }),
+                            'chasePmts' : _.sumBy(this.dataMetrics, function(o) { return Number(o.chasePmts) }),
+                            'osscXsmPmts' : _.sumBy(this.dataMetrics, function(o) { return Number(o.osscXsmPmts) }),
+                            'sxmPmts' : _.sumBy(this.dataMetrics, function(o) { return Number(o.sxmPmts) }),
+                            'totalPmts' : _.sumBy(this.dataMetrics, function(o) { return Number(o.totalPmts) }),
+                            'grossProfit' : _.sumBy(this.dataMetrics, function(o) { return Number(o.grossProfit) }),
+                            'operationsCost' : _.sumBy(this.dataMetrics, function(o) { return Number(o.operationsCost) }),
+                            'roas' : _.sumBy(this.dataMetrics, function(o) { return Number(o.roas) }) / _.filter(this.dataMetrics, function(o) { if (Number(o.roas) > 0) return o }).length,
+                            'netProfit' : _.sumBy(this.dataMetrics, function(o) { return Number(o.netProfit) }),
+                            'total_table': true
+                        })
+                    }
+                }else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            }).catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
+                    } else {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                }
                 this.showLoader = false;
             });
         },
         formatPercentage(value) {
-            return parseFloat(value * 100).toFixed(2);
-        },
-        fetchMonthlyReport(date) {
-            // window.open(`/accounting/monthlyReport/${this.yearRange}/${date}`);
-            window.location.href = `/accounting/monthlyReport/${this.yearRange}/${date}`;
+            if(value) {
+                return parseFloat(value * 100).toFixed(2);
+            }else {
+                return parseFloat(0 * 100).toFixed(2);
+            }
         },
         fetchMonthlyChasePmts(month) {
             window.open(`/bank_accounts/ipmchase/list?year=${this.yearRange}&month=${month}`);
@@ -223,9 +222,6 @@ export default {
         fetchMonthlyOperationsCost(month){
             window.open(`/accounting/fixedMonthlyCost?year=${this.yearRange}&month=${month}`);
         },
-        kFormatter(num) {
-            return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
-        }
     }
 }
 </script>
