@@ -20,7 +20,7 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Bank Accounts Payment Report
                             <v-spacer></v-spacer>
-                            <date-range-picker class="date_picker" :value="selectedRange" @update="checkOpenPicker"></date-range-picker>
+                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0 v_select_design">
                                 <v-select clearable variant="outlined" placeholder="Custom Filter" v-model="selectedtTransactionType" :items="items" chips multiple @change="genrateArchivedReportsPayments"></v-select>
                             </v-col>
@@ -29,50 +29,15 @@
                         <v-divider class="border-opacity-100 my-4" color="success" />
 
                         <v-row class="mt-4">
-                            <v-col cols="6" sm="6" md="4" lg="3">
-                                <v-card class="card_design bg-green-lighten-4">
+                            <v-col cols="6" sm="6" md="4" lg="3" v-for="(data,index) in cardMemberList" :key="index">
+                                <v-card class="card_design " :class="data.totalAmount == '0' ? 'bg-blue-lighten-4' : 'bg-green-lighten-4'">
                                     <v-card-title>
-                                        <p class="text-subtitle-2 font-weight-bold">IPM Chase</p>
+                                        <p class="text-subtitle-2 font-weight-bold">{{ data.name }}</p>
                                     </v-card-title>
                                     <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        <router-link to="" class="text-green-darken-1">
-                                            $60,710.34
+                                        <router-link :to="data.url" class="text-green-darken-1">
+                                            {{ $filters.toCurrency(data.totalAmount) }}
                                         </router-link>
-                                    </v-card-text>
-                                </v-card>
-                            </v-col>
-
-                            <v-col cols="6" sm="6" md="4" lg="3">
-                                <v-card class="card_design bg-blue-lighten-4">
-                                    <v-card-title>
-                                        <p class="text-subtitle-2 font-weight-bold">IPM PayPal</p>
-                                    </v-card-title>
-                                    <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        $0.00
-                                    </v-card-text>
-                                </v-card>
-                            </v-col>
-
-                            <v-col cols="6" sm="6" md="4" lg="3">
-                                <v-card class="card_design bg-green-lighten-4">
-                                    <v-card-title>
-                                        <p class="text-subtitle-2 font-weight-bold">IPM OSSC</p>
-                                    </v-card-title>
-                                    <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        <router-link to="" class="text-green-darken-1">
-                                            $29,329.18
-                                        </router-link>
-                                    </v-card-text>
-                                </v-card>
-                            </v-col>
-
-                            <v-col cols="6" sm="6" md="4" lg="3">
-                                <v-card class="card_design bg-blue-lighten-4">
-                                    <v-card-title>
-                                        <p class="text-subtitle-2 font-weight-bold">IPM SXM</p>
-                                    </v-card-title>
-                                    <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
-                                        $0.00
                                     </v-card-text>
                                 </v-card>
                             </v-col>
@@ -93,6 +58,7 @@
 </template>
 
 <script>
+import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
 export default {
@@ -115,10 +81,96 @@ export default {
         }
     },
     mounted() {
+        this.pull()
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
         });
+    },
+    watch:{
+        selectedtTransactionType:{
+            handler(){   
+                this.pull();
+            }
+        },
+    },
+    methods: {
+        pull() {
+            this.showLoader = true;
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/genrateArchivedReportsBanckAccounts';
+
+            if(this.selectedRange) {
+                queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+            }
+            if(this.selectedtTransactionType && this.selectedtTransactionType.length > 0) {
+                queryString.set('transactionTypeValue', JSON.stringify(this.selectedtTransactionType));
+            }            
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            axios.get(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: this.getAccessToken()
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.cardMemberList = response.data.data
+                    this.showLoader = false;
+                }else {
+                    this.$toast.open({
+                        message: response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.$toast.open({
+                        message: error.response.data.message,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.error) {
+                    this.$toast.open({
+                        message: error.response.data.error,
+                        position: 'top-right',
+                        duration: '5000',
+                        type: 'error'
+                    });
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.$toast.open({
+                            message: error.response.data.errors[0],
+                            position: 'top-right',
+                            duration: '5000',
+                            type: 'error'
+                        });
+                    }
+                }
+                this.showLoader = false;
+            });
+        },
+        updateRange(range) {
+            this.selectedRange = range;
+            this.pull();
+        },
     },
 }
 </script>
