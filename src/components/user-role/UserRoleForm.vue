@@ -842,8 +842,6 @@ export default {
                     })
                     .then(response => {
                         if (response.data.success) {
-                            this.menuItem = response.data;
-                            // console.log(this.menuItem);
                             this.$toast.open({
                                 message: response.data.message,
                                 position: 'top-right',
@@ -908,41 +906,31 @@ export default {
             window.location.reload();
         },
         isDisabled(value, type) {
-            console.log(value, type);
-            return false;
-            // console.log(value, type)
-            // if (value.menu == 'Dashboard') {
-            //     if (type != 'view') {
-            //         return true;
-            //     }
-            // } else if (value.view != true) {
-            //     value.create_auth = false;
-            //     value.update_auth = false;
-            //     value.delete_auth = false;
-            //     // console.log(value.view)
-            //     if (type == 'view') {
-            //         return false;
-            //     } else {
-            //         return true;
-            //     }
-            // } else if (value.resource) {
-            //     const permission = value.resource.split(',');
-            //     if (type == 'view') {
-            //         return permission.includes('0') ? false : true;
-            //         // console.log(permission.includes('0'), value.menu, type);
-            //     } else if (type == 'create') {
-            //         return permission.includes('1') ? false : true;
-            //         // console.log(permission.includes('1'), value.menu, type);
-            //     } else if (type == 'edit') {
-            //         return permission.includes('2') ? false : true;
-            //         // console.log(permission.includes('2'), value.menu, type);
-            //     } else if (type == 'delete') {
-            //         return permission.includes('3') ? false : true;
-            //         // console.log(permission.includes('3'), value.menu, type);
-            //     }
-            // } else {
-            //     return false;
-            // }
+            if (value.menu == 'Dashboard') {
+                if (type != 'view') {
+                    return true;
+                }
+            } else if (value.view != true && type == 'view') {
+                return false;
+                // return type == "view" ? false : true;
+            } else if (value.resource) {
+                const permission = value.resource.split(',');
+                if (type == 'view') {
+                    return permission.includes('0') ? false : true;
+                    // console.log(permission.includes('0'), value.menu, type);
+                } else if (type == 'create') {
+                    return permission.includes('1') ? false : true;
+                    // console.log(permission.includes('1'), value.menu, type);
+                } else if (type == 'edit') {
+                    return permission.includes('2') ? false : true;
+                    // console.log(permission.includes('2'), value.menu, type);
+                } else if (type == 'delete') {
+                    return permission.includes('3') ? false : true;
+                    // console.log(permission.includes('3'), value.menu, type);
+                }
+            } else {
+                return false;
+            }
         },
 
     },

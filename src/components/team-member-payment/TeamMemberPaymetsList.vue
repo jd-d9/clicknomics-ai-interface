@@ -37,7 +37,7 @@
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="viewPermission == '1'">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title>
                             <v-row>
@@ -68,31 +68,18 @@
                                         <v-row class="d-flex align-center justify-end">
                                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
-                                                <!-- <select v-model="fromAccount" @change="getTeamMemberPaymentList" class="form-control serch_table">
-                                                    <option disabled selected>From Account Filter</option>
-                                                    <option :value="val.title" v-for="(val, index) of fromAccountFilter" :key="index">
-                                                        {{ val.title }}
-                                                    </option>
-                                                </select> -->
-                                                <v-select clearable variant="outlined" placeholder="From Account Filter" :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="getTeamMemberPaymentList"  ></v-select>
+                                                <v-select clearable variant="outlined" placeholder="From Account Filter" :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="getTeamMemberPaymentList" item-value="key"></v-select>
                                             </v-col>
                                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
-                                                <!-- <select v-model="toAccount" @change="getTeamMemberPaymentList" class="form-control serch_table">
-                                                    <option disabled selected>To Account Filter</option>
-                                                    <option :value="val.title" v-for="(val, index) of toAccountFilter" :key="index">
-                                                        {{ val.title }}
-                                                    </option>
-                                                </select> -->
-                                                <v-select clearable variant="outlined" placeholder="From Account Filter" :items="toAccountFilter" v-model="toAccount" @update:modelValue="getTeamMemberPaymentList"  ></v-select>
+                                                <v-select clearable variant="outlined" placeholder="From Account Filter" :items="toAccountFilter" v-model="toAccount" @update:modelValue="getTeamMemberPaymentList" item-value="key"></v-select>
                                             </v-col>                                            
                                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="options.search"/>
+                                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                                             </v-col>
                                         </v-row> 
 
                                         <!-- data table component -->
-                                        <v-data-table-server class="table-hover-class mt-4" :headers="headers" :items="teamMemberPaymentList.data" v-model:options="options" :items-length="teamMemberPaymentList.total" v-model:items-per-page="teamMemberPaymentList.per_page" :search="search"  >
-
+                                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="teamMemberPaymentList" :items-per-page="itemPerPage" :search="search">
                                             <template v-slot:[`item.id`]="{ item }">
                                                 {{item.selectable.id ? item.selectable.id : '-'}}
                                             </template>
@@ -133,12 +120,12 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td>{{ $filters.toCurrency(sumField) }}</td>
+                                                    <td class="text-center">{{ $filters.toCurrency(sumField) }}</td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
                                             </template>
-                                        </v-data-table-server>
+                                        </v-data-table>
                                     </v-window-item>
 
                                     <v-window-item value="reports">
@@ -312,8 +299,6 @@ export default {
         return {
             showLoader: false,
             teamMemberPaymentList: [],
-            teamMemberPaymentFilter: [],
-            options: {},
             permissions: {},
             search: '',
             headers: [
@@ -336,13 +321,11 @@ export default {
             cardMemberList: [],
             showImportIcon: true,
             selectedFile: '',
-            searchInput: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
             selectedRangeTwo: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
             tabteampayment: 'payments',
             backendErrorMessage: '',
             multipleErrors: [],
-            viewPermission:'1'
         }
     },
     computed: {
@@ -362,20 +345,12 @@ export default {
             return this.teamMemberPaymentList.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         }
     },
-    watch:{
-        options: {
-            handler() {
-                this.getTeamMemberPaymentList()
-            },
-            deep:true
-        },
-    },
     mounted() {
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
         });
-        // this.getTeamMemberPaymentList();
+        this.getTeamMemberPaymentList();
     },
     methods: {
         // open/close import csv modal
@@ -409,23 +384,11 @@ export default {
             this.selectedRangeTwo = range;
             this.genrateTeamMembersPaymentsReport();
         },
-        // search payment from table
-        searchPayments() {
-            this.teamMemberPaymentList = this.teamMemberPaymentFilter.filter((val) => {
-                return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.fromaccountlist.team_member_name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.toaccountlist.team_member_name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.status.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.payment_date.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
-        },
         // get team member payment details
         getTeamMemberPaymentList() {
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/accounting/teamMemberPayment';
-            const { page,itemsPerPage,search } = this.options;
             if(this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
@@ -436,11 +399,6 @@ export default {
             if(this.toAccount) {
                 queryString.set('toAccount', this.toAccount)
             }
-            if(search) {
-                queryString.set('search', search)
-            }
-            queryString.set('perPage', itemsPerPage)
-            queryString.set('page', page)
 
             const url = `${ajaxUrl}?${queryString.toString()}`;
             axios.get(url, {
@@ -454,9 +412,7 @@ export default {
                     const allData = response.data;
                     console.log(allData, 'allData ---')
                     this.teamMemberPaymentList = allData.data.data;
-                    this.teamMemberPaymentFilter = allData.data.data;
                     this.permissions = allData.permission;
-                    this.viewPermission = allData.permission.view ? allData.permission.view : '1'
                     this.fromAccountFilter = [];
                     allData.allfromAccount.forEach((val) => {
                         this.fromAccountFilter.push({
@@ -518,7 +474,6 @@ export default {
                         });
                     }
                 }
-                this.viewPermission = '0'
                 this.showLoader = false;
             });
         },

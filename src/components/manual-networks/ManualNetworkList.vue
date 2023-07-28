@@ -32,7 +32,7 @@
                             Manual Network List
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPayments"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                             </v-col>
                         </v-card-title>
 
@@ -224,7 +224,6 @@ export default {
             accountIdToDelete: '',
             accountIdToEdit: '',
             permissions: {},
-            searchInput: '',
             restrictUser: true,
             backendErrorMessage: '',
             multipleErrors: [],
@@ -247,18 +246,6 @@ export default {
         this.getManualNetworkListing();
     },
     methods: {
-        // search payment from table
-        searchPayments() {
-            this.dataMetrics = this.dataMetricsFilter.filter((val) => {
-                return  val.id.toString().includes(this.searchInput.toLowerCase()) || 
-                        val.company && val.company.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.email.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.network.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.notes && val.notes.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.platform_type.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.created_at.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
-        },
         currentItems(currentItems) {
             this.currentItemsTable = currentItems;
         },

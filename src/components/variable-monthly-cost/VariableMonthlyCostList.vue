@@ -18,19 +18,19 @@
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1'">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             Variable Monthly Cost List
                             <v-spacer></v-spacer>
                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="options.search" />
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                             </v-col>
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table-server class="table-hover-class mt-4" :headers="headers" :items="dataMetrics.data" :search="search" v-model:items-per-page="itemsPerPage" v-model:options="options" :items-length="dataMetrics.total">
+                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="dataMetrics" :search="search" :items-per-page="itemsPerPage">
                             <template v-slot:[`item.date`]="{ item }">
                                 {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
@@ -64,7 +64,7 @@
                                     <td></td>
                                 </tr>
                             </template>
-                        </v-data-table-server>
+                        </v-data-table>
                     </v-card>
                 </v-col>
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
@@ -122,10 +122,7 @@ export default {
         return {
             showLoader: false,
             dataMetrics: [],
-            dataMetricsFilter: [],
-            permissions: {
-                view:'1'
-            },
+            permissions: {},
             search: '',
             headers: [
                 { title: 'Date', align: 'start', sortable: false, key: 'date' },
@@ -136,9 +133,8 @@ export default {
             // dateRange: {startDate, endDate},
             file: '',
             currentItemsTable: [],
-            itemsPerPage: 10,
+            itemsPerPage: -1,
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
-            options:{},
         }
     },
     computed: {
@@ -147,16 +143,8 @@ export default {
             return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         }
     },
-    watch:{
-        options: {
-            handler() {
-                this.getVariablePaymentList();
-            },
-            deep: true,
-        },
-    },
     mounted() {
-        // this.getVariablePaymentList();
+        this.getVariablePaymentList();
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
@@ -168,31 +156,15 @@ export default {
             this.selectedRange = range;
             this.getVariablePaymentList();
         },
-        // search payment from table
-        searchPayments() {
-            this.dataMetrics = this.dataMetricsFilter.filter((val) => {
-                return val.amount.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.notes && val.notes.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.date.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
-        },
         // get variable payment list
         getVariablePaymentList() {
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/accounting/variableCost';
-            const { page,itemsPerPage,search,sortBy } = this.options;
             if(this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
-            queryString.set('perPage',itemsPerPage)
-            queryString.set('page',page)
-            if(sortBy && sortBy.length > 0){
-                queryString.set('sortBy',JSON.stringify(sortBy))
-            }
-            queryString.set('search',search)
-
             const url = `${ajaxUrl}?${queryString.toString()}`;
             axios.get(url, {
                 headers: {
@@ -204,7 +176,6 @@ export default {
                 if(response.data.success) {
                     const allData = response.data;
                     this.dataMetrics = allData.data;
-                    this.dataMetricsFilter = allData.data.data;
                     this.permissions = allData.permission;
                     this.showLoader = false;
                 }else {

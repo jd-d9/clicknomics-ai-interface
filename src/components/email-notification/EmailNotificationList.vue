@@ -30,7 +30,7 @@
                                 </v-btn>
                             </div>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchData"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                             </v-col>
                         </v-card-title>
 
@@ -250,7 +250,6 @@ export default {
             },
             activityType: 'Add',
             showImportIcon: true,
-            searchInput: '',
             permissions: {},
             backendErrorMessage: '',
             multipleErrors: [],
@@ -303,21 +302,6 @@ export default {
         },
         closeModal() {
             window.$('#createUpdateData').modal('hide');
-        },
-        // search data from table
-        searchData() {
-            this.dataMetrics = this.dataMetricsFilter.filter((val) => {
-                return  val.email.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.monthly_report.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.daily_report.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.weekly_report.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.url_uptime_report.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.account_monitoring_report.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.ads_issue_report.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.domain_expires_report.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.payment_declined_report.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.speed_test_report.toLowerCase().includes(this.searchInput.toLowerCase())
-            })
         },
         // get listing data
         getListings() {

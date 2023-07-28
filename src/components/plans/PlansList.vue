@@ -25,12 +25,12 @@
                             Plan List
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="searchInput" @keyup="searchPlan"/>
+                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                             </v-col>
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :items="items" :itemsPerPage="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, -1], 'items-per-page-text': 'Rows per page:'}" :headers="headers" :search="search" :items="items" :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
                                 {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
@@ -86,7 +86,7 @@ export default {
                 { title: 'Action', align:'center', key: 'action', sortable: false },
             ],
             itemsPerPage: -1,
-            searchInput: '',
+            search: '',
             items: [],
             plansFilter: [],
             permissions: {},
@@ -101,14 +101,6 @@ export default {
         this.getPlans();
     },
     methods: {
-        // search plan from table
-        searchPlan() {
-            this.items = this.plansFilter.filter((val) => {
-                return  val.name.toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.amount.toString().concat(" ", val.currency).toLowerCase().includes(this.searchInput.toLowerCase()) || 
-                        val.id.toString().includes(this.searchInput.toLowerCase()) 
-            })
-        },
         // get all plans
         getPlans() {
             this.showLoader = true;
