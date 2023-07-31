@@ -107,19 +107,19 @@
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                         <label class="form-control-label" for="input-username">Network Name</label>
                                         <Field type="text" id="input-username" name="NetworkName" :class="{'form-control': true, 'border-red-600': errors.NetworkName}" placeholder="Name" v-model.trim="network_name"/>
-                                        <span class="text-red-600" v-if="errors.NetworkName">Network Name can not be empty</span>
+                                        <span class="text-red-600" v-if="errors.NetworkName">Network Name is a required field</span>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                         <label class="form-control-label" for="input-username">Email</label>
-                                        <Field type="text" id="input-username" name="NetworkName" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model.trim="email"/>
-                                        <span class="text-red-600" v-if="errors.NetworkName">Email can not be empty</span>
+                                        <Field type="text" id="input-username" name="Email" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model.trim="email"/>
+                                        <ErrorMessage class="text-red-600" name="Email"/>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                         <label class="form-control-label" for="input-username">Company</label>
                                         <Field type="text" id="input-username" name="NetworkName" :class="{'form-control': true, 'border-red-600': errors.Company}" placeholder="Company" v-model.trim="company"/>
-                                        <span class="text-red-600" v-if="errors.NetworkName">Company can not be empty</span>
+                                        <span class="text-red-600" v-if="errors.NetworkName">Company is a required field</span>
                                     </v-col>
 
                                     <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
@@ -127,7 +127,7 @@
                                         <Field name="Notes" v-model="notes">
                                             <textarea :class="{'form-control': true, 'border-red-600': errors.Notes}" name="Notes" rows="5" v-model="notes"></textarea>
                                         </Field>
-                                        <span class="text-red-600" v-if="errors.Notes">Notes can not be empty</span>
+                                        <span class="text-red-600" v-if="errors.Notes">Notes is a required field</span>
                                     </v-col>
                                 </v-row>
                             </div>

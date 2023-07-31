@@ -36,13 +36,13 @@
                                     <Field name="Date" v-model="date" :class="{'border-red-600': errors.date}">
                                         <datepicker placeholder="Select Date" name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :class="{'border-red-600':errors.Date }"></datepicker>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Date">Date is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Amount</label>
                                     <Field type="number" id="input-username" name="Amount" :class="{'form-control': true , 'border-red-600':errors.Amount }" step=".01" placeholder="Add Amount" v-model="amount"></Field>
-                                    <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Amount">Amount is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -55,7 +55,7 @@
                                     <Field name="Status" v-model="status">
                                         <v-select :class="{'form-control autocomplete': true , 'border-red-600':errors.Status}" name="Transaction" :items="statusList" v-model="status"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Status">Transaction Type can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Status">Transaction type is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -73,7 +73,7 @@
                                     <Field name="Description" v-model="description">
                                         <textarea :class="{'form-control': true , 'border-red-600':errors.Description}" name="Description" rows="4" v-model="description"></textarea>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Description">Description can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Description">Description is a required field</span>
                                 </v-col>
 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

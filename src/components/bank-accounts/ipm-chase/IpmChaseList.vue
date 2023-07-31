@@ -156,13 +156,13 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Report</h5>
-                        <button type="button" class="close" aria-label="Close" data-dismiss="modal">
+                        <button type="button" class="close" aria-label="Close" @click.prevent="closeViewModal">
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <p>
-                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
+                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date ? viewModalDetail.date : '-'}}
                         </p>
                         <p>
                             <span class="font-weight-bold"> Amount :</span> {{$filters.toCurrency(viewModalDetail.amount)}}
@@ -171,7 +171,7 @@
                             <span class="font-weight-bold"> Network :</span> {{viewModalDetail.network ? viewModalDetail.network : '-'}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description}}
+                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description ? viewModalDetail.description : '-'}}
                         </p>
                     </div>
                 </div>

@@ -11,8 +11,7 @@
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>RM AMEX Plum Activity</span>
-                        <v-spacer />
-
+                        <v-spacer/>
                         <div>
                             <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
                                 Import CSV
@@ -25,7 +24,7 @@
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0"> <!--  v-if="permissions.view == '1' && !showLoader" -->
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title>
                             RM AMEX Plum Activity List
@@ -41,21 +40,21 @@
                                 <v-window-item value="activity">
                                     <v-row class="d-flex align-center justify-end">
                                         <v-col class="font-medium font-weight-normal pr-0 text-right">
-                                            <v-btn @click="deleteSelected" class="ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                            <v-btn v-if="selected.length > 0" @click="deleteSelected" class="ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
                                                 Remove Selected
                                             </v-btn>
                                         </v-col>
                                         <v-col class="font-medium font-weight-normal pr-0">
-                                            <date-range-picker class="date_picker pt-2" :value="selectedRange" ></date-range-picker>
+                                            <date-range-picker class="date_picker pt-2" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                         </v-col>
                                         <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                            <v-select :items="cardMemberFilter" clearable variant="outlined" placeholder="Card Member Filter" @change="getRmAmexPlumActivityReport" v-model="cardMemberValue"></v-select>
+                                            <v-select :items="cardMemberFilter" clearable variant="outlined" placeholder="Card Member Filter" @update:modelValue="getActivities" v-model="cardMemberValue"></v-select>
                                         </v-col>
                                         <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                            <v-select :items="descriptionFilter" clearable variant="outlined" placeholder="Description Filter" @change="getRmAmexPlumActivityReport" v-model="descriptionValue"></v-select>
+                                            <v-select :items="descriptionFilter" clearable variant="outlined" placeholder="Description Filter" @update:modelValue="getActivities" v-model="descriptionValue"></v-select>
                                         </v-col>                                            
                                         <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                            <v-select :items="transactionTypeFilter" clearable variant="outlined" placeholder="Transaction Type Filter" @change="getRmAmexPlumActivityReport" v-model="transactionTypeValue"></v-select>
+                                            <v-select :items="transactionTypeFilter" clearable variant="outlined" placeholder="Transaction Type Filter" @update:modelValue="getActivities" v-model="transactionTypeValue"></v-select>
                                         </v-col>
                                         <v-col class="font-medium font-weight-normal">
                                             <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
@@ -65,32 +64,32 @@
                                     <!-- data table component -->
                                     <v-data-table class="table-hover-class mt-4" show-select :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
                                         <template v-slot:[`item.date`]="{ item }">
-                                            {{ item.selectable.date }}
+                                            {{ item.selectable.date ? item.selectable.date : '-' }}
                                         </template>
                                         <template v-slot:[`item.description`]="{ item }">
-                                            {{ item.selectable.description }}
+                                            {{ item.selectable.description ? item.selectable.description : '-' }}
                                         </template>
                                         <template v-slot:[`item.card_member`]="{ item }">
-                                            {{ item.selectable.card_member }}
+                                            {{ item.selectable.card_member ? item.selectable.card_member : '-' }}
                                         </template>
                                         <template v-slot:[`item.account`]="{ item }">
-                                            {{item.selectable.account}}
+                                            {{ item.selectable.account ? item.selectable.account : '-' }}
                                         </template>
                                         <template v-slot:[`item.amount`]="{ item }">
-                                            {{ item.selectable.amount }}
+                                            {{ $filters.toCurrency(item.selectable.amount) }}
                                         </template>
                                         <template v-slot:[`item.transaction_type`]="{ item }">
-                                            {{ item.selectable.transaction_type }}
+                                            {{ item.selectable.transaction_type ? item.selectable.transaction_type : '-' }}
                                         </template>
-                                        <template v-slot:[`item.action`]>    
-                                            <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon>
+                                        <template v-slot:[`item.action`]="{ item }">    
+                                            <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="edit(item.selectable.id, item.selectable)" :disabled="permissions.update_auth == '0'">
                                                 <v-icon color="green-darken-2">
                                                     mdi-pencil
                                                 </v-icon>
                                                 <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                             </v-btn>
 
-                                            <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon>
+                                            <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
                                                 <v-icon color="red-darken-4">
                                                     mdi-delete-empty
                                                 </v-icon>
@@ -104,7 +103,7 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
-                                                <td class="text-center">$123.00</td>
+                                                <td class="text-center">{{ $filters.toCurrency(sumField) }}</td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
@@ -115,7 +114,7 @@
                                 <v-window-item value="reports">
                                     <v-row class="d-flex align-center justify-end ma-0">
                                         <v-spacer />
-                                        <date-range-picker class="date_picker pt-2" :value="selectedRange" ></date-range-picker>
+                                        <date-range-picker class="date_picker pt-2" :value="selectedRangeTwo" @update:value="updateRangeTwo"></date-range-picker>
                                         <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
                                             <v-select v-model="selectedtTransactionType" :items="items" chips clearable variant="outlined" placeholder="Transaction Type Filter" @change="filterRmAmexPlumActivity"></v-select>
                                         </v-col>
@@ -168,14 +167,13 @@
                         </div>
                     </v-card>
                 </v-col>
-                <!--  v-if="permissions.view != '1' && !showLoader" -->
-                <!-- <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-content-center align-center">
                             You have no access for this page
                         </v-card-title>
                     </v-card>
-                </v-col> -->
+                </v-col>
             </v-row>
         </v-container>
 
@@ -184,12 +182,12 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Import Team Member Payments List</h5>
+                        <h5 class="modal-title">Import RM AMEX Plum Activity List</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeImportCsvModal">
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>                    
-                    <form @submit="importCsv">
+                    <form @submit.prevent="importCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
@@ -214,34 +212,17 @@
 </template>
 
 <script>
+import axios from '@axios';
+import moment from 'moment';
 import DateRangePicker from '../../common/DateRangePicker.vue';
-
 export default {
     components: {
         DateRangePicker,
     },
     data() {
         return{
-            dataMetrics: [
-                {
-                    date: '2023-07-06',
-                    description: 'sdsasaj ekr ajwnessmndfn',
-                    card_member: 'weqqweqwe',
-                    account: '11539',
-                    amount:'$500.00',
-                    transaction_type: 'Credit',
-                    action: '',
-                },
-                {
-                    date: '2023-07-06',
-                    description: 'ajwnessmndfn',
-                    card_member: 'sdsdsd',
-                    account: '1165639',
-                    amount:'$123.00',
-                    transaction_type: 'Debit',
-                    action: '',
-                },
-            ],
+            showLoader: false,
+            dataMetrics: [],
             search: '',
             headers: [
                 { title: 'Date', sortable: false, key: 'date' },
@@ -252,12 +233,49 @@ export default {
                 { title: 'Transaction Type', key: 'transaction_type', align: 'center' },
                 { title: 'Action', key: 'action', align: 'center' },
             ],
+            cardMemberValue: null,
+            descriptionValue: null,
+            transactionTypeValue: null,
             selected: [],
             itemsCardName: [],
             valueCardName: '',
             tabplumactivity: 'activity',
-            selectedRange: `Sat Jul 01 2023 - Mon Jul 31 2023`,
+            viewModalDetail: {},
+            currentItemsTable: [],
+            itemsPerPage: -1,
+            activity: {
+                id: '',
+                date : '',
+                amount : '',
+                description : '',
+                card_member : '',
+                account : '',
+                transaction_type : '',
+            },
+            activityType: 'Create',
+            cardMemberFilter: [],
+            descriptionFilter: [],
+            transactionTypeFilter: [],
+            items: [ 'CREDIT','DEBIT'],
+            selectedtTransactionType: [ 'CREDIT','DEBIT'],
+            cardMemberList: [],
+            showImportIcon: true,
+            permissions: {},
+            selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
+    },
+    computed: {
+        sumField() {
+            const key = 'amount';
+            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+        },
+    },
+    mounted() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+        this.getActivities();
     },
     methods: {
         // open/close import csv modal
@@ -269,13 +287,116 @@ export default {
         },
         createActivity() {
             window.$('#createUpdateData').modal('show');
-        }
-    },
-    mounted() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
+        },
+        // update date range
+        updateRange(range) {
+            this.selectedRange = range;
+            this.getActivities();
+        },
+        updateRangeTwo(range) {
+            this.selectedRangeTwo = range;
+            // this.getActivities();
+        },
+        // get activities
+        getActivities() {
+            setTimeout(() => {
+                this.showLoader = true;
+                const queryString = new URLSearchParams();
+                const ajaxUrl = this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivity';
+                if(this.selectedRange) {
+                    queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                    queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+                }
+                if(this.cardMemberValue) {
+                    queryString.set('cardMemberValue', this.cardMemberValue);
+                }
+                if(this.descriptionValue) {
+                    queryString.set('descriptionValue', this.descriptionValue);
+                }
+                if(this.transactionTypeValue) {
+                    queryString.set('transactionTypeValue', this.transactionTypeValue);
+                }
+                const url = `${ajaxUrl}?${queryString.toString()}`;
+                axios.get(url, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: this.getAccessToken()
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        const getData = response.data;
+                        this.dataMetrics = getData.data.data;
+                        this.permissions = getData.permission;
+                        this.cardMemberFilter = [];
+                        this.descriptionFilter = [];
+                        this.transactionTypeFilter = [];
+                        getData.allCardMembers.forEach((val) => {
+                            this.cardMemberFilter.push({
+                                title: val.card_member
+                            })
+                        });
+                        getData.allDescription.forEach((val) => {
+                            this.descriptionFilter.push({
+                                title: val.description
+                            })
+                        });
+                        getData.allTransactionType.forEach((val) => {
+                            this.transactionTypeFilter.push({
+                                title: val.transaction_type
+                            })
+                        });
+                        this.showLoader = false;
+                    }else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    if(error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if(error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
+            }, 100);
+        },
+        // edit item
+        edit(id, data) {
+            localStorage.setItem('editData', JSON.stringify(data));
+            this.$router.push(`/payment_methods/rm-amex-plum-card/activity/${id}/edit`);
+        },
     },
 }
 </script>

@@ -14,7 +14,7 @@
                         <input type="text" id="input-username" name="Rolename"
                             :class="{ 'form-control': true, 'border-red-600': roleNameInvalid }" placeholder="Role Name"
                             v-model.trim="roleName" @blur="roleNameIsValid" />
-                        <span class="text-red-600" v-if="roleNameInvalid">Role name can not be empty</span>
+                        <span class="text-red-600" v-if="roleNameInvalid">Role name is a required field</span>
                     </v-col>
 
                     <!-- tree menu structure design -->

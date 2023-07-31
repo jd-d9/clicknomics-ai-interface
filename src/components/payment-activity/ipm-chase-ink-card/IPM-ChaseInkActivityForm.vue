@@ -45,7 +45,7 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Card Member</label>
                                     <input type="text" :class="{'form-control': true }" placeholder="Add Card Member" v-model="name" />
-                                    <!-- <span class="text-red-600" v-if="errors.Date">Date can not be empty</span> -->
+                                    <!-- <span class="text-red-600" v-if="errors.Date">Date is a required field</span> -->
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">

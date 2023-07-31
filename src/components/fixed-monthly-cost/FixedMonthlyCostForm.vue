@@ -39,7 +39,7 @@
                                     <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
                                         <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :range="toggleElement" :class="{'border-red-600': errors.Date}"></datepicker>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Date">Date is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">

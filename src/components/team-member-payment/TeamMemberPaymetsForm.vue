@@ -34,16 +34,16 @@
                             <v-row>
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Date</label>
-                                    <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
+                                    <Field name="Date" v-model="date">
                                         <datepicker placeholder="Select Date" name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :class="{'border-red-600': errors.Date}"></datepicker>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Date">Date is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Amount</label>
                                     <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
-                                    <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Amount">Amount is a required field</span>
                                 </v-col>
                             </v-row>
 
@@ -53,7 +53,7 @@
                                     <Field name="Fromaccount" v-model="fromAccount">
                                         <v-autocomplete name="Fromaccount" :class="{'form-control autocomplete': true, 'border-red-600': errors.Fromaccount}" :items="list" item-value="key" v-model="fromAccount" placeholder="Select From account"></v-autocomplete>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Fromaccount">From Account can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Fromaccount">From account is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -61,7 +61,7 @@
                                     <Field name="Toaccount" v-model="toAccount">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.Toaccount}" :items="creditLines" item-value="key" v-model="toAccount" placeholder="Select To account"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Toaccount">To Account can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Toaccount">To account is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -69,7 +69,7 @@
                                     <Field name="Status" v-model="status">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.Status}" :items="statusList" v-model="status" placeholder="Select Status"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Status">Status can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Status">Status is a required field</span>
                                 </v-col>
                             </v-row>
 

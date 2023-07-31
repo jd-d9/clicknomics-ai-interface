@@ -34,7 +34,7 @@
                                 {{item.selectable.customer_id ? item.selectable.customer_id : '-'}}
                             </template>
                             <template v-slot:[`item.manager_account`]="{ item }">
-                                {{item.selectable.manager_account ? item.selectable.manager_account :  '-'}}
+                                {{item.selectable.manager_account ? item.selectable.manager_account.name :  '-'}}
                             </template>
                             <template v-slot:[`item.currency_conversion_check`]="{ item }">
                                 <router-link to="" @click="showEditedModal(item.selectable.id, item.selectable.currency_conversion_check)">{{item.selectable.currency_conversion_check == '1' ? 'Enabled' : 'Disabled'}}</router-link>
@@ -152,7 +152,7 @@
                                             <v-radio class="monitor" label="Disabled" value="0"></v-radio>
                                         </v-radio-group>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Currency">Currency converstion can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Currency">Currency converstion is a required field</span>
                                 </v-col>
                                 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

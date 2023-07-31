@@ -146,7 +146,7 @@
                                     <Field name="Type" v-model="managementModal.type">
                                         <v-select @update:modelValue="updateData(managementModal.type)" name="Type" :class="{'form-control autocomplete': true , 'border-red-600':errors.Type }" :items="managementSystemType" v-model="managementModal.type" item-value="key"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Type">Management type can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Type">Management type is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
@@ -154,7 +154,7 @@
                                     <Field name="System" v-model="managementModal.management_system">
                                         <v-select :class="{'form-control autocomplete': true , 'border-red-600':errors.System }" name="System" :items="managementSystemList" v-model="managementModal.management_system"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.System">Management system can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.System">Management system is a required field</span>
                                 </v-col>
 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

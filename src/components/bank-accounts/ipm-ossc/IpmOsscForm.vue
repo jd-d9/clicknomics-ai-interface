@@ -39,13 +39,13 @@
                                     <Field name="Date" v-model="date" :class="{'border-red-600': errors.date}">
                                         <datepicker placeholder="Select Date" name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :class="{'border-red-600':errors.Date }"></datepicker>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Date">Date is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Recepient</label>
                                     <Field type="text" id="input-username" name="Recepient" :class="{'form-control': true , 'border-red-600':errors.Recepient}" placeholder="Add Recepient" v-model="recepient"/>
-                                    <span class="text-red-600" v-if="errors.Recepient">Recepient can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Recepient">Recepient is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal"></v-col>
@@ -53,13 +53,13 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Amount</label>
                                     <Field type="number" id="input-username" name="Amount" :class="{'form-control': true , 'border-red-600':errors.Amount}" step=".01" min="0" placeholder="Add Amount" v-model="amount"/>
-                                    <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Amount">Amount is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Fees</label>
                                     <Field type="number" id="input-username" name="Fees" :class="{'form-control': true , 'border-red-600':errors.Fees}" step=".01" min="0" placeholder="Add fees" v-model="fees"/>
-                                    <span class="text-red-600" v-if="errors.Fees">Fees can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Fees">Fees is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -72,7 +72,7 @@
                                     <Field name="Description" v-model="description">
                                         <textarea :class="{'form-control': true , 'border-red-600':errors.Description}" name="Description" rows="4" v-model="description"></textarea>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Description">Description can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Description">Description is a required field</span>
                                 </v-col>
 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

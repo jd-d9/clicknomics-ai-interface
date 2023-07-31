@@ -159,13 +159,13 @@
                     </div>
                     <div class="modal-body">
                         <p>
-                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
+                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date ? viewModalDetail.date : '-'}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description}}
+                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description ? viewModalDetail.description : '-'}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Recepient :</span> {{viewModalDetail.recepient}}
+                            <span class="font-weight-bold"> Recepient :</span> {{viewModalDetail.recepient ? viewModalDetail.recepient : '-'}}
                         </p>
                         <p>
                             <span class="font-weight-bold"> Amount :</span> {{$filters.toCurrency(viewModalDetail.amount)}}

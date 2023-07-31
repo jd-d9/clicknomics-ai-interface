@@ -137,28 +137,28 @@
                     <div class="form-group date-picker-3">
                         <label class="form-control-label">Name</label>
                         <Field type="text" name="Name" id="input-username" :class="{'form-control': true , 'border-red-600':errors.Name}" step=".01" placeholder="Name" v-model="name"/>
-                        <span class="text-red-600" v-if="errors.Name">Name can not be empty</span>
+                        <span class="text-red-600" v-if="errors.Name">Name is a required field</span>
                     </div>
                 </div>
                 <div class="col-lg-4 py-0">
                     <div class="form-group">
                         <label class="form-control-label">Google Account Limit</label>
                         <Field type="number" id="input-username" name="googleAccountLimit" :class="{'form-control': true , 'border-red-600':errors.googleAccountLimit}" step=".01" placeholder="Google Add Account" v-model="googleAccountLimit"/>
-                        <span class="text-red-600" v-if="errors.googleAccountLimit">Google account limit can not be empty</span>
+                        <span class="text-red-600" v-if="errors.googleAccountLimit">Google account limit is a required field</span>
                     </div>
                 </div>
                 <div class="col-lg-4 py-0">
                     <div class="form-group">
                         <label class="form-control-label">Microsoft Account Limit</label>
                         <Field type="number" id="input-username" name="microsoftAccountLimit" :class="{'form-control': true , 'border-red-600':errors.microsoftAccountLimit}" step=".01" placeholder="Microsoft Add Account" v-model="microsoftAccountLimit"/>
-                        <span class="text-red-600" v-if="errors.microsoftAccountLimit">Microsoft account limit can not be empty</span>
+                        <span class="text-red-600" v-if="errors.microsoftAccountLimit">Microsoft account limit is a required field</span>
                     </div>
                 </div>
                 <div class="col-lg-4 py-0">
                     <div class="form-group">
                         <label class="form-control-label">Network Account Limit</label>
                         <Field type="number" id="input-username" name="networkAccountLimit" :class="{'form-control': true , 'border-red-600':errors.networkAccountLimit}" step=".01" placeholder="Network Account Limit" v-model="networkAccountLimit"/>
-                        <span class="text-red-600" v-if="errors.networkAccountLimit">Network account limit can not be empty</span>
+                        <span class="text-red-600" v-if="errors.networkAccountLimit">Network account limit is a required field</span>
                     </div>
                 </div>
             </div>
@@ -169,7 +169,7 @@
                         <Field name="Description" v-model="description">
                             <textarea cols="30" rows="6" name="Description" placeholder="Description" :class="{'form-control': true , 'border-red-600':errors.Description}" v-model="description"></textarea>
                         </Field>
-                        <span class="text-red-600" v-if="errors.Description">Description can not be empty</span>
+                        <span class="text-red-600" v-if="errors.Description">Description is a required field</span>
                     </div>
                 </div>
             </div>
@@ -181,14 +181,14 @@
                             <Field name="Interval" v-model="data.intervalSelected">
                                 <v-select :class="{'form-control': true , 'border-red-600':errors.Interval}" :items="intervalData" item-value="key" v-model="data.interval"></v-select>
                             </Field>
-                            <span class="text-red-600" v-if="errors.Interval">Interval can not be empty</span>
+                            <span class="text-red-600" v-if="errors.Interval">Interval is a required field</span>
                         </div>
                     </div>
                     <div class="col-lg-6 py-0">
                         <div class="form-group">
                             <label class="form-control-label">Original Price</label>
                             <Field type="number" name="original_price" id="input-username" :class="{'form-control': true , 'border-red-600':errors.original_price}" step=".01" placeholder="Add Original Price" @keyup="calculateAmount(index)" v-model="data.original_price"/>
-                            <span class="text-red-600" v-if="errors.original_price">Original price can not be empty</span>
+                            <span class="text-red-600" v-if="errors.original_price">Original price is a required field</span>
                         </div>
                         <v-btn class="add-style-to-close-button" v-if="index != 0" icon small @click="addMultipleField.splice(index, 1)">
                             <v-icon size="20">{{ 'mdi-close' }}</v-icon>
@@ -207,7 +207,7 @@
                             <label class="form-check-label form-control-label" :for="'inlineRadioPercentage' + index">Percentage</label>
                         </div>
                         <Field type="number" id="input-username" name="discount_value" :class="{'form-control': true, 'border-red-600':errors.discount_value}" :placeholder="data.discount_type == 'flat' ? 'Flat Discount' : 'Percentage Discount'" @keyup="calculateAmount(index)" v-model="data.discount_value"/>
-                        <span class="text-red-600" v-if="errors.discount_value">Discount can not be empty</span>
+                        <span class="text-red-600" v-if="errors.discount_value">Discount is a required field</span>
                     </div>
                     <div class="col-lg-6 py-0">
                         <div class="form-group">

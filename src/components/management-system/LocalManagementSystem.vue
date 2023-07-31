@@ -169,7 +169,7 @@
                                     <Field name="Type" v-model="activity.type">
                                         <v-select name="Type" :class="{'form-control autocomplete': true , 'border-red-600':errors.Type }" :items="statusList" v-model="activity.type"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Type">Type Can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Type">Type is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -177,13 +177,13 @@
                                     <Field name="Country" v-model="activity.country">
                                         <v-select name="Country" :class="{'form-control autocomplete': true , 'border-red-600':errors.Country }" :items="countryList" item-value="key" v-model="activity.country"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Country">Country Can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Country">Country is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">City</label>
                                     <Field type="text" name="City" id="input-username" :class="{'form-control': true , 'border-red-600':errors.City }" v-model="activity.city" placeholder="City"/>
-                                    <span class="text-red-600" v-if="errors.City">City Can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.City">City is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
