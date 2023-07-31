@@ -39,13 +39,13 @@
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-account" size="30" color="#00cd00" class="form_icon"></v-icon>
                                     <Field id="name" type="text" name="firstName" class="text-capitalize" :class="{'form-control': true ,'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
-                                    <span class="text-red-600" v-if="errors.firstName">First name is required field</span>
+                                    <span class="text-red-600" v-if="errors.firstName">First name is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-account" size="30" color="#00cd00" class="form_icon"></v-icon>
                                     <Field id="name" type="text" name="lastName" class="text-capitalize" :class="{'form-control': true ,'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
-                                    <span class="text-red-600" v-if="errors.lastName">Last name is required field</span>
+                                    <span class="text-red-600" v-if="errors.lastName">Last name is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
@@ -57,7 +57,7 @@
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
                                     <v-icon icon="mdi-office-building" size="30" color="#00cd00" class="form_icon"></v-icon>
                                     <Field id="company" type="text" name="companyName" :class="{'form-control': true ,'border-red-600': errors.companyName}" placeholder="Company Name" v-model="companyName"/>
-                                    <span class="text-red-600" v-if="errors.companyName">Company name is required field</span>
+                                    <span class="text-red-600" v-if="errors.companyName">Company name is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">
@@ -91,7 +91,7 @@
                                             </option>
                                         </select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Country">Country code is required field</span>
+                                    <span class="text-red-600" v-if="errors.Country">Country code is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal position-relative">

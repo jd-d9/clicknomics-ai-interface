@@ -193,13 +193,13 @@
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">Company Name</label>
                                     <Field type="text" id="input-username" name="Company" :class="{'form-control': true , 'border-red-600':errors.Company }" v-model="activity.company" placeholder="Company Name"/>
-                                    <span class="text-red-600" v-if="errors.Company">Company Name Can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Company">Company Name is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">IP Address</label>
                                     <Field type="text" id="input-username" name="Ip" :class="{'form-control': true , 'border-red-600':errors.Ip }" v-model="activity.ip" placeholder="IP Address"/>
-                                    <span class="text-red-600" v-if="errors.Ip">IP Address Can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Ip">IP Address is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">

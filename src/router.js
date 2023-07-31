@@ -87,18 +87,15 @@ import BankAccountsPaymentReport from './components/payments-reports/BankAccount
 import TeamMemberPaymentsReport from './components/payments-reports/TeamMemberPaymentsReport';
 
 // Payment Methods Section
-import RmAmexPlumCardPayments from './components/payment-organization/rm-amex-plum/RmAmexPlumCardPayments.vue';
-import RmAmexPlumCardPaymentsForm from './components/payment-organization/rm-amex-plum/RmAmexPlumCardPaymentsForm.vue';
-import IPM_AMEX_PlumCardPayments from './components/payment-organization/ipm-amex-plum/IPM-AMEX-PlumCardPayments';
-import IPM_AMEX_PlumCardPaymentsForm from './components/payment-organization/ipm-amex-plum/IPM-AMEX-PlumCardPaymentsForm';
-import IPM_Divvy_CardPayments from './components/payment-organization/ipm-divvy-card/IPM-Divvy-CardPayments';
-import IPM_Divvy_CardPaymentsForm from './components/payment-organization/ipm-divvy-card/IPM-Divvy-CardPaymentsForm';
-import IPM_ChaseInkCardPayments from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPayments';
-import IPM_ChaseInkCardPaymentsForm from './components/payment-organization/ipm-chase-ink-card/IPM-ChaseInkCardPaymentsForm';
+import PaymentCardOrganizationForm from './components/payment-organization/PaymentCardOrganizationForm.vue';
+import RmAmexPlumCardPayments from './components/payment-organization/RmAmexPlumCardPayments.vue';
+import IpmAmexPlumCardPayments from './components/payment-organization/IpmAmexPlumCardPayments.vue';
+import IpmDivvyCardPayments from './components/payment-organization/IpmDivvyCardPayments.vue';
+import IpmChaseInkCardPayments from './components/payment-organization/IpmChaseInkCardPayments.vue';
 
 // Payment Methods / Payment Activity Section
-import RM_AMEX_PlumActivity from './components/payment-activity/rm-amex-plum/RM-AMEX-PlumActivity';
-import RM_AMEX_PlumActivityForm from './components/payment-activity/rm-amex-plum/RM-AMEX-PlumActivityForm';
+import RmAmexPlumActivityList from './components/payment-activity/rm-amex-plum/RmAmexPlumActivityList.vue';
+import RmAmexPlumActivityForm from './components/payment-activity/rm-amex-plum/RmAmexPlumActivityForm.vue';
 import IPM_AMEX_PlumActivity from './components/payment-activity/ipm-amex-plum/IPM-AMEX-PlumActivity';
 import IPM_AMEX_PlumActivityForm from './components/payment-activity/ipm-amex-plum/IPM-AMEX-PlumActivityForm';
 import IPM_Divvy_Activity from './components/payment-activity/ipm-divvy-card/IPM-DivvyActivity';
@@ -201,7 +198,6 @@ const router = createRouter({
         {path: '/management_system/datavps', component: DatacenterVpsManagementSystem, meta: {auth: true}},
         {path: '/management_system/residentialvps', component: ResidentialVpsManagementSystem, meta: {auth: true}},
         {path: '/management_system/multilogin', component: MultiLoginManagementSystem, meta: {auth: true}},
-
         // domains/manual module
         {path: '/domains/eranet', component: EranetDomainComponent, meta: {auth: true}},
         {path: '/domains/flokinet', component: FlokinetDomainComponent, meta: {auth: true}},
@@ -211,14 +207,12 @@ const router = createRouter({
         {path: '/domains/namesilo', component: NamesiloDomain, meta: {auth: true}},
         {path: '/domains/njal', component: NjalDomains, meta: {auth: true}},
         {path: '/domains/easydns', component: EasydnsDomains, meta: {auth: true}},
-
         // server module
         {path: '/servers', component: ServerListComponent, meta: {auth: true}},
         // ad accounts module
         {path: '/ad-accounts', component: AdAccountComponent, meta: {auth: true}},
         // campaigns module
         {path: '/campaigns', component: CampaignsList, meta: {auth: true}},
-
         // bank-accounts/ipm-chase module
         {path: '/bank_accounts/ipmchase/list', component: IpmChaseList, meta: {auth: true}},
         {path: '/bank_accounts/ipmchase/create', component: IpmChaseForm, meta: {auth: true}},
@@ -227,7 +221,6 @@ const router = createRouter({
         {path: '/bank_accounts/onesscorp/list', component: IpmOsscList, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/create', component: IpmOsscForm, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/:id/edit', component: IpmOsscForm, meta: {auth: true}},
-
         // report/realtime-report module
         {path: '/reporting/realTimeReports/google', component: RealTimeReportGoogle, meta: {auth: true}},
         {path: '/reporting/realTimeReports/microsoft', component: RealTimeReportMicrosoft, meta: {auth: true}},
@@ -242,36 +235,28 @@ const router = createRouter({
         {path: '/reporting/archivedReports/networks', component: ArchivedReportNetwoksList, meta: {auth: true}},
         {path: '/reporting/archivedReports/manualNetworks', component: ArchivedReportManualNetworksList, meta: {auth: true}},
         {path: '/reporting/archivedReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
-
         // Payment Methods Module
+        {path: '/payment_methods/create', component: PaymentCardOrganizationForm, meta: {auth: true}},
+        {path: '/payment_methods/:id/edit', component: PaymentCardOrganizationForm, meta: {auth: true}},
         {path: '/payment_methods/rm-amex-plum-card', component: RmAmexPlumCardPayments, meta: {auth: true}},
-        {path: '/payment_methods/rm-amex-plum-card/create', component: RmAmexPlumCardPaymentsForm, meta: {auth: true}},
-        {path: '/payment_methods/ipm-amex-plum-card', component: IPM_AMEX_PlumCardPayments, meta: {auth: true}},
-        {path: '/payment_methods/ipm-amex-plum-card/create', component: IPM_AMEX_PlumCardPaymentsForm, meta: {auth: true}},
-        {path: '/payment_methods/ipm-divvy-card', component: IPM_Divvy_CardPayments, meta: {auth: true}},
-        {path: '/payment_methods/ipm-divvy-card/create', component: IPM_Divvy_CardPaymentsForm, meta: {auth: true}},
-        {path: '/payment_methods/ipm-chase-ink-card', component: IPM_ChaseInkCardPayments, meta: {auth: true}},
-        {path: '/payment_methods/ipm-chase-ink-card/create', component: IPM_ChaseInkCardPaymentsForm, meta: {auth: true}},
-        
+        {path: '/payment_methods/ipm-amex-plum-card', component: IpmAmexPlumCardPayments, meta: {auth: true}},
+        {path: '/payment_methods/ipm-divvy-card', component: IpmDivvyCardPayments, meta: {auth: true}},
+        {path: '/payment_methods/ipm-chase-ink-card', component: IpmChaseInkCardPayments, meta: {auth: true}},
         // Payment Methods Module
-        {path: '/payment_methods/rm-amex-plum-card/activity', component: RM_AMEX_PlumActivity, meta: {auth: true}},
-        {path: '/payment_methods/rm-amex-plum-card/activity/create', component: RM_AMEX_PlumActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card/activity', component: RmAmexPlumActivityList, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card/activity/create', component: RmAmexPlumActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card/activity/:id/edit', component: RmAmexPlumActivityForm, meta: {auth: true}},
         {path: '/payment_methods/ipm-amex-plum-card/activity', component: IPM_AMEX_PlumActivity, meta: {auth: true}},
         {path: '/payment_methods/ipm-amex-plum-card/activity/create', component: IPM_AMEX_PlumActivityForm, meta: {auth: true}},
         {path: '/payment_methods/ipm-divvy-card/activity', component: IPM_Divvy_Activity, meta: {auth: true}},
         {path: '/payment_methods/ipm-divvy-card/activity/create', component: IPM_Divvy_ActivityForm, meta: {auth: true}},
         {path: '/payment_methods/ipm-chase-ink-card/activity', component: IPM_ChaseInkActivity, meta: {auth: true}},
         {path: '/payment_methods/ipm-chase-ink-card/activity/create', component: IPM_ChaseInkActivityForm, meta: {auth: true}},
-
-
-        // Account Activity
-        {path: '/login-activity', component: LoginActivityComponent, meta: {auth: true}},
-        
+        // Account Login Activity
+        {path: '/settings/login-activity', component: LoginActivityComponent, meta: {auth: true}},
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         {path: '/reporting/realTimeReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
-
-
         // not found page
         {path: '/:notFound(.*)', component: NotFoundPage},
     ]

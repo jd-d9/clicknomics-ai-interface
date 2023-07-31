@@ -192,13 +192,13 @@
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">Profile Name</label>
                                     <Field type="text" id="input-username" name="Profile" :class="{'form-control': true , 'border-red-600':errors.Profile }" v-model="activity.profile_name" placeholder="Profile Name"/>
-                                    <span class="text-red-600" v-if="errors.Profile">Profile name Can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Profile">Profile name is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">IP Provider</label>
                                     <Field type="text" id="input-username" name="IpProvider" :class="{'form-control': true , 'border-red-600':errors.IpProvider }" v-model="activity.ip_provider" placeholder="IP Provider"/>
-                                    <span class="text-red-600" v-if="errors.IpProvider">IP Provider Can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.IpProvider">IP Provider is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">

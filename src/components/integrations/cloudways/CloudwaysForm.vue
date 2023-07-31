@@ -37,7 +37,7 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">API KEY</label>
                                     <Field type="text" id="input-username" name="apiKey" :class="{'form-control': true, 'border-red-600': errors.apiKey}" placeholder="API KEY" v-model="api_key"/>
-                                    <span class="text-red-600" v-if="errors.apiKey">Api key can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.apiKey">Api key is a required field</span>
                                 </v-col> 
 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

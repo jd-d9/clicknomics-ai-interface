@@ -46,25 +46,25 @@
                                             <option value="Easydns">Easydns</option>
                                         </select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Domain">Domain platform can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Domain">Domain platform is a required field</span>
                                 </v-col> 
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">API KEY</label>
                                     <Field type="text" id="input-username" name="apiKey" :class="{'form-control': true, 'border-red-600': errors.apiKey}" placeholder="API KEY" v-model="api_key"/>
-                                    <span class="text-red-600" v-if="errors.apiKey">Api key can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.apiKey">Api key is a required field</span>
                                 </v-col>  
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal" v-if="domain_selected == 'Namecheap' || domain_selected == 'Easydns'">
                                     <label class="form-control-label">User Name</label>
                                     <Field type="text" id="input-username" name="userName" :class="{'form-control': true, 'border-red-600': errors.userName}" placeholder="User Name" v-model="username"/>
-                                    <span class="text-red-600" v-if="errors.userName">User Name can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.userName">User Name is a required field</span>
                                 </v-col> 
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal" v-if="domain_selected == 'GoDaddy' || domain_selected == 'Easydns'">
                                     <label class="form-control-label">{{ domain_selected == 'Easydns' ? 'Token' : 'API Secret'}}</label>
                                     <Field type="text" id="input-username" name="apisecret" :class="{'form-control': true, 'border-red-600': errors.apisecret}" :placeholder="domain_selected == 'Easydns' ? 'Token' : 'API Secret'" v-model="api_secret"/>
-                                    <span class="text-red-600" v-if="errors.apisecret">{{errors.domain_selected == 'Easydns' ? 'Token' : 'API Secret' + 'can not be empty'}}</span>
+                                    <span class="text-red-600" v-if="errors.apisecret">{{errors.domain_selected == 'Easydns' ? 'Token' : 'API Secret' + 'is a required field'}}</span>
                                 </v-col> 
 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

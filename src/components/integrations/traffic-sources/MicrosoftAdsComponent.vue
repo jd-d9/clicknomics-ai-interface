@@ -89,7 +89,7 @@
                                             <v-radio class="monitor" label="Disabled" value="0"></v-radio>
                                         </v-radio-group>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Currency">Currency converstion can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Currency">Currency converstion is a required field</span>
                                 </v-col>
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
                                     <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>

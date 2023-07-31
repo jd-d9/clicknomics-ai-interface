@@ -315,7 +315,7 @@ export default {
                 return val.description == '';
             })
             if(value.length != 0) {
-                this.invalidDescription = 'Description can not be empty';
+                this.invalidDescription = 'Description is a required field';
             }
             else {
                 this.invalidDescription = '';
@@ -327,7 +327,7 @@ export default {
                 return val.cost == null;
             })
             if(value.length != 0) {
-                this.invalidCost = 'Cost can not be empty';
+                this.invalidCost = 'Cost is a required field';
             }
             else {
                 this.invalidCost = '';
@@ -336,7 +336,7 @@ export default {
         // description validation
         descriptionValidation(val) {
             if(!val) {
-                this.invalidDescription = 'Description can not be empty';
+                this.invalidDescription = 'Description is a required field';
             }
             else {
                 this.invalidDescription = '';
@@ -345,7 +345,7 @@ export default {
         // cost validation
         costValidation(val) {
             if(!val) {
-                this.invalidCost = 'Cost can not be empty';
+                this.invalidCost = 'Cost is a required field';
             }
             else {
                 this.invalidCost = '';
@@ -354,7 +354,7 @@ export default {
         // bank details validation
         bankDetailsValidation(val) {
             if(!val) {
-                this.invalidBankDetails = 'Bank details can not be empty';
+                this.invalidBankDetails = 'Bank details is a required field';
             }
             else {
                 this.invalidBankDetails = '';
@@ -573,7 +573,7 @@ export default {
         templateNameIsValid() {
             if(!this.templateName) {
                 this.isTempInvalid = true;
-                this.errorMessage = 'Template name can not be empty'
+                this.errorMessage = 'Template name is a required field'
             }
             else {
                 this.isTempInvalid = false;

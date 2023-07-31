@@ -87,7 +87,7 @@
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Email</label>
                                     <Field name="Email" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.Email}" placeholder="Email" v-model="activity.email"/>
-                                    <span class="text-red-600" v-if="errors.Email">Email can not be empty</span>
+                                    <ErrorMessage class="text-red-600" name="Email"/>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -95,7 +95,7 @@
                                     <Field name="DailyReport" v-model="activity.daily_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.DailyReport}" :items="accountTypeList" v-model="activity.daily_report" placeholder="Select Daily Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.DailyReport">Daily Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.DailyReport">Daily Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -103,7 +103,7 @@
                                     <Field name="MonthlyReport" v-model="activity.monthly_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.MonthlyReport}" :items="accountTypeList" v-model="activity.monthly_report" placeholder="Select Monthly Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.MonthlyReport">Monthly Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.MonthlyReport">Monthly Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -111,7 +111,7 @@
                                     <Field name="WeeklyReport" v-model="activity.weekly_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.WeeklyReport}" :items="accountTypeList" v-model="activity.weekly_report" placeholder="Select Weekly Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.WeeklyReport">Weekly Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.WeeklyReport">Weekly Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -119,7 +119,7 @@
                                     <Field name="url_uptime_report" v-model="activity.url_uptime_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.url_uptime_report}" :items="accountTypeList" v-model="activity.url_uptime_report" placeholder="Select URL Uptime Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.url_uptime_report">URL Uptime Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.url_uptime_report">URL Uptime Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -127,7 +127,7 @@
                                     <Field name="account_monitoring_report" v-model="activity.account_monitoring_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.account_monitoring_report}" :items="accountTypeList" v-model="activity.account_monitoring_report" placeholder="Select Account Monitoring Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.account_monitoring_report">Account Monitoring Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.account_monitoring_report">Account Monitoring Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -135,7 +135,7 @@
                                     <Field name="networks_monitoring_report" v-model="activity.networks_monitoring_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.networks_monitoring_report}" :items="accountTypeList" v-model="activity.networks_monitoring_report" placeholder="Select Network Monitoring Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.networks_monitoring_report">Network Monitoring Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.networks_monitoring_report">Network Monitoring Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -143,7 +143,7 @@
                                     <Field name="ads_issue_report" v-model="activity.ads_issue_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.ads_issue_report}" :items="accountTypeList" v-model="activity.ads_issue_report" placeholder="Select Ads Issue Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.ads_issue_report">Ads Issue Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.ads_issue_report">Ads Issue Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -151,7 +151,7 @@
                                     <Field name="domain_expires_report" v-model="activity.domain_expires_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.domain_expires_report}" :items="accountTypeList" v-model="activity.domain_expires_report" placeholder="Select Domain Expires Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.domain_expires_report">Domain Expires Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.domain_expires_report">Domain Expires Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -159,7 +159,7 @@
                                     <Field name="payment_declined_report" v-model="activity.payment_declined_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.payment_declined_report}" :items="accountTypeList" v-model="activity.payment_declined_report" placeholder="Select Payment Declined Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.payment_declined_report">Payment Declined Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.payment_declined_report">Payment Declined Report is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -167,7 +167,7 @@
                                     <Field name="speed_test_report" v-model="activity.speed_test_report">
                                         <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.speed_test_report}" :items="accountTypeList" v-model="activity.speed_test_report" placeholder="Select Website Speed Test Report"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.speed_test_report">Website Speed Test Report can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.speed_test_report">Website Speed Test Report is a required field</span>
                                 </v-col>
 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

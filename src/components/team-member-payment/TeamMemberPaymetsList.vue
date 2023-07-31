@@ -220,7 +220,7 @@
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">To Account Name</label>
                                     <Field name="toAccName" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.toAccName}" placeholder="Account Name" v-model="teamMemberName"/>
-                                    <span class="text-red-600" v-if="errors.toAccName">Account Name can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.toAccName">Account name is a required field</span>
                                 </v-col>
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
                                     <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
@@ -257,7 +257,7 @@
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">From Account Name</label>
                                     <Field name="fromAccName" type="text" id="input-username" :class="{'form-control': true, 'border-red-600': errors.fromAccName}" placeholder="Account Name" v-model="teamMemberName"/>
-                                    <span class="text-red-600" v-if="errors.fromAccName">Account Name can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.fromAccName">Account name is a required field</span>
                                 </v-col>
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
                                     <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>

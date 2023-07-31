@@ -10,19 +10,19 @@
                             <span>Dashboard</span>
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>RM AMEX Plum Card Payments</span>
+                        <span>IPM Chase Ink Card Payments</span>
                         <v-spacer />
 
                         <div>
-                            <v-btn class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download" @click="downloadCsv">
+                            <v-btn class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download" @click.prevent="downloadCsv">
                                 Demo.csv
                             </v-btn>
 
-                            <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                            <v-btn @click.prevent="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
                                 Import CSV
                             </v-btn>
 
-                            <v-btn to="/payment_methods/rm-amex-plum-card/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                            <v-btn to="" @click.prevent="addNew" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
                                 Add New
                             </v-btn>
                         </div>      
@@ -32,10 +32,10 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            RM AMEX Plum Card Payments List
+                            IPM Chase Ink Card Payments List
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
-                                <v-select clearable variant="outlined" placeholder="Name Custom Filter" :items="itemsCardName" v-model="valueCardName" @update:modelValue="filterPayments"></v-select>
+                                <v-select clearable variant="outlined" placeholder="Name Custom Filter" :items="itemsCardName" v-model="valueCardName" @change="filterPayments"></v-select>
                             </v-col>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
@@ -104,7 +104,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Import Team Member Payments List</h5>
+                        <h5 class="modal-title">Import IPM Chase Ink Card List</h5>
                         <button type="button" class="close" aria-label="Close" @click.prevent="closeImportCsvModal">
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
@@ -135,10 +135,7 @@
 
 <script>
 import axios from '@axios';
-// import _ from 'lodash';
 export default {
-    components: {
-    },
     data() {
         return{
             message: {},
@@ -191,7 +188,7 @@ export default {
             this.showLoader = true;
             const queryString = new URLSearchParams();
             const ajaxUrl = this.$api + '/paymentMethod/paymentCardsOrganization';
-            queryString.set('card_type', 'RM AMEX Plum Card');
+            queryString.set('card_type', 'IPM Chase Ink Card');
             
             const url = `${ajaxUrl}?${queryString.toString()}`;
             axios.get(url, {
@@ -258,6 +255,7 @@ export default {
         },
         // edit item
         edit(id) {
+            localStorage.setItem('breadCrumbMessage', 'IPM Chase Ink Card');
             this.$router.push(`/payment_methods/${id}/edit`);
         },
         // delete data
@@ -330,7 +328,7 @@ export default {
         // downlaod csv file
         downloadCsv() {
             axios.post(this.$api + '/settings/downloadfile', {
-                filename: '' // pending
+                filename: 'paymentMethods'
             }, {
                 headers: {
                     "Content-Type": "application/json",
@@ -452,6 +450,11 @@ export default {
                 }
                 this.showLoader = false;
             });
+        },
+        // add new payment
+        addNew() {
+            localStorage.setItem('breadCrumbMessage', 'IPM Chase Ink Card');
+            this.$router.push('/payment_methods/create');
         },
         // filtering payments
         filterPayments() {

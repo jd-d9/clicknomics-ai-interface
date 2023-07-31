@@ -139,7 +139,7 @@
                                             :class="{ 'form-control autocomplete': true, 'border-red-600': errors.Status }"
                                             name='Status' :items="statusList" v-model="item.status"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Status">Account status can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Status">Account status is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">

@@ -148,7 +148,7 @@
                                     <Field type="text" name="Name" id="input-username"
                                         :class="{ 'form-control': true, 'border-red-600': errors.Name }" placeholder="Add Name"
                                         v-model="list.name" />
-                                    <span class="text-red-600" v-if="errors.Name">Network name is required field</span>
+                                    <span class="text-red-600" v-if="errors.Name">Network name is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -164,7 +164,7 @@
                                     <Field type="text" name="Platform" id="input-username"
                                         :class="{ 'form-control': true, 'border-red-600': errors.Platform }" placeholder="Type"
                                         v-model="list.platform_type" />
-                                    <span class="text-red-600" v-if="errors.Name">Platform type is required field</span>
+                                    <span class="text-red-600" v-if="errors.Name">Platform type is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">

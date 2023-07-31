@@ -38,8 +38,8 @@
                                 <span v-if="item.selectable.first_name != null && item.selectable.last_name != null">{{item.selectable.first_name + ' ' + item.selectable.last_name}}</span>
                                 <span v-else>-</span>
                             </template>
-                            <template v-slot:[`item.email`]="{ item }">
-                                {{item.selectable.email ? item.selectable.email : '-'}}
+                            <template v-slot:[`item.subscribe_user_email`]="{ item }">
+                                {{item.selectable.subscribe_user_email ? '******' : '-'}}
                             </template>
                             <template v-slot:[`item.company_name`]="{ item }">
                                 {{item.selectable.company_name ? item.selectable.company_name : '-'}}
@@ -91,7 +91,7 @@
                 headers: [
                     { title: 'ID', key: 'id', align: 'start' },
                     { title: 'Name', key: 'first_name' },
-                    { title: 'Email', key: 'email' },
+                    { title: 'Email', key: 'subscribe_user_email' },
                     { title: 'Company Name', key: 'company_name' },
                     { title: 'Status', key: 'status' },
                     { title: 'Expire On', key: 'trial_ends_at' },
@@ -101,7 +101,6 @@
                 roleId: sessionStorage.getItem('roleId'),
                 showLoader: false,
                 items: [],
-                userFilter: [],
                 permissions: {},
             }
         },
@@ -126,8 +125,7 @@
                 .then(response => {
                     if(response.data.success) {
                         const getData = response.data;
-                        this.items = getData.data.data;
-                        this.userFilter = getData.data.data;
+                        this.items = getData.data;
                         this.permissions = getData.permission;
                         this.showLoader = false;
                     }else {

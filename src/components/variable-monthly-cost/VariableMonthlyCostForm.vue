@@ -38,13 +38,13 @@
                                     <Field name="Date" v-model="date" :class="{'border-red-600': errors.Date}">
                                         <datepicker name="Date" v-model:value="date" valueType="format" format="YYYY-MM-DD" :range="toggleElement" :class="{'border-red-600': errors.Date}"></datepicker>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Date">Date can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Date">Date is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Amount</label>
                                     <Field type="number" id="input-username" name="Amount" :class="{'form-control': true, 'border-red-600': errors.Amount}" step=".01" placeholder="Add Amount" v-model="amount"/>
-                                    <span class="text-red-600" v-if="errors.Amount">Amount can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Amount">Amount is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="8" lg="8" class="font-medium font-weight-normal">
@@ -52,7 +52,7 @@
                                     <Field name="Notes" v-model="notes">
                                         <textarea :class="{'form-control': true, 'border-red-600': errors.Notes}" name="Notes" cols="30" rows="10" v-model="notes"></textarea>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.Notes">Notes can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Notes">Notes is a required field</span>
                                 </v-col>
 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

@@ -38,7 +38,7 @@
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal">
                                     <label>Enter an authenticator app code</label>
                                     <Field id="authentication-code" name="Authentication" placeholder="Authenticator app code" class="form-control mb-2" :class="{'form-control': true ,'border-red-600': errors.Authentication}" type="text" v-model="authCode"/>
-                                    <span class="text-red-600" v-if="errors.Authentication">Authenticator code can not be empty</span>
+                                    <span class="text-red-600" v-if="errors.Authentication">Authenticator code is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal py-0">
