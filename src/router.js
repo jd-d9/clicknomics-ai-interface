@@ -67,10 +67,18 @@ import EasydnsDomains from './components/domains/automated-domain/EasydnsDomains
 
 import AdAccountComponent from './components/ad-accounts/AdAccountComponent.vue';
 import CampaignsList from './components/campaigns/CampaignsList.vue';
+
+// Bank Accounts
 import IpmChaseList from './components/bank-accounts/ipm-chase/IpmChaseList.vue';
 import IpmChaseForm from './components/bank-accounts/ipm-chase/IpmChaseForm.vue';
 import IpmOsscList from './components/bank-accounts/ipm-ossc/IpmOsscList.vue';
 import IpmOsscForm from './components/bank-accounts/ipm-ossc/IpmOsscForm.vue';
+import IpmSxmList from './components/bank-accounts/ipm-sxm/IpmSxmList.vue';
+import IpmSxmForm from './components/bank-accounts/ipm-sxm/IpmSxmForm.vue';
+import IpmPaypalList from './components/bank-accounts/ipm-paypal/IpmPaypalList.vue';
+import IpmPaypalForm from './components/bank-accounts/ipm-paypal/IpmPaypalForm.vue';
+
+
 import ArchivedReportMicrosoftAdsList from './components/archived-reports/ArchivedReportMicrosoftAdsList.vue';
 import ArchivedReportGoogleAdsList from './components/archived-reports/ArchivedReportGoogleAdsList.vue';
 import ArchivedReportNetwoksList from './components/archived-reports/ArchivedReportNetwoksList.vue';
@@ -221,6 +229,14 @@ const router = createRouter({
         {path: '/bank_accounts/onesscorp/list', component: IpmOsscList, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/create', component: IpmOsscForm, meta: {auth: true}},
         {path: '/bank_accounts/onesscorp/:id/edit', component: IpmOsscForm, meta: {auth: true}},
+        // bank-accounts/ipm-sxm module
+        {path: '/bank_accounts/ipm-sxm/list', component: IpmSxmList, meta: {auth: true}},
+        {path: '/bank_accounts/ipm-sxm/create', component: IpmSxmForm, meta: {auth: true}},
+        {path: '/bank_accounts/ipm-sxm/:id/edit', component: IpmSxmForm, meta: {auth: true}},
+        // bank-accounts/ipm-paypal module
+        {path: '/bank_accounts/ipm-paypal/list', component: IpmPaypalList, meta: {auth: true}},
+        {path: '/bank_accounts/ipm-paypal/create', component: IpmPaypalForm, meta: {auth: true}},
+        {path: '/bank_accounts/ipm-paypal/:id/edit', component: IpmPaypalForm, meta: {auth: true}},
         // report/realtime-report module
         {path: '/reporting/realTimeReports/google', component: RealTimeReportGoogle, meta: {auth: true}},
         {path: '/reporting/realTimeReports/microsoft', component: RealTimeReportMicrosoft, meta: {auth: true}},
