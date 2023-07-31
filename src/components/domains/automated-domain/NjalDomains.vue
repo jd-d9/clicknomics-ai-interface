@@ -56,6 +56,7 @@
 </template>
 
 <script>
+// import axios from '@axios';
 export default {
     components: {
     },
@@ -84,6 +85,7 @@ export default {
                 { title: 'Domain Expiration', key: 'expire_date', align: 'center' },
             ],
             selected: [],
+            permissions:{}
         }
     },
     mounted() {
