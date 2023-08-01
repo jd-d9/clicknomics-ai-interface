@@ -26,7 +26,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between">
-                            Create RM AMEX Plum Activity
+                            {{toggleElement ? 'Create' : 'Edit'}} RM AMEX Plum Activity
                         </v-card-title>
 
                         <v-divider class="border-opacity-100 my-4" color="success" /> 
@@ -84,7 +84,7 @@
                             </v-row>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12">
-                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                    <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">{{toggleElement ? 'Save' : 'Update'}}</v-btn>    
                                 </v-col>
                             </v-row>
                         </Form> 

@@ -40,7 +40,7 @@
                                 <v-window-item value="activity">
                                     <v-row class="d-flex align-center justify-end">
                                         <v-col class="font-medium font-weight-normal pr-0 text-right">
-                                            <v-btn v-if="selected.length > 0" @click="deleteSelected" class="ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                            <v-btn v-if="selected.length > 0" @click.prevent="deleteSelected" class="ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
                                                 Remove Selected
                                             </v-btn>
                                         </v-col>
@@ -187,7 +187,7 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>                    
-                    <form @submit.prevent="importCsv">
+                    <form @submit.prevent="uploadCsv">
                         <div class="modal-body">
                             <div class="file-upload">
                                 <div class="file-select">
@@ -261,7 +261,9 @@ export default {
             cardMemberList: [],
             showImportIcon: true,
             permissions: {},
+            selectedFile: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            selectedRangeTwo: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
     },
     computed: {
@@ -396,6 +398,210 @@ export default {
         edit(id, data) {
             localStorage.setItem('editData', JSON.stringify(data));
             this.$router.push(`/payment_methods/rm-amex-plum-card/activity/${id}/edit`);
+        },
+        // delete selected data/multiple data
+        deleteSelected() {
+            if(confirm("Do you really want to delete?")) {
+                this.showLoader = true;
+                let formData = new FormData();
+                let multipleRow = [];
+                this.selected.forEach((val) => {
+                    multipleRow.push({id: val});
+                })
+                formData.append('selectedRecord', JSON.stringify(multipleRow));
+                axios.post(this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivitys/deleteMutipleRows', formData, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: this.getAccessToken(),
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.getActivities();
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                    }else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
+            }
+        },
+        // delete data
+        deleteData(id) {
+            if(confirm("Do you really want to delete?")) {
+                this.showLoader = true;
+                axios.delete(this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivity/' + id, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: this.getAccessToken()
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.getActivities();
+                        this.showLoader = false;
+                    }else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    if(error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if(error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
+            }
+        },
+        // upload csv file
+        uploadCsv() {
+            this.showLoader = true;
+            axios.post(this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivitys/importCSV', {
+                file: this.selectedFile
+            }, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: this.getAccessToken()
+                }
+            })
+            .then(response => {
+                if(response.data.success) {
+                    this.closeModal();
+                    this.getIpmChaseReport();
+                    this.showLoader = false;
+                    this.selectedFile = '';
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if(error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                }
+                this.showLoader = false;
+            });
+        },
+        // select csv file
+        chooseFile(e) {
+            this.selectedFile = e.target.files[0];
         },
     },
 }
