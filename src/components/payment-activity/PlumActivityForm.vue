@@ -9,15 +9,15 @@
                             <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
                             <span>Dashboard</span>
                         </router-link>
-                        <router-link to="/payment_methods/rm-amex-plum-card/activity" class="d-flex align-center">
+                        <router-link  @click="backButtonDynamicPath" to="" class="d-flex align-center">
                             <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                            <span>RM AMEX Plum Activity</span>
+                            <span>{{breadCrumbText}}</span>
                         </router-link>
 
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Create</span>
+                        <span>{{toggleElement ? 'Create' : 'Edit'}} Activity</span>
                         <v-spacer />
-                        <v-btn to="/payment_methods/rm-amex-plum-card/activity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                        <v-btn to=""  @click.prevent="backButtonDynamicPath" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
                             Back
                         </v-btn>
                     </v-breadcrumbs>
@@ -26,7 +26,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between">
-                            {{toggleElement ? 'Create' : 'Edit'}} RM AMEX Plum Activity
+                            {{toggleElement ? 'Create' : 'Edit'}} {{breadCrumbText}}
                         </v-card-title>
 
                         <v-divider class="border-opacity-100 my-4" color="success" /> 
@@ -126,6 +126,7 @@ export default {
                 },
             ],
             toggleElement: true,
+            breadCrumbText: '',
         }
     },
     computed: {
@@ -145,6 +146,7 @@ export default {
             top: 0,
             behavior: 'smooth',
         });
+        this.breadCrumbText = localStorage.getItem('breadCrumbMessage');
         if(this.$route.params.id) {
             this.toggleElement = false;
             const editData = JSON.parse(localStorage.getItem('editData'));
@@ -159,61 +161,141 @@ export default {
     methods: {
         // create activities
         createActivity() {
-            this.showLoader = true;
-            let formData = new FormData();
-            formData.append('date', this.date);
-            formData.append('amount', this.amount);
-            formData.append('card_member', this.cardMember);
-            formData.append('transaction_type', this.transactionType);
-            formData.append('account', this.accountType);
-            formData.append('description', this.notes);
-            !this.toggleElement && formData.append('_method', 'PUT');
-            const url = this.toggleElement ? this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivity' : this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivity/' + this.$route.params.id;
-            axios.post(url, formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: this.getAccessToken()
-                }
-            })
-            .then(response => {
-                if(response.data.success) {
-                    this.$router.push('/payment_methods/rm-amex-plum-card/activity');
-                    this.backendErrorMessage = '';
-                    this.multipleErrors = [];
-                    this.message = {
-                        text: response.data.message,
-                        type: 'success',
+            // add and update rm amex plum activity
+            if(this.breadCrumbText == 'RM AMEX Plum Activity') {
+                this.showLoader = true;
+                let formData = new FormData();
+                formData.append('date', this.date);
+                formData.append('amount', this.amount);
+                formData.append('card_member', this.cardMember);
+                formData.append('transaction_type', this.transactionType);
+                formData.append('account', this.accountType);
+                formData.append('description', this.notes);
+                !this.toggleElement && formData.append('_method', 'PUT');
+                const url = this.toggleElement ? this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivity' : this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivity/' + this.$route.params.id;
+                axios.post(url, formData, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: this.getAccessToken()
                     }
-                    this.$eventBus.emit('flash-message', this.message, '');
-                    this.showLoader = false;
-                }else {
-                    this.message = {
-                        text: response.data.message,
-                        type: 'error',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.backendErrorMessage = error.response.data.message;
-                }
-                if(error.response.data.error) {
-                    this.backendErrorMessage = error.response.data.error;
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.backendErrorMessage = error.response.data.errors[0];
-                    }else if(error.response.data.errors.length == 0){
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.redirectUrl();
+                        localStorage.removeItem('editData');
                         this.backendErrorMessage = '';
+                        this.multipleErrors = [];
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }else {
-                        this.multipleErrors = error.response.data.errors;
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
                     }
-                }
-                this.showLoader = false;
-            });
+                })
+                .catch(error => {
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
+                    this.showLoader = false;
+                });
+            }
+            // add and update ipm amex plum activity
+            else {
+                this.showLoader = true;
+                let formData = new FormData();
+                formData.append('date', this.date);
+                formData.append('amount', this.amount);
+                formData.append('card_member', this.cardMember);
+                formData.append('transaction_type', this.transactionType);
+                formData.append('account', this.accountType);
+                formData.append('description', this.notes);
+                !this.toggleElement && formData.append('_method', 'PUT');
+                const url = this.toggleElement ? this.$api + '/paymentMethod/paymentActivity/ipmAmexPlumActivity' : this.$api + '/paymentMethod/paymentActivity/ipmAmexPlumActivity/' + this.$route.params.id;
+                axios.post(url, formData, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: this.getAccessToken()
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.redirectUrl();
+                        localStorage.removeItem('editData');
+                        this.backendErrorMessage = '';
+                        this.multipleErrors = [];
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                    }else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
+                    this.showLoader = false;
+                });
+            }
         },
+        // redirect to perticular portion based on card type
+        redirectUrl() {
+            if(this.breadCrumbText == 'RM AMEX Plum Activity') {
+                this.$router.push('/payment_methods/rm-amex-plum-card/activity');
+            }
+            if(this.breadCrumbText == 'IPM AMEX Plum Activity') {
+                this.$router.push('/payment_methods/ipm-amex-plum-card/activity');
+            }
+        },
+        // back button dynamic path
+        backButtonDynamicPath() {
+            if(this.breadCrumbText == 'RM AMEX Plum Activity') {
+                this.$router.push('/payment_methods/rm-amex-plum-card/activity');
+            }
+            if(this.breadCrumbText == 'IPM AMEX Plum Activity') {
+                this.$router.push('/payment_methods/ipm-amex-plum-card/activity');
+            }
+        }
     }
 }
 </script>

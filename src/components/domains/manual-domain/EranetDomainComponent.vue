@@ -370,7 +370,6 @@ export default {
                     const getData = response.data;
                     this.dataMetrics = getData.data.data;
                     this.permissions = getData.permission;
-                    console.log(getData, 'getData');
                     this.showLoader = false;
                 }else {
                     this.message = {

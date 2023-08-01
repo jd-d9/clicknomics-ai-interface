@@ -350,7 +350,6 @@ export default {
                 .then(response => {
                     if (response.data.success) {
                         this.networkFilter = [];
-                        console.log(response.data.networksList)
                         response.data.networksList.forEach((val) => {
                             if (val.network_name && val.network_name !== null) {
                                 this.networkFilter.push(val.network_name);

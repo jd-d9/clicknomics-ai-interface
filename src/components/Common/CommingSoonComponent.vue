@@ -55,7 +55,6 @@ export default {
         }else {
             this.toggleElement = true;
         }
-        console.log(this.$route.params.routeName, 'Route Name');
     }
 }
 </script>

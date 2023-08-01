@@ -370,7 +370,6 @@ export default {
                     const getData = response.data;
                     this.dataMetrics = getData.data.data;
                     this.permissions = getData.permission;
-                    console.log(getData, 'getData');
                     this.showLoader = false;
                 }else {
                     this.message = {
@@ -509,12 +508,6 @@ export default {
                     this.showLoader = false;
                 });
             }
-        },
-        // handle upload
-        handleUpload(event) {
-            const files = event.target.files;
-            console.log(files[0].name, '2121212')
-            this.file = files;
         },
         // view data
         // view(id) {

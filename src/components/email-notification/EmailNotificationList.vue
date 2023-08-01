@@ -316,7 +316,6 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const Data = response.data;
-                    console.log(Data, 'data')
                     this.dataMetrics = Data.data.data;
                     this.dataMetricsFilter = Data.data.data;
                     this.permissions = Data.permission;
@@ -367,9 +366,7 @@ export default {
         },
         // open model for edit and set field values
         edit(id) {
-            console.log(id)
             this.openModal();
-            // const data = _.filter(this.dataMetrics, x => { return x.id == id; });
             const result = this.dataMetrics.find((val) => {
                 return val.id == id
             });

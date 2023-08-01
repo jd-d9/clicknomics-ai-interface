@@ -248,7 +248,6 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const Data = response.data;
-                    console.log(Data, '-- Data --')
                     this.customers = Data.result;
                     this.permissions = Data.permission;
                     this.restrictUser = Data.restrict_user;

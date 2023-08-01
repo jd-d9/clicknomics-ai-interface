@@ -11,7 +11,7 @@
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>IPM PayPal Payment</span>
-                        <v-spacer />
+                        <v-spacer/>
                         <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
                             Demo.csv
                         </v-btn>
@@ -20,7 +20,7 @@
                             Import CSV
                         </v-btn>
 
-                        <v-btn @click.prevent="this.$router.push('/bank_accounts/ipm-paypal/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="this.$router.push('/bank_accounts/ipm-paypal/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus" :disabled="permissions.create_auth == '0'">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -44,16 +44,16 @@
                                     <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select :items="nameFilter" clearable variant="outlined" placeholder="Name Filter" v-model="nameValue" @change="getPaypalPaymentsReport"></v-select>
+                                    <v-select :items="nameFilter" clearable variant="outlined" placeholder="Name Filter" v-model="nameValue" @update:modelValue="getPaypalPaymentsReport"></v-select>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select :items="typeFilter" clearable variant="outlined" placeholder="Type Filter" v-model="typeValue" @change="getPaypalPaymentsReport"></v-select>
+                                    <v-select :items="typeFilter" clearable variant="outlined" placeholder="Type Filter" v-model="typeValue" @update:modelValue="getPaypalPaymentsReport"></v-select>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select :items="statusFilter" clearable variant="outlined" placeholder="Status Filter" v-model="statusValue" @change="getPaypalPaymentsReport"></v-select>
+                                    <v-select :items="statusFilter" clearable variant="outlined" placeholder="Status Filter" v-model="statusValue" @update:modelValue="getPaypalPaymentsReport"></v-select>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select :items="transactionTypeFilter" clearable variant="outlined" placeholder="Transaction Type Filter" v-model="transactionTypeValue" @change="getPaypalPaymentsReport"></v-select>
+                                    <v-select :items="transactionTypeFilter" clearable variant="outlined" placeholder="Transaction Type Filter" v-model="transactionTypeValue" @update:modelValue="getPaypalPaymentsReport"></v-select>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal">
                                     <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
@@ -63,23 +63,32 @@
 
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.date`]="{ item }">
+                                {{item.selectable.date ? item.selectable.date : '-'}}
+                            </template>
+                            <template v-slot:[`item.name`]="{ item }">
+                                {{item.selectable.name ? item.selectable.name : '-'}}
+                            </template>
+                            <template v-slot:[`item.type`]="{ item }">
+                                {{item.selectable.type ? item.selectable.type : '-'}}
+                            </template>
+                            <template v-slot:[`item.status`]="{ item }">
+                                {{item.selectable.status ? item.selectable.status : '-'}}
+                            </template>
                             <template v-slot:[`item.amount`]="{ item }">
                                 {{$filters.toCurrency(item.selectable.amount)}}
                             </template>
-                            <template v-slot:[`item.fees`]="{ item }">
-                                {{$filters.toCurrency(item.selectable.fees)}}
+                            <template v-slot:[`item.from_email_address`]="{ item }">
+                                {{item.selectable.from_email_address ? item.selectable.from_email_address : '-'}}
                             </template>
-                            <template v-slot:[`item.grandtotal`]="{ item }">
-                                {{$filters.toCurrency(item.selectable.grand_total)}}
+                            <template v-slot:[`item.to_email_address`]="{ item }">
+                                {{item.selectable.to_email_address ? item.selectable.to_email_address : '-'}}
                             </template>
-                            <template  v-slot:[`item.description`]="{ item }">
-                                <div v-if="item.selectable.description.length > 50">
-                                    {{item.selectable.description ? item.selectable.description.substring(0,50)+'...' : '-'}}
-                                </div>
-                                <div v-else>{{item.selectable.description ? item.selectable.description : '-'}}</div>
+                            <template v-slot:[`item.transaction_type`]="{ item }">
+                                {{item.selectable.transaction_type ? item.selectable.transaction_type : '-'}}
                             </template>
                             <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/bank_accounts/ipm-paypal/create')" :disabled="permissions.update_auth == '0'">
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push(`/bank_accounts/ipm-paypal/${item.selectable.id}/edit`)" :disabled="permissions.update_auth == '0'">
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
@@ -150,32 +159,6 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="viewDetail" tabindex="-1" role="dialog" aria-labelledby="viewDetailTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Report</h5>
-                        <button type="button" class="close" aria-label="Close" @click.prevent="closeViewModal">
-                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
-                        </p>
-                        <p>
-                            <span class="font-weight-bold"> Amount :</span> {{$filters.toCurrency(viewModalDetail.amount)}}
-                        </p>
-                        <p>
-                            <span class="font-weight-bold"> Network :</span> {{viewModalDetail.network}}
-                        </p>
-                        <p>
-                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description}}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -209,6 +192,14 @@ export default {
             ],
             dateRange: {startDate, endDate},
             file: '',
+            nameFilter: [],
+            nameValue: null,
+            typeFilter: [],
+            typeValue: null,
+            statusFilter: [],
+            statusValue: null,
+            transactionTypeFilter: [],
+            transactionTypeValue: null,
             selected: [],
             viewModalDetail: {},
             currentItemsTable: [],
@@ -274,14 +265,10 @@ export default {
         const params = Object.fromEntries(urlSearchParams.entries());
         if(params.startDate && params.endDate) {
             this.selectedRange = `${moment(new Date(parseInt(params.startDate))).format('ddd MMM DD YYYY')} - ${moment(new Date(parseInt(params.endDate))).format('ddd MMM DD YYYY')}`
-            // console.log(this.selectedRange, '---- this.selectedRange -----');
         }
-        this.getOnessCorpReport();
+        this.getPaypalPaymentsReport();
     },
     methods: {
-        // currency(val) {
-        //     return this.$filters.currency(val);
-        // },
         // open and close modal
         openModal() {
             window.$('#exampleModalCenter').modal('show');
@@ -289,31 +276,31 @@ export default {
         closeModal() {
             window.$('#exampleModalCenter').modal('hide');
         },
-        openViewModal() {
-            window.$('#viewDetail').modal('show');
-        },
-        closeViewModal() {
-            window.$('#viewDetail').modal('hide');
-        },
         // update date range
         updateRange(range) {
             this.selectedRange = range;
-            this.getOnessCorpReport();
+            this.getPaypalPaymentsReport();
         },
         // get all data
-        getOnessCorpReport() {
+        getPaypalPaymentsReport() {
             this.showLoader = true;
             const queryString = new URLSearchParams();
-            const ajaxUrl = this.$api + '/bank_account/onesscorp';
+            const ajaxUrl = this.$api + '/bank_account/payPalPayment';
             if(this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
-            if(this.descriptionValue) {
-                queryString.set('descriptionValue', this.descriptionValue);
+            if(this.nameValue) {
+                queryString.set('nameValue', this.nameValue);
             }
-            if(this.recepientValue) {
-                queryString.set('recepientValue', this.recepientValue);
+            if(this.statusValue) {
+                queryString.set('statusValue', this.statusValue);
+            }
+            if(this.typeValue) {
+                queryString.set('typeValue', this.typeValue);
+            }
+            if(this.transactionTypeValue) {
+                queryString.set('transactionTypeValue', this.transactionTypeValue);
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
             axios.get(url, {
@@ -324,17 +311,31 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    const Data = response.data;
-                    this.dataMetrics = Data.data.data;
-                    this.permissions = Data.permission;
-                    Data.allDescription.forEach((val) => {
-                        this.descriptionFilter.push({
-                            title: val.description
+                    const getData = response.data;
+                    this.dataMetrics = getData.data.data;
+                    this.permissions = getData.permission;
+                    this.statusFilter = [];
+                    this.nameFilter = [];
+                    this.transactionTypeFilter = [];
+                    this.typeFilter = [];
+                    getData.allName.forEach((val) => {
+                        this.nameFilter.push({
+                            title: val.name
                         })
                     });
-                    Data.allRecepient.forEach((val) => {
-                        this.recepientFilter.push({
-                            title: val.recepient
+                    getData.allStatus.forEach((val) => {
+                        this.statusFilter.push({
+                            title: val.status
+                        })
+                    });
+                    getData.allTransactionType.forEach((val) => {
+                        this.transactionTypeFilter.push({
+                            title: val.transaction_type
+                        })
+                    });
+                    getData.allType.forEach((val) => {
+                        this.typeFilter.push({
+                            title: val.type
                         })
                     });
                     this.showLoader = false;
@@ -390,7 +391,7 @@ export default {
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                axios.delete(this.$api + '/bank_account/onesscorp/' + id, {
+                axios.delete(this.$api + '/bank_account/payPalPayment/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken(),
@@ -398,7 +399,7 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.getOnessCorpReport();
+                        this.getPaypalPaymentsReport();
                     this.message = {
                         text: response.data.message,
                         type: 'success',
@@ -460,7 +461,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('selectedRecord', JSON.stringify(multipleRow));
-                axios.post(this.$api + '/bank_account/onesscorp/deleteMutipleRecord', formData, {
+                axios.post(this.$api + '/bank_account/payPalPayment/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken(),
@@ -468,12 +469,13 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.getOnessCorpReport();
-                    this.message = {
-                        text: response.data.message,
-                        type: 'success',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
+                        this.getPaypalPaymentsReport();
+                        this.selected = [];
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }else {
                         this.message = {
@@ -523,7 +525,7 @@ export default {
         // download csv file
         downloadCsv() {
             axios.post(this.$api + '/settings/downloadfile', {
-                filename: 'ipmonesscorp'
+                filename: 'ipmpaypal'
             }, {
                 headers: {
                     "Content-Type": "application/json",
@@ -583,7 +585,7 @@ export default {
         // upload csv file
         uploadCsv() {
             this.showLoader = true;
-            axios.post(this.$api + '/bank_account/onesscorp/importIpmCSV', {
+            axios.post(this.$api + '/bank_account/payPalPayment/importIpmCSV', {
                 file: this.selectedFile
             }, {
                 headers: {
@@ -594,7 +596,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.closeModal();
-                    this.getOnessCorpReport();
+                    this.getPaypalPaymentsReport();
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.message = {
@@ -650,16 +652,6 @@ export default {
         chooseFile(e) {
             this.selectedFile = e.target.files[0];
         },
-        // view details
-        view(id) {
-            this.viewModalDetail = this.dataMetrics.find((val) => {
-                return val.id == id;
-            });
-            this.openViewModal();
-        },
-        // getMonthFromString(mon){
-        //     return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
-        // }
     }
 }
 </script>

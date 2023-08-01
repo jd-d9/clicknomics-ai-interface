@@ -36,7 +36,6 @@ export default {
             timer = setTimeout(() => {
                 if(route) {
                     window.location.href = route;
-                    console.log(route)
                 }
                 this.message = null;
                 this.route = null;

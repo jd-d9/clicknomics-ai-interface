@@ -393,13 +393,11 @@ export default {
         },
         // edit network
         edit(id) {
-            console.log(id)
             this.accountIdEdit = id;
             this.showEditForm = true;
             const data = this.linkedNewtworks.data.find((val) => {
                 return val.id == id
             });
-            console.log(data)
             this.network_name = data.name;
             this.notes = data.notes ? data.notes : '';
             this.company = data.company ? data.company : '';

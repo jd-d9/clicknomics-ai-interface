@@ -112,12 +112,8 @@ export default {
         },
     },
     methods: {
-        checkDate() {
-            console.log(this.date)
-        },
         // create and update fixed monthly cost
         manageFixedMonthlyCost() {
-            console.log('sss')
             // update fixed monthly cost
             if(this.$route.params.id) {
                 this.showLoader = true;
@@ -236,7 +232,6 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data.data;
-                    console.log(getData);
                     this.date = getData.date;
                     this.amount = getData.amount;
                     this.showLoader = false;

@@ -22,7 +22,7 @@
                                 Import CSV
                             </v-btn>
 
-                            <v-btn to="" @click.prevent="addNew" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                            <v-btn to="" @click.prevent="addNew" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus" :disabled="permissions.create_auth == '0'">
                                 Add New
                             </v-btn>
                         </div>      
