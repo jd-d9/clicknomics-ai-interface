@@ -251,7 +251,6 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    console.log('response', response)
                     this.message = {
                         text: response.data.message,
                         type: 'success',
@@ -429,7 +428,6 @@ export default {
         },
         // get data for edit and set it in modal
         showEditedModal(id, currency_conversion_check) {
-            console.log(id, currency_conversion_check);
             this.editedModal.id = id;
             this.editedModal.currency_conversion_check = currency_conversion_check;
             this.openUpdateModal();

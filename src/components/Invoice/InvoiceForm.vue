@@ -328,7 +328,6 @@ export default {
         },
         // description validation
         descriptionValidation(val) {
-            console.log(val, 'val')
             if(!val) {
                 this.invalidDescription = 'Description is a required field';
             }

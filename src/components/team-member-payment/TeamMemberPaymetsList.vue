@@ -773,7 +773,7 @@ export default {
         // choose file and import csv
         importCsv() {
             this.showLoader = true;
-            axios.post(this.$api + '/accounting/creditCardPayments/importCreditCardPayment', {
+            axios.post(this.$api + '/accounting/teamMemberPayments/importTeamMembersPayment', {
                 file: this.selectedFile
             }, {
                 headers: {

@@ -12,7 +12,7 @@
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>Ipm Sxm Payment</span>
                         <v-spacer />
-                        <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                        <v-btn @click.prevent="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
                             Demo.csv
                         </v-btn>
 
@@ -20,7 +20,7 @@
                             Import CSV
                         </v-btn>
 
-                        <v-btn @click.prevent="this.$router.push('/bank_accounts/ipm-sxm/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                        <v-btn @click.prevent="this.$router.push('/bank_accounts/ipm-sxm/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus" :disabled="permissions.create_auth == '0'">
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -38,7 +38,7 @@
                             </div>
                             <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
-                                <v-select :items="descriptionFilter" clearable variant="outlined" placeholder="Description Filter" v-model="descriptionValue" @update:modelValue="getOnessCorpReport"></v-select>
+                                <v-select :items="descriptionFilter" clearable variant="outlined" placeholder="Description Filter" v-model="descriptionValue" @update:modelValue="getSxmReport"></v-select>
                             </v-col>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
@@ -47,14 +47,8 @@
 
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
-                            <template v-slot:[`item.amount`]="{ item }">
-                                {{$filters.toCurrency(item.selectable.amount)}}
-                            </template>
-                            <template v-slot:[`item.fees`]="{ item }">
-                                {{$filters.toCurrency(item.selectable.fees)}}
-                            </template>
-                            <template v-slot:[`item.grandtotal`]="{ item }">
-                                {{$filters.toCurrency(item.selectable.grand_total)}}
+                            <template v-slot:[`item.date`]="{ item }">
+                                {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
                             <template  v-slot:[`item.description`]="{ item }">
                                 <div v-if="item.selectable.description.length > 50">
@@ -62,22 +56,34 @@
                                 </div>
                                 <div v-else>{{item.selectable.description ? item.selectable.description : '-'}}</div>
                             </template>
+                            <template v-slot:[`item.receipent`]="{ item }">
+                                {{item.selectable.receipent ? item.selectable.receipent : '-'}}
+                            </template>
+                            <template v-slot:[`item.amount`]="{ item }">
+                                {{$filters.toCurrency(item.selectable.amount)}}
+                            </template>
+                            <template v-slot:[`item.fees`]="{ item }">
+                                {{$filters.toCurrency(item.selectable.fees)}}
+                            </template>
+                            <template v-slot:[`item.grandtotal`]="{ item }">
+                                {{$filters.toCurrency(item.selectable.grandtotal)}}
+                            </template>
                             <template v-slot:[`item.action`]="{ item }">    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push('/bank_accounts/ipm-sxm/create')" :disabled="permissions.update_auth == '0'">
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="this.$router.push(`/bank_accounts/ipm-sxm/${item.selectable.id}/edit`)" :disabled="permissions.update_auth == '0'">
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Edit</v-tooltip>
                                 </v-btn>
 
-                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
+                                <v-btn class="ma-2 bg-red-lighten-4" variant="text" icon @click.prevent="deleteData(item.selectable.id)" :disabled="permissions.delete_auth == '0'">
                                     <v-icon color="red-darken-4">
                                         mdi-delete-empty
                                     </v-icon>
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn>  
                                 
-                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click="view(item.selectable.id)" :disabled="permissions.view == '0'">
+                                <v-btn class="ma-2 bg-deep-purple-lighten-4" variant="text" icon @click.prevent="view(item.selectable.id)" :disabled="permissions.view == '0'">
                                     <v-icon color="deep-purple-darken-4">
                                         mdi-eye
                                     </v-icon>
@@ -150,13 +156,13 @@
                     </div>
                     <div class="modal-body">
                         <p>
-                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
+                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date ? viewModalDetail.date : '-'}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description}}
+                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description ? viewModalDetail.description : '-'}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Recepient :</span> {{viewModalDetail.recepient}}
+                            <span class="font-weight-bold"> Recepient :</span> {{viewModalDetail.recepient ? viewModalDetail.recepient : '-'}}
                         </p>
                         <p>
                             <span class="font-weight-bold"> Amount :</span> {{$filters.toCurrency(viewModalDetail.amount)}}
@@ -165,7 +171,7 @@
                             <span class="font-weight-bold"> Fees :</span> {{$filters.toCurrency(viewModalDetail.fees)}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Grand Total :</span> {{$filters.toCurrency(viewModalDetail.grand_total)}}
+                            <span class="font-weight-bold"> Grand Total :</span> {{$filters.toCurrency(viewModalDetail.grandtotal)}}
                         </p>
                     </div>
                 </div>
@@ -235,7 +241,7 @@ export default {
             return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         sumGrandtotal() {
-            const key = 'grand_total';
+            const key = 'grandtotal';
             return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
     },
@@ -267,14 +273,10 @@ export default {
         const params = Object.fromEntries(urlSearchParams.entries());
         if(params.startDate && params.endDate) {
             this.selectedRange = `${moment(new Date(parseInt(params.startDate))).format('ddd MMM DD YYYY')} - ${moment(new Date(parseInt(params.endDate))).format('ddd MMM DD YYYY')}`
-            // console.log(this.selectedRange, '---- this.selectedRange -----');
         }
-        this.getOnessCorpReport();
+        this.getSxmReport();
     },
     methods: {
-        // currency(val) {
-        //     return this.$filters.currency(val);
-        // },
         // open and close modal
         openModal() {
             window.$('#exampleModalCenter').modal('show');
@@ -291,22 +293,19 @@ export default {
         // update date range
         updateRange(range) {
             this.selectedRange = range;
-            this.getOnessCorpReport();
+            this.getSxmReport();
         },
         // get all data
-        getOnessCorpReport() {
+        getSxmReport() {
             this.showLoader = true;
             const queryString = new URLSearchParams();
-            const ajaxUrl = this.$api + '/bank_account/onesscorp';
+            const ajaxUrl = this.$api + '/bank_account/sxMedia';
             if(this.selectedRange) {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
             if(this.descriptionValue) {
                 queryString.set('descriptionValue', this.descriptionValue);
-            }
-            if(this.recepientValue) {
-                queryString.set('recepientValue', this.recepientValue);
             }
             const url = `${ajaxUrl}?${queryString.toString()}`;
             axios.get(url, {
@@ -323,11 +322,6 @@ export default {
                     Data.allDescription.forEach((val) => {
                         this.descriptionFilter.push({
                             title: val.description
-                        })
-                    });
-                    Data.allRecepient.forEach((val) => {
-                        this.recepientFilter.push({
-                            title: val.recepient
                         })
                     });
                     this.showLoader = false;
@@ -375,15 +369,11 @@ export default {
                 this.showLoader = false;
             });
         },
-        // redirect to form component
-        edit(id) {
-            this.$router.push(`/bank_accounts/onesscorp/${id}/edit`);
-        },
         // delete data
         deleteData(id) {
             if(confirm("Do you really want to delete?")) {
                 this.showLoader = true;
-                axios.delete(this.$api + '/bank_account/onesscorp/' + id, {
+                axios.delete(this.$api + '/bank_account/sxMedia/' + id, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken(),
@@ -391,7 +381,7 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.getOnessCorpReport();
+                        this.getSxmReport();
                     this.message = {
                         text: response.data.message,
                         type: 'success',
@@ -453,7 +443,7 @@ export default {
                     multipleRow.push({id: val});
                 })
                 formData.append('selectedRecord', JSON.stringify(multipleRow));
-                axios.post(this.$api + '/bank_account/onesscorp/deleteMutipleRecord', formData, {
+                axios.post(this.$api + '/bank_account/sxMedia/deleteMutipleRecord', formData, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: this.getAccessToken(),
@@ -461,12 +451,13 @@ export default {
                 })
                 .then(response => {
                     if(response.data.success) {
-                        this.getOnessCorpReport();
-                    this.message = {
-                        text: response.data.message,
-                        type: 'success',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
+                        this.getSxmReport();
+                        this.selected = [];
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }else {
                         this.message = {
@@ -516,7 +507,7 @@ export default {
         // download csv file
         downloadCsv() {
             axios.post(this.$api + '/settings/downloadfile', {
-                filename: 'ipmonesscorp'
+                filename: 'ipmBankSX'
             }, {
                 headers: {
                     "Content-Type": "application/json",
@@ -576,7 +567,7 @@ export default {
         // upload csv file
         uploadCsv() {
             this.showLoader = true;
-            axios.post(this.$api + '/bank_account/onesscorp/importIpmCSV', {
+            axios.post(this.$api + '/bank_account/sxMedia/importIpmCSV', {
                 file: this.selectedFile
             }, {
                 headers: {
@@ -587,7 +578,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.closeModal();
-                    this.getOnessCorpReport();
+                    this.getSxmReport();
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.message = {
@@ -649,10 +640,7 @@ export default {
                 return val.id == id;
             });
             this.openViewModal();
-        },
-        // getMonthFromString(mon){
-        //     return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
-        // }
+        }
     }
 }
 </script>

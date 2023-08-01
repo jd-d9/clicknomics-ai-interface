@@ -78,7 +78,6 @@ import IpmSxmForm from './components/bank-accounts/ipm-sxm/IpmSxmForm.vue';
 import IpmPaypalList from './components/bank-accounts/ipm-paypal/IpmPaypalList.vue';
 import IpmPaypalForm from './components/bank-accounts/ipm-paypal/IpmPaypalForm.vue';
 
-
 import ArchivedReportMicrosoftAdsList from './components/archived-reports/ArchivedReportMicrosoftAdsList.vue';
 import ArchivedReportGoogleAdsList from './components/archived-reports/ArchivedReportGoogleAdsList.vue';
 import ArchivedReportNetwoksList from './components/archived-reports/ArchivedReportNetwoksList.vue';
@@ -94,22 +93,21 @@ import CreditCardPaymentReport from './components/payments-reports/CreditCardPay
 import BankAccountsPaymentReport from './components/payments-reports/BankAccountsPaymentReport';
 import TeamMemberPaymentsReport from './components/payments-reports/TeamMemberPaymentsReport';
 
-// Payment Methods Section
+// Payment Methods - payment organization Section
 import PaymentCardOrganizationForm from './components/payment-organization/PaymentCardOrganizationForm.vue';
 import RmAmexPlumCardPayments from './components/payment-organization/RmAmexPlumCardPayments.vue';
 import IpmAmexPlumCardPayments from './components/payment-organization/IpmAmexPlumCardPayments.vue';
 import IpmDivvyCardPayments from './components/payment-organization/IpmDivvyCardPayments.vue';
 import IpmChaseInkCardPayments from './components/payment-organization/IpmChaseInkCardPayments.vue';
 
-// Payment Methods / Payment Activity Section
-import RmAmexPlumActivityList from './components/payment-activity/rm-amex-plum/RmAmexPlumActivityList.vue';
-import RmAmexPlumActivityForm from './components/payment-activity/rm-amex-plum/RmAmexPlumActivityForm.vue';
-import IPM_AMEX_PlumActivity from './components/payment-activity/ipm-amex-plum/IPM-AMEX-PlumActivity';
-import IPM_AMEX_PlumActivityForm from './components/payment-activity/ipm-amex-plum/IPM-AMEX-PlumActivityForm';
-import IPM_Divvy_Activity from './components/payment-activity/ipm-divvy-card/IPM-DivvyActivity';
-import IPM_Divvy_ActivityForm from './components/payment-activity/ipm-divvy-card/IPM-DivvyActivityForm';
-import IPM_ChaseInkActivity from './components/payment-activity/ipm-chase-ink-card/IPM-ChaseInkActivity';
-import IPM_ChaseInkActivityForm from './components/payment-activity/ipm-chase-ink-card/IPM-ChaseInkActivityForm';
+// Payment Methods - Payment Activity Section
+import RmAmexPlumActivityList from './components/payment-activity/RmAmexPlumActivityList.vue';
+import PlumActivityForm from './components/payment-activity/PlumActivityForm.vue';
+import IpmAmexPlumActivityList from './components/payment-activity/IpmAmexPlumActivityList.vue';
+import IpmDivvyActivityList from './components/payment-activity/ipm-divvy-card/IpmDivvyActivityList.vue';
+import IpmDivvyActivityForm from './components/payment-activity/ipm-divvy-card/IpmDivvyActivityForm.vue';
+import IpmChaseInkActivityList from './components/payment-activity/ipm-chase-ink-card/IpmChaseInkActivityList.vue';
+import IpmChaseInkActivityForm from './components/payment-activity/ipm-chase-ink-card/IpmChaseInkActivityForm.vue';
 
 
 // Account Activity Router
@@ -251,23 +249,26 @@ const router = createRouter({
         {path: '/reporting/archivedReports/networks', component: ArchivedReportNetwoksList, meta: {auth: true}},
         {path: '/reporting/archivedReports/manualNetworks', component: ArchivedReportManualNetworksList, meta: {auth: true}},
         {path: '/reporting/archivedReports/facebook', component: CommingSoonComponent, meta: {auth: true}},
-        // Payment Methods Module
+        // Payment Methods Module - payment organization
         {path: '/payment_methods/create', component: PaymentCardOrganizationForm, meta: {auth: true}},
         {path: '/payment_methods/:id/edit', component: PaymentCardOrganizationForm, meta: {auth: true}},
         {path: '/payment_methods/rm-amex-plum-card', component: RmAmexPlumCardPayments, meta: {auth: true}},
         {path: '/payment_methods/ipm-amex-plum-card', component: IpmAmexPlumCardPayments, meta: {auth: true}},
         {path: '/payment_methods/ipm-divvy-card', component: IpmDivvyCardPayments, meta: {auth: true}},
         {path: '/payment_methods/ipm-chase-ink-card', component: IpmChaseInkCardPayments, meta: {auth: true}},
-        // Payment Methods Module
+        // Payment Methods Module - activity portion
         {path: '/payment_methods/rm-amex-plum-card/activity', component: RmAmexPlumActivityList, meta: {auth: true}},
-        {path: '/payment_methods/rm-amex-plum-card/activity/create', component: RmAmexPlumActivityForm, meta: {auth: true}},
-        {path: '/payment_methods/rm-amex-plum-card/activity/:id/edit', component: RmAmexPlumActivityForm, meta: {auth: true}},
-        {path: '/payment_methods/ipm-amex-plum-card/activity', component: IPM_AMEX_PlumActivity, meta: {auth: true}},
-        {path: '/payment_methods/ipm-amex-plum-card/activity/create', component: IPM_AMEX_PlumActivityForm, meta: {auth: true}},
-        {path: '/payment_methods/ipm-divvy-card/activity', component: IPM_Divvy_Activity, meta: {auth: true}},
-        {path: '/payment_methods/ipm-divvy-card/activity/create', component: IPM_Divvy_ActivityForm, meta: {auth: true}},
-        {path: '/payment_methods/ipm-chase-ink-card/activity', component: IPM_ChaseInkActivity, meta: {auth: true}},
-        {path: '/payment_methods/ipm-chase-ink-card/activity/create', component: IPM_ChaseInkActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card/activity/create', component: PlumActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/rm-amex-plum-card/activity/:id/edit', component: PlumActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-amex-plum-card/activity', component: IpmAmexPlumActivityList, meta: {auth: true}},
+        {path: '/payment_methods/ipm-amex-plum-card/activity/create', component: PlumActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-amex-plum-card/activity/:id/edit', component: PlumActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-divvy-card/activity', component: IpmDivvyActivityList, meta: {auth: true}},
+        {path: '/payment_methods/ipm-divvy-card/activity/create', component: IpmDivvyActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-divvy-card/activity/:id/edit', component: IpmDivvyActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-chase-ink-card/activity', component: IpmChaseInkActivityList, meta: {auth: true}},
+        {path: '/payment_methods/ipm-chase-ink-card/activity/create', component: IpmChaseInkActivityForm, meta: {auth: true}},
+        {path: '/payment_methods/ipm-chase-ink-card/activity/:id/edit', component: IpmChaseInkActivityForm, meta: {auth: true}},
         // Account Login Activity
         {path: '/settings/login-activity', component: LoginActivityComponent, meta: {auth: true}},
         // comming soon pages
