@@ -221,7 +221,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const data = response.data;
-                    this.linkedNewtworks = data.data.data;
+                    this.linkedNewtworks = data.data;
                     this.permissions = data.permission;
                     this.showLoader = false;
                 }else {

@@ -21,6 +21,12 @@
                         </v-card-title>
                         <div>
                             <v-data-table-server class="table-hover-class mt-4" v-model:items-per-page="itemsPerPage" v-model:options="options" :headers="networksheaders" :items="networkMetrics" :items-length="totalPageCount" v-model:expanded="expanded" show-expand item-value="name">
+                                <template v-slot:[`item.network_name`]="{ item }">
+                                    {{item.selectable.network_name ? item.selectable.network_name : '-'}}
+                                </template>
+                                <template v-slot:[`item.email`]="{ item }">
+                                    {{item.selectable.email ? item.selectable.email : '-'}}
+                                </template>
                                 <template v-slot:expanded-row="{ columns, item }">
                                     <td :colspan="columns.length" style="padding:10px" class="exapanded bg-light-green-lighten-5" v-if="item.selectable.children.length > 0">
                                         <table class="table align-items-center" v-if="item.raw.network_type == 'cake'">

@@ -124,9 +124,9 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    const Data = response.data;
-                    this.serverListRecord = Data.data.data;
-                    this.permissions = Data.permission;
+                    const getData = response.data;
+                    this.serverListRecord = getData.data;
+                    this.permissions = getData.permission;
                     this.showLoader = false;
                 }else {
                     this.message = {

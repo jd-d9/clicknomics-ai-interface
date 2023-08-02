@@ -162,13 +162,13 @@
                     </div>
                     <div class="modal-body">
                         <p>
-                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date}}
+                            <span class="font-weight-bold">Date :</span> {{viewModalDetail.date ? viewModalDetail.date : '-'}}
                         </p>
                         <p>
                             <span class="font-weight-bold"> Amount :</span> {{$filters.toCurrency(viewModalDetail.amount)}}
                         </p>
                         <p>
-                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description}}
+                            <span class="font-weight-bold"> Description :</span> {{viewModalDetail.description ? viewModalDetail.description : '-'}}
                         </p>
                     </div>
                 </div>
@@ -334,9 +334,9 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    const Data = response.data;
-                    this.dataMetrics = Data.data.data;
-                    this.permissions = Data.permission;
+                    const getData = response.data;
+                    this.dataMetrics = getData.data;
+                    this.permissions = getData.permission;
                     this.showLoader = false;
                 }else {
                     this.message = {

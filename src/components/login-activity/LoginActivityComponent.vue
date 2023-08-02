@@ -60,6 +60,7 @@ export default {
     },
     data() {
         return{
+            showLoader: false,
             message: {},
             dataMetrics: [],
             search: '',
@@ -111,7 +112,7 @@ export default {
             .then(response => {
                 if (response.data.success) {
                     const getData = response.data.data;
-                    this.dataMetrics = getData.data.sort((a, b) => {
+                    this.dataMetrics = getData.sort((a, b) => {
                         return new Date(b.updated_at) - new Date(a.updated_at);
                     }).map((val) => {
                            return {...val, updated_at: moment(val.updated_at).format('MMMM Do YYYY, h:mm A')}
@@ -173,7 +174,7 @@ export default {
             .then(response => {
                 if (response.data.success) {
                     const getData = response.data.data;
-                    this.dataMetrics = getData.data;
+                    this.dataMetrics = getData;
                     this.showLoader = false;
                 } else {
                     this.message = {

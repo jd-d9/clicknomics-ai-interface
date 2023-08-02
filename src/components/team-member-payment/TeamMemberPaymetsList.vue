@@ -136,14 +136,14 @@
 
                                         <v-row v-if="cardMemberList.length > 0" class="mt-4">
                                             <v-col cols="6" sm="6" md="4" lg="3" v-for="(item, index) in cardMemberList" :key="index">
-                                                <v-card class="card_design bg-blue-lighten-4">
+                                                <v-card class="card_design" :class="item.total_amount == '0' ? 'bg-blue-lighten-4' : 'bg-green-lighten-4'">
                                                     <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
                                                         <div class="d-flex align-cenyer justify-space-between">
                                                             <span>From: {{item.from_account ? item.from_account : '-'}}</span>
                                                             <span>TO: {{item.to_account ? item.to_account : '-'}}</span>
                                                         </div>
                                                     </v-card-title>
-                                                    <v-card-text class="font-weight-medium text-h3 pa-0 mt-2 text-blue-darken-2">
+                                                    <v-card-text class="font-weight-medium text-h3 pa-0 mt-2" :class="item.total_amount == '0' ? 'text-blue-darken-2' : 'text-green-darken-1'">
                                                         {{item.total_amount ? item.total_amount : '-'}}
                                                     </v-card-text>
                                                 </v-card>
@@ -411,8 +411,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const allData = response.data;
-                    console.log(allData, 'allData ---')
-                    this.teamMemberPaymentList = allData.data.data;
+                    this.teamMemberPaymentList = allData.data;
                     this.permissions = allData.permission;
                     this.fromAccountFilter = [];
                     allData.allfromAccount.forEach((val) => {

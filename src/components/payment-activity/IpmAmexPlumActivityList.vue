@@ -37,16 +37,16 @@
                                     </v-btn>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal pr-0">
-                                    <date-range-picker class="date_picker pt-2" :value="selectedRange" ></date-range-picker>
+                                    <date-range-picker class="date_picker pt-2" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select :items="cardMemberFilter" clearable variant="outlined" placeholder="Card Member Filter" @change="getActivities" v-model="cardMemberValue"></v-select>
+                                    <v-select :items="cardMemberFilter" clearable variant="outlined" placeholder="Card Member Filter" @update:modelValue="getActivities" v-model="cardMemberValue"></v-select>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select :items="descriptionFilter" clearable variant="outlined" placeholder="Description Filter" @change="getActivities" v-model="descriptionValue"></v-select>
+                                    <v-select :items="descriptionFilter" clearable variant="outlined" placeholder="Description Filter" @update:modelValue="getActivities" v-model="descriptionValue"></v-select>
                                 </v-col>                                            
                                 <v-col class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select :items="transactionTypeFilter" clearable variant="outlined" placeholder="Transaction Type Filter" @change="getActivities" v-model="transactionTypeValue"></v-select>
+                                    <v-select :items="transactionTypeFilter" clearable variant="outlined" placeholder="Transaction Type Filter" @update:modelValue="getActivities" v-model="transactionTypeValue"></v-select>
                                 </v-col>
                                 <v-col class="font-medium font-weight-normal">
                                     <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
@@ -243,7 +243,7 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         const getData = response.data;
-                        this.dataMetrics = getData.data.data;
+                        this.dataMetrics = getData.data;
                         this.permissions = getData.permission;
                         this.cardMemberFilter = [];
                         this.descriptionFilter = [];

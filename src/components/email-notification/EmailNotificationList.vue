@@ -195,19 +195,19 @@
 <script>
 import axios from '@axios';
 import * as yup from 'yup';
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
     // props: [ 'list'],
     components: {
         Form, 
-        Field
+        Field,
+        ErrorMessage
     },
     data() {
         return {
             message: {},
             showLoader: false,
             dataMetrics: [],
-            dataMetricsFilter: [],
             search: '',
             headers: [
                 { title: 'Email', key: 'email'},
@@ -315,10 +315,9 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    const Data = response.data;
-                    this.dataMetrics = Data.data.data;
-                    this.dataMetricsFilter = Data.data.data;
-                    this.permissions = Data.permission;
+                    const getData = response.data;
+                    this.dataMetrics = getData.data;
+                    this.permissions = getData.permission;
                     this.showLoader = false;
                 }else {
                     this.message = {

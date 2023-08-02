@@ -54,9 +54,9 @@
                             <template v-slot:[`item.type`]="{ item }">
                                 {{item.selectable.type ? item.selectable.type : '-'}}
                             </template>
-                            <template v-slot:[`item.country`]="{ item }">
+                            <template v-slot:[`item.countryName`]="{ item }">
                                 <!-- {{item.selectable.country}} -->
-                                {{item.selectable.country.name ? item.selectable.country.name : '-'}}
+                                {{item.selectable.countryName ? item.selectable.countryName : '-'}}
                             </template>
                             <template v-slot:[`item.city`]="{ item }">
                                 {{item.selectable.city ? item.selectable.city : '-'}}
@@ -233,7 +233,7 @@ export default {
             search: '',
             headers: [
                 { title: 'Type', align: 'start', sortable: false, key: 'type' },
-                { title: 'Country ', key: 'country' },
+                { title: 'Country ', key: 'countryName' },
                 { title: 'City', key: 'city' },
                 { title: 'Notes', key: 'notes' },
                 { title: 'Action', key: 'action', align: 'center' },
@@ -346,9 +346,9 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    const Data = response.data;
-                    this.dataMetrics = Data.data.data;
-                    this.permissions = Data.permission;
+                    const getData = response.data;
+                    this.dataMetrics = getData.data;
+                    this.permissions = getData.permission;
                     this.showLoader = false;
                 }else {
                     this.message = {
@@ -729,11 +729,11 @@ export default {
                 link.setAttribute('download', 'demo.csv');
                 document.body.appendChild(link);
                 link.click();
-this.message = {
-                            text: response.data.message,
-                            type: 'success',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
+                this.message = {
+                    text: response.data.message,
+                    type: 'success',
+                }
+                this.$eventBus.emit('flash-message', this.message, '');
             })
             .catch(error => {
                 if(error.response.data.message) {

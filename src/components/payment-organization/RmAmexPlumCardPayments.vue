@@ -141,6 +141,7 @@ export default {
     },
     data() {
         return{
+            showLoader: false,
             message: {},
             selectedFile: '',
             itemsPerPage: -1,
@@ -203,9 +204,10 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data;
-                    this.dataMetrics = getData.data.data;
-                    this.dataMetricsFilter = getData.data.data;
+                    this.dataMetrics = getData.data;
+                    this.dataMetricsFilter = getData.data;
                     this.permissions = getData.permission;
+                    this.itemsCardName = [];
                     getData.allCoustomer.forEach((val) => {
                         this.itemsCardName.push({
                             title: val.name
@@ -391,7 +393,7 @@ export default {
         // upload csv
         importCsv() {
             this.showLoader = true;
-            axios.post(this.$api + '/paymentMethod/paymentCardsOrganization/importIpmCsv', {
+            axios.post(this.$api + '/paymentMethod/paymentCardsOrganizations/importIpmCSV', {
                 file: this.selectedFile
             }, {
                 headers: {

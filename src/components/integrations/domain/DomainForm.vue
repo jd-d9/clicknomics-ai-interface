@@ -121,8 +121,8 @@ export default {
                 Email: yup.string().required().email(),
                 Domain: yup.string().required(),
                 apiKey: yup.string().required(),
-                userName: yup.string().required(),
-                apisecret: yup.string().required(),
+                userName: this.domain_selected == 'Namecheap' || this.domain_selected == 'Easydns' ? yup.string().required() : '',
+                apisecret: this.domain_selected == 'GoDaddy' || this.domain_selected == 'Easydns' ? yup.string().required() : '',
             });
         },
     },

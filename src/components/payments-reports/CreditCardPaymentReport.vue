@@ -87,6 +87,16 @@ export default {
         },
     },
     methods: {
+        // set transaction type value
+        setTransactionType() {
+            if(this.selectedtTransactionType.length == 2) {
+                return 'ALL';
+            } if(this.selectedtTransactionType.length == 1) {
+                return this.selectedtTransactionType[0];
+            } if(this.selectedtTransactionType.length == 0) {
+                return '';
+            }
+        },
         pull() {
             this.showLoader = true;
             const queryString = new URLSearchParams();
@@ -95,9 +105,12 @@ export default {
                 queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
                 queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
             }
-            if(this.selectedtTransactionType && this.selectedtTransactionType.length > 0) {
-                queryString.set('transactionTypeValue', JSON.stringify(this.selectedtTransactionType));
+            if(this.selectedtTransactionType) {
+                queryString.set('transactionTypeValue', this.setTransactionType());
             }            
+            // if(this.selectedtTransactionType && this.selectedtTransactionType.length > 0) {
+            //     queryString.set('transactionTypeValue', JSON.stringify(this.selectedtTransactionType));
+            // }            
             const url = `${ajaxUrl}?${queryString.toString()}`;
             axios.get(url, {
                 headers: {

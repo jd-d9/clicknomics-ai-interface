@@ -27,6 +27,9 @@
 
                         <!-- data table component -->
                         <v-data-table :headers="headers" :items="googleCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="expanded" item-value="name" show-expand class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.name`]="{ item }">
+                                {{item.selectable.name ? item.selectable.name : '-'}}
+                            </template>
                             <template v-slot:expanded-row="{ columns, item }">
                                 <td class="exapanded bg-light-green-lighten-5" :colspan="columns.length" style="padding:10px" v-if="item.selectable.children.length > 0">
                                     <table class="table align-items-center" v-if="googleCampaignMetrics.length > 0">
@@ -64,7 +67,7 @@
                                         <tbody class="list">
                                             <tr v-for="(row , index) in item.selectable.children" :key="index">
                                                 <td class="v-data-table__td">
-                                                    {{row.campaign_name}}
+                                                    {{row.campaign_name ? row.campaign_name : '-'}}
                                                 </td>
                                                 <td class="v-data-table__td">
                                                     {{$filters.toNumberWithoutDecimal(row.clicks ? row.clicks : '0')}}

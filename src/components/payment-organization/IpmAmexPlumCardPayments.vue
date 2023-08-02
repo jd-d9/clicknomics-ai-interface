@@ -35,7 +35,7 @@
                             IPM AMEX Plum Card Payments List
                             <v-spacer></v-spacer>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
-                                <v-select clearable variant="outlined" placeholder="Name Custom Filter" :items="itemsCardName" v-model="valueCardName" @change="filterPayments"></v-select>
+                                <v-select clearable variant="outlined" placeholder="Name Custom Filter" :items="itemsCardName" v-model="valueCardName" @update:modelValue="filterPayments"></v-select>
                             </v-col>
                             <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
@@ -138,6 +138,7 @@ import axios from '@axios';
 export default {
     data() {
         return{
+            showLoader: false,
             message: {},
             selectedFile: '',
             itemsPerPage: -1,
@@ -200,9 +201,10 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data;
-                    this.dataMetrics = getData.data.data;
-                    this.dataMetricsFilter = getData.data.data;
+                    this.dataMetrics = getData.data;
+                    this.dataMetricsFilter = getData.data;
                     this.permissions = getData.permission;
+                    this.itemsCardName = [];
                     getData.allCoustomer.forEach((val) => {
                         this.itemsCardName.push({
                             title: val.name
@@ -459,7 +461,7 @@ export default {
         // filtering payments
         filterPayments() {
             if(this.valueCardName) {
-                this.dataMetrics = this.dataMetricsFilter.filter(data => this.valueCardName === data.name);
+                this.dataMetrics = this.dataMetricsFilter.filter(data => this.valueCardName == data.name);
             }else {
                 this.dataMetrics = this.dataMetricsFilter;
             }
