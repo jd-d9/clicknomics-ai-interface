@@ -119,7 +119,7 @@
                                 <v-window-item value="reports">
                                     <v-row class="d-flex align-center justify-end ma-0">
                                         <v-spacer />
-                                        <date-range-picker class="date_picker pt-2" :value="selectedRange" ></date-range-picker>
+                                        <date-range-picker class="date_picker pt-2" :value="selectedRange" @update:value="updateRangeTwo"></date-range-picker>
                                         <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
                                             <v-select v-model="selectedtTransactionType" :items="items" chips multiple clearable variant="outlined" placeholder="Transaction Type Filter" @update:modelValue="getReports"></v-select>
                                         </v-col>
@@ -127,11 +127,11 @@
 
                                     <v-row>
                                         <v-col cols="6" sm="6" md="4" lg="3" v-for="data of filterData" :key="data">
-                                            <v-card class="card_design bg-blue-lighten-4">
-                                                <v-card-title>
-                                                    <p class="text-subtitle-2 font-weight-bold">{{data.card_member}}</p>
+                                            <v-card class="card_design" :class="data.totalAmount == '0' ? 'bg-blue-lighten-4' : 'bg-green-lighten-4'">
+                                                <v-card-title :class="data.totalAmount == '0' ? 'text-blue-darken-2' : 'text-green-darken-1'">
+                                                    <p class="text-subtitle-2 font-weight-bold">{{data.card_member ? data.card_member : '-'}}</p>
                                                 </v-card-title>
-                                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
+                                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="data.totalAmount == '0' ? 'text-blue-darken-2' : 'text-green-darken-1'">
                                                     {{ $filters.toCurrency(data.totalAmount) }}
                                                 </v-card-text>
                                             </v-card>

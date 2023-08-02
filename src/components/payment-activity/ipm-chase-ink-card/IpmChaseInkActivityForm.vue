@@ -97,6 +97,7 @@ export default {
     },
     data() {
         return{
+            showLoader: false,
             date: '',
             amount: '',
             transactionType: '',

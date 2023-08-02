@@ -327,8 +327,10 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const Data = response.data;
-                    this.dataMetrics = Data.data.data;
+                    this.dataMetrics = Data.data;
                     this.permissions = Data.permission;
+                    this.descriptionFilter = [];
+                    this.recepientFilter = [];
                     Data.allDescription.forEach((val) => {
                         this.descriptionFilter.push({
                             title: val.description

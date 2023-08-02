@@ -21,7 +21,7 @@
                         </v-btn> -->
 
                         <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated"
-                            :disabled="permissions.create_auth == '0' || !restrictUser" prepend-icon="mdi-plus">
+                            :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus"> <!-- || !restrictUser -- Abhi ke liye comment - backend -->
                             Add New
                         </v-btn>
                     </v-breadcrumbs>
@@ -223,7 +223,6 @@ export default {
             message: {},
             showLoader: false,
             dataMetrics: [],
-            dataMetricsFilter: [],
             search: '',
             headers: [
                 { title: 'Network ID', align: 'start', sortable: false, key: 'id' },
@@ -301,12 +300,10 @@ export default {
             })
                 .then(response => {
                     if (response.data.success) {
-                        const data = response.data;
-                        console.log(data);
-                        this.dataMetrics = data.data.data;
-                        this.dataMetricsFilter = data.data.data;
-                        this.permissions = data.permission;
-                        this.restrictUser = data.restrict_user;
+                        const getData = response.data;
+                        this.dataMetrics = getData.data;
+                        this.permissions = getData.permission;
+                        this.restrictUser = getData.restrict_user;
                         this.showLoader = false;
                     } else {
                         this.message = {

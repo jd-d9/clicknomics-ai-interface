@@ -122,11 +122,11 @@
 
                                     <v-row>
                                         <v-col cols="6" sm="6" md="4" lg="3" v-for="data of filterData" :key="data">
-                                            <v-card class="card_design bg-blue-lighten-4">
-                                                <v-card-title>
-                                                    <p class="text-subtitle-2 font-weight-bold">{{data.card_member}}</p>
+                                            <v-card class="card_design" :class="data.totalAmount == '0' ? 'bg-blue-lighten-4' : 'bg-green-lighten-4'">
+                                                <v-card-title :class="data.totalAmount == '0' ? 'text-blue-darken-2' : 'text-green-darken-1'">
+                                                    <p class="text-subtitle-2 font-weight-bold">{{data.card_member ? data.card_member : '-'}}</p>
                                                 </v-card-title>
-                                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2 text-blue-darken-2">
+                                                <v-card-text class="font-weight-medium text-h4 pa-0 mt-2" :class="data.totalAmount == '0' ? 'text-blue-darken-2' : 'text-green-darken-1'">
                                                     {{ $filters.toCurrency(data.totalAmount) }}
                                                 </v-card-text>
                                             </v-card>
@@ -281,7 +281,7 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         const getData = response.data;
-                        this.dataMetrics = getData.data.data;
+                        this.dataMetrics = getData.data;
                         this.permissions = getData.permission;
                         this.cardMemberFilter = [];
                         this.descriptionFilter = [];

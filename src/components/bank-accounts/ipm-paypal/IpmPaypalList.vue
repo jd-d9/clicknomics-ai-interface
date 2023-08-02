@@ -312,7 +312,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const getData = response.data;
-                    this.dataMetrics = getData.data.data;
+                    this.dataMetrics = getData.data;
                     this.permissions = getData.permission;
                     this.statusFilter = [];
                     this.nameFilter = [];

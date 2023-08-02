@@ -375,6 +375,10 @@ export default {
                         const Data = response.data;
                         this.adsAccountsList = Data.data;
                         this.adsAccountsListFilter = Data.data;
+                        this.dataCenter = [];
+                        this.residential = [];
+                        this.multiLogin = [];
+                        this.localSystem = [];
                         Data.datacenter.forEach((val) => {
                             this.dataCenter.push({
                                 title: val.company,
@@ -411,6 +415,7 @@ export default {
                     }
                 })
                 .catch(error => {
+                    console.log(error, 'error --')
                     if (error.response.data.message) {
                         this.message = {
                             text: error.response.data.message,

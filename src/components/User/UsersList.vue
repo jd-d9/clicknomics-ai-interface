@@ -93,7 +93,6 @@
                 roleId: sessionStorage.getItem('roleId'),
                 showLoader: false,
                 items: [],
-                userFilter: [],
                 permissions: {},
             }
         },
@@ -109,9 +108,7 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        console.log(response.data.data.user.data, 'users');
-                        this.items = response.data.data.user.data;
-                        this.userFilter = response.data.data.user.data;
+                        this.items = response.data.data.user;
                         this.permissions = response.data.data.permission;
                         this.showLoader = false;
                     }else {

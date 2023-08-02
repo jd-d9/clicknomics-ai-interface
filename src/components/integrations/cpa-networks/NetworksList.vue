@@ -25,7 +25,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table-server class="table-hover-class mt-4"  :headers="networkHeaders" :items="linkedNewtworks.data" :single-expand="singleExpand" :items-length="linkedNewtworks.total" v-model:options="options" item-key="customer_id">
+                        <v-data-table-server class="table-hover-class mt-4"  :headers="networkHeaders" :items="linkedNewtworks" :single-expand="singleExpand" :items-length="linkedNewtworks.total" v-model:options="options" item-key="customer_id">
                             <template v-slot:[`item.id`]="{ item }">
                                 {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
@@ -395,7 +395,7 @@ export default {
         edit(id) {
             this.accountIdEdit = id;
             this.showEditForm = true;
-            const data = this.linkedNewtworks.data.find((val) => {
+            const data = this.linkedNewtworks.find((val) => {
                 return val.id == id
             });
             this.network_name = data.name;

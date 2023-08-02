@@ -314,16 +314,17 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    const Data = response.data;
-                    console.log(Data, '-- Data --')
-                    this.dataMetrics = Data.data.data;
-                    this.permissions = Data.permission;
-                    Data.allDescription.forEach((val) => {
+                    const getData = response.data;
+                    this.dataMetrics = getData.data;
+                    this.permissions = getData.permission;
+                    this.descriptionFilter = [];
+                    this.transactionTypeFilter = [];
+                    getData.allDescription.forEach((val) => {
                         this.descriptionFilter.push({
                             title: val.description
                         })
                     });
-                    Data.allTransactionType.forEach((val) => {
+                    getData.allTransactionType.forEach((val) => {
                         this.transactionTypeFilter.push({
                             title: val.transaction_type
                         })

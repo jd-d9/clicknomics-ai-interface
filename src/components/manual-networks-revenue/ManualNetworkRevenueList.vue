@@ -161,7 +161,6 @@ export default {
             message: {},
             showLoader: false,
             dataMetrics: [],
-            dataMetricsFilter: [],
             search: '',
             // headers: [
             //     { title: 'Date', align: 'start', sortable: false, key: 'date' },
@@ -237,9 +236,7 @@ export default {
                 .then(response => {
                     if (response.data.success) {
                         const getData = response.data;
-                        console.log(getData, 'getData');
-                        this.dataMetrics = getData.data.data;
-                        this.dataMetricsFilter = getData.data.data;
+                        this.dataMetrics = getData.data;
                         this.networkNameFilter = [];
                         getData.allNetworks.forEach((val) => {
                             this.networkNameFilter.push(

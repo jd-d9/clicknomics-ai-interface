@@ -142,7 +142,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     const data = response.data;
-                    this.listData = data.data.data;
+                    this.listData = data.data;
                     this.permissions = data.permission;
                     this.showLoader = false;
                 }else {

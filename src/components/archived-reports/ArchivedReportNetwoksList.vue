@@ -27,6 +27,27 @@
 
                         <!-- data table component -->
                         <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networksheaders" :items="networkMetrics" :search="search" :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.network_name`]="{ item }">
+                                {{item.selectable.network_name ? item.selectable.network_name : '-'}}
+                            </template>
+                            <template v-slot:[`item.email`]="{ item }">
+                                {{item.selectable.email ? item.selectable.email : '-'}}
+                            </template>
+                            <template v-slot:[`item.clicks`]="{ item }">
+                                {{item.selectable.clicks ? item.selectable.clicks : 0}}
+                            </template>
+                            <template v-slot:[`item.conversions`]="{ item }">
+                                {{item.selectable.conversions ? item.selectable.conversions : 0}}
+                            </template>
+                            <template v-slot:[`item.epc`]="{ item }">
+                                {{item.selectable.epc ? item.selectable.epc : 0}}
+                            </template>
+                            <template v-slot:[`item.conversions_rate`]="{ item }">
+                                {{item.selectable.conversions_rate ? item.selectable.conversions_rate : 0}}
+                            </template>
+                            <template v-slot:[`item.total_revenue`]="{ item }">
+                                {{$filters.toCurrency(item.selectable.total_revenue)}}
+                            </template>
                             <template v-slot:tbody v-if="networkMetrics.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
@@ -115,7 +136,7 @@ export default {
                 { title: 'Conversions', align: 'start', sortable: this.isSortable, key: 'conversions' },
                 { title: 'EPC', align: 'start', sortable: this.isSortable, key: 'epc' },
                 { title: 'Conversion Rate', align: 'start', sortable: this.isSortable, key: 'conversions_rate' },
-                { title: 'Revenue',  key: 'revenue', sortable: this.isSortable, },
+                { title: 'Revenue',  key: 'total_revenue', sortable: this.isSortable, },
             ]
         }
     },

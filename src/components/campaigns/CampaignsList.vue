@@ -32,18 +32,6 @@
                                     <v-tab value="microsoft_campaigns" class="font-weight-bold">
                                         <img src="assets/img/icons/microsoft.svg" class="w-20 mr-2">Microsoft Campaigns
                                     </v-tab>
-                                    <!-- <li class="nav-item">
-                                        <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true">
-                                            <span class="btn-inner--icon"><img src="assets/img/icons/google-ads.svg" class="icon-width"></span>
-                                            <span class="btn-inner--text">Google Campaigns</span>
-                                        </router-link>
-                                    </li>
-                                    <li class="nav-item">
-                                        <router-link to="" class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false">
-                                            <span class="btn-inner--icon"><img src="assets/img/icons/microsoft.svg" class="icon-width"></span>
-                                            <span class="btn-inner--text">Microsoft Campaigns</span>
-                                        </router-link>
-                                    </li> -->
                                 </v-tabs>
 
                                 <v-window v-model="tabcampaigns">
@@ -228,6 +216,7 @@ export default {
         },
         // fetch google campains
         fetchGoogleCampaign() {
+            // console.log(data, 'data-----');
             this.googleCampaigns = this.googleCampaignsList.filter(data => this.valueGoogle.find(rm => (rm === data.campaign_status) ));
         },
         // fetch microsoft campains
