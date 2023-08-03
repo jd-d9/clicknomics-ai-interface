@@ -31,7 +31,7 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" >
                             <template v-slot:[`item.network`]="{ item }">
-                                {{item.selectable.manual_network.network ? item.selectable.manual_network.network : '-'}}
+                                {{item.selectable.network ? item.selectable.network : '-'}}
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">
                                 {{$filters.toCurrency(item.selectable.amount)}}

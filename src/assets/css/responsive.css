@@ -32,7 +32,7 @@
 @media (max-width: 1200px)
 {
     .dashboard_card.col-md-2{flex: 0 0 20%;max-width: 20%;}
-    .navbar-vertical.navbar-light{transform: translate(0px) !important;}
+    .navbar-vertical.navbar-light{transform: translate(0%) !important;}
 }
 /* @media (max-width: 1199px)
 {

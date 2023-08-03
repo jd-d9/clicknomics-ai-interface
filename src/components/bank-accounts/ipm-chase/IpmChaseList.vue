@@ -55,7 +55,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}"  v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.amount`]="{ item }">
                                 {{$filters.toCurrency(item.selectable.amount)}}
                             </template>
@@ -208,6 +208,7 @@ export default {
                 { title: 'Action', key: 'action', align: 'center' },
             ],
             dateRange: {startDate, endDate},
+            currentItemsTable: [],
             file: '',
             selected: [],
             viewModalDetail: {},
@@ -232,9 +233,10 @@ export default {
         }
     },
     computed: {
+        // total row
         sumField() {
             const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         }
     },
     mounted() {
@@ -648,6 +650,28 @@ export default {
                 return val.id == id;
             });
             this.openViewModal();
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.dataMetrics.filter((val) => {
+                    return val.date && val.date.toString().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase()) ||
+                           val.description && val.description.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.network && val.network.toString().includes(this.search.toLowerCase()) ||
+                           val.transaction_type && val.transaction_type.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.balance && val.balance.toString().includes(this.search.toLowerCase()) ||
+                           val.type && val.type.toLowerCase().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.dataMetrics;
+            }
+            else {
+                const data = this.dataMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
         },
         // getMonthFromString(mon){
         //     return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1

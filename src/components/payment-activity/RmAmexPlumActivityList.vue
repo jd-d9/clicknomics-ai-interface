@@ -12,7 +12,7 @@
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>RM AMEX Plum Activity</span>
                         <v-spacer/>
-                        <div>
+                        <div v-if="showImportIcon">
                             <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
                                 Import CSV
                             </v-btn>
@@ -32,8 +32,8 @@
                         <!-- tab panel title div -->
                         <div class="mt-4">
                             <v-tabs v-model="tabplumactivity" fixed-tabs bg-color="green-lighten-4" class="mb-3">
-                                <v-tab value="activity" class="font-weight-bold" color="green-darken-4">Activity</v-tab>
-                                <v-tab value="reports" class="font-weight-bold">Reports</v-tab>
+                                <v-tab value="activity" class="font-weight-bold" color="green-darken-4" @click.prevent="showImportIcon = true">Activity</v-tab>
+                                <v-tab value="reports" class="font-weight-bold" @click.prevent="getReports">Reports</v-tab>
                             </v-tabs>
 
                             <v-window v-model="tabplumactivity">
@@ -192,6 +192,7 @@ export default {
     data() {
         return{
             showLoader: false,
+            showImportIcon: true,
             dataMetrics: [],
             search: '',
             headers: [
@@ -233,7 +234,6 @@ export default {
             behavior: 'smooth',
         });
         this.getActivities();
-        this.getReports();
     },
     methods: {
         // open/close import csv modal
@@ -359,6 +359,7 @@ export default {
         },
         // get reports data
         getReports() {
+            this.showImportIcon = false;
             setTimeout(() => {
                 this.showLoader = true;
                 axios.post(this.$api + '/paymentMethod/paymentActivity/rmAmexPlumActivitys/filter', {

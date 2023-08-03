@@ -54,9 +54,9 @@
                             <template v-slot:[`item.type`]="{ item }">
                                 {{item.selectable.type ? item.selectable.type : '-'}}
                             </template>
-                            <template v-slot:[`item.countryName`]="{ item }">
+                            <template v-slot:[`item.country_name`]="{ item }">
                                 <!-- {{item.selectable.country}} -->
-                                {{item.selectable.countryName ? item.selectable.countryName : '-'}}
+                                {{item.selectable.country_name ? item.selectable.country_name : '-'}}
                             </template>
                             <template v-slot:[`item.city`]="{ item }">
                                 {{item.selectable.city ? item.selectable.city : '-'}}
@@ -233,7 +233,7 @@ export default {
             search: '',
             headers: [
                 { title: 'Type', align: 'start', sortable: false, key: 'type' },
-                { title: 'Country ', key: 'countryName' },
+                { title: 'Country ', key: 'country_name' },
                 { title: 'City', key: 'city' },
                 { title: 'Notes', key: 'notes' },
                 { title: 'Action', key: 'action', align: 'center' },

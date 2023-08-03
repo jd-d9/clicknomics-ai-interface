@@ -85,10 +85,10 @@ import Datepicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 import moment from 'moment';
 export default {
-    // props: ['network'],
     components: {
         Datepicker,
-        Form, Field
+        Form, 
+        Field
     },
     data() {
         return {
@@ -102,6 +102,7 @@ export default {
             toggleElement: true,
             backendErrorMessage: '',
             multipleErrors: [],
+            selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
     },
     mounted() {
@@ -242,7 +243,14 @@ export default {
         // get data for edit
         getDataForEdit() {
             this.showLoader = true;
-            axios.get(this.$api + '/network/manualNetworksMetrics', {
+            const queryString = new URLSearchParams();
+            const ajaxUrl = this.$api + '/network/manualNetworksMetrics';
+            if (this.selectedRange) {
+                queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
+                queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
+            }
+            const url = `${ajaxUrl}?${queryString.toString()}`;
+            axios.get(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: this.getAccessToken()
@@ -250,7 +258,7 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    const getData = response.data.data.data.find((val) => {
+                    const getData = response.data.data.find((val) => {
                         return val.id == this.$route.params.id;
                     })
                     this.date = getData.date;

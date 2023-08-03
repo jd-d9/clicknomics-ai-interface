@@ -46,7 +46,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-3" :headers="headers" :items="dataMetrics" :items-per-page="itemsPerPage" show-select v-model="selected" :search="search">
+                        <v-data-table class="table-hover-class mt-3" :headers="headers" :items="dataMetrics" v-model:page="currentPage" :items-per-page="itemsPerPage" show-select v-model="selected" :search="search" ref="refrenseItem" @update:options="currentItems($event)">
                             <template v-slot:[`item.date`]="{ item }">
                                 {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
@@ -68,16 +68,6 @@
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn>                                                            
                             </template>
-                            <!-- <template v-slot:top v-if="selected.length > 0">
-                                <div class="p-2 text-right">
-                                    <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                        Remove
-                                    </v-btn>
-                                    <v-btn @click="openCreateUpdateData" :disabled="permissions.update_auth == '0'" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-pencil">
-                                        Edit
-                                    </v-btn>
-                                </div>
-                            </template> -->
                             <template v-slot:tbody v-if="dataMetrics.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td></td>
@@ -304,6 +294,7 @@ export default {
             },
             backendErrorMessage: '',
             multipleErrors: [],
+            currentPage: 1,
             // schema: yup.object().shape({
             //     users: yup
             //     .array()
@@ -323,10 +314,17 @@ export default {
                 Amount: yup.string().required(),
             });
         },
+        // displayedItems() {
+        //     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        //     const endIndex = startIndex + this.itemsPerPage;
+        //     console.log(this.dataMetrics.slice(startIndex, endIndex), 'startindex');
+        //     return 'test';
+        //     // return this.dataMetrics.slice(startIndex, endIndex);
+        // },
         // total row
         sumField() {
             const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         }
     },
     watch: {
@@ -335,7 +333,7 @@ export default {
             val.forEach((data) => {
                 this.selectedId.push({id: data});
             })
-        },
+        }
     },
     mounted() {
         this.getFixedMonthlyCostList();
@@ -754,7 +752,43 @@ export default {
         // select csv file
         chooseFile(e) {
             this.selectedFile = e.target.files[0];
-        }
+        },
+        // // current items for sum field
+        // currentItems(currentItems) {
+        //     if(this.search) {
+        //         const data = this.dataMetrics.filter((val) => {
+        //             return val.date.toString().includes(this.search.toLowerCase()) || 
+        //                    val.amount.toString().includes(this.search.toLowerCase())
+        //         })
+        //         this.currentItemsTable = data;
+        //     }
+        //     else if(currentItems.itemsPerPage == -1) {
+        //         this.currentItemsTable = this.dataMetrics;
+        //     }
+        //     else {
+        //         const data = this.dataMetrics.slice(0, currentItems.itemsPerPage);
+        //         this.currentItemsTable = data;
+        //     }
+        // },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.dataMetrics.filter((val) => {
+                    return val.date && val.date.toString().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+                // data.length >= 10 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data;
+                // currentItems.itemsPerPage >= 10 ? this.currentItemsTable = this.dataMetrics.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data;
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.dataMetrics;
+            }
+            else {
+                const data = this.dataMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
+        },
     }
 }
 </script>

@@ -25,7 +25,7 @@
 
                             <!-- tab panel title div -->
                             <div class="mt-4">
-                                <v-tabs v-model="tabcampaigns" fixed-tabs bg-color="green-lighten-4" class="mb-3">
+                                <v-tabs v-model="tabCampaigns" fixed-tabs bg-color="green-lighten-4" class="mb-3">
                                     <v-tab value="google_campaigns" class="font-weight-bold" color="green-darken-4 ">
                                         <img src="assets/img/icons/google-ads.svg" class="w-20 mr-2"> Google Campaigns
                                     </v-tab>
@@ -34,7 +34,7 @@
                                     </v-tab>
                                 </v-tabs>
 
-                                <v-window v-model="tabcampaigns">
+                                <v-window v-model="tabCampaigns">
                                     <v-window-item value="google_campaigns">
                                         <v-row>
                                             <v-spacer></v-spacer>
@@ -141,7 +141,7 @@ export default {
             itemsMicrosoft: ['Paused', 'BudgetPaused', 'Active'],
             valueMicrosoft: ['Paused', 'BudgetPaused', 'Active'],
             permissions: {},
-            tabcampaigns: null,
+            tabCampaigns: 'google_campaigns',
         }
     },
     mounted() {
@@ -216,12 +216,11 @@ export default {
         },
         // fetch google campains
         fetchGoogleCampaign() {
-            // console.log(data, 'data-----');
-            this.googleCampaigns = this.googleCampaignsList.filter(data => this.valueGoogle.find(rm => (rm === data.campaign_status) ));
+            this.googleCampaigns = this.googleCampaignsList.filter(data => this.valueGoogle.find(rm => (rm.toLowerCase() === data.campaign_status.toLowerCase())));
         },
         // fetch microsoft campains
         fetchMicrosoftCampaign() {
-            this.micosoftCampaigns = this.micosoftCampaignsList.filter(data => this.valueMicrosoft.find(rm => (rm === data.Status) ));
+            this.micosoftCampaigns = this.micosoftCampaignsList.filter(data => this.valueMicrosoft.find(rm => (rm.toLowerCase() === data.Status.toLowerCase())));
         }
     }
 }

@@ -55,11 +55,6 @@
                 if(val.fullPath === '/login') {
                     this.toggleContents = true;
                 }
-                // if(val.fullPath === '/dashboard') {
-                //     if(screen.width < 1200) {
-                //         this.toggleContents = false;
-                //     }
-                // }
             }
         }
     }

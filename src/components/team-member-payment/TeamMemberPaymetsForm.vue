@@ -51,7 +51,7 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">From Account</label>
                                     <Field name="Fromaccount" v-model="fromAccount">
-                                        <v-autocomplete name="Fromaccount" :class="{'form-control autocomplete': true, 'border-red-600': errors.Fromaccount}" :items="list" item-value="key" v-model="fromAccount" placeholder="Select From account"></v-autocomplete>
+                                        <v-select name="Fromaccount" :class="{'form-control autocomplete': true, 'border-red-600': errors.Fromaccount}" :items="list" item-value="key" v-model="fromAccount" placeholder="Select From account"></v-select>
                                     </Field>
                                     <span class="text-red-600" v-if="errors.Fromaccount">From account is a required field</span>
                                 </v-col>
@@ -59,7 +59,7 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">To Account</label>
                                     <Field name="Toaccount" v-model="toAccount">
-                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.Toaccount}" :items="creditLines" item-value="key" v-model="toAccount" placeholder="Select To account"></v-select>
+                                        <v-select name="Toaccount" :class="{'form-control autocomplete': true, 'border-red-600': errors.Toaccount}" :items="creditLines" item-value="key" v-model="toAccount" placeholder="Select To account"></v-select>
                                     </Field>
                                     <span class="text-red-600" v-if="errors.Toaccount">To account is a required field</span>
                                 </v-col>
