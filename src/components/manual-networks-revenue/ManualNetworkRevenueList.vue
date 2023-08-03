@@ -62,8 +62,7 @@
                             </template>
                             <template v-slot:[`item.network`]="{ item }">
                                 <div class="text-ellipsis">
-                                    {{ item.selectable.manual_network.network ? item.selectable.manual_network.network :
-                                        '-' }}
+                                    {{ item.selectable.network ? item.selectable.network : '-' }}
                                 </div>
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">

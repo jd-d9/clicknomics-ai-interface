@@ -141,69 +141,6 @@ export default {
             this.selectedRange = range;
             this.pull();
         },
-        // pull() {
-        //     this.showLoader = true;
-        //     const queryString = new URLSearchParams();
-        //     const ajaxUrl = this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport';
-        //     if(this.selectedRange) {
-        //         queryString.set('startDate', moment(this.selectedRange.split('-').shift()).format('DD-MM-YYYY'));
-        //         queryString.set('endDate', moment(this.selectedRange.split('-').pop()).format('DD-MM-YYYY'));
-        //     }
-        //     const url = `${ajaxUrl}?${queryString.toString()}`;
-        //     axios.get(url, {
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             Authorization: this.getAccessToken()
-        //         }
-        //     })
-        //     .then(response => {
-        //         if(response.data.success) {
-        //             this.cardMemberList = response.data.data
-        //             this.showLoader = false;
-        //         }else {
-        //             this.message = {
-        //                 text: response.data.message,
-        //                 type: 'error',
-        //             }
-        //             this.$eventBus.emit('flash-message', this.message, '');
-        //             this.showLoader = false;
-        //         }
-        //     })
-        //     .catch(error => {
-        //         if(error.response.data.message) {
-        //             this.message = {
-        //                 text: error.response.data.message,
-        //                 type: 'error',
-        //             }
-        //             this.$eventBus.emit('flash-message', this.message, '');
-        //         }
-        //         if(error.response.data.error) {
-        //             this.message = {
-        //                 text: error.response.data.error,
-        //                 type: 'error',
-        //             }
-        //             this.$eventBus.emit('flash-message', this.message, '');
-        //         }
-        //         if(error.response.data.errors) {
-        //             if(error.response.data.errors.length == 1) {
-        //                 this.message = {
-        //                     text: error.response.data.errors[0],
-        //                     type: 'error',
-        //                 }
-        //                 this.$eventBus.emit('flash-message', this.message, '');
-        //             }else if(error.response.data.errors.length == 0){
-        //                 this.backendErrorMessage = '';
-        //             }else {
-        //                 this.message = {
-        //                     text: error.response.data.errors[0],
-        //                     type: 'error',
-        //                 }
-        //                 this.$eventBus.emit('flash-message', this.message, '');
-        //             }
-        //         }
-        //         this.showLoader = false;
-        //     });
-        // },
     },
 }
 </script>

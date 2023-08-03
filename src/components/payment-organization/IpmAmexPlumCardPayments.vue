@@ -390,7 +390,7 @@ export default {
         // upload csv
         importCsv() {
             this.showLoader = true;
-            axios.post(this.$api + '/paymentMethod/paymentCardsOrganization/importIpmCsv', {
+            axios.post(this.$api + '/paymentMethod/paymentCardsOrganizations/importPaymentMethodCSV', {
                 file: this.selectedFile
             }, {
                 headers: {
@@ -401,7 +401,7 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.closeImportCsvModal();
-                    this.getTeamMemberPaymentList();
+                    this.getPayments();
                     this.showLoader = false;
                     this.selectedFile = '';
                     this.message = {

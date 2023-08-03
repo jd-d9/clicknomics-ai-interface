@@ -5,16 +5,13 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
                     <v-row class="mb-1 align-items-center">
-                        <v-col class="d-flex" cols="12" sm="4">
+                        <v-col class="d-flex" cols="12" sm="4" xs="12">
                             <h6 class="font-weight-bold text-h6 px-2 mb-0">
                                 Date: {{daily_date ? daily_date : '-'}}
                             </h6>
                         </v-col>
-                        <!-- <v-col class="text-orange text-center" cols="12" sm="4" v-if="trialDays > 0">
-                            You have only {{ trialDays }} days left of your trial period
-                        </v-col> -->
                         <v-spacer></v-spacer>
-                        <v-col sm="4" class="d-flex justify-content-end font-medium font-weight-normal" cols="12">
+                        <v-col sm="4" xs="12" class="d-flex justify-content-end font-medium font-weight-normal" cols="12">
                             <date-range-picker class="date_picker" style="padding: 9px 0px;" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                         </v-col>
                     </v-row>
@@ -23,7 +20,7 @@
 
                     <!-- cost -->
                     <h6 class="font-weight-bold text-h6 px-2 mb-3">Cost</h6>
-                    <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
+                    <v-row class="ma-0 mb-3 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-xs-1"> <!--  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1  -->
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_ops_cost == 0, 'bg-green-lighten-4': daily_ops_cost > 0, 'bg-orange-lighten-4': daily_ops_cost < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Operations Cost</v-card-title>
@@ -66,7 +63,7 @@
 
                     <!-- renevue -->
                     <h6 class="font-weight-bold text-h6 px-2 mb-3">Revenue</h6>
-                    <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
+                    <v-row class="ma-0 mb-3 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-xs-1"> <!--  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1  -->
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': daily_conversion == 0, 'bg-green-lighten-4': daily_conversion > 0, 'bg-orange-lighten-4': daily_conversion < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Conversions</v-card-title>
@@ -104,7 +101,7 @@
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
                     <h6 class="font-weight-bold text-h6 px-2 mb-3">General Stats</h6>                    
                     <!-- Start Microsoft -->
-                    <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
+                    <v-row class="ma-0 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-xs-1"> <!--  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1  -->
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': microsoftMasterAccount == 0, 'bg-green-lighten-4': microsoftMasterAccount > 0, 'bg-orange-lighten-4': microsoftMasterAccount < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
@@ -148,7 +145,7 @@
                     </v-row>
 
                     <!-- Start Google -->
-                    <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
+                    <v-row class="ma-0 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-xs-1"> <!--  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1  -->
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': googleMasterAccount == 0, 'bg-green-lighten-4': googleMasterAccount > 0, 'bg-orange-lighten-4': googleMasterAccount < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">
@@ -236,7 +233,7 @@
                     </v-row> -->
 
                     <!-- Start network -->
-                    <v-row class="ma-0 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
+                    <v-row class="ma-0 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-xs-1"> <!--  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1  -->
                         <v-col class="py-0 five_row mb-4">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': networks == 0, 'bg-green-lighten-4': networks > 0, 'bg-orange-lighten-4': networks < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Automated Networks</v-card-title>
@@ -261,7 +258,7 @@
                 <!-- subscription -->
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0" v-if="subscribedUser">
                     <h6 class="font-weight-bold text-h6 px-2 mb-3">Subscription</h6>
-                    <v-row class="ma-0 mb-3 row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1">
+                    <v-row class="ma-0 mb-3 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-xs-1"> <!--  row-cols-lg-5 row-cols-md-4 row-cols-sm-2 row-cols-xs-1  -->
                         <v-col class="py-0 five_row mb-2">
                             <v-card class="card_design" :class="{'bg-blue-lighten-4': subscribedUser == 0, 'bg-green-lighten-4': subscribedUser > 0, 'bg-orange-lighten-4': subscribedUser < 0}">
                                 <v-card-title class="text-subtitle-2 text-uppercase font-weight-normal">Total Subscribed User</v-card-title>

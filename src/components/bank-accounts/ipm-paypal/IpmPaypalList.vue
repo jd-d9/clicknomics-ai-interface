@@ -62,7 +62,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.date`]="{ item }">
                                 {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
@@ -226,16 +226,8 @@ export default {
     computed: {
         sumField() {
             const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        },
-        sumFee() {
-            const key = 'fees';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        },
-        sumGrandtotal() {
-            const key = 'grand_total';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        },
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+        }
     },
     mounted() {
         window.scrollTo({
@@ -651,6 +643,29 @@ export default {
         // select csv file
         chooseFile(e) {
             this.selectedFile = e.target.files[0];
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.dataMetrics.filter((val) => {
+                    return val.date && val.date.toString().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase()) ||
+                           val.name && val.name.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.status && val.status.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.type && val.type.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.transaction_type && val.transaction_type.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.from_email_address && val.from_email_address.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.to_email_address && val.to_email_address.toLowerCase().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.dataMetrics;
+            }
+            else {
+                const data = this.dataMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
         },
     }
 }

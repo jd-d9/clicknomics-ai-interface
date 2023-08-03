@@ -11,7 +11,7 @@
                         </router-link>
                         <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
                         <span>Team Member Payments</span>
-                        <v-spacer />
+                        <v-spacer/>
 
                         <div v-if="showImportIcon">
                             <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
@@ -49,18 +49,8 @@
                             <!-- tab panel title div -->
                             <div class="mt-4">
                                 <v-tabs v-model="tabteampayment" fixed-tabs bg-color="green-lighten-4" class="mb-3">
-                                    <v-tab value="payments" class="font-weight-bold" color="green-darken-4">Payments</v-tab>
-                                    <v-tab value="reports" class="font-weight-bold">Reports</v-tab>
-                                    <!-- <li class="nav-item">
-                                        <router-link to="" class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-3-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="this.showImportIcon = true">
-                                            <span class="btn-inner--text">Payments</span>
-                                        </router-link>
-                                    </li>
-                                    <li class="nav-item">
-                                        <router-link to="" class="nav-link mb-sm-4 mb-md-0" id="tabs-icons-text-4-tab" data-bs-toggle="tab" data-bs-target="#tabs-icons-text-4" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false" @click="genrateTeamMembersPaymentsReport">
-                                            <span class="btn-inner--text">Reports</span>
-                                        </router-link>
-                                    </li> -->
+                                    <v-tab value="payments" class="font-weight-bold" color="green-darken-4" @click.prevent="showImportIcon = true">Payments</v-tab>
+                                    <v-tab value="reports" class="font-weight-bold" @click.prevent="getReports">Reports</v-tab>
                                 </v-tabs>
 
                                 <v-window v-model="tabteampayment">
@@ -79,7 +69,7 @@
                                         </v-row> 
 
                                         <!-- data table component -->
-                                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="teamMemberPaymentList" :items-per-page="itemPerPage" :search="search">
+                                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="teamMemberPaymentList" :items-per-page="itemsPerPage" :search="search">
                                             <template v-slot:[`item.id`]="{ item }">
                                                 {{item.selectable.id ? item.selectable.id : '-'}}
                                             </template>
@@ -353,12 +343,20 @@ export default {
         });
         this.getTeamMemberPaymentList();
     },
+    watch: {
+        selectedFile(val) {
+            console.log(val, '-- val --');
+        }
+    },
     methods: {
         // open/close import csv modal
         openImportCsvModal() {
             window.$('#importCsvModal').modal('show');
         },
         closeImportCsvModal() {
+            // if(this.selectedFile) {
+            //     this.selectedFile = '';
+            // }
             window.$('#importCsvModal').modal('hide');
         },
         // open/close from account modal
@@ -638,19 +636,13 @@ export default {
                 this.showLoader = false;
             });
         },
+        // get report listing and hide import icons
+        getReports() {
+            this.showImportIcon = false;
+            this.genrateTeamMembersPaymentsReport();
+        },
         // generate report
         genrateTeamMembersPaymentsReport() {
-            this.showImportIcon = false;
-            // window.$('a[data-bs-toggle="tab"]').on('shown.bs.tab', (e) =>  {
-            //     console.log(this.showImportIcon, e.target, '111')
-            //     if(window.$(e.target).attr('href') == '#tabs-icons-text-3') {
-            //         console.log(this.showImportIcon, '222')
-            //         this.showImportIcon = true;
-            //     }else {
-            //         console.log(this.showImportIcon, '333')
-            //         this.showImportIcon = false;
-            //     }
-            // });
             this.showLoader = true;
             axios.post(this.$api + '/accounting/teamMemberPayments/genrateTeamMembersPaymentsReport', {
                 startDate: moment(this.selectedRangeTwo.split('-').shift()).format('DD-MM-YYYY'),
@@ -785,7 +777,6 @@ export default {
                     this.closeImportCsvModal();
                     this.getTeamMemberPaymentList();
                     this.showLoader = false;
-                    this.selectedFile = '';
                     this.message = {
                         text: response.data.message,
                         type: 'success',
