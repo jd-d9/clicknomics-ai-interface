@@ -62,7 +62,7 @@
                             <template v-slot:[`item.fees`]="{ item }">
                                 {{$filters.toCurrency(item.selectable.fees)}}
                             </template>
-                            <template v-slot:[`item.grandtotal`]="{ item }">
+                            <template v-slot:[`item.grand_total`]="{ item }">
                                 {{$filters.toCurrency(item.selectable.grand_total)}}
                             </template>
                             <template  v-slot:[`item.description`]="{ item }">
@@ -93,7 +93,7 @@
                                     <v-tooltip activator="parent" location="top">View</v-tooltip>
                                 </v-btn>  
                             </template>
-                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
@@ -206,7 +206,7 @@ export default {
                 { title: 'Recepient ', key: 'recepient' },
                 { title: 'Amount', key: 'amount' },
                 { title: 'Fees', key: 'fees' },
-                { title: 'Grand Total', key: 'grandtotal' },
+                { title: 'Grand Total', key: 'grand_total' },
                 { title: 'Action', key: 'action', align: 'center' },
             ],
             dateRange: {startDate, endDate},
@@ -289,6 +289,8 @@ export default {
             window.$('#exampleModalCenter').modal('show');
         },
         closeModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null) ;
             window.$('#exampleModalCenter').modal('hide');
         },
         openViewModal() {
@@ -669,7 +671,7 @@ export default {
                            val.amount && val.amount.toString().includes(this.search.toLowerCase()) ||
                            val.description && val.description.toLowerCase().includes(this.search.toLowerCase()) ||
                            val.recepient && val.recepient.toLowerCase().includes(this.search.toLowerCase()) ||
-                           val.grandtotal && val.grandtotal.toString().includes(this.search.toLowerCase()) ||
+                           val.grand_total && val.grand_total.toString().includes(this.search.toLowerCase()) ||
                            val.fees && val.fees.toString().includes(this.search.toLowerCase())
                 })
                 data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);

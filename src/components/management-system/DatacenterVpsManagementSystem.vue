@@ -292,10 +292,6 @@ export default {
         }
     },
     computed: {
-        sumField() {
-            const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        },
         schema() {
             return yup.object({
                 Company: yup.string().required(),
@@ -316,6 +312,8 @@ export default {
             window.$('#exampleModalCenter').modal('show');
         },
         closeModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null);
             window.$('#exampleModalCenter').modal('hide');
         },
         // open and close view details modal

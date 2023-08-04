@@ -56,7 +56,7 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4"
                             :footer-props="{ 'items-per-page-options': [5, 10, 15, 25, 50, 100, -1] }" :headers="headers"
-                            :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                            :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.date`]="{ item }">
                                 {{ item.selectable.date ? item.selectable.date : '-' }}
                             </template>
@@ -181,7 +181,7 @@ export default {
     computed: {
         sumField() {
             const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         headers: function () {
             return [
@@ -206,6 +206,8 @@ export default {
             window.$('#exampleModalCenter').modal('show');
         },
         closeModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null);
             window.$('#exampleModalCenter').modal('hide');
         },
         // update date range
@@ -485,6 +487,24 @@ export default {
                     }
                     this.showLoader = false;
                 });
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.dataMetrics.filter((val) => {
+                    return val.date && val.date.toString().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase()) ||
+                           val.network && val.network.toLowerCase().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.dataMetrics;
+            }
+            else {
+                const data = this.dataMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
         },
         // select csv file
         chooseFile(e) {

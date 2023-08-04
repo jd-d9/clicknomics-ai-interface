@@ -179,7 +179,6 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    console.log(response.data.data, 'data')
                     this.templateList = response.data.data;
                     this.templateFilter = response.data.data;
                     this.showLoader = false;

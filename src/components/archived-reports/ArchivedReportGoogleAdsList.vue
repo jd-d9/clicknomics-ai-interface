@@ -26,7 +26,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table :headers="headers" :items="googleCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="expanded" item-value="name" show-expand class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                        <v-data-table :headers="headers" :items="googleCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="expanded" item-value="name" show-expand class="table-hover-class mt-4" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.name`]="{ item }">
                                 {{item.selectable.name ? item.selectable.name : '-'}}
                             </template>
@@ -101,7 +101,7 @@
                                     No Data Found
                                 </td>
                             </template>
-                            <template v-slot:tbody v-if="googleCampaignMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
@@ -139,6 +139,7 @@ export default {
             message: {},
             showLoader: false,
             googleCampaignMetrics: [],
+            currentItemsTable: [],
             search: '',
             singleExpand: true,
             expanded: [],
@@ -150,7 +151,7 @@ export default {
     computed: {
         sumCostMicros() {
             const key = 'costMicros';
-            let data = _.cloneDeep(this.googleCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 let num = item.costMicros.substring(1);
                 // num = num.replace(/\,/g,'');
@@ -162,7 +163,7 @@ export default {
         },
         sumClick() {
             const key = 'clicks';
-            let data = _.cloneDeep(this.googleCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 item.clicks = parseFloat(Number(item.clicks.replace(/_/g,'')));
                 return item;
@@ -171,11 +172,11 @@ export default {
         },
         sumCtr() {
             const key = 'ctr';
-            return (this.googleCampaignMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)) / this.googleCampaignMetrics.length
+            return (this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)) / this.googleCampaignMetrics.length
         },
         sumImpressions() {
             const key = 'impressions';
-            let data = _.cloneDeep(this.googleCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 item.impressions = parseFloat(Number(item.impressions.replace(/_/g,'')));
                 return item;
@@ -184,7 +185,7 @@ export default {
         },
         sumAverageCpc() {
             const key = 'averageCpc';
-            let data = _.cloneDeep(this.googleCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 let num = item.averageCpc.substring(1);
                 // num = num.replace(/\,/g,'');
@@ -192,23 +193,23 @@ export default {
                 item.averageCpc = parseFloat(num);
                 return item;
             });
-            return (data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)) / this.googleCampaignMetrics.length
+            return (data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)) / this.currentItemsTable.length
         },
         sumConversions() {
             const key = 'conversions';
-            return this.googleCampaignMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         sumAbsoluteTopImpressionPercentage() {
             const key = 'absoluteTopImpressionPercentage';
-            return this.googleCampaignMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         sumCostPerConversion() {
             const key = 'cost_per_conversion';
-            return this.googleCampaignMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         sumConversionsFromInteractions() {
             const key = 'conversions_from_interactions_rate';
-            return this.googleCampaignMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         headers() {
             return [
@@ -313,6 +314,10 @@ export default {
                         });
                         return row;
                     });
+                    const currentItems = {
+                        itemsPerPage: -1
+                    };
+                    this.currentItems(currentItems);
                     if(this.googleCampaignMetrics.length > 0){
                         setTimeout(() => {
                             this.resizableGrid(document.getElementsByTagName('table')[0]);
@@ -362,6 +367,33 @@ export default {
                 }
                 this.showLoader = false;
             });
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.googleCampaignMetrics.filter((val) => {
+                    return val.name && val.name.toLowerCase().includes(this.search.toLowerCase()) || 
+                           val.impressions && val.impressions.toString().includes(this.search.toLowerCase()) ||
+                           val.clicks && val.clicks.toString().includes(this.search.toLowerCase()) ||
+                           val.costMicros && val.costMicros.toString().includes(this.search.toLowerCase()) ||
+                           val.costMicrosConverted && val.costMicrosConverted.toString().includes(this.search.toLowerCase()) ||
+                           val.averageCpc && val.averageCpc.toString().includes(this.search.toLowerCase()) ||
+                           val.ctr && val.ctr.toString().includes(this.search.toLowerCase()) ||
+                           val.absoluteTopImpressionPercentage && val.absoluteTopImpressionPercentage.toString().includes(this.search.toLowerCase()) ||
+                           val.conversions && val.conversions.toString().includes(this.search.toLowerCase()) ||
+                           val.conversions_from_interactions_rate && val.conversions_from_interactions_rate.toString().includes(this.search.toLowerCase()) ||
+                           val.cost_per_conversion && val.cost_per_conversion.toString().includes(this.search.toLowerCase())
+
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.googleCampaignMetrics;
+            }
+            else {
+                const data = this.googleCampaignMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
         },
         // made resizable table
         resizableGrid(table) {

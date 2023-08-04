@@ -178,6 +178,8 @@ export default {
             window.$('#importCsvModal').modal('show');
         },
         closeImportCsvModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null);
             window.$('#importCsvModal').modal('hide');
         },
         createActivity() {

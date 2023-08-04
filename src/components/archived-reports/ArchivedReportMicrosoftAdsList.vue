@@ -26,7 +26,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :headers="microsoftHeaders" :items="microsoftCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="microsoftExpanded" item-value="managerAccountName" show-expand :itemsPerPage="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4" :headers="microsoftHeaders" :items="microsoftCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="microsoftExpanded" item-value="managerAccountName" show-expand :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.management_system`]="{item}">
                                 <div class="text-ellipsis" style="width:180px">
                                     <router-link to="" @click="showManagementTypeModal(item.selectable.id, item.selectable.management_type, item.selectable.management_system)">{{item.selectable.management_system ? item.selectable.management_system : '-' }}</router-link>
@@ -106,7 +106,7 @@
                                     No Data Found
                                 </td>
                             </template>
-                            <template v-slot:tbody v-if="microsoftCampaignMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
@@ -202,6 +202,7 @@ export default {
             message: {},
             showLoader: false,
             microsoftCampaignMetrics: [],
+            currentItemsTable: [],
             search: '',
             microsoftReportRange: 'Last One Year',
             singleExpand: true,
@@ -257,7 +258,7 @@ export default {
         },
         sumMicrosoftClick() {
             const key = 'clicks';
-            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 item.clicks = parseFloat(Number(item.clicks.replace(/_/g,'')));
                 return item;
@@ -266,7 +267,7 @@ export default {
         },
         sumMicrosoftCtr() {
             const key = 'ctr';
-            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 item.ctr = parseFloat(Number(item.ctr.replace(/_/g,'')));
                 return item;
@@ -275,7 +276,7 @@ export default {
         },
         sumMicrosoftSpend() {
             const key = 'spend';
-            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 let num = item.spend.substring(1);
                 num = num.replace(/_/g,'');
@@ -286,7 +287,7 @@ export default {
         },
         sumMicrosoftAverageCpc() {
             const key = 'averageCpc';
-            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 item.averageCpc = parseFloat(Number(item.averageCpc.replace(/_/g,'')));
                 return item;
@@ -295,7 +296,7 @@ export default {
         },
         sumMicrosoftImpressions() {
             const key = 'impressions';
-            let data = _.cloneDeep(this.microsoftCampaignMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             data.map((item) => {
                 item.impressions = parseFloat(Number(item.impressions.replace(/_/g,'')));
                 return item;
@@ -304,7 +305,7 @@ export default {
         },
         sumMicrosoftAbsoluteTopImpressionPercentage() {
             const key = 'absoluteTopImpressionRatePercent';
-            return this.microsoftCampaignMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         },
         microsoftHeaders() {
             return [
@@ -407,6 +408,10 @@ export default {
                                 currency_conversion_check: data.currency_conversion_check,
                             });
                         });
+                        const currentItems = {
+                            itemsPerPage: -1
+                        };
+                        this.currentItems(currentItems);
                         if(this.microsoftCampaignMetrics.length > 0){
                             setTimeout(() => {
                                 this.resizableGrid(document.getElementsByTagName('table')[0]);
@@ -600,6 +605,32 @@ export default {
                     this.showLoader = false;
                 });
             }, 200)
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.microsoftCampaignMetrics.filter((val) => {
+                    return val.managerAccountName && val.managerAccountName.toLowerCase().includes(this.search.toLowerCase()) || 
+                           val.name && val.name.toLowerCase().includes(this.search.toLowerCase()) || 
+                           val.management_system && val.management_system.toString().includes(this.search.toLowerCase()) ||
+                           val.clicks && val.clicks.toString().includes(this.search.toLowerCase()) ||
+                           val.ctr && val.ctr.toString().includes(this.search.toLowerCase()) ||
+                           val.spend && val.spend.toString().includes(this.search.toLowerCase()) ||
+                           val.spendConverted && val.spendConverted.toString().includes(this.search.toLowerCase()) ||
+                           val.averageCpc && val.averageCpc.toString().includes(this.search.toLowerCase()) ||
+                           val.impressions && val.impressions.toString().includes(this.search.toLowerCase()) ||
+                           val.absoluteTopImpressionRatePercent && val.absoluteTopImpressionRatePercent.toString().includes(this.search.toLowerCase())
+
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.microsoftCampaignMetrics;
+            }
+            else {
+                const data = this.microsoftCampaignMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
         },
         // made resizable table
         resizableGrid(table) {

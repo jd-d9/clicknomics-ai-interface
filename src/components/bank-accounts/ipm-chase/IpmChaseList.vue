@@ -93,7 +93,7 @@
                                     <v-tooltip activator="parent" location="top">View</v-tooltip>
                                 </v-btn>  
                             </template>
-                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
@@ -279,6 +279,8 @@ export default {
             window.$('#exampleModalCenter').modal('show');
         },
         closeModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null) ;
             window.$('#exampleModalCenter').modal('hide');
         },
         openViewModal() {

@@ -69,18 +69,18 @@
                                         </v-row> 
 
                                         <!-- data table component -->
-                                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="teamMemberPaymentList" :items-per-page="itemsPerPage" :search="search">
+                                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="teamMemberPaymentList" :items-per-page="itemsPerPage" :search="search" @update:options="currentItems($event)">
                                             <template v-slot:[`item.id`]="{ item }">
                                                 {{item.selectable.id ? item.selectable.id : '-'}}
                                             </template>
                                             <template v-slot:[`item.payment_date`]="{ item }">
                                                 {{item.selectable.payment_date ? item.selectable.payment_date : '-'}}
                                             </template>
-                                            <template v-slot:[`item.from_account`]="{ item }">
-                                                {{item.selectable.fromaccountlist.team_member_name ? item.selectable.fromaccountlist.team_member_name : '-'}}
+                                            <template v-slot:[`item.from_account_team_member`]="{ item }">
+                                                {{item.selectable.from_account_team_member ? item.selectable.from_account_team_member : '-'}}
                                             </template>
-                                            <template v-slot:[`item.to_account`]="{ item }">
-                                                {{item.selectable.toaccountlist.team_member_name ? item.selectable.toaccountlist.team_member_name : '-'}}
+                                            <template v-slot:[`item.to_account_team_member`]="{ item }">
+                                                {{item.selectable.to_account_team_member ? item.selectable.to_account_team_member : '-'}}
                                             </template>
                                             <template v-slot:[`item.amount`]="{ item }">
                                                 {{$filters.toCurrency(item.selectable.amount)}}
@@ -104,7 +104,7 @@
                                                 </v-btn>                                                            
                                             </template>
                                             
-                                            <template v-slot:tbody v-if="teamMemberPaymentList.length > 0">
+                                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                                     <td>Totals</td>
                                                     <td></td>
@@ -295,8 +295,8 @@ export default {
             headers: [
                 { title: 'Payment ID', key: 'id' },
                 { title: 'Payment Date', align: 'center', sortable: true, key: 'payment_date' },
-                { title: 'From Account', align: 'center', sortable: true, key: 'from_account' },
-                { title: 'To Account', align: 'center', sortable: true, key: 'to_account' },
+                { title: 'From Account', align: 'center', sortable: true, key: 'from_account_team_member' },
+                { title: 'To Account', align: 'center', sortable: true, key: 'to_account_team_member' },
                 { title: 'Amount', align: 'center', sortable: true, key: 'amount' },
                 { title: 'Status', align: 'center', sortable: true, key: 'status' },
                 { title: 'Action', key: 'action', align: 'center' },
@@ -333,7 +333,7 @@ export default {
         // total row
         sumField() {
             const key = 'amount';
-            return this.teamMemberPaymentList.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         }
     },
     mounted() {
@@ -343,20 +343,14 @@ export default {
         });
         this.getTeamMemberPaymentList();
     },
-    watch: {
-        selectedFile(val) {
-            console.log(val, '-- val --');
-        }
-    },
     methods: {
         // open/close import csv modal
         openImportCsvModal() {
             window.$('#importCsvModal').modal('show');
         },
         closeImportCsvModal() {
-            // if(this.selectedFile) {
-            //     this.selectedFile = '';
-            // }
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null);
             window.$('#importCsvModal').modal('hide');
         },
         // open/close from account modal
@@ -829,7 +823,28 @@ export default {
         // select csv file
         chooseFile(e) {
             this.selectedFile = e.target.files[0];
-        }
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.teamMemberPaymentList.filter((val) => {
+                    return val.id && val.id.toString().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase()) ||
+                           val.payment_date && val.payment_date.toString().includes(this.search.toLowerCase()) ||
+                           val.from_account_team_member && val.from_account_team_member.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.to_account_team_member && val.to_account_team_member.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.status && val.status.toLowerCase().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.teamMemberPaymentList;
+            }
+            else {
+                const data = this.teamMemberPaymentList.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
+        },
     }
 }
 </script>

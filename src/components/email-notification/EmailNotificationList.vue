@@ -50,13 +50,6 @@
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn> 
                             </template>
-                            <!-- <template v-slot:top v-if="selected.length > 0">
-                                <div class="p-2 text-right">
-                                    <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                        Remove
-                                    </v-btn>
-                                </div>
-                            </template> -->
                         </v-data-table>
                     </v-card>
                 </v-col>
@@ -267,10 +260,6 @@ export default {
         }
     },
     computed: {
-        sumField() {
-            const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        },
         schema() {
             return yup.object({
                 Email: yup.string().required().email(),
