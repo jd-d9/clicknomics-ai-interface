@@ -72,7 +72,8 @@ export default {
                 { title: 'Domain Expiration', key: 'Expires', align: 'center' },
             ],
             selected: [],
-            permissions:{}
+            permissions:{},
+            showLoader:false
         }
     },
     mounted() {
@@ -85,8 +86,8 @@ export default {
     methods: {
         pull() {
             this.showLoader = true;
-            const ajaxUrl = this.$api + '/domains/automated_domain/namecheap';
-
+            const ajaxUrl = this.$api + '/domains/automated_domain/namecheap?domain_type=namecheap';
+            
             const url = `${ajaxUrl}`;
             axios.get(url, {
                 headers: {
