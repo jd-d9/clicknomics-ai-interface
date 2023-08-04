@@ -260,7 +260,6 @@ export default {
             totalPageCount: 0,
             loading: true,
             options: {},
-            currentItemsTable: [],
             permissions: {},
             showLoader:false,
         }
@@ -398,9 +397,6 @@ export default {
                 }
                 this.showLoader = false;
             });
-        },
-        currentItems(currentItems) {
-            this.currentItemsTable = currentItems;
         },
     }
 }

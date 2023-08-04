@@ -647,11 +647,6 @@ export default {
                 link.setAttribute('download', 'demo.csv');
                 document.body.appendChild(link);
                 link.click();
-this.message = {
-                            text: response.data.message,
-                            type: 'success',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
             })
             .catch(error => {
                     if (error.response.data.message) {
@@ -704,12 +699,18 @@ this.message = {
                     this.closeModal();
                     this.getDatacenterVpcManagementSystemReport();
                     this.showLoader = false;
-                    this.selectedFile = '';
                     this.message = {
                         text: response.data.message,
                         type: 'success',
                     }
                     this.$eventBus.emit('flash-message', this.message, '');
+                }else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
                 }
             })
             .catch(error => {

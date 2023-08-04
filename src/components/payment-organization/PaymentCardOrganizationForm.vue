@@ -60,7 +60,8 @@
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Card CVV</label>
-                                    <input type="number" maxlength='5' id="input-username" :class="{'form-control': true}" placeholder="Card CVV" v-model="cardCvv"/>
+                                    <Field type="number" name="cardCvv" maxlength='5' id="input-username" :class="{'form-control': true, 'border-red-600': errors.cardCvv}" placeholder="Card CVV" v-model="cardCvv"/>
+                                    <span class="text-red-600" v-if="errors.cardCvv">Card CVV is a required field and minimum 3 digits.</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
@@ -173,6 +174,7 @@ export default {
             return yup.object({
                 cardExpiration: yup.string().required(),
                 lastFourDigit: yup.string().required().min(4).max(4),
+                cardCvv: yup.string().required().min(3),
                 name: yup.string().required(),
                 type: yup.string().required(),
             });

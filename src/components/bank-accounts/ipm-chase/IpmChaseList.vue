@@ -333,6 +333,10 @@ export default {
                             title: val.transaction_type
                         })
                     });
+                    const currentItems = {
+                        itemsPerPage: -1
+                    };
+                    this.currentItems(currentItems);
                     this.showLoader = false;
                 }else {
                     this.message = {
@@ -465,11 +469,12 @@ export default {
                 .then(response => {
                     if(response.data.success) {
                         this.getIpmChaseReport();
-                    this.message = {
-                        text: response.data.message,
-                        type: 'success',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
+                        this.selected = [];
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                         this.showLoader = false;
                     }else {
                         this.message = {
@@ -535,11 +540,6 @@ export default {
                 link.setAttribute('download', 'demo.csv');
                 document.body.appendChild(link);
                 link.click();
-                this.message = {
-                    text: response.data.message,
-                    type: 'success',
-                }
-                this.$eventBus.emit('flash-message', this.message, '');
             })
             .catch(error => {
                 if(error.response.data.message) {
@@ -592,7 +592,6 @@ export default {
                     this.closeModal();
                     this.getIpmChaseReport();
                     this.showLoader = false;
-                    this.selectedFile = '';
                     this.message = {
                         text: response.data.message,
                         type: 'success',

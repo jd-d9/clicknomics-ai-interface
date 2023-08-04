@@ -265,6 +265,10 @@ export default {
                                 title: val.transaction_type
                             })
                         });
+                        const currentItems = {
+                            itemsPerPage: -1
+                        };
+                        this.currentItems(currentItems);
                         this.showLoader = false;
                     }else {
                         this.message = {
@@ -468,7 +472,6 @@ export default {
                     this.closeImportCsvModal();
                     this.getActivities();
                     this.showLoader = false;
-                    this.selectedFile = '';
                     this.message = {
                         text: response.data.message,
                         type: 'success',

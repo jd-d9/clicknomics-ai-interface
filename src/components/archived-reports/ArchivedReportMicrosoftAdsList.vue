@@ -27,6 +27,12 @@
 
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :headers="microsoftHeaders" :items="microsoftCampaignMetrics" :search="search" :single-expand="singleExpand" v-model:expanded="microsoftExpanded" item-value="managerAccountName" show-expand :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
+                            <template v-slot:[`item.managerAccountName`]="{item}">
+                                {{ item.selectable.managerAccountName ? item.selectable.managerAccountName : '-' }}
+                            </template>
+                            <template v-slot:[`item.name`]="{item}">
+                                {{ item.selectable.name ? item.selectable.name : '-' }}
+                            </template>
                             <template v-slot:[`item.management_system`]="{item}">
                                 <div class="text-ellipsis" style="width:180px">
                                     <router-link to="" @click="showManagementTypeModal(item.selectable.id, item.selectable.management_type, item.selectable.management_system)">{{item.selectable.management_system ? item.selectable.management_system : '-' }}</router-link>

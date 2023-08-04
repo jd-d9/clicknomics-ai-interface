@@ -234,6 +234,10 @@ export default {
                     return val.from_account == this.fromAccount;
                 })
             }
+            const currentItems = {
+                itemsPerPage: -1
+            };
+            this.currentItems(currentItems);
         },
         // to account list filtering
         filterToAccount() {
@@ -245,6 +249,10 @@ export default {
                     return val.to_account == this.toAccount;
                 })
             }
+            const currentItems = {
+                itemsPerPage: -1
+            };
+            this.currentItems(currentItems);
         },
         // get credit card payment list 
         getCreditCardPaymentList() {
@@ -392,7 +400,6 @@ export default {
         },
         // downloading csv
         downloadCsv() {
-            // /admin/img/doc/ipm-credit-card-payment-demo.csv
             axios.post(this.$api + '/settings/downloadfile', {
                 filename: 'creditCardPayments'
             }, {
@@ -410,11 +417,6 @@ export default {
                 link.setAttribute('download', 'demo.csv');
                 document.body.appendChild(link);
                 link.click();
-                this.message = {
-                    text: response.data.message,
-                    type: 'success',
-                }
-                this.$eventBus.emit('flash-message', this.message, '');
             })
             .catch(error => {
                 if(error.response.data.message) {

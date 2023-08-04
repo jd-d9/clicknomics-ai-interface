@@ -31,7 +31,7 @@
                             <template v-slot:item="{ item }">
                                 <tr :class="{'total_table': item.total_table }">
                                     <td>
-                                        {{ item.selectable.date}}
+                                        {{ item.selectable.date ? item.selectable.date : '-' }}
                                     </td>
                                     <td>{{ $filters.toCurrency(item.selectable.spendCost) }}</td>
                                     <td>{{ $filters.toCurrency(item.selectable.totalRevenue) }}</td>
@@ -231,5 +231,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

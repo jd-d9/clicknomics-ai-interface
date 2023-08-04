@@ -28,6 +28,21 @@
                         </v-card-title>
                         <!-- data table component -->
                         <v-data-table :headers="headers" :items="serverListRecord" :search="search" :single-expand="singleExpand" show-expand v-model:expanded="expanded" item-value="server_id" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                            <template v-slot:[`item.cloudways_parent`]="{ item }">
+                                {{item.selectable.cloudways_parent.email ? item.selectable.cloudways_parent.email : '-'}}
+                            </template>
+                            <template v-slot:[`item.server_id`]="{ item }">
+                                {{item.selectable.server_id ? item.selectable.server_id : '-'}}
+                            </template>
+                            <template v-slot:[`item.label`]="{ item }">
+                                {{item.selectable.label ? item.selectable.label : '-'}}
+                            </template>
+                            <template v-slot:[`item.public_ip`]="{ item }">
+                                {{item.selectable.public_ip ? item.selectable.public_ip : '-'}}
+                            </template>
+                            <template v-slot:[`item.platform`]="{ item }">
+                                {{item.selectable.platform ? item.selectable.platform : '-'}}
+                            </template>
                             <template v-slot:expanded-row="{ columns, item }">
                                 <td class="exapanded bg-light-green-lighten-5" :colspan="columns.length" v-if="item.selectable.children.length > 0">
                                     <!-- exapnded table data -->

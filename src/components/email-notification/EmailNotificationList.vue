@@ -523,9 +523,6 @@ export default {
                 });
             }
         },
-        currentItems(currentItems) {
-            this.currentItemsTable = currentItems;
-        },
         // save and update email notification
         saveEmailNotificationUser() {
             this.showLoader = true;
