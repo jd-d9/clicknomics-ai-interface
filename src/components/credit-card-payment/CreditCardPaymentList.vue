@@ -38,22 +38,10 @@
                             <v-row class="d-flex align-center justify-end">
                                 <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
-                                    <!-- <select v-model="fromAccount" @change="filterFromAccount" class="form-control serch_table">
-                                        <option disabled selected>From Account Filter</option>
-                                        <option :value="val.title" v-for="(val, index) of fromAccountFilter" :key="index">
-                                            {{ val.title }}
-                                        </option>
-                                    </select> -->
                                     <v-select clearable variant="outlined" placeholder="From Account Filter" :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="filterFromAccount"
                                     ></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
-                                    <!-- <select v-model="toAccount" @change="filterToAccount" class="form-control serch_table">
-                                        <option disabled selected>To Account Filter</option>
-                                        <option :value="val.title" v-for="(val, index) of toAccountFilter" :key="index">
-                                            {{ val.title }}
-                                        </option>
-                                    </select> -->
                                     <v-select clearable variant="outlined" placeholder="To Account Filter"  :items="toAccountFilter" v-model="toAccount" @update:modelValue="filterToAccount"></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal ">
@@ -64,7 +52,7 @@
 
                         <v-divider class="border-opacity-100 my-4" color="success" />
 
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="creditCardPaymentList" :search="search" :itemsPerPage="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="creditCardPaymentList" :search="search" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.id`]="{ item }">
                                 {{item.selectable.id ? item.selectable.id : '-'}}
                             </template>
@@ -98,7 +86,7 @@
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn> 
                             </template>
-                            <template v-slot:tbody v-if="creditCardPaymentList.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
@@ -218,7 +206,7 @@ export default {
         // total row
         sumField() {
             const key = 'amount';
-            return this.creditCardPaymentList.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         }
     },
     methods: {        
@@ -227,6 +215,8 @@ export default {
             window.$('#importCsvModal').modal('show');
         },
         closeImportCsvModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null) ;
             window.$('#importCsvModal').modal('hide');
         },
         // update date range
@@ -280,6 +270,10 @@ export default {
                     this.creditCardPaymentList = getData.data;
                     this.creditCardPaymentFilter = getData.data;
                     this.permissions = getData.permission;
+                    const currentItems = {
+                        itemsPerPage: -1
+                    };
+                    this.currentItems(currentItems);
                     response.data.allfromAccount.forEach((val) => {
                         this.fromAccountFilter.push({
                             title: val.from_account,
@@ -473,7 +467,6 @@ export default {
                     this.closeImportCsvModal();
                     this.getCreditCardPaymentList();
                     this.showLoader = false;
-                    this.selectedFile = '';
                     this.message = {
                         text: response.data.message,
                         type: 'success',
@@ -526,7 +519,28 @@ export default {
         // select csv file
         chooseFile(e) {
             this.selectedFile = e.target.files[0];
-        }
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.creditCardPaymentList.filter((val) => {
+                    return val.id && val.id.toString().includes(this.search.toLowerCase()) || 
+                           val.payment_date && val.payment_date.toString().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase()) ||
+                           val.from_account && val.from_account.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.to_account && val.to_account.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.status && val.status.toLowerCase().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.creditCardPaymentList;
+            }
+            else {
+                const data = this.creditCardPaymentList.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
+        },
     }
 }
 </script>

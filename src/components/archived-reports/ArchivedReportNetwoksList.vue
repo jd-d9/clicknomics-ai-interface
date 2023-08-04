@@ -26,7 +26,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networksheaders" :items="networkMetrics" :search="search" :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage">
+                        <v-data-table :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="networksheaders" :items="networkMetrics" :search="search" :single-expand="singleExpand" class="table-hover-class mt-4" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.network_name`]="{ item }">
                                 {{item.selectable.network_name ? item.selectable.network_name : '-'}}
                             </template>
@@ -48,7 +48,7 @@
                             <template v-slot:[`item.total_revenue`]="{ item }">
                                 {{$filters.toCurrency(item.selectable.total_revenue)}}
                             </template>
-                            <template v-slot:tbody v-if="networkMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
@@ -103,6 +103,7 @@ export default {
             reportsData: [],
             search: '',
             networkMetrics: [],
+            currentItemsTable: [],
             singleExpand: true,
             expanded: [],
             page: 1,
@@ -115,17 +116,17 @@ export default {
     computed: {
         sumRevenue() {
             const key = 'total_revenue';
-            let data = _.cloneDeep(this.networkMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             return data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         sumClicks() {
             const key = 'clicks';
-            let data = _.cloneDeep(this.networkMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             return data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         sumConversions() {
             const key = 'conversions';
-            let data = _.cloneDeep(this.networkMetrics);
+            let data = _.cloneDeep(this.currentItemsTable);
             return data.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         networksheaders: function() {
@@ -175,6 +176,10 @@ export default {
                     this.networkMetrics.map((data) => {
                         data.revenue = this.$filters.toCurrency(data.total_revenue);
                     });
+                    const currentItems = {
+                        itemsPerPage: -1
+                    };
+                    this.currentItems(currentItems);
                     if(this.networkMetrics.length > 0){
                         setTimeout(() => {
                             this.resizableGrid(document.getElementsByTagName('table')[0]);
@@ -224,6 +229,28 @@ export default {
                 }
                 this.showLoader = false;
             });
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.networkMetrics.filter((val) => {
+                    return val.network_name && val.network_name.toLowerCase().includes(this.search.toLowerCase()) || 
+                           val.email && val.email.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.clicks && val.clicks.toString().includes(this.search.toLowerCase()) ||
+                           val.conversions && val.conversions.toString().includes(this.search.toLowerCase()) ||
+                           val.epc && val.epc.toString().includes(this.search.toLowerCase()) ||
+                           val.conversions_rate && val.conversions_rate.toString().includes(this.search.toLowerCase()) ||
+                           val.total_revenue && val.total_revenue.toString().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.networkMetrics;
+            }
+            else {
+                const data = this.networkMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
         },
         // made resizable table
         resizableGrid(table) {

@@ -30,7 +30,7 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="dataMetrics" :search="search" :items-per-page="itemsPerPage">
+                        <v-data-table class="table-hover-class mt-4" :headers="headers" :items="dataMetrics" :search="search" :items-per-page="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.date`]="{ item }">
                                 {{item.selectable.date ? item.selectable.date : '-'}}
                             </template>
@@ -56,7 +56,7 @@
                                 </v-btn> 
                             </template>
 
-                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td class="text-center">{{ $filters.toCurrency(sumField) }}</td>
@@ -76,37 +76,6 @@
                 </v-col>
             </v-row>
         </v-container>
-
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Import Fixed Monthly Cost List</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" class="mdi mdi-close-circle"></span>
-                        </button>
-                    </div>
-                    <form>
-                        <div class="modal-body">
-                            <div class="file-upload">
-                                <div class="file-select">
-                                    <div class="file-select-button" id="fileName">Choose File</div>
-                                    <div class="file-select-name" id="noFile" v-if="file">{{file[0].name}}</div>
-                                    <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
-                                    <input @change="handleUpload($event)" title="Choose CSV"  class="inputFile form-control-file" type="file" name="chooseFile"  required/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer pt-0">
-                            <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-import">Import</v-btn>    
-                                <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" data-dismiss="modal">Close</v-btn>
-                            </v-col>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -141,7 +110,7 @@ export default {
     computed: {
         sumField() {
             const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0);
         }
     },
     mounted() {
@@ -284,7 +253,25 @@ export default {
                 }
                 this.showLoader = false;
             });
-        }
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.dataMetrics.filter((val) => {
+                    return val.date && val.date.toString().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase()) ||
+                           val.notes && val.notes.toLowerCase().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.dataMetrics;
+            }
+            else {
+                const data = this.dataMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
+        },
     }
 }
 </script>

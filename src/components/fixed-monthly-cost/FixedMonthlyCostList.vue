@@ -68,7 +68,7 @@
                                     <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                 </v-btn>                                                            
                             </template>
-                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td></td>
                                     <td>Totals</td>
@@ -107,9 +107,7 @@
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
                                     <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" accept=".csv" name="selectFile" required/>
-                                    <!-- <Field @change="chooseFile" title="Choose CSV" :class="{'border-red-600': errors.selectFile}" class="inputFile form-control-file" type="file" accept=".csv" name="selectFile" required/> -->
                                 </div>
-                                <!-- <ErrorMessage class="text-red-600" name="selectFile"/> -->
                             </div>
                         </div>
                         <div class="modal-footer pt-0">
@@ -348,6 +346,8 @@ export default {
             window.$('#importCsvModal').modal('show');
         },
         closeImportCsvModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null) ;
             window.$('#importCsvModal').modal('hide');
         },
         // open/close bulk edition operation cost modal

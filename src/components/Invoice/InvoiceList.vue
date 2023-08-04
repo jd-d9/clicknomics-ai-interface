@@ -304,7 +304,6 @@ export default {
         });
         this.getInvoicesList();
         this.fetchNetworkList();
-        this.filterUsingNetwork();
     },
     watch: {
         networkSelected(val) {
@@ -347,32 +346,58 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        this.networkFilter = [];
-                        response.data.networksList.forEach((val) => {
-                            if (val.network_name && val.network_name !== null) {
-                                this.networkFilter.push(val.network_name);
-                            }
-                        })
-                        this.showLoader = false;
-                    } else {
+            .then(response => {
+                if (response.data.success) {
+                    this.networkFilter = [];
+                    response.data.networksList.forEach((val) => {
+                        if (val.network_name && val.network_name !== null) {
+                            this.networkFilter.push(val.network_name);
+                        }
+                    })
+                    this.showLoader = false;
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if(error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
                         this.message = {
-                            text: response.data.message,
+                            text: error.response.data.errors[0],
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.showLoader = false;
-                });
-        },
-        // invoice list filter using selected network
-        filterUsingNetwork() {
-            console.log(this.invoiceList, this.networkSelected, 'oifihfg')
+                }
+                this.showLoader = false;
+            });
         },
         // add multiple email address field
         addNewItem() {
@@ -389,55 +414,54 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        this.invoiceList = response.data.data.invoiceList;
-                        this.invoiceFilter = response.data.data.invoiceList;
-                        console.log(response.data.data.invoiceList, 'this.invoiceList')
-                        this.showLoader = false;
+            .then(response => {
+                if (response.data.success) {
+                    this.invoiceList = response.data.data.invoiceList;
+                    this.invoiceFilter = response.data.data.invoiceList;
+                    this.showLoader = false;
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
                     } else {
                         this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
+                            text: error.response.data.errors[0],
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
         // delete invoice
         deleteInvoice(id) {

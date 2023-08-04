@@ -29,14 +29,14 @@
                         </v-card-title>
 
                         <!-- data table component -->
-                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" >
+                        <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                             <template v-slot:[`item.network`]="{ item }">
                                 {{item.selectable.network ? item.selectable.network : '-'}}
                             </template>
                             <template v-slot:[`item.amount`]="{ item }">
                                 {{$filters.toCurrency(item.selectable.amount)}}
                             </template>
-                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td>{{ $filters.toCurrency(sumField) }}</td>
@@ -63,6 +63,7 @@ export default {
             message: {},
             showLoader: false,
             dataMetrics: [],
+            currentItemsTable: [],
             search: '',
             itemsPerPage: -1,
             networkNameFilter: [],
@@ -74,7 +75,7 @@ export default {
     computed: {
         sumField() {
             const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
         headers: function() {
             return [
@@ -117,10 +118,15 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.dataMetrics = response.data.data;
+                    const getData = response.data;
+                    this.dataMetrics = getData.data;
+                    const currentItems = {
+                        itemsPerPage: -1
+                    };
+                    this.currentItems(currentItems);
                     if(response) {
                         this.networkNameFilter = [];
-                        response.data.allNetworks.map((data) => {
+                        getData.allNetworks.map((data) => {
                             this.networkNameFilter.push({
                                 title : data.network,
                                 key : data.id
@@ -176,6 +182,23 @@ export default {
                 }
                 this.showLoader = false;
             });
+        },
+        // current items for sum field
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.dataMetrics.filter((val) => {
+                    return val.network && val.network.toLowerCase().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.dataMetrics;
+            }
+            else {
+                const data = this.dataMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
         },
         // made resizable table
         resizableGrid(table) {

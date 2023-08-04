@@ -114,9 +114,7 @@
                                     <div class="file-select-name" id="noFile" v-if="selectedFile">{{selectedFile.name}}</div>
                                     <div class="file-select-name" id="noFile" v-else>No file chosen...</div>
                                     <input @change="chooseFile" title="Choose CSV" class="inputFile form-control-file" type="file" accept=".csv" name="selectFile" required/>
-                                    <!-- <Field @change="chooseFile" title="Choose CSV" :class="{'border-red-600': errors.selectFile}" class="inputFile form-control-file" type="file" accept=".csv" name="selectFile" required/> -->
                                 </div>
-                                <!-- <ErrorMessage class="text-red-600" name="selectFile"/> -->
                             </div>
                         </div>
                         <div class="modal-footer pt-0">
@@ -325,10 +323,6 @@ export default {
                 Status: yup.string().required(),
             });
         },
-        sumField() {
-            const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        }
     },
     mounted() {
         // this.dataMetrics = this.list;
@@ -348,6 +342,8 @@ export default {
             window.$('#exampleModalCenter').modal('show');
         },
         closeImportCsvModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null);
             window.$('#exampleModalCenter').modal('hide');
         },
         openModal() {

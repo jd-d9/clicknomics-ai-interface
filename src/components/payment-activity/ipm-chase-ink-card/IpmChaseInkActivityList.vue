@@ -57,7 +57,7 @@
                             </v-row> 
 
                             <!-- data table component -->
-                            <v-data-table class="table-hover-class mt-4" show-select :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
+                            <v-data-table class="table-hover-class mt-4" show-select :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                                 <template v-slot:[`item.date`]="{ item }">
                                     {{ item.selectable.date ? item.selectable.date : '-' }}
                                 </template>
@@ -85,7 +85,7 @@
                                         <v-tooltip activator="parent" location="top">Delete</v-tooltip>
                                     </v-btn>                                                            
                                 </template>
-                                <template v-slot:tbody v-if="dataMetrics.length > 0">
+                                <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                     <tr class="total_table table-body-back bg-blue-darken-2">
                                         <td></td>
                                         <td>Totals</td>
@@ -180,7 +180,7 @@ export default {
     computed: {
         sumField() {
             const key = 'amount';
-            return this.dataMetrics.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
+            return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
         },
     },
     mounted() {
@@ -196,6 +196,8 @@ export default {
             window.$('#importCsvModal').modal('show');
         },
         closeImportCsvModal() {
+            this.selectedFile = '';
+            window.$('input[type=file]').val(null);
             window.$('#importCsvModal').modal('hide');
         },
         // update date range
@@ -558,7 +560,25 @@ export default {
         // select csv file
         chooseFile(e) {
             this.selectedFile = e.target.files[0];
-        }
+        },
+        currentItems(currentItems) {
+            if(this.search) {
+                const data = this.dataMetrics.filter((val) => {
+                    return val.date && val.date.toString().includes(this.search.toLowerCase()) || 
+                           val.amount && val.amount.toString().includes(this.search.toLowerCase()) ||
+                           val.description && val.description.toLowerCase().includes(this.search.toLowerCase()) ||
+                           val.transaction_type && val.transaction_type.toLowerCase().includes(this.search.toLowerCase())
+                })
+                data.length <= 10 ? this.currentItemsTable = data : (currentItems.itemsPerPage != -1 ? this.currentItemsTable = data.slice(0, currentItems.itemsPerPage) : this.currentItemsTable = data);
+            }
+            else if(currentItems.itemsPerPage == -1) {
+                this.currentItemsTable = this.dataMetrics;
+            }
+            else {
+                const data = this.dataMetrics.slice(0, currentItems.itemsPerPage);
+                this.currentItemsTable = data;
+            }
+        },
     },
 }
 </script>
