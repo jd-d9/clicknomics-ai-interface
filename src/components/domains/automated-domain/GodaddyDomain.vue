@@ -76,7 +76,8 @@ export default {
                 { title: 'Domain Expiration', key: 'expires', align: 'center' },
             ],
             selected: [],
-            permissions:{}
+            permissions:{},
+            showLoader:false
         }
     },
     mounted() {
@@ -89,7 +90,7 @@ export default {
     methods: {
         pull() {
             this.showLoader = true;
-            const ajaxUrl = this.$api + '/domains/automated_domain/godaddy';
+            const ajaxUrl = this.$api + '/domains/automated_domain/godaddy?domain_type=godaddy';
 
             const url = `${ajaxUrl}`;
             axios.get(url, {
@@ -157,7 +158,8 @@ export default {
             this.showLoader = true;
             let data = {
                 renewAuto: item.renewAuto,
-                id: item.id
+                id: item.id,
+                domain_type:'godaddy'
             }
             const ajaxUrl = this.$api + '/domains/automated_domain/godaddyAutoRenewUpdate';
 
