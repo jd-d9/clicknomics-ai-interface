@@ -39,10 +39,10 @@
                                 {{item.selectable.ip ? item.selectable.ip : '-'}}
                             </template>
                             <template v-slot:[`item.status`]="{ item }">
-                                <div color="red-darken-4" v-if="item.selectable.status ==='Listed'">
+                                <div class="text-red-lighten-1" v-if="item.selectable.status ==='Listed'">
                                     {{item.selectable.status ? 'Blacklisted' : '-'}}
                                 </div>
-                                <div color="green-darken-2" v-if="item.selectable.status ==='OK'">
+                                <div class="text-green-lighten-1" v-if="item.selectable.status ==='OK'">
                                     {{item.selectable.status ? 'No Issues' : '-'}}
                                 </div>
                             </template>
