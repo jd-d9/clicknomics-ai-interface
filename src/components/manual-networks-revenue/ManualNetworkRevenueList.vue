@@ -88,7 +88,7 @@
                                 </v-btn>
                             </template>
 
-                            <template v-slot:tbody v-if="dataMetrics.length > 0">
+                            <template v-slot:tbody v-if="currentItemsTable.length > 0">
                                 <tr class="total_table table-body-back bg-blue-darken-2">
                                     <td>Totals</td>
                                     <td></td>
@@ -234,70 +234,69 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        const getData = response.data;
-                        this.dataMetrics = getData.data;
-                        this.networkNameFilter = [];
-                        getData.allNetworks.forEach((val) => {
-                            this.networkNameFilter.push(
-                                {
-                                    key: val.manual_network.id,
-                                    title: val.manual_network.network
-                                }
-                            )
-                        });
-                        this.permissions = getData.permission;
-                        this.showLoader = false;
+            .then(response => {
+                if (response.data.success) {
+                    const getData = response.data;
+                    this.dataMetrics = getData.data;
+                    this.networkNameFilter = [];
+                    getData.allNetworks.forEach((val) => {
+                        this.networkNameFilter.push(
+                            {
+                                key: val.manual_network.id,
+                                title: val.manual_network.network
+                            }
+                        )
+                    });
+                    this.permissions = getData.permission;
+                    const currentItems = {
+                        itemsPerPage: -1
+                    };
+                    this.currentItems(currentItems);
+                    this.showLoader = false;
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
                     } else {
                         this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
+                            text: error.response.data.errors[0],
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
-        // checkOpenPicker() {
-        //     setTimeout(() => {
-        //         this.getManualNetworksEntry();
-        //     },100)
-        // },
         // delete data
         deleteData(id) {
             if (confirm("Do you really want to delete?")) {
@@ -381,11 +380,6 @@ export default {
                     link.setAttribute('download', 'demo.csv');
                     document.body.appendChild(link);
                     link.click();
-                    this.message = {
-                        text: response.data.message,
-                        type: 'success',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
                 })
                 .catch(error => {
                     if (error.response.data.message) {
@@ -433,60 +427,59 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        this.closeModal();
-                        this.getManualNetworksEntry();
-                        this.showLoader = false;
-                        this.selectedFile = '';
+            .then(response => {
+                if (response.data.success) {
+                    this.closeModal();
+                    this.getManualNetworksEntry();
+                    this.showLoader = false;
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
                         this.message = {
-                            text: response.data.message,
-                            type: 'success',
+                            text: error.response.data.errors[0],
+                            type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
                     } else {
                         this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
+                            text: error.response.data.errors[0],
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
         // current items for sum field
         currentItems(currentItems) {

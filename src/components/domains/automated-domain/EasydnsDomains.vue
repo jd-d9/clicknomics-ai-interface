@@ -15,7 +15,7 @@
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1'">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             Easydns Domain List
@@ -27,22 +27,22 @@
 
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage">
-                            <template v-slot:[`item.domain_credentials`]="{ item }">
-                              {{ item.selectable.domain_credentials ? item.selectable.domain_credentials.email : '' }}
+                            <template v-slot:[`item.email`]="{ item }">
+                              {{ item.selectable.email ? item.selectable.email : '-' }}
                             </template>
                             <template v-slot:[`item.Name`]="{ item }">
-                              {{ item.selectable.Name }}
+                              {{ item.selectable.Name ? item.selectable.Name : '-' }}
                             </template>
                             <template v-slot:[`item.auto_renewals`]="{ item }">
                               <v-switch color="primary" :model-value="item.selectable.auto_renewals == 'true' ? true : false" disabled="disabled"></v-switch>
                             </template>
                             <template v-slot:[`item.expiry`]="{ item }">
-                              {{item.selectable.expiry}}
+                              {{item.selectable.expiry ? item.selectable.expiry : '-'}}
                             </template>
                         </v-data-table>
                     </v-card>
                 </v-col>
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-else>
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-content-center align-center">
                             You have no access for this page
@@ -65,11 +65,13 @@ export default {
             dataMetrics: [],
             search: '',
             headers: [
-                { title: 'Account (email)', key: 'domain_credentials'},
+                { title: 'Account (email)', key: 'email'},
                 { title: 'Domain Name', key: 'domain' },
                 { title: 'Domain Auto Renew Status', key: 'auto_renewals', align: 'center' },
                 { title: 'Domain Expiration', key: 'expiry', align: 'center' },
             ],
+            itemsPerPage: -1,
+            showLoader: false,
             selected: [],
             permissions:{}
         }
@@ -85,7 +87,6 @@ export default {
         pull() {
             this.showLoader = true;
             const ajaxUrl = this.$api + '/domains/automated_domain/easydns?domain_type=easydns';
-
             const url = `${ajaxUrl}`;
             axios.get(url, {
                 headers: {
@@ -99,49 +100,44 @@ export default {
                     this.dataMetrics = getData.data;
                     this.permissions = getData.permission;
                 }else {
-                    this.$toast.open({
-                        message: response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                 }
-              this.showLoader = false;
+                this.showLoader = false;
             })
             .catch(error => {
                 if(error.response.data.message) {
-                    this.$toast.open({
-                        message: error.response.data.message,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                 }
                 if(error.response.data.error) {
-                    this.$toast.open({
-                        message: error.response.data.error,
-                        position: 'top-right',
-                        duration: '5000',
-                        type: 'error'
-                    });
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                 }
                 if(error.response.data.errors) {
                     if(error.response.data.errors.length == 1) {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }else if(error.response.data.errors.length == 0){
                         this.backendErrorMessage = '';
                     }else {
-                        this.$toast.open({
-                            message: error.response.data.errors[0],
-                            position: 'top-right',
-                            duration: '5000',
-                            type: 'error'
-                        });
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
                     }
                 }
                 this.showLoader = false;

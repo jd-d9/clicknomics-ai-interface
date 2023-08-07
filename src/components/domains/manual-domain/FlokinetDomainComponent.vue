@@ -422,8 +422,8 @@ export default {
             this.activity.status = result.status;
             this.activity.domain_name = result.domain
             this.activity.auto_renew_status = result.auto_renewals;
-            this.activity.expiration_date = result.expire_date;
-            this.activity.creation_date = result.creation_date;
+            this.activity.expiration_date = moment(result.expire_date).format('YYYY-MM-DD');
+            this.activity.creation_date = moment(result.creation_date).format('YYYY-MM-DD');
             // this.activity.notes = result.notes ? result.notes : '';
             this.openModal();
         },
@@ -588,11 +588,6 @@ export default {
                 link.setAttribute('download', 'demo.csv');
                 document.body.appendChild(link);
                 link.click();
-                this.message = {
-                    text: response.data.message,
-                    type: 'success',
-                }
-                this.$eventBus.emit('flash-message', this.message, '');
             })
             .catch(error => {
                 if(error.response.data.message) {
@@ -645,7 +640,6 @@ export default {
                     this.closeImportCsvModal();
                     this.getDomainList();
                     this.showLoader = false;
-                    this.selectedFile = '';
                     this.message = {
                         text: response.data.message,
                         type: 'success',

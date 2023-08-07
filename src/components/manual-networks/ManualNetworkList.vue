@@ -41,7 +41,7 @@
                         <!-- data table component -->
                         <v-data-table class="table-hover-class mt-4"
                             :footer-props="{ 'items-per-page-options': [5, 10, 15, 25, 50, 100, -1] }" :headers="headers"
-                            :items="dataMetrics" :search="search" @current-items="currentItems"
+                            :items="dataMetrics" :search="search"
                             :itemsPerPage="itemsPerPage">
                             <template v-slot:[`item.id`]="{ item }">
                                 {{ item.selectable.id ? item.selectable.id : '-' }}
@@ -234,7 +234,6 @@ export default {
                 { title: 'Date Added', key: 'created_at' },
                 { title: 'Action', key: 'action', sortable: false },
             ],
-            currentItemsTable: [],
             itemsPerPage: -1,
             list: {
                 id: null,
@@ -271,9 +270,6 @@ export default {
         this.getManualNetworkListing();
     },
     methods: {
-        currentItems(currentItems) {
-            this.currentItemsTable = currentItems;
-        },
         // formate date
         format_date(value) {
             if (value) {

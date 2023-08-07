@@ -147,6 +147,10 @@ export default {
                     const allData = response.data;
                     this.dataMetrics = allData.data;
                     this.permissions = allData.permission;
+                    const currentItems = {
+                        itemsPerPage: -1
+                    };
+                    this.currentItems(currentItems);
                     this.showLoader = false;
                 }else {
                     this.message = {

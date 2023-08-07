@@ -230,7 +230,6 @@ import * as yup from 'yup';
 import { Field, Form } from 'vee-validate';
 import axios from '@axios';
 export default {
-    // props: ['list', 'datacenter', 'residential', 'multilogin', 'localsystem'],
     components: {
         Field,
         Form,
@@ -370,85 +369,85 @@ export default {
                     Authorization: this.getAccessToken(),
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        const Data = response.data;
-                        this.adsAccountsList = Data.data;
-                        this.adsAccountsListFilter = Data.data;
-                        this.dataCenter = [];
-                        this.residential = [];
-                        this.multiLogin = [];
-                        this.localSystem = [];
-                        Data.datacenter.forEach((val) => {
-                            this.dataCenter.push({
-                                title: val.company,
-                                key: val.text
-                            })
-                        });
-                        Data.residential.forEach((val) => {
-                            this.residential.push({
-                                title: val.company,
-                                key: val.text
-                            })
-                        });
-                        Data.multilogin.forEach((val) => {
-                            this.multiLogin.push({
-                                title: val.profile_name,
-                                key: val.text
-                            })
-                        });
-                        Data.localsystem.forEach((val) => {
-                            this.localSystem.push({
-                                title: val.company,
-                                key: val.text
-                            })
-                        });
-                        this.permissions = Data.permission;
-                        this.showLoader = false;
+            .then(response => {
+                if (response.data.success) {
+                    const Data = response.data;
+                    this.adsAccountsList = Data.data;
+                    this.adsAccountsListFilter = Data.data;
+                    this.dataCenter = [];
+                    this.residential = [];
+                    this.multiLogin = [];
+                    this.localSystem = [];
+                    Data.datacenter.forEach((val) => {
+                        this.dataCenter.push({
+                            title: val.company,
+                            key: val.text
+                        })
+                    });
+                    Data.residential.forEach((val) => {
+                        this.residential.push({
+                            title: val.company,
+                            key: val.text
+                        })
+                    });
+                    Data.multilogin.forEach((val) => {
+                        this.multiLogin.push({
+                            title: val.profile_name,
+                            key: val.text
+                        })
+                    });
+                    Data.localsystem.forEach((val) => {
+                        this.localSystem.push({
+                            title: val.company,
+                            key: val.text
+                        })
+                    });
+                    this.permissions = Data.permission;
+                    this.showLoader = false;
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                console.log(error, 'error --')
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
                     } else {
                         this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    console.log(error, 'error --')
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
+                            text: error.response.data.errors[0],
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
         // get data for edit and set values in respected fields
         edit(id) {

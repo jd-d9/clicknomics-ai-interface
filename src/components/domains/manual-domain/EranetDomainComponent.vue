@@ -198,7 +198,7 @@
                                     <Field name="renewStatus" v-model="activity.auto_renew_status">
                                         <v-select name="renewStatus" :class="{'form-control autocomplete': true , 'border-red-600':errors.renewStatus }" :items="accountStatusList" v-model="activity.auto_renew_status"></v-select>
                                     </Field>
-                                    <span class="text-red-600" v-if="errors.expDate">Domain auto renew status is a required field</span>
+                                    <span class="text-red-600" v-if="errors.renewStatus">Domain auto renew status is a required field</span>
                                 </v-col>
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
@@ -422,8 +422,8 @@ export default {
             this.activity.status = result.status;
             this.activity.domain_name = result.domain
             this.activity.auto_renew_status = result.auto_renewals;
-            this.activity.expiration_date = result.expire_date;
-            this.activity.creation_date = result.creation_date;
+            this.activity.expiration_date = moment(result.expire_date).format('YYYY-MM-DD');
+            this.activity.creation_date = moment(result.creation_date).format('YYYY-MM-DD');
             // this.activity.notes = result.notes ? result.notes : '';
             this.openModal();
         },
@@ -610,11 +610,6 @@ export default {
                 link.setAttribute('download', 'demo.csv');
                 document.body.appendChild(link);
                 link.click();
-                this.message = {
-                    text: response.data.message,
-                    type: 'success',
-                }
-                this.$eventBus.emit('flash-message', this.message, '');
             })
             .catch(error => {
                 if(error.response.data.message) {
@@ -667,7 +662,6 @@ export default {
                     this.closeImportCsvModal();
                     this.getDomainList();
                     this.showLoader = false;
-                    this.selectedFile = '';
                     this.message = {
                         text: response.data.message,
                         type: 'success',

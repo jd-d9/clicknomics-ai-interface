@@ -60,7 +60,7 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">To Account</label>
                                     <Field name="Toaccount" v-model="toAccount">
-                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.Toaccount}" :items="creditLines" v-model="toAccount" placeholder="Select To account"></v-select>
+                                        <v-autocomplete :class="{'form-control autocomplete': true, 'border-red-600': errors.Toaccount}" :items="creditLines" v-model="toAccount" placeholder="Select To account"></v-autocomplete>
                                     </Field>
                                     <span class="text-red-600" v-if="errors.Toaccount">To Account is a required field</span>
                                 </v-col>
@@ -68,7 +68,7 @@
                                 <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
                                     <label class="form-control-label">Status</label>
                                     <Field name="Status" v-model="status">
-                                        <v-select :class="{'form-control autocomplete': true, 'border-red-600': errors.Status}" :items="statusList" v-model="status" placeholder="Select Status"></v-select>
+                                        <v-autocomplete :class="{'form-control autocomplete': true, 'border-red-600': errors.Status}" :items="statusList" v-model="status" placeholder="Select Status"></v-autocomplete>
                                     </Field>
                                     <span class="text-red-600" v-if="errors.Status">Status is a required field</span>
                                 </v-col>
@@ -155,11 +155,6 @@ export default {
             ],
             toggleComponent: true,
             breadCrumbMessage: 'Create',
-            invalidDate: '',
-            invalidAmount: '',
-            invalidFromAccount: '',
-            invalidToAccount: '',
-            invalidStatus: '',
             backendErrorMessage: '',
             multipleErrors: [],
         }
@@ -310,11 +305,12 @@ export default {
             })
             .then(response => {
                 if(response.data.success) {
-                    this.date = response.data.data.payment_date;
-                    this.amount = response.data.data.amount;
-                    this.fromAccount = response.data.data.from_account;
-                    this.toAccount = response.data.data.to_account;
-                    this.status = response.data.data.status;
+                    const getData = response.data.data;
+                    this.date = getData.payment_date;
+                    this.amount = getData.amount;
+                    this.fromAccount = getData.from_account;
+                    this.toAccount = getData.to_account;
+                    this.status = getData.status;
                     this.showLoader = false;
                 }else {
                     this.message = {
