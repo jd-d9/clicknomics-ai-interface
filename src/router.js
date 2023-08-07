@@ -109,12 +109,21 @@ import IpmDivvyActivityForm from './components/payment-activity/ipm-divvy-card/I
 import IpmChaseInkActivityList from './components/payment-activity/ipm-chase-ink-card/IpmChaseInkActivityList.vue';
 import IpmChaseInkActivityForm from './components/payment-activity/ipm-chase-ink-card/IpmChaseInkActivityForm.vue';
 
-
 // Account Activity Router
 import LoginActivityComponent from './components/login-activity/LoginActivityComponent.vue';
 
+// Monitoring Router
+import AdsAccountsComponent from './components/monitoring/AdsAccountsComponent.vue';
+import UrlsUptimeUsaComponent from './components/monitoring/UrlsUptimeUsaComponent.vue';
+import UrlsUptimeEuropeComponent from './components/monitoring/UrlsUptimeEuropeComponent.vue';
+import BlacklistIntegrityComponent from './components/monitoring/BlacklistIntegrityComponent.vue';
+import AdsIssuesComponent from './components/monitoring/AdsIssuesComponent.vue';
+import SpeedTestComponent from './components/monitoring/SpeedTestComponent.vue';
+import MetricsComponent from './components/monitoring/MetricsComponent.vue';
+import MicrosoftMonitoringComponent from './components/monitoring/MicrosoftMonitoringComponent.vue';
+import GoogleMonitoringComponent from './components/monitoring/GoogleMonitoringComponent.vue';
 
-
+ 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -271,6 +280,18 @@ const router = createRouter({
         {path: '/payment_methods/ipm-chase-ink-card/activity/:id/edit', component: IpmChaseInkActivityForm, meta: {auth: true}},
         // Account Login Activity
         {path: '/settings/login-activity', component: LoginActivityComponent, meta: {auth: true}},
+
+        // Monitoring Router
+        {path: '/monitoring/adsAccounts', component: AdsAccountsComponent, meta: {auth: true}},
+        {path: '/monitoring/urlUptimeUsa', component: UrlsUptimeUsaComponent, meta: {auth: true}},
+        {path: '/monitoring/urlUptimeEurope', component: UrlsUptimeEuropeComponent, meta: {auth: true}},
+        {path: '/monitoring/blacklist', component: BlacklistIntegrityComponent, meta: {auth: true}},
+        {path: '/monitoring/adsIssues', component: AdsIssuesComponent, meta: {auth: true}},
+        {path: '/monitoring/speedTest', component: SpeedTestComponent, meta: {auth: true}},
+        {path: '/monitoring/metrics', component: MetricsComponent, meta: {auth: true}},
+        {path: '/monitoring/paymentDeclined/microsoft', component: MicrosoftMonitoringComponent, meta: {auth: true}},
+        {path: '/monitoring/paymentDeclined/google', component: GoogleMonitoringComponent, meta: {auth: true}},
+
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},
         {path: '/reporting/realTimeReports/facebook', component: CommingSoonComponent, meta: {auth: true}},

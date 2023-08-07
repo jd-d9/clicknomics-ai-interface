@@ -8,7 +8,7 @@
             <v-icon icon="mdi-progress-close" class="mr-3 text-white bg-red-darken-3" ></v-icon>
             Lorem ipsum dolor sit amet consectetur adipisicing elit.
         </v-alert> -->
-        <v-alert class="inside_alert bg-white mt-3" :class="{'text-red-darken-3': message.type == 'error', 'text-green-darken-3': message.type == 'success'}" prominent variant="outlined" border="top" v-if="message">
+        <v-alert class="inside_alert bg-white" :class="{'text-red-darken-3': message.type == 'error', 'text-green-darken-3': message.type == 'success'}" prominent variant="outlined" border="top" v-if="message">
             <v-icon icon="mdi-checkbox-marked-circle-outline" class="mr-3 text-white bg-green-darken-3" v-if="message.type == 'success'"></v-icon>
             <v-icon icon="mdi-progress-close" class="mr-3 text-white bg-red-darken-3" v-if="message.type == 'error'"></v-icon>
             {{message.text}}
