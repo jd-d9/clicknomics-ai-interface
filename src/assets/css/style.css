@@ -89,7 +89,7 @@ td.v-data-table__td {
 .side-menu-hover:hover span, .active-tab span {color: white !important;}
 .side-menu-hover:hover i, .active-tab i {color: white;}
 .side-menu-hover:hover .sidebar-dropdown-menu{display: block !important;}
-.side-menu-hover img {width: 25px;margin-right: 5px !important;}
+.side-menu-hover img {width: 23px;margin-right: 5px !important;}
 .active-tab:after{
     content: '';
     position: absolute;
@@ -295,6 +295,7 @@ td.v-data-table__td {
     box-shadow: none;
     border: none;
     text-align: center;
+    width: 100%;
 }
 .form-control.serch_table{
     height: 40px;
@@ -433,7 +434,7 @@ td.v-data-table__td {
 
 
 
-.alert_msg_div{position: fixed;right: 10px;top: 75px;z-index: 1050;border-radius: 100px;}
+.alert_msg_div{position: fixed;right: 10px;top: 6px;z-index: 1050;border-radius: 100px;}
 .inside_alert{border-radius: 100px;overflow: visible;padding: 12px 15px;}
 .inside_alert .v-alert__content{padding-left: 35px;font-size: 14px;}
 .inside_alert .v-alert__content .v-icon{
@@ -450,3 +451,14 @@ td.v-data-table__td {
 .v-alert--density-default.v-alert--border-top {
     padding-top: 12px;
 }
+.message-container {
+    border: 2px solid #fff;
+    box-shadow: rgb(100 100 111 / 20%) 0px 7px 29px 0px;
+}
+.message-container.error {
+    border-top: 3px solid orange;
+}
+.message-container.success {
+    border-top: 3px solid green;
+}
+/* .card_design .v-card-title .v-row.d-flex {margin-top: 5px;} */

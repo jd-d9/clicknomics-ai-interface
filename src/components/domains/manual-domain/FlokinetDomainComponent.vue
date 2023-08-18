@@ -5,14 +5,21 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Flokinet Domains</span>
-                        <v-spacer />
-                        <div v-if="showImportIcon">
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Flokinet Domains</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" v-if="showImportIcon" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
+                        </v-btn>
+                        <div class="button_div" v-if="!isHidden && showImportIcon">
                             <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
                                 Demo.csv
                             </v-btn>
@@ -33,14 +40,11 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Flokinet Domains List
                             <v-spacer></v-spacer>
-                            <div v-if="selected.length > 0" class="mr-2">
-                                <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                    Remove
-                                </v-btn>
-                            </div>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
-                            </v-col>                            
+                            <v-row class="d-flex align-center justify-end responsive_margin">
+                                <v-col cols="12" lg="7" md="7" sm="12" class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                                </v-col>                            
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -180,7 +184,7 @@
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Domain Creation Date</label>
                                     <Field v-model="activity.creation_date" name="createDate">
-                                        <datepicker name="createDate" v-model:value="activity.creation_date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                        <datepicker name="createDate" :class="{'border-red-600':errors.createDate }" v-model:value="activity.creation_date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                     </Field>
                                     <span class="text-red-600" v-if="errors.createDate">Domain creation date is a required field</span>
                                 </v-col>
@@ -188,7 +192,7 @@
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Domain Expiration Date</label>
                                     <Field name="expDate" v-model="activity.expiration_date">
-                                        <datepicker name="expDate" v-model:value="activity.expiration_date" valueType="format" format="YYYY-MM-DD"></datepicker>
+                                        <datepicker name="expDate" :class="{'border-red-600':errors.expDate }" v-model:value="activity.expiration_date" valueType="format" format="YYYY-MM-DD"></datepicker>
                                     </Field>
                                     <span class="text-red-600" v-if="errors.expDate">Domain expiration date is a required field</span>
                                 </v-col>
@@ -220,6 +224,7 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="reset" class="text-none bg-blue-darken-4 btn_animated mr-5 ml--4" id="reset_button" append-icon="mdi-content-save" style="opacity: 0">Reset</v-btn>
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
                             </v-col>
@@ -300,6 +305,7 @@ export default {
             permissions: {},
             backendErrorMessage: '',
             multipleErrors: [],
+            isHidden: false
         }
     },
     filters: {
@@ -325,15 +331,14 @@ export default {
         },
     },
     mounted() {
-        // this.dataMetrics = this.list;
-        // this.dataMetrics = this.list.map((item) => {
-        //     item.renewAuto = item.auto_renewals == 'Active' ? 1 : 0;
-        //     return item;
-        // })
         this.getDomainList();
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
+        });
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
         });
     },
     methods: {
@@ -350,6 +355,9 @@ export default {
             window.$('#createUpdateData').modal('show');
         },
         closeModal() {
+            document.getElementById('reset_button').click();
+            this.backendErrorMessage = '';
+            this.multipleErrors = [];
             window.$('#createUpdateData').modal('hide');
         },
         // get domain listing
@@ -438,8 +446,10 @@ export default {
             this.activity.auto_renew_status = '';
             this.activity.expiration_date = '';
             this.activity.creation_date = '';
-            // this.activity.notes = '';
-            this.openModal();
+            setTimeout(() => {
+                document.getElementById('reset_button').click();               
+                this.openModal();
+            }, 100);
         },
         // delete domain
         deleteData(id) {
@@ -536,8 +546,6 @@ export default {
                         type: 'success',
                     }
                     this.$eventBus.emit('flash-message', this.message, '');
-                    this.backendErrorMessage = '';
-                    this.multipleErrors = [];
                     this.closeModal();
                     this.getDomainList();
                     this.showLoader = false;

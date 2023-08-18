@@ -5,14 +5,21 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Residential VPS System </span>
-                        <v-spacer />
-                        <div v-if="showImportIcon">
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Residential VPS System </span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" v-if="showImportIcon" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
+                        </v-btn>
+                        <div class="button_div" v-if="!isHidden && showImportIcon">
                             <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
                                 Demo.csv
                             </v-btn>
@@ -33,49 +40,24 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Residential VPS System List
                             <v-spacer></v-spacer>
-                            <div v-if="selected.length > 0" class="mr-2">
-                                <v-btn :disabled="permissions.delete_auth == '0'" @click="deleteSelected" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                    Remove Selected
-                                </v-btn>
-                            </div>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0" v-if="false">
-                                <v-select :items="descriptionFilter" placeholder="Description Filter" clearable variant="outlined" v-model="descriptionValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0" v-if="false">
-                                <v-select :items="transactionTypeFilter" placeholder="Transaction Type Filter" clearable variant="outlined" v-model="transactionTypeValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
-                            </v-col>
-                            <!-- <date-range-picker v-model="dateRange" format="mm/dd/yyyy" @update="checkOpenPicker">
-                                <div slot="header" slot-scope="header" class="slot">
-                                    <h3 class="m-0">Calendar header</h3> <span v-if="header.in_selection"> - in selection</span>
-                                </div>
-                                <template #input="picker" style="min-width: 350px;">
-                                    {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                                </template>
-                                <template #date="data">
-                                    <span class="small">{{ data.date | dateCell }}</span>
-                                </template>
-                                <template #ranges="ranges">
-                                    <div class="ranges">
-                                        <ul>
-                                        <li v-for="(range, name) in ranges.ranges" :key="name" @click="ranges.clickRange(range)">
-                                            <b>{{ name }}</b> <small class="text-muted">{{ range[0].toDateString() }} -
-                                            {{ range[1].toDateString() }}</small>
-                                        </li>
-                                        </ul>
+                            <v-row class="d-flex align-center justify-end">
+                                <v-col v-if="selected.length > 0" class="font-medium font-weight-normal v_select_design pr-0">
+                                    <div class="mr-2">
+                                        <v-btn :disabled="permissions.delete_auth == '0'" @click="deleteSelected" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                            Remove Selected
+                                        </v-btn>
                                     </div>
-                                </template>
-                                <div slot="footer" slot-scope="data" class="slot">
-                                    <div>
-                                        <b class="text-black">Calendar footer</b> {{ data.rangeText }}
-                                    </div>
-                                    <div style="margin-left: auto">
-                                        <a @click="data.clickApply" v-if="!data.in_selection" class="btn btn-primary btn-sm">Choose current</a>
-                                    </div>
-                                </div>
-                            </date-range-picker> -->
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
-                            </v-col>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select :items="descriptionFilter" placeholder="Description Filter" clearable variant="outlined" v-model="descriptionValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select :items="transactionTypeFilter" placeholder="Transaction Type Filter" clearable variant="outlined" v-model="transactionTypeValue" @change="getDatacenterVpcManagementSystemReport"></v-select>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -216,6 +198,7 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="reset" class="text-none bg-blue-darken-4 btn_animated mr-5 ml--4" id="reset_button" append-icon="mdi-content-save" style="opacity: 0">Reset</v-btn>
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeRmAmexModal">Close</v-btn>
                             </v-col>
@@ -265,8 +248,8 @@ export default {
             activityType: 'Create',
             descriptionFilter: [],
             transactionTypeFilter: [],
-            descriptionValue: '',
-            transactionTypeValue: '',
+            descriptionValue: null,
+            transactionTypeValue: null,
             dateRangeTabReport: {startDate, endDate},
             items: [ 'CREDIT','DEBIT'],
             selectedtTransactionType: [ 'CREDIT','DEBIT'],
@@ -276,6 +259,7 @@ export default {
             selectedFile: '',
             backendErrorMessage: '',
             multipleErrors: [],
+            isHidden: false,
         }
     },
     filters: {
@@ -302,6 +286,10 @@ export default {
             behavior: 'smooth',
         });
         this.getDatacenterVpcManagementSystemReport();
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     },
     methods: {
         // open and close modal
@@ -318,6 +306,9 @@ export default {
             window.$('#createUpdateData').modal('show');
         },
         closeRmAmexModal() {
+            document.getElementById('reset_button').click();
+            this.backendErrorMessage = '';
+            this.multipleErrors = [];
             window.$('#createUpdateData').modal('hide');
         },
         // get data center vps listings data
@@ -379,37 +370,6 @@ export default {
                 this.showLoader = false;
             });
         },
-        // filterIPMChaseInkActivity() {
-        //     this.showLoader = true;
-        //     let formData = new FormData();
-        //     formData.append('startDate', this.dateRangeTabReport.startDate.toDateString());
-        //     formData.append('endDate', this.dateRangeTabReport.endDate.toDateString());
-        //     this.selectedtTransactionType.length == this.items.length ? formData.append('transactionTypeValue', 'ALL') : formData.append('transactionTypeValue', this.selectedtTransactionType);
-        //     const csrf = document.querySelector('meta[name="csrf-token"]').content;
-        //     axios.defaults.headers.common = {
-        //         'X-Requested-With': 'XMLHttpRequest',
-        //         'X-CSRF-TOKEN': csrf
-        //     };
-        //     axios.post('/filterIPMChaseInkActivity' , formData, {
-        //         headers: {
-        //             'Content-Type': 'multipart/form-data'
-        //         },
-        //     })
-        //     .then(response => {
-        //         // console.log(response);
-        //         this.cardMemberList = response.data.data;
-        //         this.showLoader = false;
-
-        //     }).catch((error) => {
-        //         this.showLoader = false;
-        //     })
-        // },
-        checkOpenPicker(e) {
-            console.log(e)
-            setTimeout(() => {
-                this.getDatacenterVpcManagementSystemReport();
-            },100)
-        },
         // edit data
         edit(id) {
             const result = this.dataMetrics.find((val) => {
@@ -429,7 +389,10 @@ export default {
             this.activity.company = '';
             this.activity.ip = '';
             this.activity.notes = '';
-            this.openRmAmexModal();
+            setTimeout(() => {
+                document.getElementById('reset_button').click();
+                this.openRmAmexModal();
+            }, 100)
         },
         // delete data
         deleteData(id) {
@@ -566,12 +529,6 @@ export default {
                 });
             }
         },
-        // view
-        view(id) {
-            console.log(id)
-            // this.viewModalDetail = _.find(this.dataMetrics, ['id', id]);
-            window.$('#viewDetail').modal('show');
-        },
         // save and update
         saveResidentialVpcManagementSystem() {
             this.showLoader = true;
@@ -595,8 +552,6 @@ export default {
                         type: 'success',
                     }
                     this.$eventBus.emit('flash-message', this.message, '');
-                    this.backendErrorMessage = '';
-                    this.multipleErrors = [];
                     this.closeRmAmexModal();
                     this.getDatacenterVpcManagementSystemReport();
                     this.showLoader = false;

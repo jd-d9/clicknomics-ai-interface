@@ -124,6 +124,7 @@ app.mixin(mixin);
 require('@/assets/css/argon.css');
 require('@/assets/css/style.css');
 require('@/assets/css/responsive.css');
+require('@/assets/css/responsive2.css');
 require('@/assets/css/dark-argon.css');
 // components
 app.component('loader-component', LoaderComponent);

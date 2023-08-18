@@ -3,7 +3,7 @@
         <loader-component v-if="showLoader"></loader-component>
         <v-card class="card_design mb-4">
             <v-card-title class="d-flex justify-space-between">
-                {{breadCrumbMessage}} Role
+                {{ breadCrumbMessage }} Role
             </v-card-title>
             <v-divider class="border-opacity-100 my-4" color="success" />
 
@@ -17,300 +17,6 @@
                         <span class="text-red-600" v-if="roleNameInvalid">Role name is a required field</span>
                     </v-col>
 
-                    <!-- tree menu structure design -->
-                    <!-- <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal exapanded">
-                        <v-table fixed-header height="500px" class="table align-items-center table-hover-class ma-0">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th class="v-data-table__td">
-                                        <div class="v-data-table-header__content">Menu Name</div>
-                                    </th>
-                                    <th class="v-data-table__td">
-                                        <div class="v-data-table-header__content">View</div>
-                                    </th>
-                                    <th class="v-data-table__td">
-                                        <div class="v-data-table-header__content">Create</div>
-                                    </th>
-                                    <th class="v-data-table__td">
-                                        <div class="v-data-table-header__content">Edit</div>
-                                    </th>
-                                    <th class="v-data-table__td">
-                                        <div class="v-data-table-header__content">Delete</div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="v-data-table__td pa-2">
-                                        <ul class="userrole_menu_tree">
-                                            <li>
-                                                <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>
-                                                Dashbaord
-                                            </li>
-                                        </ul>                                       
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="v-data-table__td pa-2">
-                                        <ul class="userrole_menu_tree">
-                                            <li>
-                                                <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00"></v-icon>
-                                                Settings
-                                            </li>
-                                        </ul>                                       
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="v-data-table__td pa-2">
-                                        <ul class="userrole_menu_tree">
-                                            <li>
-                                                <ul>
-                                                    <li>
-                                                        <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00"></v-icon>
-                                                        User Management
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>                                       
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="v-data-table__td pa-2">
-                                        <ul class="userrole_menu_tree">
-                                            <li>
-                                                <ul>
-                                                    <li>
-                                                        <ul>
-                                                            <li>
-                                                            <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>Users
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>                                       
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="v-data-table__td pa-2">
-                                        <ul class="userrole_menu_tree">
-                                            <li>
-                                                <ul>
-                                                    <li>
-                                                        <ul>
-                                                            <li>
-                                                            <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>User Roles
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>                                       
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                </tr>    
-                                
-                                <tr>
-                                    <td class="v-data-table__td pa-2">
-                                        <ul class="userrole_menu_tree">
-                                            <li>
-                                                <ul>
-                                                    <li>
-                                                        <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>
-                                                        Plan
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>                                       
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td class="v-data-table__td pa-2">
-                                        <ul class="userrole_menu_tree">
-                                            <li>
-                                                <ul>
-                                                    <li>
-                                                        <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>
-                                                        Email Notifications
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>                                       
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                    <td class="v-data-table__td">
-                                        <label class="custom-toggle">
-                                            <input type="checkbox" class="form-control">
-                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                        </label>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </v-table>
-                    </v-col> -->
-                    <!-- tree menu structure design -->
-                    
                     <v-col cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal exapanded">
                         <div class="table align-items-center table-hover-class ma-0">
                             <div class="thead-light">
@@ -336,164 +42,185 @@
                                 <div v-for="(item, ind) of menuItem" :key="ind">
                                     <!-- parents which have child(settings, accounting) are display here -->
                                     <div class="row form-row" v-if="item.child.length > 0">
-                                        <div class="row add-border-bottom">
+                                        <div class="row add-border-bottom justify-start">
                                             <div class="v-data-table__td_name col-4">
                                                 <ul class="userrole_menu_tree">
                                                     <li>
-                                                        <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00"></v-icon>
-                                                        {{item.menu}}
+                                                        <v-icon icon="mdi-folder-open" class="mx-2"
+                                                            color="#00cd00"></v-icon>
+                                                        {{ item.menu }}
                                                     </li>
-                                                </ul>                                       
-                                            </div>
-                                            <div class="v-data-table__td col-2">
-                                                <label class="custom-toggle">
-                                                    <input type="checkbox" class="form-control" v-model="item.view"
-                                                    :disabled="isDisabled(item, 'view')">
-                                                    <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                                </label>
-                                            </div>
-                                            <div class="v-data-table__td col-2">
-                                                <label class="custom-toggle">
-                                                    <input type="checkbox" class="form-control" v-model="item.create_auth"
-                                                    :disabled="isDisabled(item, 'create')">
-                                                    <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                                </label>
-                                            </div>
-                                            <div class="v-data-table__td col-2">
-                                                <label class="custom-toggle">
-                                                    <input type="checkbox" class="form-control" v-model="item.update_auth"
-                                                    :disabled="isDisabled(item, 'edit')">
-                                                    <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                                </label>
-                                            </div>
-                                            <div class="v-data-table__td col-2">
-                                                <label class="custom-toggle">
-                                                    <input type="checkbox" class="form-control" v-model="item.delete_auth"
-                                                    :disabled="isDisabled(item, 'delete')">
-                                                    <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
-                                                </label>
+                                                </ul>
                                             </div>
                                         </div>
                                         <!-- childs (Integrations, email notification) are display here -->
                                         <div class="row" v-for="(value, ind) of item.child" :key="ind">
-                                            <div class="row add-border-bottom">
+                                            <div class="row add-border-bottom"
+                                                :class="{ 'justify-start': value.child.length > 0 }">
                                                 <div class="v-data-table__td_name col-4">
                                                     <ul class="userrole_menu_tree ms-5">
                                                         <li>
-                                                            <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00" v-if="value.child.length > 0"></v-icon>
-                                                            <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00" v-else></v-icon>
-                                                            {{value.menu}}
+                                                            <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00"
+                                                                v-if="value.child.length > 0"></v-icon>
+                                                            <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"
+                                                                v-else></v-icon>
+                                                            {{ value.menu }}
                                                         </li>
-                                                    </ul>                                       
+                                                    </ul>
                                                 </div>
-                                                <div class="v-data-table__td col-2">
+                                                <div class="v-data-table__td col-2" v-if="value.child.length == 0">
                                                     <label class="custom-toggle">
                                                         <input type="checkbox" class="form-control" v-model="value.view"
-                                                        :disabled="isDisabled(value, 'view')">
-                                                        <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                            :disabled="isDisabled(value, 'view')"
+                                                            @change="toggleChild(item, '', '', $event)">
+                                                        <span class="custom-toggle-slider rounded-circle"
+                                                            data-label-off="No" data-label-on="Yes"></span>
                                                     </label>
                                                 </div>
-                                                <div class="v-data-table__td col-2">
+                                                <div class="v-data-table__td col-2" v-if="value.child.length == 0">
                                                     <label class="custom-toggle">
-                                                        <input type="checkbox" class="form-control" v-model="value.create_auth"
-                                                        :disabled="isDisabled(value, 'create')">
-                                                        <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                        <input type="checkbox" class="form-control"
+                                                            v-model="value.create_auth"
+                                                            :disabled="isDisabled(value, 'create')"
+                                                            @change="toggleChild(item, '', '', $event)">
+                                                        <span class="custom-toggle-slider rounded-circle"
+                                                            data-label-off="No" data-label-on="Yes"></span>
                                                     </label>
                                                 </div>
-                                                <div class="v-data-table__td col-2">
+                                                <div class="v-data-table__td col-2" v-if="value.child.length == 0">
                                                     <label class="custom-toggle">
-                                                        <input type="checkbox" class="form-control" v-model="value.update_auth"
-                                                        :disabled="isDisabled(value, 'edit')">
-                                                        <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                        <input type="checkbox" class="form-control"
+                                                            v-model="value.update_auth"
+                                                            :disabled="isDisabled(value, 'edit')"
+                                                            @change="toggleChild(item, '', '', $event)">
+                                                        <span class="custom-toggle-slider rounded-circle"
+                                                            data-label-off="No" data-label-on="Yes"></span>
                                                     </label>
                                                 </div>
-                                                <div class="v-data-table__td col-2">
+                                                <div class="v-data-table__td col-2" v-if="value.child.length == 0">
                                                     <label class="custom-toggle">
-                                                        <input type="checkbox" class="form-control" v-model="value.delete_auth"
-                                                        :disabled="isDisabled(value, 'delete')">
-                                                        <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                        <input type="checkbox" class="form-control"
+                                                            v-model="value.delete_auth"
+                                                            :disabled="isDisabled(value, 'delete')"
+                                                            @change="toggleChild(item, '', '', $event)">
+                                                        <span class="custom-toggle-slider rounded-circle"
+                                                            data-label-off="No" data-label-on="Yes"></span>
                                                     </label>
                                                 </div>
                                             </div>
                                             <!-- sub-childs (Traffic Sources, network) are display here -->
                                             <div class="row" v-for="children of value.child" :key="children">
-                                                <div class="row add-border-bottom">
+                                                <div class="row add-border-bottom"
+                                                    :class="{ 'justify-start': children.child.length > 0 }">
                                                     <div class="v-data-table__td_name col-4">
                                                         <ul class="userrole_menu_tree ms-5 ps-5">
                                                             <li>
-                                                                <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00" v-if="children.child.length > 0"></v-icon>
-                                                                <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00" v-else></v-icon>
-                                                                {{children.menu}}
+                                                                <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00"
+                                                                    v-if="children.child.length > 0"></v-icon>
+                                                                <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"
+                                                                    v-else></v-icon>
+                                                                {{ children.menu }}
                                                             </li>
-                                                        </ul>                                       
+                                                        </ul>
                                                     </div>
-                                                    <div class="v-data-table__td col-2">
+                                                    <div class="v-data-table__td col-2" v-if="children.child.length == 0">
                                                         <label class="custom-toggle">
-                                                            <input type="checkbox" class="form-control" v-model="children.view"
-                                                            :disabled="isDisabled(children, 'view')">
-                                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                            <input type="checkbox" class="form-control"
+                                                                v-model="children.view"
+                                                                :disabled="isDisabled(children, 'view')"
+                                                                @change="toggleChild(item, value, '', $event)">
+                                                            <span class="custom-toggle-slider rounded-circle"
+                                                                data-label-off="No" data-label-on="Yes"></span>
                                                         </label>
                                                     </div>
-                                                    <div class="v-data-table__td col-2">
+                                                    <div class="v-data-table__td col-2" v-if="children.child.length == 0">
                                                         <label class="custom-toggle">
-                                                            <input type="checkbox" class="form-control" v-model="children.create_auth"
-                                                            :disabled="isDisabled(children, 'create')">
-                                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                            <input type="checkbox" class="form-control"
+                                                                v-model="children.create_auth"
+                                                                :disabled="isDisabled(children, 'create')"
+                                                                @change="toggleChild(item, value, '', $event)">
+                                                            <span class="custom-toggle-slider rounded-circle"
+                                                                data-label-off="No" data-label-on="Yes"></span>
                                                         </label>
                                                     </div>
-                                                    <div class="v-data-table__td col-2">
+                                                    <div class="v-data-table__td col-2" v-if="children.child.length == 0">
                                                         <label class="custom-toggle">
-                                                            <input type="checkbox" class="form-control" v-model="children.update_auth"
-                                                            :disabled="isDisabled(children, 'edit')">
-                                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                            <input type="checkbox" class="form-control"
+                                                                v-model="children.update_auth"
+                                                                :disabled="isDisabled(children, 'edit')"
+                                                                @change="toggleChild(item, value, '', $event)">
+                                                            <span class="custom-toggle-slider rounded-circle"
+                                                                data-label-off="No" data-label-on="Yes"></span>
                                                         </label>
                                                     </div>
-                                                    <div class="v-data-table__td col-2">
+                                                    <div class="v-data-table__td col-2" v-if="children.child.length == 0">
                                                         <label class="custom-toggle">
-                                                            <input type="checkbox" class="form-control" v-model="children.delete_auth"
-                                                            :disabled="isDisabled(children, 'delete')">
-                                                            <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                            <input type="checkbox" class="form-control"
+                                                                v-model="children.delete_auth"
+                                                                :disabled="isDisabled(children, 'delete')"
+                                                                @change="toggleChild(item, value, '', $event)">
+                                                            <span class="custom-toggle-slider rounded-circle"
+                                                                data-label-off="No" data-label-on="Yes"></span>
                                                         </label>
                                                     </div>
                                                 </div>
                                                 <!-- grand-childs (googleads, microsoftads) are display here -->
                                                 <div class="row" v-for="grandChild of children.child" :key="grandChild">
-                                                    <div class="row add-border-bottom">
+                                                    <div class="row add-border-bottom"
+                                                        :class="{ 'justify-start': grandChild.child.length > 0 }">
                                                         <div class="v-data-table__td_name col-4">
                                                             <ul class="userrole_menu_tree add-margin-left">
                                                                 <li>
-                                                                    <v-icon icon="mdi-folder-open" class="mx-2" color="#00cd00" v-if="grandChild.child.length > 0"></v-icon>
-                                                                    <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00" v-else></v-icon>
-                                                                    {{grandChild.menu}}
+                                                                    <v-icon icon="mdi-folder-open" class="mx-2"
+                                                                        color="#00cd00"
+                                                                        v-if="grandChild.child.length > 0"></v-icon>
+                                                                    <v-icon icon="mdi-file-outline" class="mx-2"
+                                                                        color="#00cd00" v-else></v-icon>
+                                                                    {{ grandChild.menu }}
                                                                 </li>
-                                                            </ul>                                       
+                                                            </ul>
                                                         </div>
-                                                        <div class="v-data-table__td col-2">
+                                                        <div class="v-data-table__td col-2" v-if="grandChild.child.length == 0">
                                                             <label class="custom-toggle">
-                                                                <input type="checkbox" class="form-control" v-model="grandChild.view"
-                                                                :disabled="isDisabled(grandChild, 'view')">
-                                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                                <input type="checkbox" class="form-control"
+                                                                    v-model="grandChild.view"
+                                                                    :disabled="isDisabled(grandChild, 'view')"
+                                                                    @change="toggleChild(item, value, children, $event)">
+                                                                <span class="custom-toggle-slider rounded-circle"
+                                                                    data-label-off="No" data-label-on="Yes"></span>
                                                             </label>
                                                         </div>
-                                                        <div class="v-data-table__td col-2">
+                                                        <div class="v-data-table__td col-2"
+                                                            v-if="grandChild.child.length == 0">
                                                             <label class="custom-toggle">
-                                                                <input type="checkbox" class="form-control" v-model="grandChild.create_auth"
-                                                                :disabled="isDisabled(grandChild, 'create')">
-                                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                                <input type="checkbox" class="form-control"
+                                                                    v-model="grandChild.create_auth"
+                                                                    :disabled="isDisabled(grandChild, 'create')"
+                                                                    @change="toggleChild(item, value, children, $event)">
+                                                                <span class="custom-toggle-slider rounded-circle"
+                                                                    data-label-off="No" data-label-on="Yes"></span>
                                                             </label>
                                                         </div>
-                                                        <div class="v-data-table__td col-2">
+                                                        <div class="v-data-table__td col-2"
+                                                            v-if="grandChild.child.length == 0">
                                                             <label class="custom-toggle">
-                                                                <input type="checkbox" class="form-control" v-model="grandChild.update_auth"
-                                                                :disabled="isDisabled(grandChild, 'edit')">
-                                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                                <input type="checkbox" class="form-control"
+                                                                    v-model="grandChild.update_auth"
+                                                                    :disabled="isDisabled(grandChild, 'edit')"
+                                                                    @change="toggleChild(item, value, children, $event)">
+                                                                <span class="custom-toggle-slider rounded-circle"
+                                                                    data-label-off="No" data-label-on="Yes"></span>
                                                             </label>
                                                         </div>
-                                                        <div class="v-data-table__td col-2">
+                                                        <div class="v-data-table__td col-2"
+                                                            v-if="grandChild.child.length == 0">
                                                             <label class="custom-toggle">
-                                                                <input type="checkbox" class="form-control" v-model="grandChild.delete_auth"
-                                                                :disabled="isDisabled(grandChild, 'delete')">
-                                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                                <input type="checkbox" class="form-control"
+                                                                    v-model="grandChild.delete_auth"
+                                                                    :disabled="isDisabled(grandChild, 'delete')"
+                                                                    @change="toggleChild(item, value, children, $event)">
+                                                                <span class="custom-toggle-slider rounded-circle"
+                                                                    data-label-off="No" data-label-on="Yes"></span>
                                                             </label>
                                                         </div>
                                                     </div>
@@ -507,36 +234,40 @@
                                             <ul class="userrole_menu_tree ms-2">
                                                 <li>
                                                     <v-icon icon="mdi-file-outline" class="mx-2" color="#00cd00"></v-icon>
-                                                    {{item.menu}}
+                                                    {{ item.menu }}
                                                 </li>
-                                            </ul>                                       
+                                            </ul>
                                         </div>
                                         <div class="v-data-table__td col-2">
                                             <label class="custom-toggle">
                                                 <input type="checkbox" class="form-control" v-model="item.view"
-                                                :disabled="isDisabled(item, 'view')">
-                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                    :disabled="isDisabled(item, 'view')">
+                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                                    data-label-on="Yes"></span>
                                             </label>
                                         </div>
                                         <div class="v-data-table__td col-2">
                                             <label class="custom-toggle">
                                                 <input type="checkbox" class="form-control" v-model="item.create_auth"
-                                                :disabled="isDisabled(item, 'create')">
-                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                    :disabled="isDisabled(item, 'create')">
+                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                                    data-label-on="Yes"></span>
                                             </label>
                                         </div>
                                         <div class="v-data-table__td col-2">
                                             <label class="custom-toggle">
                                                 <input type="checkbox" class="form-control" v-model="item.update_auth"
-                                                :disabled="isDisabled(item, 'edit')">
-                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                    :disabled="isDisabled(item, 'edit')">
+                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                                    data-label-on="Yes"></span>
                                             </label>
                                         </div>
                                         <div class="v-data-table__td col-2">
                                             <label class="custom-toggle">
                                                 <input type="checkbox" class="form-control" v-model="item.delete_auth"
-                                                :disabled="isDisabled(item, 'delete')">
-                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                                                    :disabled="isDisabled(item, 'delete')">
+                                                <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                                    data-label-on="Yes"></span>
                                             </label>
                                         </div>
                                     </div>
@@ -559,14 +290,7 @@
 
 <script>
 import axios from '@axios';
-// import * as yup from 'yup';
-// import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
-    // components: {
-    //     Form, 
-    //     Field, 
-    //     ErrorMessage
-    // },
     data() {
         return {
             message: {},
@@ -592,21 +316,11 @@ export default {
         }
     },
     mounted() {
-        // window.scrollTo({
-        //     top: 0,
-        //     behavior: 'smooth',
-        // });
-        // this.getAllUserRole();
-        // if (this.$route.params.id) {
-        //     this.getUserRole();
-        //     this.toggleButton = true;
-        //     this.breadCrumbMessage = 'Edit';
-        // }
         if (this.$route.params.id) {
             this.getUserRole();
             this.toggleButton = true;
             this.breadCrumbMessage = 'Edit';
-        }else {
+        } else {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth',
@@ -624,47 +338,46 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if (response.data.success) {
-                    this.menuItem = response.data.data;
-                    // console.log(this.menuItem);
+                .then(response => {
+                    if (response.data.success) {
+                        this.menuItem = response.data.data;
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
                     this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.message = {
-                        text: error.response.data.message,
-                        type: 'error',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
-                }
-                if(error.response.data.error) {
-                    this.message = {
-                        text: error.response.data.error,
-                        type: 'error',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
-                        this.message = {
-                            text: error.response.data.errors[0],
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
-                        this.message = {
-                            text: error.response.data.errors[0],
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                }
-                this.showLoader = false;
-            });
+                });
         },
         // role name validation
         roleNameIsValid() {
@@ -684,55 +397,55 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-            .then(response => {
-                if (response.data.success) {
-                    const getData = response.data.data;
-                    this.menuItem = getData.menus;
-                    this.roleName = getData.role.role_name;
-                    this.showLoader = false;
-                }else {
-                    this.message = {
-                        text: response.data.message,
-                        type: 'error',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
-                    this.showLoader = false;
-                }
-            })
-            .catch(error => {
-                if(error.response.data.message) {
-                    this.message = {
-                        text: error.response.data.message,
-                        type: 'error',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
-                }
-                if(error.response.data.error) {
-                    this.message = {
-                        text: error.response.data.error,
-                        type: 'error',
-                    }
-                    this.$eventBus.emit('flash-message', this.message, '');
-                }
-                if(error.response.data.errors) {
-                    if(error.response.data.errors.length == 1) {
+                .then(response => {
+                    if (response.data.success) {
+                        const getData = response.data.data;
+                        this.menuItem = getData.menus;
+                        this.roleName = getData.role.role_name;
+                        this.showLoader = false;
+                    } else {
                         this.message = {
-                            text: error.response.data.errors[0],
+                            text: response.data.message,
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
-                    }else if(error.response.data.errors.length == 0){
-                        this.backendErrorMessage = '';
-                    }else {
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    if (error.response.data.message) {
                         this.message = {
-                            text: error.response.data.errors[0],
+                            text: error.response.data.message,
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
                     }
-                }
-                this.showLoader = false;
-            });
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
+                    this.showLoader = false;
+                });
         },
         // create and update user role
         manageUserRole() {
@@ -755,58 +468,58 @@ export default {
                             Authorization: this.getAccessToken()
                         }
                     })
-                    .then(response => {
-                        if (response.data.success) {
-                            this.message = {
-                                text: response.data.message,
-                                type: 'success',
+                        .then(response => {
+                            if (response.data.success) {
+                                this.message = {
+                                    text: response.data.message,
+                                    type: 'success',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                                this.$router.push('/settings/user_management/user_roles');
+                                this.showLoader = false;
+                            } else {
+                                this.message = {
+                                    text: response.data.message,
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                                this.showLoader = false;
                             }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                            this.$router.push('/settings/user_management/user_roles');
+                        })
+                        .catch(error => {
+                            if (error.response.data.message) {
+                                this.message = {
+                                    text: error.response.data.message,
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                            }
+                            if (error.response.data.error) {
+                                this.message = {
+                                    text: error.response.data.error,
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                            }
+                            if (error.response.data.errors) {
+                                if (error.response.data.errors.length == 1) {
+                                    this.message = {
+                                        text: error.response.data.errors[0],
+                                        type: 'error',
+                                    }
+                                    this.$eventBus.emit('flash-message', this.message, '');
+                                } else if (error.response.data.errors.length == 0) {
+                                    this.backendErrorMessage = '';
+                                } else {
+                                    this.message = {
+                                        text: error.response.data.errors[0],
+                                        type: 'error',
+                                    }
+                                    this.$eventBus.emit('flash-message', this.message, '');
+                                }
+                            }
                             this.showLoader = false;
-                        }else {
-                            this.message = {
-                                text: response.data.message,
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                            this.showLoader = false;
-                        }
-                    })
-                    .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                        });
                 }
             }
             // create user role
@@ -826,65 +539,80 @@ export default {
                             Authorization: this.getAccessToken()
                         }
                     })
-                    .then(response => {
-                        if (response.data.success) {
-                            this.message = {
-                                text: response.data.message,
-                                type: 'success',
+                        .then(response => {
+                            if (response.data.success) {
+                                this.message = {
+                                    text: response.data.message,
+                                    type: 'success',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                                this.$router.push('/settings/user_management/user_roles');
+                                this.showLoader = false;
+                            } else {
+                                this.message = {
+                                    text: response.data.message,
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                                this.showLoader = false;
                             }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                            this.$router.push('/settings/user_management/user_roles');
+                        })
+                        .catch(error => {
+                            if (error.response.data.message) {
+                                this.message = {
+                                    text: error.response.data.message,
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                            }
+                            if (error.response.data.error) {
+                                this.message = {
+                                    text: error.response.data.error,
+                                    type: 'error',
+                                }
+                                this.$eventBus.emit('flash-message', this.message, '');
+                            }
+                            if (error.response.data.errors) {
+                                if (error.response.data.errors.length == 1) {
+                                    this.message = {
+                                        text: error.response.data.errors[0],
+                                        type: 'error',
+                                    }
+                                    this.$eventBus.emit('flash-message', this.message, '');
+                                } else if (error.response.data.errors.length == 0) {
+                                    this.backendErrorMessage = '';
+                                } else {
+                                    this.message = {
+                                        text: error.response.data.errors[0],
+                                        type: 'error',
+                                    }
+                                    this.$eventBus.emit('flash-message', this.message, '');
+                                }
+                            }
                             this.showLoader = false;
-                        }else {
-                            this.message = {
-                                text: response.data.message,
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                            this.showLoader = false;
-                        }
-                    })
-                    .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                        });
                 }
             }
         },
-        // reset form data
-        resetForm() {
-            window.location.reload();
+        // handle menu active or inactive
+        handleMenuActive(parent, children, child) {
+            if (child) {
+                child.view = child.child.some(childMenu => childMenu.view || childMenu.create_auth || childMenu.delete_auth || childMenu.update_auth);
+            } 
+            if (children) {
+                children.view = children.child.some(childMenu => childMenu.view || childMenu.create_auth || childMenu.delete_auth || childMenu.update_auth);
+            }
+            if (parent) {
+                parent.view = parent.child.some(childMenu => childMenu.view || childMenu.create_auth || childMenu.delete_auth || childMenu.update_auth);
+            }
         },
+        // toggle parent value based on true value
+        toggleChild(parent, children, child) {
+            this.$nextTick(() => {
+                this.handleMenuActive(parent, children, child);
+            });
+        },
+        // make button disable
         isDisabled(value, type) {
             if (value.menu == 'Dashboard') {
                 if (type != 'view') {
@@ -897,16 +625,12 @@ export default {
                 const permission = value.resource.split(',');
                 if (type == 'view') {
                     return permission.includes('0') ? false : true;
-                    // console.log(permission.includes('0'), value.menu, type);
                 } else if (type == 'create') {
                     return permission.includes('1') ? false : true;
-                    // console.log(permission.includes('1'), value.menu, type);
                 } else if (type == 'edit') {
                     return permission.includes('2') ? false : true;
-                    // console.log(permission.includes('2'), value.menu, type);
                 } else if (type == 'delete') {
                     return permission.includes('3') ? false : true;
-                    // console.log(permission.includes('3'), value.menu, type);
                 }
             } else {
                 return false;
@@ -916,30 +640,36 @@ export default {
     },
 }
 </script>
-<style scoped>
-    .row {
-        padding: 0 !important;
-        min-height: 50px;
-        align-items: center;
-        justify-content: center;
-    }
-    .add-border-bottom {
-        border-bottom: 1px solid #e5e5e5;
-    }
-    .add-margin-left {
-        margin-left: 150px !important;
-    }
-    .thead-light > div, .thead-light > div > div {
-        background-color: #c7dcee !important;
-    }
-    .v-data-table__td_name > div {
-        text-align: left !important;
-        padding-left: 10px;
-    }
-    .v-data-table__td div, .v-data-table__td {
-        text-align: center !important;
-    }
-    .v-data-table-header__content {
-        display: block !important;
-    }
-</style>
+<style scoped>.row {
+    padding: 0 !important;
+    min-height: 50px;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.add-margin-left {
+    margin-left: 150px !important;
+}
+
+.thead-light>div,
+.thead-light>div>div {
+    background-color: #c7dcee !important;
+}
+
+.v-data-table__td_name>div {
+    text-align: left !important;
+    padding-left: 10px;
+}
+
+.v-data-table__td div,
+.v-data-table__td {
+    text-align: center !important;
+}
+
+.v-data-table-header__content {
+    display: block !important;
+}</style>

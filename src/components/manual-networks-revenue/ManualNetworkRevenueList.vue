@@ -5,15 +5,21 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Archived Reports Manual Network</span>
-                        <v-spacer />
-
-                        <div>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Archived Reports Manual Network</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
+                        </v-btn>
+                        <div class="button_div" v-if="!isHidden">
                             <v-btn @click.prevent="downloadCsv"
                                 class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated"
                                 prepend-icon="mdi-download">
@@ -39,18 +45,17 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Archived Reports Manual Network List
                             <v-spacer></v-spacer>
-                            <date-range-picker class="date_picker" :value="selectedRange"
-                                @update:value="updateRange"></date-range-picker>
-                            <v-col cols="12" sm="12" md="3" lg="3"
-                                class="font-medium font-weight-normal v_select_design py-0 pr-0">
-                                <v-select clearable variant="outlined" placeholder="Network Name Filter"
-                                    :items="networkNameFilter" item-value="key" v-model="networkName"
-                                    @update:modelValue="getManualNetworksEntry"></v-select>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search"
-                                    v-model="search" />
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end">
+                                <v-col class="font-medium font-weight-normal pr-0">
+                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select clearable variant="outlined" placeholder="Network Name Filter" :items="networkNameFilter" item-value="key" v-model="networkName" @update:modelValue="getManualNetworksEntry"></v-select>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -151,7 +156,9 @@
 import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
+import mixin from '../../mixin.js';
 export default {
+    mixins: [mixin],
     components: {
         DateRangePicker
     },
@@ -161,12 +168,6 @@ export default {
             showLoader: false,
             dataMetrics: [],
             search: '',
-            // headers: [
-            //     { title: 'Date', align: 'start', sortable: false, key: 'date' },
-            //     { title: 'Network Name', key: 'network', sortable: true },
-            //     { title: 'Amount', key: 'amount' },
-            //     { title: 'Action', key: '' },
-            // ],
             file: '',
             currentItemsTable: [],
             itemsPerPage: -1,
@@ -175,6 +176,7 @@ export default {
             selectedFile: '',
             isSortable: true,
             permissions: {},
+            isHidden: false,
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
         }
     },
@@ -199,6 +201,10 @@ export default {
         });
         this.getManualNetworksEntry();
         this.updateCsvWithTodayDate('ipm-manual-networks-metrics-demo.csv');
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     },
     methods: {
         // open and close modal
@@ -252,6 +258,11 @@ export default {
                         itemsPerPage: -1
                     };
                     this.currentItems(currentItems);
+                    if(this.dataMetrics.length > 0){
+                        setTimeout(() => {
+                            this.resizableGrid(document.getElementsByTagName('table')[0]);
+                        }, 1000)
+                    }
                     this.showLoader = false;
                 } else {
                     this.message = {

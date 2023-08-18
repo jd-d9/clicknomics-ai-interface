@@ -4,16 +4,22 @@
         <v-container>
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
-                    <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Team Member Payments</span>
+                    <v-breadcrumbs class="team_member_responsive">
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Team Member Payments</span>
+                        </div>
                         <v-spacer/>
-
-                        <div v-if="showImportIcon">
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" v-if="showImportIcon" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
+                        </v-btn>
+                        <div class="button_div" v-if="!isHidden && showImportIcon">
                             <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
                                 Demo.csv
                             </v-btn>
@@ -33,21 +39,16 @@
                             <v-btn @click.prevent="this.$router.push('/accounting/teamMembersPayments/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
                                 Add New
                             </v-btn>
-                        </div>                        
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
-                                    Team Member Payments List
-                                </v-col>
-                            </v-row>
-
+                            Team Member Payments List
                             <!-- tab panel title div -->
-                            <div class="mt-4">
+                            <div class="mt-2">
                                 <v-tabs v-model="tabteampayment" fixed-tabs bg-color="green-lighten-4" class="mb-3">
                                     <v-tab value="payments" class="font-weight-bold" color="green-darken-4" @click.prevent="showImportIcon = true">Payments</v-tab>
                                     <v-tab value="reports" class="font-weight-bold" @click.prevent="getReports">Reports</v-tab>
@@ -56,14 +57,16 @@
                                 <v-window v-model="tabteampayment">
                                     <v-window-item value="payments">
                                         <v-row class="d-flex align-center justify-end">
-                                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                            <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                            </v-col>
+                                            <v-col class="font-medium font-weight-normal v_select_design pr-0">
                                                 <v-select clearable variant="outlined" placeholder="From Account Filter" :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="getTeamMemberPaymentList" item-value="key"></v-select>
                                             </v-col>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                            <v-col class="font-medium font-weight-normal v_select_design pr-0">
                                                 <v-select clearable variant="outlined" placeholder="From Account Filter" :items="toAccountFilter" v-model="toAccount" @update:modelValue="getTeamMemberPaymentList" item-value="key"></v-select>
-                                            </v-col>                                            
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                            </v-col>
+                                            <v-col class="font-medium font-weight-normal">
                                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                                             </v-col>
                                         </v-row> 
@@ -121,7 +124,9 @@
                                     <v-window-item value="reports">
                                         <v-row class="d-flex align-center justify-end ma-0">
                                             <v-spacer />
-                                            <date-range-picker class="date_picker" :value="selectedRangeTwo" @update:value="updateRangeTwo"></date-range-picker>
+                                            <v-col cols="12" lg="3" md="3" sm="5" class="font-medium font-weight-normal v_select_design pr-0">
+                                                <date-range-picker class="date_picker" :value="selectedRangeTwo" @update:value="updateRangeTwo"></date-range-picker>
+                                            </v-col>
                                         </v-row>
 
                                         <v-row v-if="cardMemberList.length > 0" class="mt-4">
@@ -223,6 +228,7 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="reset" class="text-none bg-blue-darken-4 btn_animated mr-3 ml--4" id="reset_button" append-icon="mdi-content-save" style="opacity: 0">Reset</v-btn>
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeTeamMemberModal">Close</v-btn>
                             </v-col>
@@ -260,6 +266,7 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="reset" class="text-none bg-blue-darken-4 btn_animated mr-5 ml--4" id="reset_button_from" append-icon="mdi-content-save" style="opacity: 0">Reset</v-btn>
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeFromAccountModal">Close</v-btn>
                             </v-col>
@@ -317,6 +324,7 @@ export default {
             tabteampayment: 'payments',
             backendErrorMessage: '',
             multipleErrors: [],
+            isHidden: false,
         }
     },
     computed: {
@@ -342,6 +350,10 @@ export default {
             behavior: 'smooth',
         });
         this.getTeamMemberPaymentList();
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     },
     methods: {
         // open/close import csv modal
@@ -358,6 +370,9 @@ export default {
             window.$('#fromAccountModal').modal('show');
         },
         closeFromAccountModal() {
+            document.getElementById('reset_button_from').click();
+            this.backendErrorMessage = '';
+            this.multipleErrors = [];
             window.$('#fromAccountModal').modal('hide');
         },
         // open/close import csv modal
@@ -365,6 +380,9 @@ export default {
             window.$('#teamMemberModal').modal('show');
         },
         closeTeamMemberModal() {
+            document.getElementById('reset_button').click();
+            this.backendErrorMessage = '';
+            this.multipleErrors = [];
             window.$('#teamMemberModal').modal('hide');
         },
         // update date range
@@ -548,8 +566,6 @@ export default {
                         type: 'success',
                     }
                     this.$eventBus.emit('flash-message', this.message, '');
-                    this.backendErrorMessage = '';
-                    this.multipleErrors = [];
                     this.showLoader = false;
                     this.getTeamMemberPaymentList();
                     this.closeTeamMemberModal();
@@ -600,8 +616,6 @@ export default {
                         type: 'success',
                     }
                     this.$eventBus.emit('flash-message', this.message, '');
-                    this.backendErrorMessage = '';
-                    this.multipleErrors = [];
                     this.showLoader = false;
                     this.getTeamMemberPaymentList();
                     this.closeFromAccountModal();

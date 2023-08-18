@@ -5,23 +5,27 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Ads Issues</span>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Ads Issues</span>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0"><!-- v-if="permissions.view == '1' && !showLoader" -->
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex align-center justify-end">
                             Ads Issues List
                             <v-spacer></v-spacer>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" single-line hide-details />
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end responsive_margin">
+                                <v-col cols="12" lg="7" md="7" sm="12" class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" single-line hide-details />
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -49,25 +53,24 @@
                         </v-data-table>
                     </v-card>
                 </v-col>
-                <!-- <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-content-center align-center">
                             You have no access for this page
                         </v-card-title>
                     </v-card>
-                </v-col> -->
+                </v-col>
             </v-row>
         </v-container>
     </div>
 </template>
 
 <script>
+import axios from '@axios';
 export default {
-    components: {
-
-    },
     data() {
         return {
+            message: {},
             showLoader: false,
             search: '',
             headers: [
@@ -78,23 +81,11 @@ export default {
                 { title: 'Domain', key: 'Domain' },
                 { title: 'Editorial Status', key: 'EditorialStatus' },
             ],
-            urlList: [
-                {
-                    id: '1',
-                    microsoft_ads_account_name: 'Diamond Events & Productions',
-                    CampaignName: 'BarXStop - 12082022',
-                    AdId: '84319342772234',
-                    Domain: 'getbarxstop.com',
-                    EditorialStatus: 'Disapproved',
-                }
-            ],
+            urlList: [],
             singleExpand: true,
             page: 1,
             itemsPerPage: -1,
-            item: {
-                id:'',
-                notes: '',
-            }
+            permissions: {},
         }
     },
     mounted() {
@@ -102,8 +93,68 @@ export default {
             top: 0,
             behavior: 'smooth',
         });
+        this.getData();
     },
     methods: {
+        // get listings
+        getData() {
+            this.showLoader = true;
+            axios.get(this.$api + '/monitoring/blacklists/adsIssues', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: this.getAccessToken(),
+                }
+            })
+            .then(response => {
+                if (response.data.success) {
+                    const getData = response.data;
+                    this.urlList = getData.data;
+                    this.permissions = getData.permission;
+                    this.showLoader = false;
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
+                    } else {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                }
+                this.showLoader = false;
+            });
+        },
     }
 }
 </script>

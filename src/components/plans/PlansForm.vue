@@ -4,23 +4,26 @@
         <v-container>
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
-                    <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <router-link to="/settings/plan-management" class="d-flex align-center">
+                    <v-breadcrumbs class="form_breadcume">
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <router-link to="/settings/plan-management" class="d-flex align-center">
+                                <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                                <span>Plan Management</span>
+                            </router-link>
+                            
                             <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                            <span>Plan Management</span>
-                        </router-link>
-                        
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>{{breadCrumbText}} Plan</span>
-
-                        <v-spacer />
-                        <v-btn to="/settings/plan-management" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
-                            Back
-                        </v-btn>
+                            <span>{{breadCrumbText}} Plan</span>
+                        </div>
+                        <v-spacer/>
+                        <div class="button_div">
+                            <v-btn to="/settings/plan-management" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                                Back
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -97,7 +100,7 @@
                                     </v-col>
     
                                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                                        <label class="form-control-label d-block">&nbsp;</label>
+                                        <label class="form-control-label d-block hide-nbsp">&nbsp;</label>
                                         <v-btn class="mx-2 bg-blue-lighten-4" variant="text" icon @click="addMoreField">
                                             <v-icon color="blue-darken-2">
                                                 mdi-plus
@@ -282,7 +285,7 @@ export default {
             ],
             backendErrorMessage: '',
             multipleErrors: [],
-            toggleEditor: false,
+            toggleEditor: true,
         }
     },
     mounted() {
@@ -294,6 +297,7 @@ export default {
             this.getDataForEdit();
             this.breadCrumbText = 'Edit';
             this.toggleButton = false;
+            this.toggleEditor = false;
         }
     },
     // computed: {

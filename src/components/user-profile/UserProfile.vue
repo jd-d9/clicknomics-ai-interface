@@ -4,16 +4,21 @@
         <v-container>
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
-                    <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>My Profile</span>
-                        <v-btn to="/dashboard" class="ms-auto text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
-                            Back
-                        </v-btn>
+                    <v-breadcrumbs class="form_breadcume">
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>My Profile</span>
+                        </div>
+                        <v-spacer/>
+                        <div class="button_div">
+                            <v-btn to="/dashboard" class="ms-auto text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                                Back
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
                 <!-- profile form -->
@@ -26,12 +31,12 @@
                         <div>
                             <!-- user profile section -->
                             <v-row id="userDetailsForm" v-if="!profileDetailsToggle">
-                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                     <label>Name : 
                                         <span class="font-weight-medium text-blue-darken-4 text-capitalize">{{ firstName + ' ' + lastName }}</span>
                                     </label>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                <v-col cols="12" sm="12" md="6" lg="6" class="font-medium font-weight-normal">
                                     <label>Company Name : 
                                         <span class="font-weight-medium text-blue-darken-4">{{ companyName ? companyName : '-' }}</span>
                                     </label>
@@ -45,19 +50,19 @@
                             </v-row>
                             <Form @submit="updateUserDetails" :validation-schema="userSchema" v-slot="{ errors }" v-show="profileDetailsToggle">
                                 <v-row>
-                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <v-col cols="12" sm="12" md="6" lg="4" class="font-medium font-weight-normal">
                                         <label>First Name</label>
                                         <Field type="text" id="input-username" name="firstName" class="text-capitalize" :class="{'form-control': true, 'border-red-600': errors.firstName}" placeholder="First Name" v-model="firstName"/>
                                         <span class="text-red-600" v-if="errors.firstName">First name is a required field</span>
                                     </v-col>
 
-                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <v-col cols="12" sm="12" md="6" lg="4" class="font-medium font-weight-normal">
                                         <label>Last Name</label>
                                         <Field type="text" id="input-username" name="lastName" class="text-capitalize" :class="{'form-control': true, 'border-red-600': errors.lastName}" placeholder="Last Name" v-model="lastName"/>
                                         <span class="text-red-600" v-if="errors.lastName">Last name is a required field</span>
                                     </v-col>
 
-                                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                    <v-col cols="12" sm="12" md="6" lg="4" class="font-medium font-weight-normal">
                                         <label>Company Name</label>
                                         <Field type="text" id="input-username" name="companyName" :class="{'form-control': true, 'border-red-600': errors.companyName}" placeholder="Company Name" v-model="companyName"/>
                                         <span class="text-red-600" v-if="errors.companyName">Company name is a required field</span>
@@ -107,20 +112,20 @@
                                 </v-row>
                                 <Form @submit="updateUserPassword" :validation-schema="passSchema" v-slot="{ errors }" v-show="passwordToggle">
                                     <v-row>
-                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <v-col cols="12" sm="12" md="6" lg="4" class="font-medium font-weight-normal">
                                             <label>Current Password</label>
                                             <Field type="password" name="currentPass" :class="{'form-control outlined': true, 'border-red-600': errors.currentPass}" placeholder="Current Password" v-model="currentPassword"/>
                                             <span class="text-red-600" v-if="errors.currentPass">Current Password is a required field</span>
                                         </v-col>
 
-                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <v-col cols="12" sm="12" md="6" lg="4" class="font-medium font-weight-normal">
                                             <label>New Password</label>
                                             <Field type="password" id="input-username" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password || passwordValidation}" placeholder="New Password" v-model="password" @keyup="validatePassword"/>
                                             <ErrorMessage class="text-red-600" name="Password" v-if="!passwordValidation"/>
                                             <span class="text-red-600" v-if="passwordValidation">{{passwordValidation}}</span>
                                         </v-col>
 
-                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <v-col cols="12" sm="12" md="6" lg="4" class="font-medium font-weight-normal">
                                             <label>Confirm Password</label>
                                             <Field type="password" id="input-username" name="repeatPass" :class="{'form-control': true, 'border-red-600': errors.repeatPass}" placeholder="Confirm Password" v-model="passwordConfirmation"/>
                                             <span class="text-red-600" v-if="errors.repeatPass">Password did not match</span>
@@ -155,7 +160,7 @@
                                 </v-row>
                                 <Form @submit="update2FaVerify" :validation-schema="verifySchema"  v-slot="{ errors }" v-show="TwoFaVerifyToggle">
                                     <v-row>
-                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <v-col cols="12" sm="12" md="6" lg="4" class="font-medium font-weight-normal">
                                             <label>Select Verification Status</label>
                                             <Field name="TwoFaVerify" v-model="verificationStatus">
                                                 <select :class="{'form-control': true, 'border-red-600': errors.TwoFaVerify}" name="TwoFaVerify" placeholder="User Status" v-model="verificationStatus">
@@ -166,7 +171,7 @@
                                             <span class="text-red-600" v-if="errors.TwoFaVerify">Verification status is a required field</span>
                                         </v-col>
 
-                                        <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
+                                        <v-col cols="12" sm="12" md="6" lg="4" class="font-medium font-weight-normal">
                                             <label>Remember For 30 Days.</label>
                                             <Field name="Remember" v-model="remember2Fa">
                                                 <select :class="{'form-control': true, 'border-red-600': errors.Remember}" name="Remember" placeholder="User Status" v-model="remember2Fa">

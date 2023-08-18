@@ -5,15 +5,21 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>IPM Chase Ink Activity</span>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>IPM Chase Ink Activity</span>
+                        </div>
                         <v-spacer/>
-
-                        <div>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
+                        </v-btn>
+                        <div class="button_div" v-if="!isHidden">
                             <v-btn @click.prevent="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
                                 Demo.csv
                             </v-btn>
@@ -33,12 +39,10 @@
                     <v-card class="card_design mb-4">
                         <v-card-title>
                             IPM Chase Ink Activity List
-                        </v-card-title>
-                        <!-- tab panel title div -->
-                        <div class="mt-4">
+                            <v-spacer></v-spacer>
                             <v-row class="d-flex align-center justify-end">
-                                <v-col class="font-medium font-weight-normal pr-0 text-right">
-                                    <v-btn v-if="selected.length > 0" @click.prevent="deleteSelected" class="ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                <v-col class="font-medium font-weight-normal pr-0 text-right" v-if="selected.length > 0">
+                                    <v-btn @click.prevent="deleteSelected" class="ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
                                         Remove Selected
                                     </v-btn>
                                 </v-col>
@@ -55,7 +59,9 @@
                                     <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                                 </v-col>
                             </v-row> 
-
+                        </v-card-title>
+                        <!-- tab panel title div -->
+                        <div class="mt-4">
                             <!-- data table component -->
                             <v-data-table class="table-hover-class mt-4" show-select :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage" @update:options="currentItems($event)">
                                 <template v-slot:[`item.date`]="{ item }">
@@ -175,6 +181,7 @@ export default {
             permissions: {},
             selectedFile: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            isHidden: false
         }
     },
     computed: {
@@ -189,6 +196,10 @@ export default {
             behavior: 'smooth',
         });
         this.getActivities();
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     },
     methods: {
         // open/close import csv modal

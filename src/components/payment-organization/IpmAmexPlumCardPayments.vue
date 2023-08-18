@@ -5,15 +5,21 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>IPM AMEX Plum Card Payments</span>
-                        <v-spacer />
-
-                        <div>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>IPM AMEX Plum Card Payments</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
+                        </v-btn>
+                        <div class="button_div" v-if="!isHidden">
                             <v-btn class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download" @click.prevent="downloadCsv">
                                 Demo.csv
                             </v-btn>
@@ -34,12 +40,14 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             IPM AMEX Plum Card Payments List
                             <v-spacer></v-spacer>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
-                                <v-select clearable variant="outlined" placeholder="Name Custom Filter" :items="itemsCardName" v-model="valueCardName" @update:modelValue="filterPayments"></v-select>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select clearable variant="outlined" placeholder="Name Custom Filter" :items="itemsCardName" v-model="valueCardName" @update:modelValue="filterPayments"></v-select>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -160,6 +168,7 @@ export default {
             itemsCardName: [],
             valueCardName: null,
             permissions: {},
+            isHidden:false
         }
     },
     mounted() {
@@ -167,6 +176,10 @@ export default {
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
+        });
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
         });
     },
     methods: {

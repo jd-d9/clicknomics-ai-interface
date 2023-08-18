@@ -4,14 +4,13 @@
         <v-container>
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="pa-0">
-                    <v-row class="mb-1 align-items-center">
-                        <v-col class="d-flex" cols="12" sm="4" xs="12">
-                            <h6 class="font-weight-bold text-h6 px-2 mb-0">
+                    <v-row class="mx-0 mb-1 align-items-center justify-space-between d-flex top_header_button">
+                        <v-col>
+                            <h6 class="font-weight-bold text-h6 mb-0">
                                 Date: {{daily_date ? daily_date : '-'}}
                             </h6>
                         </v-col>
-                        <v-spacer></v-spacer>
-                        <v-col sm="4" xs="12" class="d-flex justify-content-end font-medium font-weight-normal" cols="12">
+                        <v-col class="d-flex justify-content-end font-medium font-weight-normal">
                             <date-range-picker class="date_picker" style="padding: 9px 0px;" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                         </v-col>
                     </v-row>

@@ -5,13 +5,14 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Bank Accounts Payment Report</span>
-                        <v-spacer />
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Bank Accounts Payment Report</span>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -20,15 +21,19 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Bank Accounts Payment Report
                             <v-spacer></v-spacer>
-                            <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0 v_select_design">
-                                <v-select clearable variant="outlined" placeholder="Custom Filter" v-model="selectedtTransactionType" :items="items" chips multiple @change="genrateArchivedReportsPayments"></v-select>
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal v_select_design">
+                                    <v-select clearable variant="outlined" placeholder="Custom Filter" v-model="selectedtTransactionType" :items="items" chips multiple @change="genrateArchivedReportsPayments"></v-select>
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <v-divider class="border-opacity-100 my-4" color="success" />
 
-                        <v-row class="mt-4">
+                        <v-row class="mt-4" v-if="cardMemberList.length > 0">
                             <v-col cols="6" sm="6" md="4" lg="3" v-for="(data,index) in cardMemberList" :key="index">
                                 <v-card class="card_design " :class="data.totalAmount == '0' ? 'bg-blue-lighten-4' : 'bg-green-lighten-4'">
                                     <v-card-title>
@@ -39,6 +44,15 @@
                                             {{ $filters.toCurrency(data.totalAmount) }}
                                         </router-link>
                                     </v-card-text>
+                                </v-card>
+                            </v-col>
+                        </v-row>
+                        <v-row class="mt-4" v-else>
+                            <v-col cols="12" sm="12" md="12" lg="12">
+                                <v-card class="border-0">
+                                    <v-card-title class="d-flex justify-content-center align-center">
+                                         No data available
+                                    </v-card-title>
                                 </v-card>
                             </v-col>
                         </v-row>

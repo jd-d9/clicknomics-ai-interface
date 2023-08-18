@@ -112,6 +112,10 @@ import IpmChaseInkActivityForm from './components/payment-activity/ipm-chase-ink
 // Account Activity Router
 import LoginActivityComponent from './components/login-activity/LoginActivityComponent.vue';
 
+// pliad
+import PlaidList from './components/plaid/PlaidList.vue';
+import PlaidForm from './components/plaid/PlaidForm.vue';
+
 // Monitoring Router
 import AdsAccountsComponent from './components/monitoring/AdsAccountsComponent.vue';
 import UrlsUptimeUsaComponent from './components/monitoring/UrlsUptimeUsaComponent.vue';
@@ -122,6 +126,12 @@ import SpeedTestComponent from './components/monitoring/SpeedTestComponent.vue';
 import MetricsComponent from './components/monitoring/MetricsComponent.vue';
 import MicrosoftMonitoringComponent from './components/monitoring/MicrosoftMonitoringComponent.vue';
 import GoogleMonitoringComponent from './components/monitoring/GoogleMonitoringComponent.vue';
+import GoogleSafeBrowsing from './components/monitoring/GoogleSafeBrowsing.vue';
+import NetcraftMalwareSiteCheckComponent from './components/monitoring/NetcraftMalwareSiteCheckComponent.vue';
+import SucuriMalwareSiteCheckComponent from './components/monitoring/SucuriMalwareSiteCheckComponent.vue';
+import VirusTotalSiteCheckComponent from './components/monitoring/VirusTotalSiteCheckComponent.vue';
+import MicrosoftSiteCheckUsaComponent from './components/monitoring/MicrosoftSiteCheckUsaComponent.vue';
+import MicrosoftSiteCheckEuropeComponent from './components/monitoring/MicrosoftSiteCheckEuropeComponent.vue';
 
  
 const router = createRouter({
@@ -280,6 +290,9 @@ const router = createRouter({
         {path: '/payment_methods/ipm-chase-ink-card/activity/:id/edit', component: IpmChaseInkActivityForm, meta: {auth: true}},
         // Account Login Activity
         {path: '/settings/login-activity', component: LoginActivityComponent, meta: {auth: true}},
+        // pliad
+        {path: '/settings/plaid', component: PlaidList, meta: {auth: true}},
+        {path: '/settings/plaid/create', component: PlaidForm, meta: {auth: true}},
 
         // Monitoring Router
         {path: '/monitoring/adsAccounts', component: AdsAccountsComponent, meta: {auth: true}},
@@ -291,6 +304,12 @@ const router = createRouter({
         {path: '/monitoring/metrics', component: MetricsComponent, meta: {auth: true}},
         {path: '/monitoring/paymentDeclined/microsoft', component: MicrosoftMonitoringComponent, meta: {auth: true}},
         {path: '/monitoring/paymentDeclined/google', component: GoogleMonitoringComponent, meta: {auth: true}},
+        {path: '/monitoring/google-safe-browsing', component: GoogleSafeBrowsing, meta: {auth: true}},
+        {path: '/monitoring/netcraft-site-check', component: NetcraftMalwareSiteCheckComponent, meta: {auth: true}},
+        {path: '/monitoring/sucuri-site-check', component: SucuriMalwareSiteCheckComponent, meta: {auth: true}},
+        {path: '/monitoring/virustotal-site-check', component: VirusTotalSiteCheckComponent, meta: {auth: true}},
+        {path: '/monitoring/microsoft-defender-site-check', component: MicrosoftSiteCheckUsaComponent, meta: {auth: true}},
+        {path: '/monitoring/microsoft-defender-site-check-europe', component: MicrosoftSiteCheckEuropeComponent, meta: {auth: true}},
 
         // comming soon pages
         {path: '/help/:routeName', component: CommingSoonComponent, meta: {auth: true}},

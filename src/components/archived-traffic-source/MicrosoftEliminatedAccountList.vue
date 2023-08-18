@@ -5,18 +5,20 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Microsoft Eliminated Accounts</span>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Microsoft Eliminated Accounts</span>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
-                        <v-card-title class="d-flex justify-space-between align-center">
+                        <v-card-title>
                             Microsoft Eliminated Accounts List
                         </v-card-title>
 
@@ -113,7 +115,37 @@ export default {
                     }
             })
             .catch(error => {
-                console.log(error);
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
+                    } else {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                }
                 this.showLoader = false;
             });
         },

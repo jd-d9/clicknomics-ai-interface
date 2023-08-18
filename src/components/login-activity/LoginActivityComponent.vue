@@ -5,24 +5,32 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Authentication History</span>
-                        <v-spacer />
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Authentication History</span>
+                        </div>
+                        <v-spacer/>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0"> <!--  v-if="permissions.view == '1' && !showLoader" -->
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
-                            Authentication History List
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
+                                    Authentication History List
+                                </v-col>
+                            </v-row>
                             <v-spacer></v-spacer>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end">
+                                <v-col class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->

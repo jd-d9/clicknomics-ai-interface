@@ -15,7 +15,7 @@
                     <v-list nav class="pa-0">
                         <v-list-item class="pa-0">
                             <div class="sidebar-contents">
-                                <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" :class="{'active-tab': addActiveClass(data)}" @mouseenter="showHoveredDropdown(data)" :id="data.id + 'tab'" v-for="data in allMenues" :key="data.id">
+                                <router-link :to="data.routes === '#' ? '' : '/' + data.routes" class="side-menu text-decoration-none side-menu-hover" :class="{'active-tab': addActiveClass(data)}" @mouseenter="showHoveredDropdown(data)" :id="data.id + 'tab'" v-for="data in allMenues" :key="data.id" :data-step="setIntroStep(data.menu)" :data-title="setIntroTitle(data.menu)" :data-intro="setIntroDescription(data.menu)" data-position="bottom-middle-aligned">
                                     <img :src="'/assets/img/icons/' + data.icon" alt="icon">
                                     <span class="inner-text text-primary" :class="{'d-none': !hideShowSidebar}">{{ data.menu }}</span>
                                     <i class="fa-solid fa-angle-right ms-auto" v-if="data.child.length > 0"></i>
@@ -97,13 +97,13 @@
                             <v-icon color="success" >
                                 mdi-weather-night
                             </v-icon>
-                            <v-tooltip activator="parent" location="left">Switch to Dark Theme</v-tooltip>
+                            <v-tooltip activator="parent" location="left">Switch to Light Theme</v-tooltip>
                         </div>
                         <div v-else>
                             <v-icon color="white">
                                 mdi-white-balance-sunny
                             </v-icon>
-                            <v-tooltip activator="parent" location="left">Switch to Light Theme</v-tooltip>
+                            <v-tooltip activator="parent" location="left">Switch to Dark Theme</v-tooltip>
                         </div>
                     </v-btn>
                     <!-- <v-menu>
@@ -338,11 +338,9 @@
                 })
                 .then(response => {
                     if(response.data.success) {
-                        console.log(response,'response')
                         this.allMenues = response.data.data;
                         this.trialDays = response.data.trialEnd;
                         this.lastLogin = response.data.lastLogin;
-                        console.log(this.allMenues, 'sidebarAllData');
                         this.showLoader = false;
                         if(this.lastLogin) {
                             setTimeout(() => {
@@ -354,8 +352,38 @@
                     }
                 })
                 .catch(error => {
+                    if (error.response.data.message) {
+                        this.message = {
+                            text: error.response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.error) {
+                        this.message = {
+                            text: error.response.data.error,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                    if (error.response.data.errors) {
+                        if (error.response.data.errors.length == 1) {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        } else if (error.response.data.errors.length == 0) {
+                            this.backendErrorMessage = '';
+                        } else {
+                            this.message = {
+                                text: error.response.data.errors[0],
+                                type: 'error',
+                            }
+                            this.$eventBus.emit('flash-message', this.message, '');
+                        }
+                    }
                     this.showLoader = false;
-                    console.log(error);
                 });
             },
             // hide/show components

@@ -5,22 +5,31 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Invoice</span>
-                        <v-spacer />
-                        <v-btn @click.prevent="this.$router.push('/accounting/invoice/template')" href=""
-                            class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-layers">
-                            Templates
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Invoice</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
                         </v-btn>
-
-                        <v-btn @click.prevent="this.$router.push('/accounting/invoice/create')"
-                            class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
-                            Add New
-                        </v-btn>
+                        <div class="button_div" v-if="!isHidden">
+                            <v-btn @click.prevent="this.$router.push('/accounting/invoice/template')" href=""
+                                class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-layers">
+                                Templates
+                            </v-btn>
+    
+                            <v-btn @click.prevent="this.$router.push('/accounting/invoice/create')"
+                                class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus">
+                                Add New
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -28,18 +37,16 @@
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             Invoice List
-                            <v-row class="d-flex justify-space-between align-center">
-                                <v-spacer></v-spacer>
-                                <date-range-picker class="date_picker" :value="selectedRange"
-                                    @update:value="updateRange"></date-range-picker>
-                                <v-col cols="12" sm="12" md="3" lg="3"
-                                    class="font-medium font-weight-normal v_select_design pr-0">
-                                    <v-select clearable variant="outlined" placeholder="Network Filter"
-                                        :items="networkFilter" v-model="networkSelected"></v-select>
+                            <v-spacer></v-spacer>
+                            <v-row class="d-flex justify-end align-center">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <input type="search" class="form-control serch_table" placeholder="Search"
-                                        v-model="search" />
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select clearable variant="outlined" placeholder="Network Filter" :items="networkFilter" v-model="networkSelected"></v-select>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
                                 </v-col>
                             </v-row>
                         </v-card-title>
@@ -137,6 +144,12 @@
                                             <v-btn class="bg-green-lighten-4" variant="text" width="40px" height="40px"
                                                 icon="mdi-plus" color="green-darken-2" @click="addNewItem"></v-btn>
                                         </v-col>
+                                        <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                            <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                        </v-col>
+                                        <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                            <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                                        </v-col>
                                     </v-row>
                                 </div>
                             </div>
@@ -184,6 +197,12 @@
                                     <v-autocomplete :class="{ 'form-control': true }" variant="outlined" :items="networkList"
                                         v-model="networkModal.networkName"></v-autocomplete>
                                 </v-col>
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                                </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer pt-0">
@@ -219,6 +238,12 @@
                                         <v-radio class="monitor" label="NO" value="0"></v-radio>
                                     </v-radio-group>
                                 </v-col>
+                                <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
+                                </v-col>
+                                <v-col v-if="multipleErrors.length > 0" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
+                                    <small class="text-red-600" v-for="(error, ind) in multipleErrors" :key="ind">{{ind + 1 + '.'}} {{ error }}</small>
+                                </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer pt-0">
@@ -240,8 +265,10 @@
 import axios from '@axios';
 import DateRangePicker from '../common/DateRangePicker.vue';
 import moment from 'moment';
+import mixin from '../../mixin.js';
 export default {
     name: "SlotsDemo",
+    mixins: [mixin],
     components: {
         DateRangePicker,
     },
@@ -295,6 +322,9 @@ export default {
             dialog: false,
             selectedInvoiceId: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            backendErrorMessage: '',
+            multipleErrors: [],
+            isHidden: false
         }
     },
     mounted() {
@@ -304,6 +334,10 @@ export default {
         });
         this.getInvoicesList();
         this.fetchNetworkList();
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     },
     watch: {
         networkSelected(val) {
@@ -418,6 +452,11 @@ export default {
                 if (response.data.success) {
                     this.invoiceList = response.data.data.invoiceList;
                     this.invoiceFilter = response.data.data.invoiceList;
+                    if(this.invoiceList.length > 0){
+                        setTimeout(() => {
+                            this.resizableGrid(document.getElementsByTagName('table')[0]);
+                        }, 1000)
+                    }
                     this.showLoader = false;
                 } else {
                     this.message = {
@@ -472,58 +511,58 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
+            .then(response => {
+                if (response.data.success) {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.getInvoicesList();
+                    this.showLoader = false;
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
                         this.message = {
-                            text: response.data.message,
-                            type: 'success',
+                            text: error.response.data.errors[0],
+                            type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
-                        this.getInvoicesList();
-                        this.showLoader = false;
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
                     } else {
                         this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
+                            text: error.response.data.errors[0],
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
         // edit invoice
         editInvoice(id) {
@@ -538,54 +577,49 @@ export default {
                 },
                 responseType: 'blob',
             })
-                .then(response => {
-                    let blob = new Blob([response.data], { type: 'application/pdf' });
-                    const _url = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = _url;
-                    link.setAttribute('download', 'invoice_' + id + '.pdf');
-                    document.body.appendChild(link);
-                    link.click();
+            .then(response => {
+                let blob = new Blob([response.data], { type: 'application/pdf' });
+                const _url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = _url;
+                link.setAttribute('download', 'invoice_' + id + '.pdf');
+                document.body.appendChild(link);
+                link.click();
+            })
+            .catch(error => {
+                if (error.response.data.message) {
                     this.message = {
-                        text: response.data.message,
-                        type: 'success',
+                        text: error.response.data.message,
+                        type: 'error',
                     }
                     this.$eventBus.emit('flash-message', this.message, '');
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
                         this.message = {
-                            text: error.response.data.message,
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
+                    } else {
+                        this.message = {
+                            text: error.response.data.errors[0],
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
         // open share invoice modal
         openShareInvoice(id) {
@@ -609,59 +643,45 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        this.message = {
-                            text: response.data.message,
-                            type: 'success',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                        this.dialog = false;
-                        this.emailList = [{ email: '' }];
-                    } else {
-                        this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
+            .then(response => {
+                if (response.data.success) {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
                     }
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
                     this.showLoader = false;
-                });
+                    this.dialog = false;
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
+                    this.emailList = [{ email: '' }];
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.backendErrorMessage = error.response.data.message;
+                }
+                if(error.response.data.error) {
+                    this.backendErrorMessage = error.response.data.error;
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.backendErrorMessage = error.response.data.errors[0];
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.multipleErrors = error.response.data.errors;
+                    }
+                }
+                this.showLoader = false;
+            });
         },
         // open/close modals is invoice edited modal
         openNumberEditedModal(id, edited) {
@@ -686,54 +706,40 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        this.showLoader = false;
-                        this.closeNumberEditedModal();
-                        this.getInvoicesList();
-                    } else {
-                        this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
+            .then(response => {
+                if (response.data.success) {
                     this.showLoader = false;
-                });
+                    this.closeNumberEditedModal();
+                    this.getInvoicesList();
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.backendErrorMessage = error.response.data.message;
+                }
+                if(error.response.data.error) {
+                    this.backendErrorMessage = error.response.data.error;
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.backendErrorMessage = error.response.data.errors[0];
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.multipleErrors = error.response.data.errors;
+                    }
+                }
+                this.showLoader = false;
+            });
         },
         // open/close create network modals
         openCreateNetworkModal(id, type, name) {
@@ -770,55 +776,41 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        this.showLoader = false;
-                        this.closeCreateNetworkModal();
-                        this.getInvoicesList();
-                        this.fetchNetworkList();
-                    } else {
-                        this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
+            .then(response => {
+                if (response.data.success) {
                     this.showLoader = false;
-                });
+                    this.closeCreateNetworkModal();
+                    this.getInvoicesList();
+                    this.fetchNetworkList();
+                    this.backendErrorMessage = '';
+                    this.multipleErrors = [];
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if(error.response.data.message) {
+                    this.backendErrorMessage = error.response.data.message;
+                }
+                if(error.response.data.error) {
+                    this.backendErrorMessage = error.response.data.error;
+                }
+                if(error.response.data.errors) {
+                    if(error.response.data.errors.length == 1) {
+                        this.backendErrorMessage = error.response.data.errors[0];
+                    }else if(error.response.data.errors.length == 0){
+                        this.backendErrorMessage = '';
+                    }else {
+                        this.multipleErrors = error.response.data.errors;
+                    }
+                }
+                this.showLoader = false;
+            });
         }
     }
 }

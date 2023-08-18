@@ -5,22 +5,24 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Master Accounting</span>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Master Accounting</span>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0"> <!--  v-if="permissions.view == '1' && !showLoader"  -->
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             Master Accounting List
-                            <v-row>
-                                <v-spacer></v-spacer>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                            <v-spacer></v-spacer>
+                            <v-row class="d-flex align-center justify-end m-0">
+                                <v-col cols="12" lg="6" md="6" sm="12" class="font-medium font-weight-normal v_select_design p-0">
                                     <v-select variant="outlined" placeholder="Report Year" v-model="yearRange" :items="dateFilter" @update:modelValue="fetchDashboardData"></v-select>
                                 </v-col>
                             </v-row>

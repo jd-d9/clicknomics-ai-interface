@@ -5,12 +5,14 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Ads Accounts</span>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Ads Accounts</span>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -18,17 +20,13 @@
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-space-between align-center">
                             Ads Accounts List
-                            <v-row>
-                                <v-spacer></v-spacer>
-                                <v-col cols="12" sm="12" md="3" lg="3"
-                                    class="font-medium font-weight-normal v_select_design">
-                                    <v-select clearable variant="outlined" placeholder="Custom Filter" v-model="value"
-                                        :items="items" chips multiple @update:modelValue="filterList"></v-select>
+                            <v-spacer></v-spacer>
+                            <v-row class="d-flex align-center justify-end">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select clearable variant="outlined" placeholder="Custom Filter" v-model="value" :items="items" chips multiple @update:modelValue="filterList"></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
-                                    <input type="search" class="form-control serch_table" placeholder="Search"
-                                        v-model="search" />
-                                    <!-- <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field> -->
+                                <v-col class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
                                 </v-col>
                             </v-row>
                         </v-card-title>
@@ -414,7 +412,6 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error, 'error --')
                 if (error.response.data.message) {
                     this.message = {
                         text: error.response.data.message,

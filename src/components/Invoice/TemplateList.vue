@@ -4,22 +4,25 @@
         <v-container>
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
-                    <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <router-link to="/accounting/invoice" class="d-flex align-center">
-                            <span>Invoice</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Template</span>
-                        <v-spacer />
-
-                        <v-btn to="/accounting/invoice" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
-                            Back
-                        </v-btn>
+                    <v-breadcrumbs class="form_breadcume">
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <router-link to="/accounting/invoice" class="d-flex align-center">
+                                <span>Invoice</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Template</span>
+                        </div>
+                        <v-spacer/>
+                        <div class="button_div">
+                            <v-btn to="/accounting/invoice" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                                Back
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -28,9 +31,11 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Invoice Template List
                             <v-spacer></v-spacer>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal pa-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end responsive_margin">
+                                <v-col cols="12" lg="7" md="7" sm="12" class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -93,12 +98,13 @@
                             <span aria-hidden="true" class="mdi mdi-close-circle"></span>
                         </button>
                     </div>
-                    <form>
+                    <Form @submit="updateTemplateName" :validation-schema="schema" v-slot="{ errors }">
                         <div class="modal-body">
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
                                     <label class="form-control-label" for="input-username">Template Name</label>
-                                    <input type="text" placeholder="Template Name" :class="{'form-control': true }" v-model="selectedTemplateName">
+                                    <Field type="text" name="tempName" placeholder="Template Name" :class="{'form-control': true, 'border-red-600': errors.tempName }" v-model="selectedTemplateName"/>
+                                    <span class="text-red-600" v-if="errors.tempName">Template name is a required field</span>
                                 </v-col>
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">
                                     <small class="text-red-600" v-if="backendErrorMessage">{{ backendErrorMessage }}</small>
@@ -110,11 +116,11 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="updateTemplateName">Save</v-btn>    
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
                             </v-col>
                         </div>
-                    </form>
+                    </Form>
                 </div>
             </div>
         </div>
@@ -123,7 +129,15 @@
 
 <script>
 import axios from '@axios';
+import * as yup from 'yup';
+import { Form, Field } from 'vee-validate';
+import mixin from '../../mixin.js';
 export default {
+    mixins: [mixin],
+    components: {
+        Form, 
+        Field,
+    },
     data() {
         return {
             message: {},
@@ -146,10 +160,6 @@ export default {
             selectedTemplateId: '',
             backendErrorMessage: '',
             multipleErrors: [],
-            // selectedTemplate: {
-            //     id: '',
-            //     name: ''
-            // }
         }
     },
     mounted() {
@@ -158,6 +168,13 @@ export default {
             behavior: 'smooth',
         });
         this.getTemplateData();
+    },
+    computed: {
+        schema() {
+            return yup.object({
+                tempName: yup.string().required(),
+            });
+        },
     },
     methods: {
         // opening modal
@@ -182,6 +199,11 @@ export default {
                     this.templateList = response.data.data;
                     this.templateFilter = response.data.data;
                     this.showLoader = false;
+                    if(this.templateList.length > 0){
+                        setTimeout(() => {
+                            this.resizableGrid(document.getElementsByTagName('table')[0]);
+                        }, 1000)
+                    }
                 }else {
                     this.message = {
                         text: response.data.message,

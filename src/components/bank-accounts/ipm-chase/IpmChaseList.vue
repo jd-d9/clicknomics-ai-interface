@@ -5,50 +5,58 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>IPM Chase (Revenue) Payments</span>
-                        <v-spacer />
-                        <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
-                            Demo.csv
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>IPM Chase (Revenue) Payments</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
                         </v-btn>
-
-                        <v-btn @click="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
-                            Import CSV
-                        </v-btn>
-
-                        <v-btn to="/bank_accounts/ipmchase/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus" :disabled="permissions.create_auth == '0'">
-                            Add New
-                        </v-btn>
+                        <div class="button_div" v-if="!isHidden">
+                            <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                                Demo.csv
+                            </v-btn>
+    
+                            <v-btn @click="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                                Import CSV
+                            </v-btn>
+    
+                            <v-btn to="/bank_accounts/ipmchase/create" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-plus" :disabled="permissions.create_auth == '0'">
+                                Add New
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
-                                    IPM Chase (Revenue) Payments List
-                                </v-col>
-                            </v-row>                            
+                            IPM Chase (Revenue) Payments List
                             <v-row class="d-flex align-center justify-end">
-                                <v-spacer></v-spacer>
-                                <div v-if="selected.length > 0" class="mr-2">
-                                    <v-btn @click="deleteSelected" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                        Remove Selected
-                                    </v-btn>
-                                </div>
-                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0" v-if="selected.length > 0">
+                                    <div class="mr-2">
+                                        <v-btn @click="deleteSelected" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                            Remove Selected
+                                        </v-btn>
+                                    </div>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
                                     <v-select :items="descriptionFilter" clearable variant="outlined" placeholder="Description Filter" v-model="descriptionValue" @update:modelValue="getIpmChaseReport"></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
                                     <v-select :items="transactionTypeFilter" clearable variant="outlined" placeholder="Transaction Type Filter" v-model="transactionTypeValue" @update:modelValue="getIpmChaseReport"></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal">
+                                <v-col class="font-medium font-weight-normal">
                                     <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                                 </v-col>
                             </v-row>
@@ -220,6 +228,7 @@ export default {
             permissions: {},
             selectedFile: '',
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            isHidden: false,
         }
     },
     filters: {
@@ -243,6 +252,10 @@ export default {
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
+        });
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
         });
         
         // const urlSearchParams = new URLSearchParams(window.location.search);
@@ -269,7 +282,6 @@ export default {
         const params = Object.fromEntries(urlSearchParams.entries());
         if(params.startDate && params.endDate) {
             this.selectedRange = `${moment(new Date(parseInt(params.startDate))).format('ddd MMM DD YYYY')} - ${moment(new Date(parseInt(params.endDate))).format('ddd MMM DD YYYY')}`
-            // console.log(this.selectedRange, '---- this.selectedRange -----');
         }
         this.getIpmChaseReport();
     },

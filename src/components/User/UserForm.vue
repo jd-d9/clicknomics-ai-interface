@@ -79,18 +79,14 @@
                     </v-col>
                 </v-row>
 
-                <v-row v-if="toggleComponent">
+                <v-row>
                     <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                        <label class="form-control-label">Password</label>
-                        <Field type="password" id="input-username" name="Password" :class="{'form-control': true ,'border-red-600': errors.Password || passwordValidation}" placeholder="Password" v-model="userPassword" @keyup="validatePassword"/>
-                        <ErrorMessage class="text-red-600" name="Password" v-if="!passwordValidation"/>
-                        <span class="text-red-600" v-if="passwordValidation">{{passwordValidation}}</span>
-                    </v-col>
-
-                    <v-col cols="12" sm="12" md="4" lg="4" class="font-medium font-weight-normal">
-                        <label class="form-control-label">Confirm Password</label>
-                        <Field type="password" id="input-username" name="passwordConfirmation" :class="{'form-control': true, 'border-red-600': errors.passwordConfirmation}" placeholder="Confirm Password" v-model="confirmPassword"/>
-                        <span class="text-red-600" v-if="errors.passwordConfirmation">Password did not match</span>
+                        <label class="form-control-label">Restricted By</label>
+                        <select disabled :class="{'form-control': true}" placeholder="Select Restricted By" v-model="restrictBy">
+                            <option value="">Select Restricted By</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
                     </v-col>
                 </v-row>
 
@@ -107,7 +103,7 @@
                 <v-row>
                     <v-col cols="12" sm="12" md="12" lg="12">
                         <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">{{toggleComponent ? 'Save' : 'Update'}}</v-btn>    
-                        <v-btn type="reset" v-if="toggleComponent" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-backup-restore" @click="passwordValidation = ''">Reset</v-btn>    
+                        <v-btn type="reset" v-if="toggleComponent" class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-backup-restore">Reset</v-btn>    
                     </v-col>
                 </v-row>
             </Form>                    
@@ -129,8 +125,6 @@ export default {
         return {
             message: {},
             userEmail: '',
-            userPassword: '',
-            confirmPassword: '',
             firstName: '',
             lastName: '',
             companyName: '',
@@ -145,7 +139,7 @@ export default {
             backendErrorMessage: '',
             multipleErrors: [],
             breadCrumbMessage: 'Create',
-            passwordValidation: '',
+            restrictBy: 1,
         }
     },
     mounted() {
@@ -168,8 +162,6 @@ export default {
                 lastName: yup.string().required(),
                 Email: yup.string().required().email(),
                 companyName: yup.string().required(),
-                Password: !this.toggleComponent ? '' : yup.string().required(),
-                passwordConfirmation: !this.toggleComponent ? '' : yup.string().required().oneOf([yup.ref('Password')], 'Passwords do not match'),
                 // Mobile: yup.string().required().min(10),
                 // Country: yup.string().required(),
                 Role: yup.string().required(),
@@ -178,15 +170,6 @@ export default {
         },
     },
     methods:{
-        // password validation
-        validatePassword() {
-            const validPassword = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
-            if(!this.userPassword.match(validPassword)) {
-                this.passwordValidation = 'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
-            }else {
-                this.passwordValidation = '';
-            }
-        },
         // save and update user
         manageUser() {
             // update user
@@ -196,10 +179,10 @@ export default {
                     first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
                     last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
                     email: this.userEmail,
-                    password: this.userPassword,
                     role_id: this.roleId,
                     status: this.status,
                     company_name: this.companyName,
+                    restricted_by_plan: this.restrictBy,
                     // phone_number: this.userContact,
                     // country_code: this.selectedCountry,
                     _method: 'PUT'
@@ -250,66 +233,61 @@ export default {
             }
             // create user
             else {
-                if(this.passwordValidation) {
-                    return false;
-                }
-                else {
-                    this.showLoader = true;
-                    axios.post(this.$api + '/settings/user', {
-                        first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
-                        last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
-                        email: this.userEmail,
-                        password: this.userPassword,
-                        role_id: this.roleId,
-                        status: this.status,
-                        company_name: this.companyName,
-                        // phone_number: this.userContact,
-                        // country_code: this.selectedCountry,
-                    }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: this.getAccessToken()
-                        }
-                    })
-                    .then(response => {
-                        if(response.data.success) {
-                            this.$router.push('/settings/user');
-                            this.showLoader = false;
-                            this.backendErrorMessage = '';
-                            this.multipleErrors = [];
-                            this.message = {
-                                text: response.data.message,
-                                type: 'success',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }else {
-                            this.message = {
-                                text: response.data.message,
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                            this.showLoader = false;
-                        }
-                    })
-                    .catch(error => {
-                        if(error.response.data.message) {
-                            this.backendErrorMessage = error.response.data.message;
-                        }
-                        if(error.response.data.error) {
-                            this.backendErrorMessage = error.response.data.error;
-                        }
-                        if(error.response.data.errors) {
-                            if(error.response.data.errors.length == 1) {
-                                this.backendErrorMessage = error.response.data.errors[0];
-                            }else if(error.response.data.errors.length == 0){
-                                this.backendErrorMessage = '';
-                            }else {
-                                this.multipleErrors = error.response.data.errors;
-                            }
-                        }
+                this.showLoader = true;
+                axios.post(this.$api + '/settings/user', {
+                    first_name: this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1),
+                    last_name: this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1),
+                    email: this.userEmail,
+                    role_id: this.roleId,
+                    status: this.status,
+                    company_name: this.companyName,
+                    restricted_by_plan: this.restrictBy,
+                    // phone_number: this.userContact,
+                    // country_code: this.selectedCountry,
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: this.getAccessToken()
+                    }
+                })
+                .then(response => {
+                    if(response.data.success) {
+                        this.$router.push('/settings/user');
                         this.showLoader = false;
-                    });
-                }
+                        this.backendErrorMessage = '';
+                        this.multipleErrors = [];
+                        this.message = {
+                            text: response.data.message,
+                            type: 'success',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }else {
+                        this.message = {
+                            text: response.data.message,
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                        this.showLoader = false;
+                    }
+                })
+                .catch(error => {
+                    if(error.response.data.message) {
+                        this.backendErrorMessage = error.response.data.message;
+                    }
+                    if(error.response.data.error) {
+                        this.backendErrorMessage = error.response.data.error;
+                    }
+                    if(error.response.data.errors) {
+                        if(error.response.data.errors.length == 1) {
+                            this.backendErrorMessage = error.response.data.errors[0];
+                        }else if(error.response.data.errors.length == 0){
+                            this.backendErrorMessage = '';
+                        }else {
+                            this.multipleErrors = error.response.data.errors;
+                        }
+                    }
+                    this.showLoader = false;
+                });
             }
         },
         // get all user data
@@ -324,7 +302,6 @@ export default {
             .then(response => {
                 if(response.data.success) {
                     this.roles = response.data.data.roles;
-                    console.log(this.roles, 'this.roles')
                     this.showLoader = false;
                 }else {
                     this.message = {
@@ -355,7 +332,6 @@ export default {
                     this.firstName = getData.first_name;
                     this.lastName = getData.last_name;
                     this.userEmail = getData.email;
-                    this.userPassword = getData.password;
                     this.roleId = getData.role_id;
                     this.status = getData.status;
                     this.companyName = getData.company_name;

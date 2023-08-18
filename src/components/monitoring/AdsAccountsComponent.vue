@@ -5,26 +5,30 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Monitoring Ads Accounts</span>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Monitoring Ads Accounts</span>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
-                <v-col cols="12" sm="12" md="12" lg="12" class="py-0"><!-- v-if="permissions.view == '1' && !showLoader" -->
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex align-center justify-end">
                             Monitoring Ads Accounts List
                             <v-spacer></v-spacer>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design py-0 pr-0">
-                                <v-select v-model="value" :items="items" chips placeholder="Custom Filter" multiple clearable variant="outlined" @change="filterList"></v-select>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" single-line hide-details />
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end responsive_margin">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-select v-model="value" :items="items" chips placeholder="Custom Filter" multiple clearable variant="outlined" @update:modelValue="filterList"></v-select>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" single-line hide-details />
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -48,8 +52,8 @@
                                     Disabled
                                 </div>
                             </template>
-                            <template v-slot:[`item.action`]>    
-                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editAdsAccountModal">
+                            <template v-slot:[`item.action`]="{ item }">    
+                                <v-btn class="ma-2 bg-green-lighten-4" variant="text" icon @click.prevent="editAdsAccountModal(item.selectable)" :disabled="permissions.update_auth == '0'">
                                     <v-icon color="green-darken-2">
                                         mdi-pencil
                                     </v-icon>
@@ -59,13 +63,13 @@
                         </v-data-table>
                     </v-card>
                 </v-col>
-                <!-- <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
+                <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view != '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title class="d-flex justify-content-center align-center">
                             You have no access for this page
                         </v-card-title>
                     </v-card>
-                </v-col> -->
+                </v-col>
             </v-row>
         </v-container>
 
@@ -83,15 +87,13 @@
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label" for="input-username">Monitoring Check Enabled</label>
-                                    <Field v-model="item.monitoring_check_enabled">
-                                        <v-select :class="{'form-control autocomplete': true}" :items="statusList" v-model="item.monitoring_check_enabled"></v-select>
-                                    </Field>
+                                    <v-select :class="{'form-control autocomplete': true}" :items="statusList" v-model="item.monitoring_check_enabled" item-value="key"></v-select>
                                 </v-col>
                             </v-row>
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
-                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
+                                <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save" @click.prevent="updateMonitoring">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeAdsAccountModal">Close</v-btn>
                             </v-col>
                         </div>
@@ -103,12 +105,11 @@
 </template>
 
 <script>
+import axios from '@axios';
 export default {
-    components: {
-
-    },
     data() {
         return {
+            message: {},
             showLoader: false,
             search: '',
             headers: [
@@ -118,15 +119,8 @@ export default {
                 { title: 'Monitoring Enabled', key: 'monitoring_check_enabled' },
                 { title: 'Action', key: 'action' },
             ],
-            adsAccountsList: [
-                {
-                    account_id: '5288641337',
-                    name: 'IPM - 283',
-                    traffic_source: 'GOOGLE',
-                    monitoring_check_enabled: 'Disabled',
-                    action: '',
-                }
-            ],
+            adsAccountsList: [],
+            adsAccountsListFilter: [],
             singleExpand: true,
             page: 1,
             itemsPerPage: -1,
@@ -134,17 +128,20 @@ export default {
             value: ['GOOGLE', 'MICROSOFT'],
             statusList: [
                 {
-                    title: 'Enabled'
+                    title: 'Enabled',
+                    key: '1'
                 },
                 {
-                    title: 'Disabled'
+                    title: 'Disabled',
+                    key: '0'
                 },
             ],
             item: {
                 id:'',
                 monitoring_check_enabled: '',
                 traffic_source: ''
-            }
+            },
+            permissions: {},
         }
     },
     mounted() {
@@ -152,13 +149,149 @@ export default {
             top: 0,
             behavior: 'smooth',
         });
+        this.getData();
     },
     methods: {
-        editAdsAccountModal() {
+        editAdsAccountModal(val) {
+            this.item.id = val.account_id;
+            this.item.monitoring_check_enabled = val.monitoring_check_enabled;
+            this.item.traffic_source = val.traffic_source;
             window.$('#adsAccountModal').modal('show');
         },
         closeAdsAccountModal() {
+            this.item = {};
             window.$('#adsAccountModal').modal('hide');
+        },
+        // get listings
+        getData() {
+            this.showLoader = true;
+            axios.get(this.$api + '/monitoring/adsAccounts', {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: this.getAccessToken(),
+                }
+            })
+            .then(response => {
+                if (response.data.success) {
+                    const getData = response.data;
+                    this.adsAccountsList = getData.data;
+                    this.adsAccountsListFilter = getData.data;
+                    this.permissions = getData.permission;
+                    this.showLoader = false;
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
+                    } else {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                }
+                this.showLoader = false;
+            });
+        },
+        // update monitoring
+        updateMonitoring() {
+            this.showLoader = true;
+            axios.post(this.$api + '/monitoring/saveAdsAccountsStatus', {
+                id: this.item.id,
+                monitoring_check_enabled: this.item.monitoring_check_enabled == '1' ? 'Enabled' : 'Disabled',
+                traffic_source: this.item.traffic_source,
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: this.getAccessToken(),
+                }
+            })
+            .then(response => {
+                if (response.data.success) {
+                    this.showLoader = false;
+                    this.getData();
+                    this.closeAdsAccountModal();
+                    this.message = {
+                        text: response.data.message,
+                        type: 'success',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
+                    } else {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    }
+                }
+                this.showLoader = false;
+            });
+        },
+        // filter list
+        filterList() {
+            this.adsAccountsList = this.adsAccountsListFilter.filter(data => this.value.find(rm => (rm.toLowerCase() === data.traffic_source.toLowerCase())));
         },
     }
 }

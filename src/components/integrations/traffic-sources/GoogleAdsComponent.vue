@@ -5,24 +5,32 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Google Ads Integration</span>
-
-                        <v-spacer />
-                        <v-btn @click.prevent="fetchAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="!restrictUser">
-                            <img src="/assets/img/icons/google-ads.svg" class="add-width mr-2">
-                            <span class="btn-inner--text">Sync Google Accounts</span>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Google Ads Integration</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
                         </v-btn>
+                        <div class="button_div" v-if="!isHidden">
+                            <v-btn @click.prevent="fetchAccessToken" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="!restrictUser">
+                                <img src="/assets/img/icons/google-ads.svg" class="add-width mr-2">
+                                <span class="btn-inner--text">Sync Google Accounts</span>
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
-                        <v-card-title class="d-flex justify-space-between align-center">
+                        <v-card-title>
                             Google Ads Integration List
                         </v-card-title>
 
@@ -210,6 +218,7 @@ export default {
             backendErrorMessage: '',
             multipleErrors: [],
             restrictUser: true,
+            isHidden: false,
         }
     },
     mounted() {
@@ -217,6 +226,10 @@ export default {
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
+        });
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
         });
     },
     computed: {

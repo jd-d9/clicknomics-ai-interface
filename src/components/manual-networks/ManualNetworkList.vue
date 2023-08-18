@@ -5,13 +5,15 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Manual Network</span>
-                        <v-spacer />
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Manual Network</span>
+                        </div>
+                        <v-spacer/>
                         <!-- <v-btn to="/admin/img/doc/manual-networks-metrics.csv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
                             Demo.csv
                         </v-btn>
@@ -19,11 +21,17 @@
                         <v-btn to="#exampleModalCenter" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
                             Import CSV
                         </v-btn> -->
-
-                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated"
-                            :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus"> <!-- || !restrictUser -- Abhi ke liye comment - backend -->
-                            Add New
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
                         </v-btn>
+                        <div class="button_div" v-if="!isHidden">
+                            <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated"
+                                :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus"> <!-- || !restrictUser -- Abhi ke liye comment - backend -->
+                                Add New
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -32,10 +40,11 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Manual Network List
                             <v-spacer></v-spacer>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search"
-                                    v-model="search" />
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end responsive_margin">
+                                <v-col cols="12" lg="7" md="7" sm="12" class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" />
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <!-- data table component -->
@@ -153,7 +162,7 @@
 
                                 <v-col cols="12" sm="12" md="6" lg="6" class="pb-0 font-medium font-weight-normal">
                                     <label class="form-control-label">Email</label>
-                                    <Field type="text" name="Email" id="input-username"
+                                    <Field type="email" name="Email" id="input-username"
                                         :class="{ 'form-control': true, 'border-red-600': errors.Email }" placeholder="Email"
                                         v-model="list.email" />
                                     <ErrorMessage class="text-red-600" name="Email" />
@@ -251,6 +260,7 @@ export default {
             restrictUser: true,
             backendErrorMessage: '',
             multipleErrors: [],
+            isHidden: false,
         }
     },
     computed: {
@@ -268,6 +278,10 @@ export default {
             behavior: 'smooth',
         });
         this.getManualNetworkListing();
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     },
     methods: {
         // formate date
@@ -283,6 +297,9 @@ export default {
             window.$('#createUpdateData').modal('show');
         },
         closeModal() {
+            document.getElementById('reset_button').click();
+            this.backendErrorMessage = '';
+            this.multipleErrors = [];
             window.$('#createUpdateData').modal('hide');
         },
         // get manual network listing
@@ -294,56 +311,56 @@ export default {
                     Authorization: this.getAccessToken()
                 }
             })
-                .then(response => {
-                    if (response.data.success) {
-                        const getData = response.data;
-                        this.dataMetrics = getData.data;
-                        this.permissions = getData.permission;
-                        this.restrictUser = getData.restrict_user;
-                        this.showLoader = false;
+            .then(response => {
+                if (response.data.success) {
+                    const getData = response.data;
+                    this.dataMetrics = getData.data;
+                    this.permissions = getData.permission;
+                    this.restrictUser = getData.restrict_user;
+                    this.showLoader = false;
+                } else {
+                    this.message = {
+                        text: response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                    this.showLoader = false;
+                }
+            })
+            .catch(error => {
+                if (error.response.data.message) {
+                    this.message = {
+                        text: error.response.data.message,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.error) {
+                    this.message = {
+                        text: error.response.data.error,
+                        type: 'error',
+                    }
+                    this.$eventBus.emit('flash-message', this.message, '');
+                }
+                if (error.response.data.errors) {
+                    if (error.response.data.errors.length == 1) {
+                        this.message = {
+                            text: error.response.data.errors[0],
+                            type: 'error',
+                        }
+                        this.$eventBus.emit('flash-message', this.message, '');
+                    } else if (error.response.data.errors.length == 0) {
+                        this.backendErrorMessage = '';
                     } else {
                         this.message = {
-                            text: response.data.message,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                        this.showLoader = false;
-                    }
-                })
-                .catch(error => {
-                    if (error.response.data.message) {
-                        this.message = {
-                            text: error.response.data.message,
+                            text: error.response.data.errors[0],
                             type: 'error',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
                     }
-                    if (error.response.data.error) {
-                        this.message = {
-                            text: error.response.data.error,
-                            type: 'error',
-                        }
-                        this.$eventBus.emit('flash-message', this.message, '');
-                    }
-                    if (error.response.data.errors) {
-                        if (error.response.data.errors.length == 1) {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        } else if (error.response.data.errors.length == 0) {
-                            this.backendErrorMessage = '';
-                        } else {
-                            this.message = {
-                                text: error.response.data.errors[0],
-                                type: 'error',
-                            }
-                            this.$eventBus.emit('flash-message', this.message, '');
-                        }
-                    }
-                    this.showLoader = false;
-                });
+                }
+                this.showLoader = false;
+            });
         },
         // create and update network
         saveManualNetwork() {
@@ -370,8 +387,6 @@ export default {
                             type: 'success',
                         }
                         this.$eventBus.emit('flash-message', this.message, '');
-                        this.backendErrorMessage = '';
-                        this.multipleErrors = [];
                         this.getManualNetworkListing();
                         this.closeModal();
                         this.showLoader = false;
@@ -405,14 +420,16 @@ export default {
         },
         // open modal for create new network
         createActivity() {
-            document.getElementById('reset_button').click();
             this.activityType = 'Create';
             this.list.name = '';
             this.list.email = '';
             this.list.platform_type = '';
             this.list.notes = '';
             this.list.company = '';
-            this.openModal();
+            setTimeout(() => {
+                document.getElementById('reset_button').click();
+                this.openModal();
+            }, 100)
         },
         // get data for edit
         edit(id) {

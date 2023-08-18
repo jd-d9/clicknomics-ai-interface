@@ -5,23 +5,31 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Cloudways</span>
-
-                        <v-spacer />
-                        <v-btn @click.prevent="this.$router.push('/settings/cloudways/integrate')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
-                            Integrate Cloudways
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Cloudways</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
                         </v-btn>
+                        <div class="button_div" v-if="!isHidden">
+                            <v-btn @click.prevent="this.$router.push('/settings/cloudways/integrate')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                                Integrate Cloudways
+                            </v-btn>
+                        </div>  
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
-                        <v-card-title class="d-flex justify-space-between align-center">
+                        <v-card-title>
                             Cloudways List
                         </v-card-title>
 
@@ -111,6 +119,7 @@ export default {
             listData: [],
             itemsPerPage: -1,
             permissions: {},
+            isHidden: false,
         }
     },
     mounted() {
@@ -118,6 +127,10 @@ export default {
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
+        });
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
         });
     },
     methods: {

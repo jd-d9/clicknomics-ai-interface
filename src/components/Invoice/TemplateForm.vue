@@ -5,36 +5,39 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <router-link to="/accounting/invoice/template" class="d-flex align-center">
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <router-link to="/accounting/invoice/template" class="d-flex align-center">
+                                <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                                <span>Templates</span>
+                            </router-link>
                             <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                            <span>Templates</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>{{ dynamicBredCrumb }}</span>
-
-                        <v-spacer />
-                        <div v-if="!toggleElement">
+                            <span>{{ dynamicBredCrumb }}</span>
+                        </div>
+                        <v-spacer/>
+                        <div class="button_div" v-if="!toggleElement">
                             <v-btn @click.prevent="createInvoice" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-plus" >
                                 Create Invoice
                             </v-btn>
+                            <v-btn to="/accounting/invoice/template" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                                Back
+                            </v-btn>
                         </div>
 
-                        <div v-else>
+                        <div class="button_div" v-else>
                             <v-btn @click.prevent="openModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-plus" >
                                 Create New Template
                             </v-btn>
                             <v-btn @click.prevent="updateTemplate" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-content-save" >
                                 Update Invoice
                             </v-btn>
+                            <v-btn to="/accounting/invoice/template" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
+                                Back
+                            </v-btn>
                         </div>
-
-                        <v-btn to="/accounting/invoice/template" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" prepend-icon="mdi-keyboard-backspace" >
-                            Back
-                        </v-btn>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -43,11 +46,11 @@
                         <v-card-title class="d-flex justify-space-between">
                             {{ dynamicBredCrumb }}
                         </v-card-title>
-                        <v-divider class="border-opacity-100 my-4" color="success" />     
+                        <v-divider class="border-opacity-100 my-4" color="success"/>     
 
                         <v-row class="mb-4">
                             <!-- Left Company detail -->
-                            <v-col cols="12" sm="12" md="5" lg="5" class="font-medium font-weight-normal">
+                            <v-col cols="12" sm="12" md="5" lg="5" class="font-medium font-weight-normal position-2">
                                 <div class="mb-4">
                                     <label class="form-control-label">Company Name</label>
                                     <input v-model="invoiceData.companyName" class="form-control" label="Company Name" placeholder="Company Name" hide-details="auto" />
@@ -60,10 +63,10 @@
                             <v-spacer />
 
                             <!-- Right Invoice number and date -->
-                            <v-col cols="12" sm="12" md="5" lg="4" class="font-medium font-weight-normal">
+                            <v-col cols="12" sm="12" md="5" lg="4" class="font-medium font-weight-normal position-1">
                                 <div class="mb-4 d-flex align-center justify-end">
                                     <label class="mb-0 mr-2">Invoice Number</label>
-                                    <input v-model="invoiceData.invoiceData.invoiceNumber" class="form-control" label="Company Name" placeholder="Company Name" hide-details="auto" style="width:100px" />
+                                    <input v-model="invoiceData.invoiceData.invoiceNumber" class="form-control" label="Company Name" placeholder="Invoice Number" hide-details="auto" style="width:100px" />
                                 </div>
                                 <div class="mb-4 d-flex align-center justify-end">
                                     <label class="mb-0 mr-2" style="width:130px">Date Issued</label>
@@ -112,7 +115,7 @@
                                     <strong>${{ product.cost * product.quantity }}</strong>
                                 </p>
                             </v-col>
-                            <v-col cols="12" sm="12" md="1" lg="1" class="font-medium font-weight-normal" v-if="index == 0">
+                            <v-col cols="12" sm="12" md="1" lg="1" class="font-medium font-weight-normal">
                                 <label class="form-control-label"></label>
                                 <v-btn class="ma-2 bg-blue-lighten-4" variant="text" icon @click="addNewItem">
                                     <v-icon color="blue-darken-2">
@@ -195,10 +198,8 @@
                             <v-row>
                                 <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
                                     <label class="form-control-label" for="input-username">Template Name</label>
-                                    <input type="text" :class="{'form-control': true, 'is-invalid': errorMessage}" v-model="templateName">
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ errorMessage }}</strong>
-                                    </span>
+                                    <input type="text" :class="{'form-control': true, 'border-red-600': errorMessage}" v-model="templateName">
+                                    <span class="text-red-600" role="alert">{{ errorMessage }}</span>
                                 </v-col>
 
                                 <v-col v-if="backendErrorMessage" cols="12" sm="12" md="12" lg="12" class="font-medium font-weight-normal position-relative mb-0 mt-0 pt-0 pb-0">

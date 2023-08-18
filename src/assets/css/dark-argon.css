@@ -54,6 +54,14 @@ body.dark-mode , .dark-mode .bg-default{background-color:#121e2d !important;}
 .dark-mode .introjs-helperLayer{
     box-shadow: rgb(255 255 255 / 0%) 0px 0px 1px 2px, rgb(219 219 219 / 14%) 0px 0px 0px 5000px !important;
 }
+.dark-mode .active-tab:after {
+    border: 18px solid #162131;
+    border-right: 18px solid #00cd00;
+}
+.dark-mode .hide-show-sidebar .active-tab:after{
+    border: 18px solid transparent;
+    border-right: 18px solid #00cd00;
+}
 
 
 /*---------------- form css -------*/

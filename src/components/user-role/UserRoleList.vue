@@ -5,23 +5,31 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>User Roles</span>
-                        <v-spacer />
-
-                        <v-btn @click.prevent="addNewUserRole" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
-                            Add User Role
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>User Roles</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
                         </v-btn>
+                        <div class="button_div" v-if="!isHidden">
+                            <v-btn @click.prevent="addNewUserRole" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                                Add User Role
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
-                        <v-card-title class="d-flex justify-space-between align-center">
+                        <v-card-title>
                             User Roles List
                         </v-card-title>
 
@@ -77,7 +85,8 @@ export default {
                 { title: 'Role Name', key: 'role_name' },
                 { title: 'Action', align:'center', key: 'action', sortable: false },
             ],
-            itemsPerPage: -1
+            itemsPerPage: -1,
+            isHidden: false,
         }
     },
     methods: {
@@ -217,6 +226,10 @@ export default {
             behavior: 'smooth',
         });
         this.getUserRole();
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     }
 }
 </script>

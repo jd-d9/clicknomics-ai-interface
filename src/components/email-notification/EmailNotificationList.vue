@@ -5,17 +5,25 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Email Notification</span>
-
-                        <v-spacer />
-                        <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
-                            Add New
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Email Notification</span>
+                        </div>
+                        <v-spacer/>
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
                         </v-btn>
+                        <div class="button_div" v-if="!isHidden">
+                            <v-btn @click.prevent="createActivity" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                                Add New
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
@@ -24,14 +32,16 @@
                         <v-card-title class="d-flex justify-space-between align-center">
                             Email Notification List
                             <v-spacer></v-spacer>
-                            <div v-if="selected.length > 0">
-                                <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
-                                    Remove Selected
-                                </v-btn>
-                            </div>
-                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal py-0 pr-0">
-                                <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
-                            </v-col>
+                            <v-row class="d-flex align-center justify-end responsive_margin">
+                                <v-col cols="12" lg="6" md="6" sm="12" v-if="selected.length > 0" class="font-medium font-weight-normal v_select_design pr-0">
+                                    <v-btn @click="deleteSelected" :disabled="permissions.delete_auth == '0'" class="ms-auto ml-2 text-none bg-red-darken-4 btn_animated" prepend-icon="mdi-delete-empty">
+                                        Remove Selected
+                                    </v-btn>
+                                </v-col>
+                                <v-col cols="12" lg="6" md="6" sm="12" class="font-medium font-weight-normal">
+                                    <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
+                                </v-col>
+                            </v-row>
                         </v-card-title>
 
                         <v-data-table class="table-hover-class mt-4" :footer-props="{'items-per-page-options': [5, 10, 15, 25, 50, 100, -1]}" v-model="selected" show-select :headers="headers" :items="dataMetrics" :search="search" :itemsPerPage="itemsPerPage"> <!--  @current-items="currentItems"  -->
@@ -174,6 +184,7 @@
                         </div>
                         <div class="modal-footer">
                             <v-col cols="12" sm="12" md="12" lg="12" class="text-right pa-0">
+                                <v-btn type="reset" class="text-none bg-blue-darken-4 btn_animated mr-5 ml--4" id="reset_button" append-icon="mdi-content-save" style="opacity: 0">Reset</v-btn>
                                 <v-btn type="submit" class="text-none bg-blue-darken-4 btn_animated mr-3" append-icon="mdi-content-save">Save</v-btn>    
                                 <v-btn class="text-none bg-red-darken-2 btn_animated" append-icon="mdi-close" @click.prevent="closeModal">Close</v-btn>
                             </v-col>
@@ -190,7 +201,6 @@ import axios from '@axios';
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
-    // props: [ 'list'],
     components: {
         Form, 
         Field,
@@ -247,6 +257,7 @@ export default {
             permissions: {},
             backendErrorMessage: '',
             multipleErrors: [],
+            isHidden: false,
         }
     },
     filters: {
@@ -284,6 +295,10 @@ export default {
         this.getListings();
         // this.getDomainList();
         // this.dataMetrics = this.list
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     },
     methods: {
         // open and close modal
@@ -291,6 +306,9 @@ export default {
             window.$('#createUpdateData').modal('show');
         },
         closeModal() {
+            document.getElementById('reset_button').click();
+            this.backendErrorMessage = '';
+            this.multipleErrors = [];
             window.$('#createUpdateData').modal('hide');
         },
         // get listing data
@@ -374,19 +392,24 @@ export default {
         },
         // open model for create and set field values
         createActivity() {
-            this.openModal();
-            this.activityType = 'Add';
             this.activity.email = '';
-            this.activity.daily_report = 'Active';
-            this.activity.monthly_report = 'Active';
-            this.activity.weekly_report = 'Active';
-            this.activity.url_uptime_report = 'Active';
-            this.activity.account_monitoring_report = 'Active';
-            this.activity.networks_monitoring_report = 'Active';
-            this.activity.ads_issue_report = 'Active';
-            this.activity.domain_expires_report = 'Active';
-            this.activity.payment_declined_report = 'Active';
-            this.activity.speed_test_report = 'Active';
+            setTimeout(() => {
+                document.getElementById('reset_button').click();
+            }, 100)
+            setTimeout(() => {
+                this.activityType = 'Add';
+                this.activity.daily_report = 'Active';
+                this.activity.monthly_report = 'Active';
+                this.activity.weekly_report = 'Active';
+                this.activity.url_uptime_report = 'Active';
+                this.activity.account_monitoring_report = 'Active';
+                this.activity.networks_monitoring_report = 'Active';
+                this.activity.ads_issue_report = 'Active';
+                this.activity.domain_expires_report = 'Active';
+                this.activity.payment_declined_report = 'Active';
+                this.activity.speed_test_report = 'Active';
+                this.openModal();
+            }, 150)
         },
         // delete single data
         deleteData(id) {
@@ -554,8 +577,6 @@ export default {
                         type: 'success',
                     }
                     this.$eventBus.emit('flash-message', this.message, '');
-                    this.backendErrorMessage = '';
-                    this.multipleErrors = [];
                     this.closeModal();
                     this.getListings();
                     this.showLoader = false;

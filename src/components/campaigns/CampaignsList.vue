@@ -5,26 +5,24 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Campaigns</span>
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Campaigns</span>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
-                                    Campaigns List
-                                </v-col>
-                            </v-row>
+                            Campaigns List
 
                             <!-- tab panel title div -->
-                            <div class="mt-4">
+                            <div class="mt-2">
                                 <v-tabs v-model="tabCampaigns" fixed-tabs bg-color="green-lighten-4" class="mb-3">
                                     <v-tab value="google_campaigns" class="font-weight-bold" color="green-darken-4 ">
                                         <img src="assets/img/icons/google-ads.svg" class="w-20 mr-2"> Google Campaigns
@@ -36,12 +34,12 @@
 
                                 <v-window v-model="tabCampaigns">
                                     <v-window-item value="google_campaigns">
-                                        <v-row>
+                                        <v-row class="d-flex align-center justify-end">
                                             <v-spacer></v-spacer>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                            <v-col class="font-medium font-weight-normal v_select_design pr-0">
                                                 <v-select v-model="valueGoogle" :items="itemsGoogle" chips variant="outlined" placeholder="Custom Filter" multiple @update:modelValue="fetchGoogleCampaign"></v-select>
                                             </v-col>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                            <v-col class="font-medium font-weight-normal v_select_design">
                                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="search" hide-details/>
                                             </v-col>
                                         </v-row>
@@ -63,12 +61,12 @@
                                     </v-window-item>
 
                                     <v-window-item value="microsoft_campaigns">
-                                        <v-row>
+                                        <v-row class="d-flex align-center justify-end">
                                             <v-spacer></v-spacer>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                            <v-col class="font-medium font-weight-normal v_select_design pr-0">
                                                 <v-select v-model="valueMicrosoft" :items="itemsMicrosoft" chips variant="outlined" placeholder="Custom Filter" multiple @update:modelValue="fetchMicrosoftCampaign"></v-select>
                                             </v-col>
-                                            <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design">
+                                            <v-col class="font-medium font-weight-normal v_select_design">
                                                 <input type="search" class="form-control serch_table" placeholder="Search" v-model="microsoftSearch" hide-details/>
                                             </v-col>
                                         </v-row>

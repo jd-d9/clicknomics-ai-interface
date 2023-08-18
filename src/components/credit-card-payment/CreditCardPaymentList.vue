@@ -5,46 +5,52 @@
             <v-row class="ma-0">
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0">
                     <v-breadcrumbs>
-                        <router-link to="/dashboard" class="d-flex align-center">
-                            <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
-                            <span>Dashboard</span>
-                        </router-link>
-                        <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
-                        <span>Credit Card Payments</span>
-
+                        <div class="d-flex">
+                            <router-link to="/dashboard" class="d-flex align-center">
+                                <v-icon icon="mdi-view-dashboard mr-2"></v-icon>
+                                <span>Dashboard</span>
+                            </router-link>
+                            <v-icon icon="mdi-rhombus-medium" class="mx-2" color="#00cd00"></v-icon>
+                            <span>Credit Card Payments</span>
+                        </div>
                         <v-spacer />
-                        <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
-                            Demo.csv
+                        <v-btn class="ma-2 bg-green-lighten-4 hidden-md-and-up" variant="text" icon v-on:click="isHidden = !isHidden">
+                            <v-icon color="green-darken-2">
+                                mdi-dots-vertical
+                            </v-icon>
                         </v-btn>
+                        <div class="button_div" v-if="!isHidden">
+                            <v-btn @click="downloadCsv" class="ms-auto ml-2 text-none bg-deep-purple-darken-1 btn_animated" prepend-icon="mdi-download">
+                                Demo.csv
+                            </v-btn>
 
-                        <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
-                            Import CSV
-                        </v-btn>
+                            <v-btn @click="openImportCsvModal" class="ms-auto ml-2 text-none bg-green-darken-1 btn_animated" prepend-icon="mdi-import">
+                                Import CSV
+                            </v-btn>
 
-                        <v-btn @click.prevent="this.$router.push('/accounting/creditCardPayments/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
-                            Add New
-                        </v-btn>
+                            <v-btn @click.prevent="this.$router.push('/accounting/creditCardPayments/create')" class="ms-auto ml-2 text-none bg-blue-darken-4 btn_animated" :disabled="permissions.create_auth == '0'" prepend-icon="mdi-plus">
+                                Add New
+                            </v-btn>
+                        </div>
                     </v-breadcrumbs>
                 </v-col>
 
                 <v-col cols="12" sm="12" md="12" lg="12" class="py-0" v-if="permissions.view == '1' && !showLoader">
                     <v-card class="card_design mb-4">
                         <v-card-title>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="12" lg="12" class="pb-0">
-                                    Credit Card Payments List
-                                </v-col>
-                            </v-row>
+                            Credit Card Payments List
                             <v-row class="d-flex align-center justify-end">
-                                <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
+                                    <date-range-picker class="date_picker" :value="selectedRange" @update:value="updateRange"></date-range-picker>
+                                </v-col>
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
                                     <v-select clearable variant="outlined" placeholder="From Account Filter" :items="fromAccountFilter" v-model="fromAccount" @update:modelValue="filterFromAccount"
                                     ></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal v_select_design pr-0">
+                                <v-col class="font-medium font-weight-normal v_select_design pr-0">
                                     <v-select clearable variant="outlined" placeholder="To Account Filter"  :items="toAccountFilter" v-model="toAccount" @update:modelValue="filterToAccount"></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="3" lg="3" class="font-medium font-weight-normal ">
+                                <v-col class="font-medium font-weight-normal">
                                     <input type="search" class="form-control serch_table" placeholder="Search" v-model="search"/>
                                  </v-col>
                             </v-row>                          
@@ -183,6 +189,7 @@ export default {
             toAccountFilter: [],
             toAccount: null,
             selectedRange: `${moment().startOf('month').format('ddd MMM DD YYYY')} - ${moment().endOf('month').format('ddd MMM DD YYYY')}`,
+            isHidden: false,
         }
     },
     filters: {
@@ -201,15 +208,19 @@ export default {
             behavior: 'smooth',
         });
         this.getCreditCardPaymentList();
+        this.isHidden = screen.width < 960 ? true : false;
+        window.addEventListener('resize', () => {
+            this.isHidden = screen.width < 960 ? true : false;
+        });
     },
     computed: {
         // total row
         sumField() {
             const key = 'amount';
             return this.currentItemsTable.reduce((a, b) => parseFloat(a) + parseFloat(b[key] || 0), 0)
-        }
+        },
     },
-    methods: {        
+    methods: {
         // open/close import csv modal
         openImportCsvModal() {
             window.$('#importCsvModal').modal('show');
